@@ -18,13 +18,13 @@ import java.util.Vector;
 
 
 /**
- * This ALP PlugIn expands tasks of verb "CODE"
+ * This COUGAAR PlugIn expands tasks of verb "CODE"
  * into workflows of subtasks:
  * DESIGN
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.4 2001-01-19 17:45:01 wwright Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.5 2001-03-29 21:51:50 mthome Exp $
  **/
 public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

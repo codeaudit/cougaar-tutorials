@@ -1,7 +1,7 @@
 rem Script to compile all tutorial files
 
-set LIBPATHS=%ALP_INSTALL_PATH%\lib\core.jar
-set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\build.jar
+set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
+set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\build.jar
 echo on
 
 rem Regenerate and recompile all property/asset files

@@ -21,10 +21,10 @@ import tutorial.assets.*;
 
 
 /**
- * This ALP PlugIn subscribes to tasks and allocates
+ * This COUGAAR PlugIn subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.2 2000-12-18 15:41:10 wwright Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2001-03-29 21:51:48 mthome Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

@@ -1,4 +1,4 @@
-ALP Tutorial Problem - Towers of Hanoi Algorithm
+COUGAAR Tutorial Problem - Towers of Hanoi Algorithm
 
 This tutorial implements a the 'Towers of Hanoi' algorithm in the ALP
 infrastructure. The problem assumes three poles, and a set of ordered disks
@@ -22,14 +22,14 @@ PlugIns:
 		and allocation
 	HanoiMoverPlugIn - Manages the actual disk moves (when the 
 		algorithm is down to NUM_DISKS = 1);
-	PlanServerPlugIn - Standard ALP PlugIn to view log plan using a web 
+	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
                 browser
 
 The society is configured with a PlanServerPlugin to 
 allow for interactive viewing of the generated log plan.
 
-Before running the society, set the environment variable ALP_INSTALL_PATH
-to the directory where the ALP release was unpacked.  The ALP_INSTALL_PATH
+Before running the society, set the environment variable COUGAAR_INSTALL_PATH
+to the directory where the COUGAAR release was unpacked.  The COUGAAR_INSTALL_PATH
 directory should contain the subdirectories "lib" and "doc" among others.
 	
 To run the society, type '..\bin\Run HanoiNode' from the configs directory. 

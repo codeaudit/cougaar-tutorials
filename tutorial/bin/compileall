@@ -2,11 +2,11 @@
 # Script to compile all tutorial files
 
 # library 
-LIBPATHS=$ALP_INSTALL_PATH/lib/core.jar
-LIBPATHS=$LIBPATHS:$ALP_INSTALL_PATH/lib/build.jar
+LIBPATHS=$COUGAAR_INSTALL_PATH/lib/core.jar
+LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/build.jar
 
 # java files location
-SOURCE_LOC=$ALP_INSTALL_PATH/src/org/cougaar/tutorial/faststart
+SOURCE_LOC=$COUGAAR_INSTALL_PATH/src/org/cougaar/tutorial/faststart
 
 # echo on
 

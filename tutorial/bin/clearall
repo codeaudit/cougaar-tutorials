@@ -3,7 +3,7 @@
 # $id$
 
 # make sure this is the correct location of the java files
-LOC=$ALP_INSTALL_PATH/src/org/cougaar/tutorial/faststart
+LOC=$COUGAAR_INSTALL_PATH/src/org/cougaar/tutorial/faststart
 
 rm $LOC/*.class 
 rm $LOC/binary/*.class

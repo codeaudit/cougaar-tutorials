@@ -11,10 +11,10 @@ and multi-agent examples.  To run the single agent example, do the following...
 
 2) Open a terminal window (Command Prompt Window on NT, xterm on LINUX/UNIX)
 
-3) In the terminal window, set the environment ALP_INSTALL_PATH to the cougaar 
+3) In the terminal window, set the environment COUGAAR_INSTALL_PATH to the cougaar 
 	directory, e.g. 
-	for NT use:		set ALP_INSTALL_PATH=c:\opt\cougaar
-	for LINUX/UNIX use:	set ALP_INSTALL_PATH=/opt/cougaar
+	for NT use:		set COUGAAR_INSTALL_PATH=c:\opt\cougaar
+	for LINUX/UNIX use:	set COUGAAR_INSTALL_PATH=/opt/cougaar
 
 4) In the terminal window, change directory to 'bin':
 	cd c:\opt\cougaar\bin (on NT)
@@ -33,7 +33,7 @@ Hit Ctrl-C to stop the agent and shut down the node.
 
 How is it constructed?
 
-This tutorial implements a binary search algorithm in the ALP infrastructure.
+This tutorial implements a binary search algorithm in the COUGAAR infrastructure.
 
 The tutorial presents two different node/cluster models for the solution. 
 In the first, a single cluster, BinarySimple runs which contains the following
@@ -41,7 +41,7 @@ PlugIns:
 
 	BinaryIteratorPlugIn - Iterates on preferences to converge to solution
 	BinaryResponderPlugin - Has solution value and responds to iterative 'guesses'
-	UIPlugIn - Standard ALP PlugIn to view log plan
+	UIPlugIn - Standard COUGAAR PlugIn to view log plan
 
 In the second, we demonstrate what is involved in changing such a configuration
 to a multi-cluster society. This second society contains two clsuters, 
@@ -56,7 +56,7 @@ BinaryResponder:
 	TutorialHookupPlugIn - An example PlugIn that establishes inter-cluster 
                 support relations
 both:
-	PlanServerPlugIn - Standard ALP PlugIn to view log plan using a web browser
+	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web browser
 
 What to look for?
 

@@ -21,12 +21,12 @@ import tutorial.assets.*;
 
 
 /**
- * This ALP PlugIn monitors ProgrammerAssets for conflicts between their
+ * This COUGAAR PlugIn monitors ProgrammerAssets for conflicts between their
  * internal schedule and the tasks allocated to them.  When a conflict is
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugIn.java,v 1.2 2000-12-18 15:41:13 wwright Exp $
+ * @version $Id: DevelopmentAssessorPlugIn.java,v 1.3 2001-03-29 21:51:50 mthome Exp $
  **/
 public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

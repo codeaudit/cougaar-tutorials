@@ -1,6 +1,6 @@
 		Computer Asset Creator Fast Start Package
 
-This tutorial is intended to provide a small demonstration of ALP assets
+This tutorial is intended to provide a small demonstration of COUGAAR assets
 and properties : how they are created and maintained in the software
 development process, and how they are used in running software.
 
@@ -15,10 +15,10 @@ and multi-agent examples.  To run the single agent example, do the following...
 
 2) Open a terminal window (Command Prompt Window on NT, xterm on LINUX/UNIX)
 
-3) In the terminal window, set the environment ALP_INSTALL_PATH to the cougaar 
+3) In the terminal window, set the environment COUGAAR_INSTALL_PATH to the cougaar 
 	directory, e.g. 
-	for NT use:		set ALP_INSTALL_PATH=c:\opt\cougaar
-	for LINUX/UNIX use:	set ALP_INSTALL_PATH=/opt/cougaar
+	for NT use:		set COUGAAR_INSTALL_PATH=c:\opt\cougaar
+	for LINUX/UNIX use:	set COUGAAR_INSTALL_PATH=/opt/cougaar
 
 4) In the terminal window, change directory to 'bin':
 	cd c:\opt\cougaar\bin (on NT)
@@ -48,7 +48,7 @@ The cluster creates computer assets and prints them out. It consists of two
 plugins:
 	ComputerLDMPlugIn : Creates computer Assets
 	ComputerAssetListerPlugIn : Prints new Assets out to stdout
-	PlanServerPlugIn - Standard ALP PlugIn to view log plan using a web 
+	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
                 browser
 
 These agents also load the plan server plugin which will allow you to 

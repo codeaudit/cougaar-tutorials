@@ -11,10 +11,10 @@ and multi-agent examples.  To run the single agent example, do the following...
 
 2) Open a terminal window (Command Prompt Window on NT, xterm on LINUX/UNIX)
 
-3) In the terminal window, set the environment ALP_INSTALL_PATH to the cougaar 
+3) In the terminal window, set the environment COUGAAR_INSTALL_PATH to the cougaar 
 	directory, e.g. 
-	for NT use:		set ALP_INSTALL_PATH=c:\opt\cougaar
-	for LINUX/UNIX use:	set ALP_INSTALL_PATH=/opt/cougaar
+	for NT use:		set COUGAAR_INSTALL_PATH=c:\opt\cougaar
+	for LINUX/UNIX use:	set COUGAAR_INSTALL_PATH=/opt/cougaar
 
 4) In the terminal window, change directory to 'bin':
 	cd c:\opt\cougaar\bin (on NT)
@@ -69,7 +69,7 @@ CalendarManager:
                 support relations
 
 both:
-	PlanServerPlugIn - Standard ALP PlugIn to view log plan using a web 
+	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
                 browser
  
 

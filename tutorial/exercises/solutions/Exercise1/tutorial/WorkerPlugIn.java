@@ -24,9 +24,9 @@ class myPredicate implements UnaryPredicate{
 }
 
 /**
- * This ALP PlugIn subscribes to Job objects and prints them out.
+ * This COUGAAR PlugIn subscribes to Job objects and prints them out.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: WorkerPlugIn.java,v 1.2 2000-12-18 15:41:05 wwright Exp $
+ * @version $Id: WorkerPlugIn.java,v 1.3 2001-03-29 21:51:45 mthome Exp $
  **/
 public class WorkerPlugIn extends SimplePlugIn {
   // holds my subscription for Job objects (matching predicate above)

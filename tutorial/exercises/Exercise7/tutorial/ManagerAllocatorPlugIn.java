@@ -65,10 +65,10 @@ class myProgrammersPredicate implements UnaryPredicate{
 }
 
 /**
- * This ALP PlugIn allocates tasks of verb "CODE"
+ * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2001-01-18 23:36:48 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.5 2001-03-29 21:51:42 mthome Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 

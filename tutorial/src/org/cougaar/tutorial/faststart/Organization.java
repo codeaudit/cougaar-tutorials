@@ -6,10 +6,10 @@ import org.cougaar.core.cluster.*;
 import org.cougaar.domain.planning.ldm.plan.*;
 
 /**
- * An ALP Asset class that represents a cluster.  Allocation to
+ * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: Organization.java,v 1.2 2001-03-29 21:51:51 mthome Exp $
  */
 public class Organization extends org.cougaar.domain.planning.ldm.asset.Asset {
 

@@ -20,7 +20,7 @@ import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
- * This ALP PlugIn creates and publishes "CODE" tasks
+ * This COUGAAR PlugIn creates and publishes "CODE" tasks
  */
 public class ManagerPlugIn extends SimplePlugIn {
 

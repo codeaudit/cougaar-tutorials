@@ -4,22 +4,22 @@
 
 <clusterassets>
   <prototype name="BUDGET_300_XT">
-    <object id="proto-001" class="alp.tutorial.computer.assets.ComputerAsset">
-      <property id="property-001" class="alp.tutorial.computer.assets.CPUPG">
+    <object id="proto-001" class="org.cougaar.tutorial.faststart.computer.assets.ComputerAsset">
+      <property id="property-001" class="org.cougaar.tutorial.faststart.computer.assets.CPUPG">
 		<field name="Manufacturer" type="java.lang.String" value="BUDGET">
                 </field>
 		<field name="ClockSpeed" type="int" value="300">
                 </field>
       </property>
-      <property id="property-002" class="alp.tutorial.computer.assets.MemoryPG">
+      <property id="property-002" class="org.cougaar.tutorial.faststart.computer.assets.MemoryPG">
 		<field name="RAM" type="int" value="128">
                 </field>
       </property>
-      <property id="property-003" class="alp.tutorial.computer.assets.MonitorPG">
+      <property id="property-003" class="org.cougaar.tutorial.faststart.computer.assets.MonitorPG">
 		<field name="ScreenSize" type="int" value="17">
                 </field>
       </property>
-      <property id="property-004" class="alp.tutorial.computer.assets.MarketPG">
+      <property id="property-004" class="org.cougaar.tutorial.faststart.computer.assets.MarketPG">
 		<field name="DaysToShip" type="int" value="7">
                 </field>
 		<field name="Price" type="int" value="1000">

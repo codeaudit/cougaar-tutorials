@@ -1,7 +1,7 @@
-ALP Tutorial Problem - Calendar Scheduler
+COUGAAR Tutorial Problem - Calendar Scheduler
 
 This tutorial contains a simple calendar scheduler problem intended
-to show ALP approaches towards execution monitoring and dynamic replanning.
+to show COUGAAR approaches towards execution monitoring and dynamic replanning.
 
 The tutorial society consists of two clusters in a single node, 
 CalendarRequester and CalendarManager, which request scheduling of events 
@@ -25,12 +25,12 @@ CalendarManager:
                 support relations
 
 both:
-	PlanServerPlugIn - Standard ALP PlugIn to view log plan using a web 
+	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
                 browser
 
 
-Before running the society, set the environment variable ALP_INSTALL_PATH
-to the directory where the ALP release was unpacked.  The ALP_INSTALL_PATH
+Before running the society, set the environment variable COUGAAR_INSTALL_PATH
+to the directory where the COUGAAR release was unpacked.  The COUGAAR_INSTALL_PATH
 directory should contain the subdirectories "lib" and "doc" among others.
 
 To run the tutorial, type '..\bin\Run CalendarNode' from the configs directory. 

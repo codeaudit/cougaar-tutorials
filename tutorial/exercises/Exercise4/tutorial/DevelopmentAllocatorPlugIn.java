@@ -21,10 +21,10 @@ import tutorial.assets.*;
 
 
 /**
- * This ALP PlugIn subscribes to tasks in a workflow and allocates
+ * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2001-01-26 22:37:10 wwright Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.4 2001-03-29 21:51:40 mthome Exp $
  **/
  // todo:  add code to make this a subclass
 public class DevelopmentAllocatorPlugIn

@@ -120,16 +120,16 @@ Additional PSPs loaded by PSP Launcher
   </element>
 -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_AlpMap</Classname>
-    <PSPName>alpine/demo/ALPMAP.PSP</PSPName>
+    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Map</Classname>
+    <PSPName>alpine/demo/MAP.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Inventory</Classname>
     <PSPName>alpine/demo/INVENTORY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_ALPInventory</Classname>
-    <PSPName>alpine/demo/ALPINVENTORY.PSP</PSPName>
+    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_Inventory</Classname>
+    <PSPName>alpine/demo/INVENTORY.PSP</PSPName>
   </element>
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">

@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.asset.*;
 
 
 /**
- * This ALP PlugIn creates and publishes "CODE" tasks
+ * This COUGAAR PlugIn creates and publishes "CODE" tasks
  */
 public class ManagerPlugIn extends SimplePlugIn {
 

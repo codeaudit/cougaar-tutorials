@@ -26,10 +26,10 @@ import tutorial.assets.*;
  */
 
 /**
- * This ALP PlugIn allocates tasks of verb "CODE"
+ * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2001-01-26 22:37:10 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.5 2001-03-29 21:51:39 mthome Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 public class ManagerAllocatorPlugIn  {
