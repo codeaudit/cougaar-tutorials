@@ -923,7 +923,7 @@ public class HistoryServlet extends ComponentPlugin {
 	PrintWriter out = response.getWriter();
         out.print(
             "<html><head><title>"+
-            "The Pizza Party"+
+            "History Servlet for " + agentId.getAddress()+
 	    "</title></head>"+
 	    "<body>" +
 	    //	    "<p><center>Pizza Preferences</center>"+
