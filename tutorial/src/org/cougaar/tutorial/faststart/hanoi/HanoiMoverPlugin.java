@@ -1,10 +1,25 @@
 package org.cougaar.tutorial.faststart.hanoi;
 
-/**
-  * Copyright 1997-1999 Defense Advanced Research Project Agency 
-  * and ALPINE (A Raytheon Systems Company and BBN Corporation Consortium). 
-  * This software to be used in accordance with the COUGAAR license agreement.
-**/
+/*
+ * <copyright>
+ *  Copyright 1997-2003 BBNT Solutions, LLC
+ *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the Cougaar Open Source License as published by
+ *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
+ *
+ *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
+ *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
+ *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND WITHOUT
+ *  ANY WARRANTIES AS TO NON-INFRINGEMENT.  IN NO EVENT SHALL COPYRIGHT
+ *  HOLDER BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL
+ *  DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE OF DATA OR PROFITS,
+ *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ *  PERFORMANCE OF THE COUGAAR SOFTWARE.
+ * </copyright>
+ */
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.PlanningFactory;
@@ -36,7 +51,7 @@ import org.cougaar.core.service.*;
  *        satisfaction of preferences [Level4]
  * else error
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiMoverPlugin.java,v 1.3 2003-01-22 23:09:11 mbarger Exp $
+ * @version $Id: HanoiMoverPlugin.java,v 1.4 2003-01-23 22:12:55 mbarger Exp $
  **/
 public class HanoiMoverPlugin extends ComponentPlugin
 {
