@@ -28,8 +28,6 @@ package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.plugin.PluginAlarm;
@@ -49,22 +47,31 @@ import org.cougaar.util.UnaryPredicate;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
- * Sends a simple relay invitation to all "FriendsOfMark".
+ * Sends a simple relay invitation to all "FriendsOfMark" (members of the community),
+ * whose responses are automatically collected in the PizzaPreferences object.
  * <p/>
  * Waits for a set amount of time, WAIT_FOR_RSVP_DURATION, until it
  * publishes the pizza preference list to the blackboard.  While it's
  * waiting, replies come back from invitees and update the PizzaPreferences
- * object.
- *
- * Linewrap detector:
- *3456789012345678901234567890123456789012345678901234567890123456789012345
- *       1         2         3         4         5         6         7   75  
+ * object in memory.
+ * <p>
+ * It must wait because people may take a while to join the FriendsOfMark community,
+ * and the PlaceOrderPlugin will place the orders as soon as the PizzaPreferences
+ * object is published. 
+ * <p>
+ * An alternate way to do this instead of an alarm would be to tell this Plugin in
+ * advance how many people to expect, or allow it to publishChange the
+ * PizzaPreferences object.
+ * @see PizzaPreferences
+ * @see PlaceOrderPlugin
  */
 public class InvitePlugin extends ComponentPlugin {
 
+  // Name of community or "buddy list"
   private static final String COMMUNITY = "FriendsOfMark-COMM";
   private static final String ATTRIBUTE_TYPE  = "Role";
   private static final String ATTRIBUTE_VALUE = "Member";
@@ -80,12 +87,12 @@ public class InvitePlugin extends ComponentPlugin {
   private Arguments args = Arguments.EMPTY_INSTANCE;
   
   /**
-   * my subscription to relays
+   * my subscription to Relays
    */
   private IncrementalSubscription relaySubscription;
 
   /**
-   * my subscription to entities
+   * my subscription to Entities
    */
   private IncrementalSubscription entitySubscription;
 
@@ -118,26 +125,14 @@ public class InvitePlugin extends ComponentPlugin {
     args = new Arguments(o);
   }  
 
-  /**
-   * Set up the services we need - logging and the uid service
-   */
-  public void load() {
-    super.load();
 
-    // get services
-    ServiceBroker sb = getServiceBroker();
-    log = (LoggingService)
-        sb.getService(this, LoggingService.class, null);
-    uids = (UIDService)
-        sb.getService(this, UIDService.class, null);
+  public void setLoggingService(LoggingService log) {
+    this.log = log;
+    // Note that by default all logging calls start with our agent name
+  }
 
-    // prefix all logging calls with our agent name
-    log = LoggingServiceWithPrefix.add(log, agentId + ": ");
-
-    // get wait parameter
-    waitForRSVPDuration = getWaitParameter();
-	
-    log.debug("plugin loaded, services found");
+  public void setUIDService(UIDService uids) {
+    this.uids = uids;
   }
 
   /**
@@ -178,155 +173,205 @@ public class InvitePlugin extends ComponentPlugin {
    * to return.
    */
   protected void setupSubscriptions() {
-    log.debug("setupSubscriptions");
+    if (log.isDebugEnabled())
+      log.debug("setupSubscriptions");
+
+    // get wait parameter
+    waitForRSVPDuration = getWaitParameter();
 
     // create relay subscription
     relaySubscription = 
-      (IncrementalSubscription) blackboard.subscribe(new RelaySourcePred());
+      (IncrementalSubscription) blackboard.subscribe(RELAYSOURCEPRED);
 
     // create entity subscription
     entitySubscription = 
-      (IncrementalSubscription) blackboard.subscribe(new EntityPred());
+      (IncrementalSubscription) blackboard.subscribe(ENTITYPRED);
 
-    // wait for a time for responses to get back
-    if (log.isInfoEnabled()) {
-      log.info(
-	       "Waiting " + (waitForRSVPDuration / 1000) +
-	       " seconds before publishing pizza prefs.");
+    // If this agent moves or restarts, its possible we've already
+    // invited people to the party. Get any pre-published PizzaPreferences.
+    getPizzaPreferencesFromBB();
+
+    // If we havent already published the pizzaPreferences,
+    // then set a timer, to allow RSVPs to come in, before
+    // we publish it
+    if (!publishedPreferences) {
+      // wait for a time for responses to get back
+      if (log.isInfoEnabled()) {
+	log.info(
+		 "Waiting " + (waitForRSVPDuration / 1000) +
+		 " seconds before publishing pizza prefs.");
+      }
+      
+      startTimer(waitForRSVPDuration);
+    } else {
+      // Must have restarted when this plugins job was done
+      if (log.isInfoEnabled())
+	log.info("Restarting when RSVPs already collected and published.");
     }
-
-    startTimer(waitForRSVPDuration);
   }
 
   /**
-   * When a relay changes, this method gets called
-   * <p/>
-   * Also, when the timer expires, this method gets called.
+   * Query the Blackboard for a pre-existing PizzaPreferences object.
+   * This might happen if the agent moved or restarted.
+   * If it is found, record it and the fact it was already published. 
+   * If not, check for an RSVPRelaySource off of which to grab the
+   * (unpublished) PizzaPreferences.
    */
-  protected void execute() {
-    if (log.isInfoEnabled()) {
-      log.info(" execute --------------- ");
+  private void getPizzaPreferencesFromBB() {
+    Collection pprefs =  blackboard.query(new UnaryPredicate() {
+	public boolean execute(Object o) {
+	  return o instanceof PizzaPreferences;
+	}
+      });
+    if (! pprefs.isEmpty()) {
+      this.pizzaPreferences = (PizzaPreferences)pprefs.iterator().next();
+      publishedPreferences = true;
+    } else if (!relaySubscription.isEmpty()) {
+      // If get here, haven't yet published the PizzaPreferences. But
+      // have published a Relay with a PizzaPreferences object. Grab it back.
+      RSVPRelaySource rSource = (RSVPRelaySource)relaySubscription.first();
+      this.pizzaPreferences = rSource.getPizzaPrefs();
     }
-
-    // observe changed entity to see when it changes
-    if (log.isInfoEnabled()) {
-      for (Iterator iter = entitySubscription.getChangedCollection().iterator(); iter.hasNext();) {
-	Entity sr = (Entity) iter.next();
-	log.info("observe changed " + sr);
-      }
-    }
-
-    if (!entitySubscription.isEmpty() && (pizzaPreferences == null)) {
-      // when we publish the relay, we create a pizza preference
-      // we use this to know only to do this once
-      publishRelay (entitySubscription.getCollection());
-    }
-
-    // observe changed relay to see when it changes
-    if (log.isInfoEnabled()) {
-      for (Iterator iter = relaySubscription.getChangedCollection().iterator(); iter.hasNext();) {
-	Relay sr = (Relay) iter.next();
-	log.info("observe changed " + sr);
-      }
-    }
-
-    if (log.isDebugEnabled()) {
-      // removed relays
-      for (Iterator iter = relaySubscription.getRemovedCollection().iterator(); iter.hasNext();) {
-        Relay.Source sr = (Relay.Source) iter.next();
-        log.debug("observe removed " + sr);
-      }
-    }
-
-    // if we waited long enough, publish pizza preferences so 
-    // OrderPlugin can order the pizza.
-    checkTimer();
   }
 
-  protected void publishRelay (Collection entities) {
-    // Create recipient addresses 
+  /**
+   * Onc we have the self org, publish the invite RSVPRelay if we haven't yet.
+   * When the timer expires, assume all replies have come in, and publish the collected
+   * PizzaPreferences object for the PlaceOrderPlugin.
+   */
+  protected void execute() {
+    // When we have the self org, but havent yet created our 
+    // reply catalog, we need to invite people to the party
+    if (!entitySubscription.isEmpty() && (pizzaPreferences == null)) {
+      // When we publish the relay, we create a pizza preference locally (not published).
+      // That PizzaPreferences is auto-updated by the Relay responses. Publishing
+      // it is just to let the PlaceOrderPlugin know it can start working
+      publishRelay();
+    }
+
+    // Wait for everyone to register with the community,
+    // so my ABA Relay gets to them, and then they reply, so it is safe to 
+    // assume we have all the replies. Then publish the pizza preferences object so 
+    // PlaceOrderPlugin can order the pizza.
+    checkTimer();
+  } // end of execute()
+
+  /**
+   * Create a PizzaPreferences object to collect local results, and 
+   * publish my RSVP relay inviting people to the party. The relay itself
+   * will update the PizzaPreferences object as replies come in.
+   */
+  protected void publishRelay() {
+    // Create recipient addresses: a multicast address, going to all the
+    // members of my community of friends. The infrastructure will take care
+    // of ensuring that as people join the community, they get a copy of
+    // any message sent to this ABA. You just have to wait for people
+    // to join the community.
     MessageAddress target =
       AttributeBasedAddress.getAttributeBasedAddress(COMMUNITY, 
 						     ATTRIBUTE_TYPE, 
 						     ATTRIBUTE_VALUE);
 
-    // create pizza preferences - update as RSVPs arrive
+    // create pizza preferences - updated as RSVPs arrive
     this.pizzaPreferences = new PizzaPreferences(uids.nextUID());
 
-    // record inviter's preference
-    // there will be several entities on the blackboard
+    // There may be several entities on the blackboard
     // we want the one that represents the inviting agent
-    Entity selfEntity = null;
-    for (Iterator iter = entities.iterator(); iter.hasNext(); ) {
-      Entity entity = (Entity) iter.next();
-      
-      if (entity.isSelf()) {
-	selfEntity = entity;
-	break;
-      }
-    }
+    Entity selfEntity = getSelfEntity();
 
-    if (selfEntity == null) {
+    if (selfEntity == null && log.isWarnEnabled()) {
       log.warn ("Could not find self entity. It's needed to find " + 
 		"out my pizza preference.");
     }
 
-    PizzaPreferenceHelper prefHelper = new PizzaPreferenceHelper();
-    String preference = prefHelper.getPizzaPreference(log, selfEntity);
+    // Get the inviters preference
+    String preference = PizzaPreferenceHelper.getPizzaPreference(log, selfEntity);
+
+    // And record it.
     pizzaPreferences.addFriendToPizza(agentId.toString(), preference);
 
-    // send invitation
+    // send invitation to the ABA
     Relay sourceRelay = new RSVPRelaySource(uids.nextUID(), 
 					    target,
-                                            Constants.INVITATION_QUERY,
-                                            pizzaPreferences);
-
+					    Constants.INVITATION_QUERY,
+					    pizzaPreferences);
+    
     if (log.isInfoEnabled()) {
       log.info(" Sending " + sourceRelay);
     }
-
+    
     blackboard.publishAdd(sourceRelay);
   }
 
   /**
-   * If the timer has expired, publish the pizza preferences.
+   * Returns the Entity representing the agent.  Checks the entity subscription and
+   * returns the first element.  In this example, there should be only one self entity.
+   * @return local Entity, null if none yet
+   */
+  protected Entity getSelfEntity() {
+    // See if we have any yet -- we should
+    if (entitySubscription.isEmpty()) {
+      log.error("Entity subscription is empty, this should not happen!!!!");
+      return null;
+    }
+
+    // Look for the local Entity
+    for (Enumeration entities=entitySubscription.elements(); entities.hasMoreElements(); ) {
+      Entity ent = (Entity)entities.nextElement();
+      if (ent.isLocal())
+	return ent;
+    }
+    return null;
+  }
+
+  /**
+   * If the timer has expired, assume all the members of the community have joined,
+   * gotten the ABA targeted RSVP Relay, and replied. So publish the 
+   * PizzaPreferences object, so the PlaceOrderPlugin can begin.
    */
   protected void checkTimer () {
     if (timerExpired()) {
       Collection relays = relaySubscription.getCollection();
       if (publishedPreferences) {
 	if (log.isInfoEnabled()) {
-	  log.info("We published the invite list already, " +
-		   "so there are no relays in our collection.");
+	  log.info("We already published the invite list");
+	  // Note that the relaySubscription should be empty too, since
+	  // we remove the relay when we're done
 	}
       } else {
 	if (relays.isEmpty()) {
-	  log.warn ("Expecting a relay since the timer has expired.");
+	  log.error("Expecting an RSVPrelay, since the timer has expired.");
+	  return;
 	}
 
-	// the timer could only have been started if we 
-	// published the relay, so we are guaranteed it will be in the
-	// collection
-	
-        Object sourceRelay = relays.iterator().next();
+	// Get our (single) published relay
+        RSVPRelaySource sourceRelay = (RSVPRelaySource) relays.iterator().next();
 
 	if (log.isInfoEnabled()) {
 	  log.info("We've waited " + (waitForRSVPDuration / 1000) +
 		   " seconds, so we're publishing the preference list.");
 
-	  log.info("\nremoving source relay        : " + sourceRelay +
-		   "\nand adding pizza preferences : " + pizzaPreferences);
+	  log.info("Removing source relay: " + sourceRelay +
+		   ", and adding pizza preferences: " + pizzaPreferences);
 	}
 
+	// We're done with the relay -- and any agent which starts up late
+	// and joins the community late is too late to come to the party.
+	// So remove the relay. In other applications, we could leave it.
         blackboard.publishRemove(sourceRelay);
+
+	// Publish our final set of attendees with their pizza preferences,
+	// so the PlaceOrderPlugin knows what to get
         blackboard.publishAdd(pizzaPreferences);
+
+	// Note that we've finished.
         publishedPreferences = true;
       }
     } else {
       if (log.isInfoEnabled()) {
-	log.info("Timer not expired so not publishing..." +
-		 "\nvs now             : " + new Date() +
-		 "\nExpiration time is : " + 
+	log.info("Timer not expired so not publishing Preferences yet. " +
+		 "Now: " + new Date() +
+		 ", Timer expiration time is: " + 
 		 new Date(getTimerExpirationTime()));
       }
     }
@@ -373,7 +418,6 @@ public class InvitePlugin extends ComponentPlugin {
   /**
    * Test if the timer has expired.
    * @return false if the timer is not running or has not yet expired
-   * else return true.
    */
   protected boolean timerExpired() {
     synchronized (timerLock) {
@@ -381,7 +425,7 @@ public class InvitePlugin extends ComponentPlugin {
     }
   }
 
-  /** When will (has) the timer expire */
+  /** When will (has) the timer expire(d)? */
   protected long getTimerExpirationTime() {
     synchronized (timerLock) {
       if (timer != null) {
@@ -393,17 +437,21 @@ public class InvitePlugin extends ComponentPlugin {
   }
 
   /**
-   * My subscription predicate, which matches RSVPRelaySource objects
+   * Single static predicate that matches RSVPRelaySource objects. 
+   * Use a static singleton since we only need one.
    */
-  private static class RelaySourcePred implements UnaryPredicate {
-    public boolean execute(Object o) {
-      return (o instanceof RSVPRelaySource);
-    }
-  }
+  private static final UnaryPredicate RELAYSOURCEPRED = new UnaryPredicate() {
+      public boolean execute(Object o) {
+	return (o instanceof RSVPRelaySource);
+      }
+    };
 
-  private static class EntityPred implements UnaryPredicate {
-    public boolean execute(Object o) {
-      return (o instanceof Entity);
-    }
-  }
+  /**
+   * Subscribe to Entities, in order to find the self Entity.
+   */
+  private static final UnaryPredicate ENTITYPRED = new UnaryPredicate() {
+      public boolean execute(Object o) {
+	return o instanceof Entity;
+      }
+    };
 }
