@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *
- *  Copyright 1997-2004 BBNT Solutions, LLC
+ *  Copyright 2002-2004 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  *
@@ -48,11 +48,14 @@ public class Constants {
   public static final int EXPECTED_NUM_FRIENDS = 4;
 
   public interface Verbs {
+    /** Verb for ordering pizzas */
     public static final Verb ORDER = Verb.get("Order");
+    /* Initiates service discovery to find a provider */
     public static final Verb FIND_PROVIDERS = Verb.get("FindProviders");
   }
 
   public interface Prepositions {
+    /* Used in excluding a particular provider */
     public static final String NOT = "Not";
   }
 
@@ -63,7 +66,7 @@ public class Constants {
 
   public static class Roles {
     /**
-     * Insure that Role constants are initialized. Actually does nothing, but
+     * Ensure that Role constants are initialized. Actually does nothing, but
      * the classloader insures that all static initializers have been run 
      * before executing any code in this class. This ensures that Roles 
      * required for the Pizza app are created properly before a application
@@ -99,8 +102,12 @@ public class Constants {
         org.cougaar.planning.ldm.plan.Role.getRole(Constants.PIZZA + CUSTOMER_SUFFIX);
   }
 
-  // Used to find the data files required to support the pizza application e.g.
-  // $CIP/pizza/data
+  /**
+   * Returns the path to the data files required to support the pizza application e.g.
+   * $COUGAAR_INSTALL_PATH/pizza/data
+   *
+   * @return a string representing the file path
+   */
   public static String getDataPath() {
     return System.getProperty("org.cougaar.install.path") + File.separator + "pizza" + File.separator + "data";
   }
