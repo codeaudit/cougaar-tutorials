@@ -42,12 +42,28 @@ import org.cougaar.core.service.*;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.6 2003-04-16 22:37:17 dmontana Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.7 2003-04-17 15:42:21 dmontana Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent 
 implements BlackboardClient 
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   private BlackboardService blackboard;
 
@@ -144,13 +160,7 @@ implements BlackboardClient
 	      col = blackboard.query(pred);
 	      for (Iterator it=col.iterator(); it.hasNext(); ) {
 		  pa=(ProgrammerAsset)it.next();
-		  if (makeVacation(pa, out)) {
-		      blackboard.publishChange(pa);
-		      System.out.println("Adding VACATION time for "
-					 +pa.getItemIdentificationPG()
-					 .getItemIdentification());
-
-		  }
+                  makeVacation (pa, out);
 	      }
 	  } finally {
 	      blackboard.closeTransactionDontReset();
@@ -164,26 +174,40 @@ implements BlackboardClient
    * Find and take a vacation month for this programmer.  Print the vacation
    * month to the PrintStream
    */
-  private boolean makeVacation(ProgrammerAsset pa, PrintWriter out) {
-    boolean vacation = false;
-    int min_month = Integer.MAX_VALUE;
-    Schedule s = pa.getSchedule();
-    Enumeration months = s.keys();
-    // find the earliest month to force the most replanning
-    while (months.hasMoreElements()) {
-      int month = ((Integer)months.nextElement()).intValue();
-      if ((month < min_month) && (s.getWork(month) instanceof Task))
-        min_month = month;
+  private void makeVacation(ProgrammerAsset pa, PrintWriter out) {
+
+    // make a VACATION task
+    PlanningFactory factory =
+      (PlanningFactory) getDomainService().getFactory("planning");
+    NewTask task = factory.newTask();
+    task.setVerb(Verb.getVerb("VACATION"));
+    task.setPlan(factory.getRealityPlan());
+    task.setDirectObject (pa);
+    blackboard.publishAdd (task);
+
+    // allocate it to current first month of schedule
+    Enumeration e = pa.getRoleSchedule().getRoleScheduleElements();
+    while (e.hasMoreElements()) {
+      Allocation alloc = (Allocation) e.nextElement();
+      if (! alloc.getEstimatedResult().isSuccess())
+        continue;
+      long start = alloc.getStartTime();
+      GregorianCalendar cal = new GregorianCalendar();
+      cal.setTime (new Date (start));
+      cal.add (GregorianCalendar.MONTH, 1);
+      long end = cal.getTime().getTime();
+      AllocationResult ar = new AllocationResult (1.0, true,
+        new AspectValue[] {
+          AspectValue.newAspectValue (AspectType.START_TIME, start),
+          AspectValue.newAspectValue (AspectType.END_TIME, end) });
+      Allocation alloc2 = factory.createAllocation
+        (task.getPlan(), task, pa, ar, Role.ASSIGNED);
+      blackboard.publishAdd (alloc2);
+      System.out.println ("Adding VACATION time for " +
+               pa.getItemIdentificationPG().getItemIdentification() +
+               " at time " + new Date (start));
+      break;
     }
-    if (min_month != Integer.MAX_VALUE) {
-      s.setWork(min_month, "Vacation");
-      out.println("<p>Vacation time for "
-		  +pa.getItemIdentificationPG()
-		  .getItemIdentification() 
-		  + " month: "+min_month+"</p>");
-      vacation = true;
-    }
-    return vacation;
   }
 
   }

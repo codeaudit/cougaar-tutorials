@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.1 2003-04-16 22:37:16 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.2 2003-04-17 15:42:20 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -96,6 +96,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     public boolean execute(Object o) {
 // todo: test if allocation with task that pass task predicate
 // hints: Allocation.getTask
+      return false;
     }
   };
 
