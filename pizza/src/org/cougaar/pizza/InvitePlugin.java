@@ -101,15 +101,7 @@ public class InvitePlugin extends ComponentPlugin {
 
     // Create recipient addresses 
     MessageAddress source = getAgentIdentifier(); 
-    MessageAddress target = new MyABA("FriendsOfMark-COMM", "Role", "Member"); 
-
-    // give bob a chance to show up
-
-    // BOZO - perhaps we should reconsider retries here?
-
-    log.shout ("about to sleep");
-    try { Thread.sleep (10000); } catch (Exception e) {}
-    log.shout ("woke up...");
+    MessageAddress target = AttributeBasedAddress.getAttributeBasedAddress("FriendsOfMark-COMM", "Role", "Member"); 
 
     UID uid = uids.nextUID();
     SimpleRelay simpleRelay = 
@@ -152,19 +144,27 @@ public class InvitePlugin extends ComponentPlugin {
           log.shout("Received "+sr);
         } 
 
+	// FIXME: The Response content needs to be aggregated from all the friends
+	// in our relay impl, otherwise we could lose a response
 	RSVPReply rsvpReply = (RSVPReply) sr.getReply();
-	pizzaPreferences.addFriendToPizza (rsvpReply.friend, rsvpReply.pizzaPreference);
-
-	log.warn ("pizza prefs now : " + pizzaPreferences);
-
-        // remove query both locally and at the remote target.
-        //
-        // this is optional, but it's a good idea to clean up and
-        // free some memory.
-        blackboard.publishRemove(sr); 
-
-	// update pizza preferences now that a new RSVP arrived
-	blackboard.publishChange (pizzaPreferences);
+	if (pizzaPreferences.getFriends().contains(rsvpReply.friend)) {
+	  log.shout("Already have reply from " + rsvpReply.friend);
+	} else {
+	  pizzaPreferences.addFriendToPizza (rsvpReply.friend, rsvpReply.pizzaPreference);
+	  
+	  log.warn ("pizza prefs now : " + pizzaPreferences);
+	  
+	  // remove query both locally and at the remote target.
+	  //
+	  // this is optional, but it's a good idea to clean up and
+	  // free some memory.
+	  
+	  // Can't remove it until all Friends have replied!!!
+	  //blackboard.publishRemove(sr); 
+	  
+	  // update pizza preferences now that a new RSVP arrived
+	  blackboard.publishChange (pizzaPreferences);
+	}
       } else {
         // ignore relays from other sources...
 	log.warn ("********************* ignoring " + sr);
@@ -197,15 +197,6 @@ public class InvitePlugin extends ComponentPlugin {
 	}
       }
       return false;
-    }
-  }
-
-  /** required since ABA doesn't have public setter methods */
-  private static class MyABA extends AttributeBasedAddress {
-    public MyABA(String commName, String attrType, String attrValue) {
-      this.myCommunityName = commName;
-      this.myAttributeType = attrType;
-      this.myAttributeValue = attrValue;
     }
   }
 
