@@ -97,7 +97,9 @@ public class ScheduleServlet
         out.print("<tr><td>"+i+++"<td>");
         if (o instanceof Task) {
           Task task = (Task)o;
-          // todo:  print the verb and the item to be coded
+          // todo: print the verb and the item to be coded
+          // NOTE: all the HTML has already been taken care of, so just print
+          //       the verb and item to be coded
         } else {
           out.print(o);
         }
