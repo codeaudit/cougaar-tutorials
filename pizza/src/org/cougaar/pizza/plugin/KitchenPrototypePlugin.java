@@ -23,12 +23,10 @@ package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
-import org.cougaar.core.service.LoggingService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PropertyGroupFactory;
-import org.cougaar.pizza.util.PGCreator;
 import org.cougaar.util.Arguments;
 
 /**
@@ -37,9 +35,6 @@ import org.cougaar.util.Arguments;
  * kitchen can make.
  */
 public class KitchenPrototypePlugin extends ComponentPlugin {
-
-  //The logging service acts as a central logger for each component
-  private LoggingService logger;
 
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
@@ -63,39 +58,40 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   private boolean createMeat = true;
   private final String PIZZA_TYPE_PARAM = "PIZZA_TYPES_PROVIDED";
 
+   /**
+    * Used by the binding utility through introspection to set my DomainService
+    * Services that are required for plugin usage should be set through reflection instead of explicitly
+    * getting each service from your ServiceBroker in the load method. The setter methods are called after
+    * the component is constructed but before the state methods such as initialize, load, setupSubscriptions, etc.
+    * If the service is not available at that time the component will be unloaded.
+    */
+   public void setDomainService(DomainService aDomainService) {
+     domainService = aDomainService;
+   }
+
   /**
-   * setParameter is only called by the infrastructure
-   * if a plugin has parameters
+   * Used by the binding utility through introspection to set my PrototypeRegistryService
    */
-  public void setParameter(Object o) {
-    args = new Arguments(o);
-    super.setParameter(o);
+  public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
+    prototypeRegistryService = aPrototypeRegistryService;
   }
 
   /**
-   * Initialize the plugin with the plugin parameters and get our
-   * services.
+   * Get the plugin parameters and our factory when our component is loaded.
+   * If we want additional services that are not required for the plugin, we should get them in load.
+   * However, if the component gets a service in load, it should override the unload() method and
+   * release the services.
    */
   public void load() {
     super.load();
-    // get services
-    domainService = (DomainService)
-        getServiceBroker().getService(this, DomainService.class, null);
-    prototypeRegistryService = (PrototypeRegistryService)
-        getServiceBroker().getService(this, PrototypeRegistryService.class,
-                                      null);
-    logger = (LoggingService)
-        getServiceBroker().getService(this, LoggingService.class, null);
     factory = (PlanningFactory)domainService.getFactory("planning");
-    // Get the plugin params and initialize the createVeggie and
-    // createMeat booleans
-    String pizzaTypeValue = args.getString(PIZZA_TYPE_PARAM);
-    setKitchenParameters(pizzaTypeValue);
+    // Process the plugin params
+    args = new Arguments(getParameter());
+    setKitchenParameters();
   }
 
   /**
-   * Used for initialization to populate the Blackboard with Kitchen
-   * prototype and Asset objects
+   * Used for initialization to populate the Blackboard with Kitchen prototype and Asset objects
    */
   protected void setupSubscriptions() {
     // create the kitchen prototypes and assets
@@ -108,30 +104,20 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
    * and the plugin arguments.
    */
   private void createKitchenAssets() {
-    // Register our PropertyGroupFactory
-    factory.addPropertyGroupFactory(new PropertyGroupFactory());
-
-    KitchenAsset new_prototype = (KitchenAsset)factory.
-        createPrototype(KitchenAsset.class, "kitchen");
+    KitchenAsset new_prototype = (KitchenAsset)factory.createPrototype(KitchenAsset.class, "kitchen");
     // Cache the prototype in the LDM so that it can be used to create
     // instances of Kitchen assets when asked for by prototype name
     prototypeRegistryService.cachePrototype("kitchen", new_prototype);
-    KitchenAsset kitchen_asset = (KitchenAsset)
-        factory.createInstance("kitchen");
-    // Check the plugin arguments to see if this plugin should create a
-    // Kitchen asset that can make veggie pizza.
+    KitchenAsset kitchen_asset = (KitchenAsset) factory.createInstance("kitchen");
+    // Check the plugin arguments to see if this plugin should create a Kitchen asset that can make veggie pizza.
     if (createVeggie) {
-      kitchen_asset.
-          addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
+      kitchen_asset.addOtherPropertyGroup(PropertyGroupFactory.newVeggiePG());
     }
-    // Check the plugin arguments to see if this plugin should create a
-    // Kitchen asset that can make meat pizza.
+    // Check the plugin arguments to see if this plugin should create a Kitchen asset that can make meat pizza.
     if (createMeat) {
-      kitchen_asset.
-          addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
+      kitchen_asset.addOtherPropertyGroup(PropertyGroupFactory.newMeatPG());
     }
-    kitchen_asset.setItemIdentificationPG(
-        PGCreator.makeAItemIdentificationPG(factory, "Pizza Kitchen"));
+    kitchen_asset.setItemIdentificationPG(PropertyGroupFactory.newItemIdentificationPG());
     getBlackboardService().publishAdd(kitchen_asset);
   }
 
@@ -141,24 +127,22 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   protected void execute () {}
 
   /**
-   * Set the createVeggie and createMeat plugin variables according to
-   * the plugin param that was read in.
+   * Set the createVeggie and createMeat plugin variables according to the plugin param that was read in.
    */
-  private void setKitchenParameters(String paramValue) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Found " + PIZZA_TYPE_PARAM + " param of: " +
-                   paramValue.trim());
+  private void setKitchenParameters() {
+    String paramValue = args.getString(PIZZA_TYPE_PARAM);
+    if (paramValue != null) {
+      if ("all".equals(paramValue)) {
+        createVeggie = true;
+        createMeat = true;
+      } else if ("veggie_only".equals(paramValue)) {
+        createVeggie = true;
+        createMeat = false;
+      } else if ("meat_only".equals(paramValue)) {
+        createVeggie = false;
+        createMeat = true;
+      }
     }
-    if (paramValue.trim().equals("all")) {
-      createVeggie = true;
-      createMeat = true;
-    } else if (paramValue.trim().equals("veggie_only")) {
-      createVeggie = true;
-      createMeat = false;
-    } else if (paramValue.trim().equals("meat_only")) {
-      createVeggie = false;
-      createMeat = true;
-    } 
   }
 
 }
