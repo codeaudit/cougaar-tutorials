@@ -28,18 +28,21 @@ import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 
 /**
- * This COUGAAR Plugin creates and publishes Pizza Asset objects.
+ * This Plugin creates and registers the Pizza Prototype asset.  Other plugins will create
+ * instances of Pizza Assets as needed based on this prototype. This plugin does not require any inputs,
+ * it simply creates and registers the prototype. Note that this plugin will only run once since there
+ * are no inputs(subscriptions) that will cause it to run.
  */
 public class PizzaPrototypePlugin extends ComponentPlugin {
 
-  // The domainService acts as a provider of domain factory services
+  // The domainService provides domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype registration services
+  // The prototypeRegistryService provides prototype registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
   // The planning factory we use to create planning objects.
-  private PlanningFactory factory;
+  private PlanningFactory planningFactory;
 
   /**
    * Used by the binding utility through introspection to set my DomainService
@@ -60,22 +63,27 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Initialize our plugin. Since we don't have any subscriptions,
-   * create the Pizza prototype right away.
+   * Generally used to initalize plugin subscriptions. But in this case, we will just use it to
+   * call our method that will create the prototype.
    */
   protected void setupSubscriptions() {
-    factory = (PlanningFactory)domainService.getFactory("planning");
+    planningFactory = (PlanningFactory)domainService.getFactory("planning");
+    // unload the domain service since we only need it to get the planning factory
+    getServiceBroker().releaseService(this, DomainService.class, domainService);
     createPizzaPrototype();
   }
 
+  /**
+   * Create and register the pizza prototype.
+   */
   private void createPizzaPrototype() {
-    PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype(PizzaAsset.class, Constants.PIZZA);
+    PizzaAsset new_prototype = (PizzaAsset)planningFactory.createPrototype(PizzaAsset.class, Constants.PIZZA);
     // Cache the prototype in the LDM so that other plugins can create Pizza instances using the new prototype.
     prototypeRegistryService.cachePrototype(Constants.PIZZA, new_prototype);
   }
 
   /**
-   * No subscriptions, so this method does nothing
+   * No subscriptions to process so this method does nothing.
    */
   protected void execute () {}
 }
