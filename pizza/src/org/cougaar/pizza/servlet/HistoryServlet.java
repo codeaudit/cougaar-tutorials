@@ -65,12 +65,14 @@ import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.Claimable;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.TimeAspectValue;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Relationship;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.log.Logger;
@@ -140,7 +142,11 @@ public class HistoryServlet extends ComponentPlugin {
 
   private UnaryPredicate uniqueObjectPredicate =  new UnaryPredicate() {
       public boolean execute(Object o) {
-	return (o instanceof UniqueObject);
+	return (!(o instanceof Relay) &&
+		!(o instanceof Task) &&
+		!(o instanceof PlanElement) &&
+		!(o instanceof Asset) &&
+		 (o instanceof UniqueObject));
       }
     };
 
@@ -251,11 +257,16 @@ public class HistoryServlet extends ComponentPlugin {
   public void execute() {
     long now = System.currentTimeMillis();
 
-    checkTasks(now);
-    checkPlanElements(now);
-    checkRelays(now);
-    checkAssets(now);
-    checkUniqueObjects(now);
+    try {
+      checkTasks(now);
+      checkPlanElements(now);
+      checkRelays(now);
+      checkAssets(now);
+      checkUniqueObjects(now);
+    } catch (Exception e) {
+      logger.warn ("got exception : " + e);
+      e.printStackTrace();
+    }
 
     StringBuffer buf = new StringBuffer();
     for (Iterator iter = events.iterator (); iter.hasNext(); ) {
@@ -311,8 +322,8 @@ public class HistoryServlet extends ComponentPlugin {
 	String event = 
 	  "New " + getClassName(planElement) + 
 	  " " + getURL(planElement.getUID (), PLAN_ELEMENT) + 
-	  " - of task " + getURL(planElement.getTask().getUID(), TASK) + 
-	  " was published by " + planElement.getClaimable().getClaim();
+	  "<br/>of task " + getURL(planElement.getTask().getUID(), TASK) + 
+	  "<br/>was published by " + planElement.getClaimable().getClaim();
 				   
 	events.add (new EventInfo (planElement.getUID().toString(),
 				   event,
@@ -394,7 +405,7 @@ public class HistoryServlet extends ComponentPlugin {
 				   "New asset " + getURL(asset.getUID(), ASSET)+ 
 				   " was published",
 				   now,
-				   "",
+				   getNewAssetComment(asset),
 				   encodeHTML(asset.toString())));
       }
 
@@ -404,7 +415,7 @@ public class HistoryServlet extends ComponentPlugin {
 	events.add (new EventInfo (asset.getUID().toString(),
 				   "Asset " + getURL(asset.getUID(), ASSET) + " changed.",
 				   now,
-				   "",
+				   getChangedAssetComment(asset),
 				   encodeHTML(asset.toString())));
       }
 
@@ -417,6 +428,100 @@ public class HistoryServlet extends ComponentPlugin {
 				   ""));
       }
     }
+  }
+
+  protected String getNewAssetComment (Asset asset) {
+    return getChangedAssetComment(asset);
+  }
+
+  protected String getChangedAssetComment (Asset asset) {
+    StringBuffer buf = new StringBuffer();
+
+    if (asset instanceof Entity) {
+      Entity entity = (Entity) asset;
+      buf.append(" Asset <b>" + asset.getItemIdentificationPG().getItemIdentification());
+      buf.append ("</b>"); 
+
+      if (!entity.getEntityPG ().getRoles().isEmpty()) {
+	buf.append (" with roles : "); 
+      }
+
+      for (Iterator iter = entity.getEntityPG ().getRoles().iterator(); iter.hasNext(); ) {
+	buf.append(
+		   "<font size=small color=mediumblue>"+
+		   "<li>");
+	Object obj = iter.next();
+	buf.append (getClassName(obj) + " - " + obj);
+	buf.append(
+		   "</li>"+
+		   "</font>\n");
+      }
+
+      Collection relationships = 
+	entity.getRelationshipSchedule().getMatchingRelationships(new UnaryPredicate() {
+	    public boolean execute(Object o) { return true; }
+	  });
+
+      if (!relationships.isEmpty()) {
+	buf.append("<br/>with relationships : "); 
+      }
+
+      for (Iterator iter = relationships.iterator(); iter.hasNext(); ) {
+	buf.append(
+		   "<font size=small color=mediumblue>"+
+		   "<li>");
+
+	Object obj = iter.next();
+	// buf.append (getClassName(obj) + " - " + obj);
+	if (obj instanceof Relationship) {
+	  Relationship relation = (Relationship) obj;
+	  buf.append (relation.getRoleA().toString());
+	  buf.append ("=");
+
+	  if (relation.getA() instanceof Asset) {
+	    buf.append (getTypeAndItemInfo ((Asset) relation.getA()));
+	  }
+
+	  buf.append ("<br/>" + relation.getRoleB().toString());
+	  buf.append ("=");
+
+	  if (relation.getB() instanceof Asset) {
+	    buf.append (getTypeAndItemInfo ((Asset) relation.getB()));
+	  }
+	}
+
+	buf.append(
+		   "</li>"+
+		   "</font>\n");
+      }
+
+    }
+
+    if (asset.getRoleSchedule().getRoleScheduleElements().hasMoreElements()) {
+      buf.append("<br/>with role schedule : "); 
+    }
+
+    for (Enumeration enum = asset.getRoleSchedule().getRoleScheduleElements(); enum.hasMoreElements(); ) {
+      buf.append(
+		 "<font size=small color=mediumblue>"+
+		 "<li>");
+      Object elem = enum.nextElement();
+
+      if (elem instanceof Allocation) {
+	buf.append("Allocation to " + getTypeAndItemInfo (((Allocation) elem).getAsset()));
+      }
+      else if (elem instanceof PlanElement) {
+	buf.append (getAddedComment ((PlanElement) elem));
+      }
+      else {
+	buf.append (enum.nextElement());
+      }
+      buf.append(
+		 "</li>"+
+		 "</font>\n");
+    }
+
+    return buf.toString();
   }
 
   protected void checkUniqueObjects (long now) {
@@ -539,7 +644,6 @@ public class HistoryServlet extends ComponentPlugin {
 		 "</li>"+
 		 "</font>\n");
     }
-
     return buf.toString();
   }
 
@@ -681,8 +785,9 @@ public class HistoryServlet extends ComponentPlugin {
       if (allocation.getAsset() == null)
 	return "";
       else
-	return "Place " + allocation.getTask().getVerb() + 
-	  " with " + getTypeAndItemInfo(allocation.getAsset());
+	return "Do " + allocation.getTask().getVerb() + 
+	  " with " + getTypeAndItemInfo(allocation.getAsset()) + 
+	  " " + getChangedAssetComment(allocation.getAsset());
     }
     else if (planElement instanceof Expansion) {
       Expansion expansion = (Expansion) planElement;
@@ -709,6 +814,7 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append ("</table>");
       return buf.toString();
     }
+
     return "";
   }
 
@@ -823,6 +929,22 @@ public class HistoryServlet extends ComponentPlugin {
 	    //	    "<p><center>Pizza Preferences</center>"+
 	    //	    getHtmlForPreferences () +
 	    "<p><center><h1>State History</h1></center>"+
+	    "<p><center>" +
+
+	    "<a href=\"/$" +
+	    encAgentName+
+	    getPath() +
+	    "?"+
+	    "sortByUID=true"+
+	    "\">sort by uid</a>"+
+
+	    "&nbsp;<a href=\"/$" +
+	    encAgentName+
+	    getPath() +
+	    "?"+
+	    "sortByUID=false"+
+	    "\">sort by time</a></center>"+
+
 	    getHtmlForState() +
 	    "</body>" +
             "</html>\n");
@@ -1012,7 +1134,11 @@ public class HistoryServlet extends ComponentPlugin {
       if (timeStamp > otherEvent.timeStamp)
 	return 1;
 
-      return uid.compareTo (otherEvent.uid);
+      int uidComp = uid.compareTo (otherEvent.uid);
+      if (uidComp != 0)
+	return uidComp;
+
+      return meaning.compareTo (otherEvent.meaning);
     }
 
     public String toString () {
