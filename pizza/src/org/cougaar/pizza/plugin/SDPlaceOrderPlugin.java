@@ -52,7 +52,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   private IncrementalSubscription selfSub;
   private IncrementalSubscription pizzaPrefSub;
   private IncrementalSubscription findProvidersDispositionSub;
-   private IncrementalSubscription allocationSub;
+  private IncrementalSubscription allocationSub;
   private IncrementalSubscription expansionSub;
   private Subscription taskSub;
   private Entity self;
@@ -118,10 +118,10 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
         logger.debug(" found pizzaPrefs " + pizzaPrefSub);
       }
       // For now we assume only one, but we should enhance to accommodate many
-      publishFindProvidersTask();
+      publishFindProvidersTask(null);
       Task orderTask = makeOrderTask();
       Collection subtasks = expandTask(pizzaPrefs, orderTask);
-      allocateTasks(subtasks);
+      allocateTasks(subtasks, null);
     }
     
     for (Iterator i = findProvidersDispositionSub.getAddedCollection().iterator(); i.hasNext();) {
@@ -129,7 +129,9 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
         Collection tasks = getUnallocatedTasks();
         if (! tasks.isEmpty()) {
-          allocateTasks(getUnallocatedTasks());
+          // check the find providers task for exclusions
+          Entity exclusion = checkFindProvidersTask(disposition.getTask());
+          allocateTasks(getUnallocatedTasks(), exclusion);
         }
       }
     }
@@ -142,13 +144,52 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
         }
       }
     }
+
+    //If the result on the pizza order expansion is failed, find a new provider
+    if (! expansionSub.getChangedCollection().isEmpty()) {
+      for (Iterator i = expansionSub.iterator(); i.hasNext();) {
+        Expansion exp = (Expansion) i.next();
+        if (! exp.getReportedResult().isSuccess()) {
+          processFailedExpansion(exp);
+        }
+      }
+    }
   }
 
-  private void allocateTasks(Collection tasks) {
+  private void processFailedExpansion(Expansion exp) {
+    // Find the supplier to that failed and rescind the allocations
+    Asset failedSupplier = null;
+    for (Iterator resultsIt = exp.getWorkflow().getSubtaskResults().iterator(); resultsIt.hasNext();) {
+      SubTaskResult result = (SubTaskResult) resultsIt.next();
+      if (! result.getAllocationResult().isSuccess()) {
+        failedSupplier = ((Allocation)result.getTask().getPlanElement()).getAsset();
+      }
+      //rescind all task allocations since we will replan with a new provider.
+      //Note we are rescinding the successful meat pizza order because we want our entire order to
+      //be delivered by one pizza provider.
+      blackboard.publishRemove(result.getTask().getPlanElement());
+    }
+    NewPrepositionalPhrase excludePP = planningFactory.newPrepositionalPhrase();
+    excludePP.setPreposition(Constants.NOT);
+    excludePP.setIndirectObject(failedSupplier);
+    publishFindProvidersTask(excludePP);
+  }
+
+  private Entity checkFindProvidersTask(Task findProvidersTask) {
+    Entity excludedEntity = null;
+    PrepositionalPhrase notPP = findProvidersTask.getPrepositionalPhrase(Constants.NOT);
+    if (notPP != null) {
+      excludedEntity = (Entity) notPP.getIndirectObject();
+    }
+    return excludedEntity;
+  }
+
+  private void allocateTasks(Collection tasks, Entity excludeProvider) {
     Collection providers = getProviderOrgAssets();
     Entity provider = null;
     for (Iterator iterator = providers.iterator(); iterator.hasNext();) {
       provider = (Entity) iterator.next();
+      if (provider.equals(excludeProvider)) continue;
     }
     if (provider != null) {
       for (Iterator i = tasks.iterator(); i.hasNext();) {
@@ -203,15 +244,20 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     return pref;
   }
 
-  private void publishFindProvidersTask() {
+  private void publishFindProvidersTask(PrepositionalPhrase excludePhrase) {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.FIND_PROVIDERS));
     newTask.setPlan(planningFactory.getRealityPlan());
     newTask.setDirectObject(self);
+    Vector prepPhrases = new Vector();
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition(AS);
     pp.setIndirectObject(Role.getRole(Constants.PIZZA_PROVIDER));
-    newTask.setPrepositionalPhrases(pp);
+    prepPhrases.add(pp);
+    if (excludePhrase != null) {
+      prepPhrases.add(excludePhrase);
+    }
+    newTask.setPrepositionalPhrases(prepPhrases.elements());
     blackboard.publishAdd(newTask);
   }
 
