@@ -92,7 +92,7 @@ public class Constants {
   public static class Roles {
     /**
      * Ensure that Role constants are initialized. Actually does nothing, but
-     * the classloader insures that all static initializers have been run 
+     * the classloader ensures that all static initializers have been run 
      * before executing any code in this class. This ensures that Roles 
      * required for the Pizza app are created properly before a application
      * code calls Role.get(Constants.Role.XXX)
