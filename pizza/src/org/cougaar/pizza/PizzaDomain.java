@@ -41,7 +41,10 @@ import java.util.Collections;
 
 
 /**
- * COUGAAR Domain package definition.
+ * PizzaDomain definition -
+ * Required to ensure the Roles and Assets specific to the pizza
+ * application are initialized correctly. PizzaDomain does not include any
+ * domain specific LogicProviders.
  **/
 
 public class PizzaDomain extends DomainAdapter {
@@ -80,6 +83,11 @@ public class PizzaDomain extends DomainAdapter {
 
   public void initialize() {
     super.initialize();
+
+    // Domain is loaded before any plugins. Call to Constants.Role.init() 
+    // creates all Roles specific to the Pizza domain before they are 
+    // accessed by application code. This insures that that the Roles and
+    // their converses are defined consistently.
     Constants.Roles.init();    // Insure that our Role constants are initted
   }
 
@@ -114,6 +122,10 @@ public class PizzaDomain extends DomainAdapter {
       throw new RuntimeException("Missing \"planning\" factory!");
     }
 
+    // Adding pizza specific AssetFactory and PropertyGroupFactory allows 
+    // pizza application code to use ldmf.createAsset(<asset class name>) for
+    // the assets defined in org.cougaar.pizza.asset. For example, 
+    // ldmf.createAsset("KitchenAsset")
     ldmf.addAssetFactory(new AssetFactory());
     ldmf.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
   }
@@ -127,3 +139,5 @@ public class PizzaDomain extends DomainAdapter {
   }
 
 }
+
+
