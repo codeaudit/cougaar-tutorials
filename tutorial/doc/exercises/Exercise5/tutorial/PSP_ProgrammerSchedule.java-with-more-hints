@@ -1,0 +1,187 @@
+/*
+ * <copyright>
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
+ * </copyright>
+ */
+package tutorial;
+
+import tutorial.assets.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.cluster.*;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.lib.planserver.*;
+import java.io.*;
+import java.util.*;
+
+
+  /**
+   * todo:  Create Predicate matching all ProgrammerAssets
+   */
+  // hint:  see UnaryPredicate interface
+  // more hints:  class GetProgrammersPredicate implements UnaryPredicate {
+  // more hints:    public boolean execute(Object o) {
+  // more hints:      return o instanceof ProgrammerAsset;
+  // more hints:    }
+  // more hints:  }
+
+/**
+ * This PSP responds with HTML tables showing the schedule maintained by
+ * each programmer asset.
+ * @author ALPINE (alpine-software@bbn.com)
+ * @version $Id: PSP_ProgrammerSchedule.java-with-more-hints,v 1.1 2001-08-13 15:45:04 wwright Exp $
+ */
+ // todo:  add code to make this a subclass implementing the needed interfaces
+ // hint:  parent class should be PSP_BaseAdapter
+ // hint:  implement the following interfaces: PlanServiceProvider, UISubscriber
+ // more hints: use java keywords 'extends' and 'implements'
+ // more hints: public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
+public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
+{
+  /** A zero-argument constructor is required for dynamically loaded PSPs,
+   *         required by Class.newInstance()
+   **/
+  public PSP_ProgrammerSchedule()
+  {
+    super();
+  }
+
+  /**
+   * This constructor includes the URL path as arguments
+   */
+  public PSP_ProgrammerSchedule( String pkg, String id ) throws RuntimePSPException
+  {
+    setResourceLocation(pkg, id);
+  }
+
+  /**
+   * Some PSPs can respond to queries -- URLs that start with "?"
+   * I don't respond to queries
+   */
+  public boolean test(HttpInput query_parameters, PlanServiceContext sc)
+  {
+    super.initializeTest(); // IF subclass off of PSP_BaseAdapter.java
+    return false;  // This PSP is only accessed by direct reference.
+  }
+
+
+  /**
+   * Called when a HTTP request is made of this PSP.
+   * @param out data stream back to the caller.
+   * @param query_parameters tell me what to do.
+   * @param psc information about the caller.
+   * @param psu unused.
+   */
+  public void execute( PrintStream out,
+                       HttpInput query_parameters,
+                       PlanServiceContext psc,
+                       PlanServiceUtilities psu ) throws Exception
+  {
+    IncrementalSubscription subscription = null;
+    try {
+      System.out.println("PSP_ProgrammerSchedule called from " + psc.getSessionAddress());
+
+      // todo: query the PLAN for ProgrammerAssets
+      // hint: see PlanServiceContext.getServerPlugInSupport()
+      // hint: note ServerPluginSupport.queryForSubscriber()
+      // more hints:  ServerPluginSupport sps = psc.getServerPlugInSupport();
+      // more hints:  Collection programmers = sps.queryForSubscriber(new GetProgrammersPredicate());
+
+
+      // todo: use dumpProgrammerSchedule to send each ProgrammerAsset
+      //       to browser.  note that dumpProgrammerSchedule is defined below
+      // hint: see java.util.Collection.iterator()
+      // more hints:  Iterator iter = programmers.iterator();
+      // more hints:  while (iter.hasNext()) {
+      // more hints:    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
+      // more hints:    dumpProgrammerSchedule(pa, out);
+      // more hints:  }
+
+    } catch (Exception ex) {
+      out.println(ex.getMessage());
+      ex.printStackTrace(out);
+      System.out.println(ex);
+      out.flush();
+    }
+  }
+
+
+  /**
+   * Print an HTML table of this programmer's schedule to the PrintStream
+   */
+  private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintStream out) {
+      // todo: print programmer's name in bold (in HTML)
+      // hint:  see Asset.getItemIdentificationPG (see getItemIdentification())
+      // more hints:  out.println("<b>Programmer: "
+      // more hints:      +pa.getItemIdentificationPG().getItemIdentification()
+      // more hints:      +"<b><br>");
+
+      // todo: Start an HTML table
+      // todo: create header row with columns for Task, Verb, and Month
+      // more hints:  out.println("<table border=1>");
+      // more hints:  out.println("<tr><td>Task<td>Verb<td>Month</tr>");
+
+      Schedule s;
+      // todo: get the schedule from the ProgrammerAsset (set s to the schedule)
+      // hint: see ProgrammerAsset.getSchedule
+      // more hints:  s = pa.getSchedule();
+
+      TreeSet ts = new TreeSet(s.keySet());
+      Iterator iter = ts.iterator();
+
+      int i = 0;
+      while (iter.hasNext()) {
+        Object key = iter.next();
+        Object o = s.get(key);
+
+        out.print("<tr><td>"+i+++"<td>");
+        if (o instanceof Task) {
+          Task task = (Task)o;
+
+          // todo:  print the verb and the item to be coded
+          // hint:  see Task.getVerb
+          // hint:  see Task.getDirectObject
+          // hint:  see Asset.getItemIdentificationPG()
+          // hint:  see IdentificationPG.getIdentification()
+          // more hints:  out.print(task.getVerb());
+          // more hints:  out.print(" " + task.getDirectObject().getItemIdentificationPG().getItemIdentification());
+        } else {
+          out.print(o);
+        }
+        // the key is the month
+        out.println("<td>"+key+"</tr>");
+      }
+      out.println("</table>");
+      out.flush();
+  }
+
+  /**
+   * A PSP can output either HTML or XML (for now).  The server
+   * should be able to ask and find out what type it is.
+   **/
+  public boolean returnsXML() {
+    return false;
+  }
+
+  public boolean returnsHTML() {
+    return true;
+  }
+
+  /**  Any PlanServiceProvider must be able to provide DTD of its
+   *  output IFF it is an XML PSP... ie.  returnsXML() == true;
+   *  or return null
+   **/
+  public String getDTD()  {
+    return null;
+  }
+
+  /**
+   * The UISubscriber interface. (not needed)
+   */
+  public void subscriptionChanged(Subscription subscription) {
+  }
+}
+

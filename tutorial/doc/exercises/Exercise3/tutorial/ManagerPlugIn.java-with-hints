@@ -1,0 +1,77 @@
+/*
+ * <copyright>
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
+ * </copyright>
+ */
+package tutorial;
+
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import java.util.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.*;
+
+/**
+ * This COUGAAR PlugIn creates and publishes "CODE" tasks
+ */
+ // todo:  add code to make this a subclass
+ // hint:  parent class should be SimplePlugIn
+public class ManagerPlugIn {
+
+  // Two assets to use as direct objects for the CODE tasks
+  private Asset what_to_code, what_else_to_code;
+
+  /**
+   * todo: Use setupSubscriptions to create the initial CODE tasks
+   */
+protected void setupSubscriptions() {
+  // todo: Create a task to code "the next killer app"
+  // todo: Part 1: create the AbstractAsset asset store it in instance variable 'what_to_code'
+  // hint: see createPrototype()
+  // hint: see createPropertyGroup()
+  // hint: see tutorial.assets.NewItemIdentificationPG class
+  // hint: add a reference to the new NewItemIdentificationPG object to 'what_to_code'
+
+  // todo: Part 2: put the 'what_to_code' asset on the LogPlan
+  // hint: see publishAdd()
+
+  // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset
+  //       (use the makeTask function which is later in this file)
+  // hint: see publishAdd()
+
+  // todo: Create an task to code "something java"
+  //       (store it in instance variable 'what_else_to_code')
+  // hint: see above code to create the task for "the next killer app"
+}
+
+
+/**
+ * This PlugIn has no subscriptions so this method does nothing
+ */
+protected void execute () {
+}
+
+/**
+ * Create a CODE task.
+ * @param what the direct object of the task
+ */
+protected Task makeTask(Asset what) {
+    NewTask new_task;
+
+    // todo: create the task with the verb "CODE"
+    // new_task =  // hint: see newTask()
+    // hint: see NewTask.setVerb()
+    // hint: see getRealityPlan()
+    // hint: see NewTask.setPlan()
+    // hint: see NewTask.setDirectObject()
+
+
+    return new_task;
+}
+
+}
