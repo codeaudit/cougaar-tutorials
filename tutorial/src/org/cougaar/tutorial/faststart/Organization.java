@@ -33,7 +33,7 @@ import org.cougaar.planning.ldm.plan.*;
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.5 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: Organization.java,v 1.6 2002-02-05 15:40:05 krotherm Exp $
  */
 public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 
@@ -83,9 +83,9 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
   /**
    * Set the relationship between this cluster and the local cluster.
    * @param newRelationship the relationship.
-   * @see CUSTOMER_RELATIONSHIP
-   * @see SUPPLIER_RELATIONSHIP
-   * @see SELF_RELATIONSHIP
+   * see CUSTOMER_RELATIONSHIP
+   * see SUPPLIER_RELATIONSHIP
+   * see SELF_RELATIONSHIP
    */
   public void setRelationship(String newRelationship) {
     relationship = newRelationship;
