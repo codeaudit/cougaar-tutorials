@@ -29,12 +29,10 @@ slots = VeggieProperty, MeatProperty
 
 [VeggiePG]
 doc=Veggie only.
-;slots=boolean knowsJava, boolean knowsJavaScript
-;knowsJava.doc=True if the programmer is fluent in Java
-;knowsJavaScript.doc=True if the programmer is fluent in JavaScript
+slots=boolean veggieOnly
+veggieOnly.doc=True if the pizza should only have veggies
 
 [MeatPG]
 doc=Meat or meat and veggie.
-;slots=int yearsExperience, int SLOCPerDay
-;yearsExperience.doc=The number of years the programmer has been coding
-;SLOCPerDay.doc=The average number lines of source code the programmer can produce per day
+slots=boolean meatOnly
+onlyMeat.doc=True if the pizza should only have meat, false if it can have veggies and meat
