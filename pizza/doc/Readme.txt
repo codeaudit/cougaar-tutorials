@@ -1,19 +1,22 @@
-PIZZA PLANNER FOR COUGAAR, release ??? (December 2004)
+Pizza Party Planner Application
 ------------------------------------------------------
-http://www.cougaar.org/
+http://tutorials.cougaar.org/
 
 1. INTRODUCTION
 
-The Pizza Planner application is a simple 8 agent society that 
+The Pizza Party Planner application is a simple 8 agent society that
 exercises many key Cougaar modules, while staying relatively
-simple. As such, it is a good test to ensure key pieces of Cougaar are
-still working, and a good set of sample code for modelling custom
+simple. It demonstrates a little of what Cougaar can do, and key
+features. It is also a good test to ensure key pieces of Cougaar are
+still working, and a good set of sample code for modeling custom
 components off of.
 
 2. SETUP
 
-Insure that you installed cougaar.zip and cougaar-support.zip and
-that your Cougaar Install Path is setup correctly
+Insure that you installed cougaar.zip and cougaar-support.zip and that
+your Cougaar Install Path environment variable points to the directory
+where those were unzipped. It will also help if you put
+COUGAAR_INSTALL_PATH/bin on your PATH.
 
 3. RUNNING
 
@@ -29,45 +32,39 @@ Cougaar SDPizzaNode2.xml
 
 4. EXPECTED OUTPUT
 
-You should see something like:
+In the first window, you should see something like:
+
 COUGAAR 11.4 built on Tue Dec 07 07:04:16 GMT 2004
 Repository: HEAD on Tue Dec 07 07:00:08 GMT 2004
 VM: JDK 1.4.2_06-b03 (mixed mode)
 OS: Windows 2000 (5.0)
 16:52:11,680 SHOUT - XMLComponentInitializerServiceProvider - Initializing node "SDPizzaNo
 de1" from XML file "SDPizzaNode1.xml"
-16:52:20,622 WARN  - ExecutionTimer - Multi-node societies will have execution-time clock
-skew: Set org.cougaar.core.society.startTime or society.timeOffset to avoid this problem.
-16:52:20,622 WARN  - ExecutionTimer - Starting Time set to Wed Aug 10 00:05:00 GMT 2005 of
-fset=21107559388ms
-2004-12-08 04:52:26,331 SHOUT [DOTS] -
-+-+-+-.+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-....+----
-16:53:12,607 SHOUT - SDPlaceOrderPlugin - Alice: Pizza Order Task FAILED
-16:53:12,607 SHOUT - SDPlaceOrderPlugin - Alice:      JoesLocalPizzaShack could handle Ord
-er for 2.0 Meat Pizza
-16:53:12,617 SHOUT - SDPlaceOrderPlugin - Alice:      JoesLocalPizzaShack could NOT handle
- Order for 2.0 Veggie Pizza
-16:53:12,617 SHOUT - SDPlaceOrderPlugin - Alice: Initial Expansion FAILed. Redo Service Di
-scovery.
-2004-12-08 04:53:12,617 SHOUT [DOTS] - +
-2004-12-08 04:53:12,617 SHOUT [DOTS] - +-+-+-+-+-+-+-+-+-+-+-+-
-16:53:12,757 SHOUT - SDPlaceOrderPlugin - Alice: Pizza Order Task SUCCEEDED
-16:53:12,757 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 M
-eat Pizza
-16:53:12,757 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 V
-eggie Pizza
+18:05:41,490 SHOUT - Parameters - Warning: Found no source for (Database) Parameters - looked for ~/.cougaarrc or [ConfigPath]/cougaar.rc (see doc/OnlineManual/DataAccess.html)
+2004-12-14 06:05:44,805 SHOUT [DOTS] - +-
+18:05:45,015 SHOUT - InvitePlugin - Alice: Sending `Come to my party! RSVP: Meat or Veggie Pizza?' to my Buddy list: FriendsOfMark-COMM
+2004-12-08 04:52:26,331 SHOUT [DOTS] -+-+-+-.+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-....+----
+18:06:29,949 SHOUT - InvitePlugin - Alice: RSVP time is up. Got Party guests pizza preferences: {Bob=Meat Pizza, Mark=Veggie Pizza, Alice=Veggie Pizza, Tony=Meat Pizza}
+2004-12-14 06:06:29,949 SHOUT [DOTS] - ++++--+-+-+-+-+-+-+-+-+.-+-
+18:06:30,891 SHOUT - SDPlaceOrderPlugin - Alice: Pizza Order Task FAILED
+18:06:30,891 SHOUT - SDPlaceOrderPlugin - Alice:      JoesLocalPizzaShack could handle Order for 2.0 servings of Meat Pizza
+18:06:30,891 SHOUT - SDPlaceOrderPlugin - Alice:      JoesLocalPizzaShack could NOT handle Order for 2.0 servings of Veggie Pizza
+18:06:30,891 SHOUT - SDPlaceOrderPlugin - Alice: Can't get the pizza I need! The party guests will not be happy....
+18:06:30,891 SHOUT - SDPlaceOrderPlugin - Alice: Initial Expansion FAILed. Redo Service Discovery.
+2004-12-14 06:06:30,891 SHOUT [DOTS] - ++-+-+-+-+-+-+-+-+-+-+-+-
+18:06:31,021 SHOUT - SDPlaceOrderPlugin - Alice: Pizza Order Task SUCCEEDED
+18:06:31,021 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 servings of Meat Pizza
+18:06:31,021 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 servings of Veggie Pizza
+18:06:31,021 SHOUT - SDPlaceOrderPlugin - Alice: The Party is on!
 
 5. OTHER OUTPUT
-The Pizza App also has built in monitoring tools that are available via 
-your browser while the application is running.
 
-In your favorite web browser goto: http://localhost:8800/
-This will display the main access point to all servlets.
+As with all Cougaar applications, user interfaces for the Pizza Application are available as web pages.
 
-To see all the servlets associated with Alice navigate to: 
-http://localhost:8800/$Alice/list
-
-A good starting point would be:
+The main interface for the Pizza Party is:
 http://localhost:8800/$Alice/pizza
+
+To see all the servlets associated with the party planner, Alice, navigate to:
+http://localhost:8800/$Alice/list
 
 6. LEARN MORE
