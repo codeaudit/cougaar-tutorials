@@ -96,12 +96,12 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    * Create our blackboard subscriptions.
    */
   protected void setupSubscriptions() {
-    selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
-    pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
-    disposedFindProvidersSub = (IncrementalSubscription) blackboard.subscribe(findProvidersDispositionPred);
-    expansionSub = (IncrementalSubscription) blackboard.subscribe(expansionPred);
-    taskSub = blackboard.subscribe(taskPred);
-    allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
+    selfSub = (IncrementalSubscription) getBlackboardService().subscribe(selfPred);
+    pizzaPrefSub = (IncrementalSubscription) getBlackboardService().subscribe(pizzaPrefPred);
+    disposedFindProvidersSub = (IncrementalSubscription) getBlackboardService().subscribe(findProvidersDispositionPred);
+    expansionSub = (IncrementalSubscription) getBlackboardService().subscribe(expansionPred);
+    taskSub = getBlackboardService().subscribe(taskPred);
+    allocationSub = (IncrementalSubscription) getBlackboardService().subscribe(allocationPred);
   }
 
   protected void execute() {
@@ -114,7 +114,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       }
     }
 
-    // Create pizza orders when we find a new PizzaPreference object on our blackboard.
+    // Create pizza orders when we find a new PizzaPreference object on our getBlackboardService().
     // The Pizza Preference object serves as a repository for party invitation responses.
     for (Iterator iterator = pizzaPrefSub.getAddedCollection().iterator(); iterator.hasNext();) {
       PizzaPreferences pizzaPrefs = (PizzaPreferences) iterator.next();
@@ -124,7 +124,9 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       // For now we assume only one, but we should enhance to accommodate many
       publishFindProvidersTask(null);
       Task orderTask = makeTask(Constants.Verbs.ORDER, planningFactory.createInstance(Constants.PIZZA));
-      Collection subtasks = makeExpansionAndPublish(pizzaPrefs, orderTask);
+      getBlackboardService().publishAdd(orderTask);
+      Collection subtasks = makeSubtasks(pizzaPrefs, orderTask);
+      makeExpansionAndPublish(orderTask, subtasks);
       allocateTasks(subtasks, null);
     }
 
@@ -149,7 +151,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       for (Iterator i = allocationSub.iterator(); i.hasNext();) {
         PlanElement pe = (PlanElement) i.next();
         if (PluginHelper.updatePlanElement(pe)) {
-          blackboard.publishChange(pe);
+          getBlackboardService().publishChange(pe);
         }
       }
     }
@@ -180,14 +182,17 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       provider = (Entity) iterator.next();
       if (provider.equals(excludeProvider))
         continue;
+      break;
     }
+
     if (provider != null) {
       for (Iterator i = tasks.iterator(); i.hasNext();) {
         Task newTask = (Task) i.next();
-        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
+        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 0.25, true);
         Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
                                                             Constants.Roles.PIZZAPROVIDER);
-        blackboard.publishAdd(alloc);
+        getBlackboardService().publishAdd(alloc);
+
         if (logger.isDebugEnabled()) {
           logger.debug(" allocating task " + newTask);
         }
@@ -196,43 +201,49 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   }
 
   /**
-   * Expand our order pizza task into specific meat and veggie pizza orders.
-   *
-   * @param pizzaPrefs The preferences of the party guests.
-   * @param parentTask The order task that is the parent of the specific pizza order tasks.
-   * @return A collection of pizza order tasks.
+   * This method expands order pizza tasks into two subtasks:  meat and veggie.
+   * @param pizzaPrefs
+   * @param parentTask
+   * @return
    */
-  private Collection makeExpansionAndPublish(PizzaPreferences pizzaPrefs, Task parentTask) {
-    NewTask meatPizzaTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(MEAT));
+  private Collection makeSubtasks(PizzaPreferences pizzaPrefs, Task parentTask) {
+    ArrayList subtasks = new ArrayList(2);
+
+    PizzaAsset meatPizza = makePizzaAsset(Constants.MEAT_PIZZA);
+    meatPizza.addOtherPropertyGroup(PropertyGroupFactory.newMeatPG());
+    NewTask meatPizzaTask = makeTask(Constants.Verbs.ORDER, meatPizza);
     Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
     meatPizzaTask.setPreference(meatPref);
     meatPizzaTask.setParentTask(parentTask);
+    subtasks.add(meatPizzaTask);
 
-    NewTask veggiePizzaTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(VEGGIE));
+    PizzaAsset veggiePizza = makePizzaAsset(Constants.VEGGIE_PIZZA);
+    veggiePizza.addOtherPropertyGroup(PropertyGroupFactory.newVeggiePG());
+    NewTask veggiePizzaTask = makeTask(Constants.Verbs.ORDER, veggiePizza);
     Preference veggiePref = makeQuantityPreference(pizzaPrefs.getNumVeg());
     veggiePizzaTask.setPreference(veggiePref);
     veggiePizzaTask.setParentTask(parentTask);
+    subtasks.add(veggiePizzaTask);
+    return subtasks;
+  }
 
-    NewWorkflow wf = planningFactory.newWorkflow();
-    wf.setParentTask(parentTask);
-    wf.setIsPropagatingToSubtasks(true);
-    wf.addTask(meatPizzaTask);
-    wf.addTask(veggiePizzaTask);
-    meatPizzaTask.setWorkflow(wf);
-    veggiePizzaTask.setWorkflow(wf);
-    Expansion expansion = planningFactory.createExpansion(parentTask.getPlan(), parentTask, wf, null);
-
-    blackboard.publishAdd(expansion);
-    blackboard.publishAdd(meatPizzaTask);
-    blackboard.publishAdd(veggiePizzaTask);
-    if (logger.isDebugEnabled()) {
-      logger.debug(" publishing expansion and subtasks ");
+  private void makeExpansionAndPublish(Task orderTask, Collection subtasks) {
+    // Wire expansion will create an expansion plan element, a new workflow, add the subtasks and set the intial
+    // allocation result to null.
+    Expansion expansion = PluginHelper.wireExpansion(orderTask, 
+						     new Vector(subtasks), 
+						     planningFactory);
+    // Logical order of publish:  tasks first, then the expansion that contains them.
+    for (Iterator iterator = subtasks.iterator();
+	 iterator.hasNext();) {
+      Task subtask = (Task) iterator.next();
+      getBlackboardService().publishAdd(subtask);
     }
+    getBlackboardService().publishAdd(expansion);
 
-    ArrayList tasksToAllocate = new ArrayList();
-    tasksToAllocate.add(meatPizzaTask);
-    tasksToAllocate.add(veggiePizzaTask);
-    return tasksToAllocate;
+    if (logger.isDebugEnabled()) {
+      logger.debug(" publishing subtasks and expansion ");
+    }
   }
 
   /**
@@ -265,7 +276,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       prepPhrases.add(excludePhrase);
     }
     newTask.setPrepositionalPhrases(prepPhrases.elements());
-    blackboard.publishAdd(newTask);
+    getBlackboardService().publishAdd(newTask);
   }
 
   /**
@@ -299,7 +310,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       //rescind all task allocations since we will replan with a new provider.
       //Note we are rescinding the successful meat pizza order because we want our entire order to
       //be delivered by one pizza provider.
-      blackboard.publishRemove(result.getTask().getPlanElement());
+      getBlackboardService().publishRemove(result.getTask().getPlanElement());
     }
     NewPrepositionalPhrase excludePP = planningFactory.newPrepositionalPhrase();
     excludePP.setPreposition(Constants.Prepositions.NOT);

@@ -54,6 +54,7 @@ import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Filters;
 import org.cougaar.util.UnaryPredicate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
@@ -104,7 +105,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
       Task orderTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(Constants.PIZZA));
       getBlackboardService().publishAdd(orderTask);
-      Vector subtasks = makeSubtasks(pizzaPrefs, orderTask);
+      Collection subtasks = makeSubtasks(pizzaPrefs, orderTask);
       makeExpansionAndPublish(orderTask, subtasks);
       allocateTasks(subtasks);
     }
@@ -134,14 +135,15 @@ public class PlaceOrderPlugin extends ComponentPlugin {
    * @param parentTask
    * @return
    */
-  private Vector makeSubtasks(PizzaPreferences pizzaPrefs, Task parentTask) {
+  private Collection makeSubtasks(PizzaPreferences pizzaPrefs, Task parentTask) {
+    ArrayList subtasks = new ArrayList(2);
+
     PizzaAsset meatPizza = makePizzaAsset(Constants.MEAT_PIZZA);
     meatPizza.addOtherPropertyGroup(PropertyGroupFactory.newMeatPG());
     NewTask meatPizzaTask = makeTask(Constants.Verbs.ORDER, meatPizza);
     Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
     meatPizzaTask.setPreference(meatPref);
     meatPizzaTask.setParentTask(parentTask);
-    Vector subtasks = new Vector(2);
     subtasks.add(meatPizzaTask);
 
     PizzaAsset veggiePizza = makePizzaAsset(Constants.VEGGIE_PIZZA);
@@ -154,14 +156,16 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return subtasks;
   }
 
-  private void makeExpansionAndPublish(Task orderTask, Vector subtasks) {
+  private void makeExpansionAndPublish(Task orderTask, Collection subtasks) {
     // Wire expansion will create an expansion plan element, a new workflow, add the subtasks and set the intial
     // allocation result to null.
-    Expansion expansion = PluginHelper.wireExpansion(orderTask, subtasks, planningFactory);
+    Expansion expansion = PluginHelper.wireExpansion(orderTask, 
+						     new Vector(subtasks), 
+						     planningFactory);
     // Logical order of publish:  tasks first, then the expansion that contains them.
-    for (int j = 0; j < subtasks.size(); j++) {
-      Task subtask = (Task) subtasks.elementAt(j);
-      getBlackboardService().publishAdd(subtask);
+    for (Iterator iterator = subtasks.iterator();
+	 iterator.hasNext();) {
+      Task subtask = (Task) iterator.next();
       getBlackboardService().publishAdd(subtask);
     }
     getBlackboardService().publishAdd(expansion);
