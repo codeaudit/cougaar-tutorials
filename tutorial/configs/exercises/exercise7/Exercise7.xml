@@ -5,10 +5,11 @@
   xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
   <host name="localhost">
     <node name="Exercise7">
+      <component class="org.cougaar.core.plugin.DemoTimeControlPlugin"/>
       <agent name="Management">
         <component class="org.cougaar.tutorial.exercise7.ManagerPlugin"/>
         <component class="org.cougaar.tutorial.exercise7.ManagerAllocatorPlugin"/>
-        <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
+        <component class="org.cougaar.planning.plugin.asset.AssetReportPlugin"/>
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
           <argument>/tasks</argument>
@@ -17,8 +18,8 @@
           <argument>org.cougaar.planning.servlet.CompletionServlet</argument>
           <argument>/completion</argument>
         </component>
-        <component class="org.cougaar.mlm.plugin.organization.OrgDataParamPlugin">
-          <argument>Prototype:Organization</argument>
+        <component class="org.cougaar.planning.plugin.asset.AssetDataParamPlugin">
+          <argument>Prototype:Entity</argument>
           <argument>ClusterPG:MessageAddress:MessageAddress:Management</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Management</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Management</argument>
@@ -26,13 +27,13 @@
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Project Management</argument>
           <argument>TypeIdentificationPG:AlternateTypeIdentification:String:Alice's Department</argument>
-          <argument>OrganizationPG:Roles:Collection&lt;Role&gt;:ProjectManagement</argument>
+          <argument>EntityPG:Roles:Collection&lt;Role&gt;:ProjectManagement</argument>
         </component>
       </agent>
       <agent name="Development">
         <component class="org.cougaar.tutorial.exercise7.ProgrammerLDMPlugin"/>
         <component class="org.cougaar.tutorial.exercise7.DevelopmentAllocatorPlugin"/>
-        <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
+        <component class="org.cougaar.planning.plugin.asset.AssetReportPlugin"/>
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
           <argument>/tasks</argument>
@@ -45,8 +46,8 @@
           <argument>org.cougaar.tutorial.exercise7.ScheduleServlet</argument>
           <argument>/showSchedule</argument>
         </component>
-        <component class="org.cougaar.mlm.plugin.organization.OrgDataParamPlugin">
-          <argument>Prototype:Organization</argument>
+        <component class="org.cougaar.planning.plugin.asset.AssetDataParamPlugin">
+          <argument>Prototype:Entity</argument>
           <argument>ClusterPG:MessageAddress:MessageAddress:Development</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Development</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Development</argument>
@@ -54,7 +55,7 @@
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Software Development </argument>
           <argument>TypeIdentificationPG:AlternateTypeIdentification:String:Bob's Department</argument>
-          <argument>OrganizationPG:Roles:Collection&lt;Role&gt;:SoftwareDevelopment</argument>
+          <argument>EntityPG:Roles:Collection&lt;Role&gt;:SoftwareDevelopment</argument>
           <argument>Relationship:MessageAddress=Management,ItemIdentification=Management,TypeIdentification=UTC/RTOrg,Role=SoftwareDevelopment,StartTime=01/01/2000 12:00 am,EndTime=</argument>
         </component>
       </agent>

@@ -62,7 +62,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.3 2004-01-21 15:33:34 jwong Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.4 2004-11-17 23:06:04 mbarger Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 
@@ -98,7 +98,7 @@ protected void setupSubscriptions() {
 
 
   /**
-   * Top level plugin execute loop.  Allocate CODE tasks to organizations
+   * Top level plugin execute loop.  Allocate CODE tasks to entities
    */
 protected void execute () {
 

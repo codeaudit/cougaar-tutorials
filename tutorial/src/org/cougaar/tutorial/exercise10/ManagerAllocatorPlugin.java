@@ -30,8 +30,8 @@ import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.asset.Entity;
+import org.cougaar.planning.ldm.asset.EntityPG;
 
 import org.cougaar.tutorial.assets.*;
 
@@ -64,16 +64,16 @@ class myAllocationPredicate implements UnaryPredicate{
 }
 
 /**
- * A predicate that matches all organizations that can
+ * A predicate that matches all entities that can
  * fulfill the SoftwareDevelopment role
  */
 class myProgrammersPredicate implements UnaryPredicate{
   public boolean execute(Object o) {
     boolean ret = false;
-    if (o instanceof Organization) {
-      Organization org = (Organization)o;
-      OrganizationPG orgPG = org.getOrganizationPG();
-      ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
+    if (o instanceof Entity) {
+      Entity ent = (Entity)o;
+      EntityPG entPG = ent.getEntityPG();
+      ret = entPG.inRoles(Role.getRole("SoftwareDevelopment"));
     }
     return ret;
   }
@@ -81,7 +81,7 @@ class myProgrammersPredicate implements UnaryPredicate{
 
 /**
  * This COUGAAR Plugin allocates tasks of verb "CODE"
- * to Organizations that have the "SoftwareDevelopment" role.
+ * to Entities that have the "SoftwareDevelopment" role.
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 
@@ -103,11 +103,11 @@ public class ManagerAllocatorPlugin extends ComponentPlugin {
   }
 
   private IncrementalSubscription tasks;         // "CODE" tasks
-  private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
+  private IncrementalSubscription programmers;   // SoftwareDevelopment entities
   private IncrementalSubscription allocations;   // My allocations
 
   /**
-   * subscribe to tasks and programming organizations
+   * subscribe to tasks and programming entities
    */
   protected void setupSubscriptions() {
     tasks = (IncrementalSubscription)getBlackboardService().subscribe(new myTaskPredicate());
@@ -117,7 +117,7 @@ public class ManagerAllocatorPlugin extends ComponentPlugin {
 
 
   /**
-   * Top level plugin execute loop.  Allocate CODE tasks to organizations
+   * Top level plugin execute loop.  Allocate CODE tasks to entities
    */
   protected void execute () {
 
@@ -127,9 +127,9 @@ public class ManagerAllocatorPlugin extends ComponentPlugin {
       Task t = (Task)task_enum.nextElement();
       if (t.getPlanElement() != null)
 	continue;
-      Asset organization = (Asset)programmers.first();
-      if (organization != null)  // if no organization yet, give up for now
-	allocateTo(organization, t);
+      Asset entity = (Asset)programmers.first();
+      if (entity != null)  // if no entity yet, give up for now
+	allocateTo(entity, t);
     }
 
     // Process changed allocations

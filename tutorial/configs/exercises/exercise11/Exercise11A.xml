@@ -18,8 +18,8 @@
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
         <component
-          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          name="org.cougaar.planning.plugin.asset.AssetReportPlugin"
+          class="org.cougaar.planning.plugin.asset.AssetReportPlugin"
           priority="COMPONENT"
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
@@ -40,12 +40,12 @@
           <argument>/completion</argument>
         </component>
         <component
-          name='org.cougaar.mlm.plugin.organization.OrgDataParamPlugin()'
-          class='org.cougaar.mlm.plugin.organization.OrgDataParamPlugin'
+          name='org.cougaar.planning.plugin.asset.AssetDataParamPlugin()'
+          class='org.cougaar.planning.plugin.asset.AssetDataParamPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
           <argument>
-                  Prototype:Organization
+                  Prototype:Entity
           </argument>
           <argument>
             ClusterPG:MessageAddress:MessageAddress:Management
@@ -69,7 +69,7 @@
                   TypeIdentificationPG:AlternateTypeIdentification:String:Alice's Department
           </argument>
           <argument>
-                  OrganizationPG:Roles:Collection&lt;Role&gt;:ProjectManagement
+                  EntityPG:Roles:Collection&lt;Role&gt;:ProjectManagement
           </argument>
         </component>
       </agent>
