@@ -9,7 +9,6 @@
         <component class="org.cougaar.tutorial.exercise10.ManagerPlugin"/>
         <component class="org.cougaar.tutorial.exercise10.ManagerAllocatorPlugin"/>
         <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
-        <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
           <argument>/tasks</argument>
@@ -37,8 +36,6 @@
 
         <component class="org.cougaar.tutorial.exercise10.DevelopmentAssessorPlugin"/>
         <component class="org.cougaar.tutorial.exercise10.TakeVacationServlet"/>
-
-        <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
         <component class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"/>
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
