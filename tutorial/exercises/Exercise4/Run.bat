@@ -8,14 +8,12 @@ set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\alpine.jar
 set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\xml4j_2_0_11.jar
 set LIBPATHS=.;%LIBPATHS%
 
-set DOMAIN=-Dalp.domain.alp=mil.darpa.log.alp.domain.ALPDomain
 
 REM pass in "NodeName" to run a specific named Node
 
-set MYPROPERTIES= %DOMAIN% -Dalp.nameserver.verbosity=2
-set MYPROPERTIES= %DOMAIN%
+set MYPROPERTIES=
 set MYMEMORY=
-set MYCLASSES=alp.society.Node
+set MYCLASSES=org.cougaar.core.society.Node
 set MYARGUMENTS= -c -n "%1"
 
 @ECHO ON

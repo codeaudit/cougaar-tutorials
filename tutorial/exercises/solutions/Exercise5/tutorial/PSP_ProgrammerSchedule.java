@@ -10,10 +10,10 @@
 package tutorial;
 
 import tutorial.assets.*;
-import alp.util.UnaryPredicate;
-import alp.cluster.*;
-import alp.ldm.plan.*;
-import alp.ui.planserver.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.cluster.*;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.lib.planserver.*;
 import java.io.*;
 import java.util.*;
 
@@ -31,7 +31,7 @@ class GetProgrammersPredicate implements UnaryPredicate {
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.1 2000-12-15 20:19:02 mthome Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.2 2000-12-18 15:41:09 wwright Exp $
  */
 public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {

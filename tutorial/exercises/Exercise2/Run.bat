@@ -12,7 +12,7 @@ REM pass in "NodeName" to run a specific named Node
 
 set MYPROPERTIES=
 set MYMEMORY=
-set MYCLASSES=alp.society.Node
+set MYCLASSES=org.cougaar.core.society.Node
 set MYARGUMENTS= -c -n "%1"
 
 @ECHO ON

@@ -12,9 +12,9 @@ package tutorial;
 /**
  * This ALP PlugIn publishes a Job object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerPlugIn.java,v 1.1 2000-12-15 20:19:00 mthome Exp $
+ * @version $Id: ManagerPlugIn.java,v 1.2 2000-12-18 15:41:05 wwright Exp $
  **/
-import alp.plugin.*;
+import org.cougaar.core.plugin.*;
 public class ManagerPlugIn extends SimplePlugIn {
 
 /**

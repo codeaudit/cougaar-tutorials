@@ -9,16 +9,16 @@
  */
 package tutorial;
 
-import alp.plugin.*;
+import org.cougaar.core.plugin.*;
 import tutorial.assets.*;
-import alp.ldm.asset.Asset;
-import alp.ldm.asset.NewItemIdentificationPG;
-import alp.ldm.asset.ItemIdentificationPG;
+import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 
 /**
  * This ALP PlugIn creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugIn.java,v 1.1 2000-12-15 20:18:59 mthome Exp $
+ * @version $Id: ProgrammerLDMPlugIn.java,v 1.2 2000-12-18 15:41:02 wwright Exp $
  */
 public class ProgrammerLDMPlugIn extends SimplePlugIn {
   /**

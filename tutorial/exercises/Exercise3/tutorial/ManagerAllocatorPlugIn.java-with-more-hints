@@ -9,12 +9,12 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
 import java.util.*;
-import alp.util.UnaryPredicate;
-import alp.ldm.plan.*;
-import alp.ldm.asset.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.*;
 import tutorial.assets.*;
 
 /**
@@ -51,7 +51,7 @@ import tutorial.assets.*;
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java-with-more-hints,v 1.1 2000-12-15 20:18:58 mthome Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java-with-more-hints,v 1.2 2000-12-18 15:40:58 wwright Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 // hint:  see SimplePlugIn (parent class)

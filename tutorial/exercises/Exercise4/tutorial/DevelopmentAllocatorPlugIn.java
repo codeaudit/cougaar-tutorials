@@ -9,10 +9,10 @@
  */
 package tutorial;
 
-import alp.cluster.IncrementalSubscription;
-import alp.ldm.plan.*;
-import alp.ldm.asset.Asset;
-import alp.util.UnaryPredicate;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
@@ -24,7 +24,7 @@ import tutorial.assets.*;
  * This ALP PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.1 2000-12-15 20:18:58 mthome Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.2 2000-12-18 15:40:59 wwright Exp $
  **/
  // todo:  add code to make this a subclass
 public class DevelopmentAllocatorPlugIn

@@ -1,4 +1,4 @@
-;!generate: alp.ldm.asset.AssetWriter -Ptutorial.assets programmer_assets.def
+;!generate: org.cougaar.domain.planning.ldm.asset.AssetWriter -Ptutorial.assets programmer_assets.def
 ;; Basis for generating class definitions for Subclasses of Assets
 ;;
 

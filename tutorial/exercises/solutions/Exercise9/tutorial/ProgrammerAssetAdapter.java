@@ -9,13 +9,13 @@
  */
 package tutorial;
 
-import alp.ldm.asset.Asset;
+import org.cougaar.domain.planning.ldm.asset.Asset;
 
 /**
  * This ALP Asset class serves as a base class for the ProgrammerAsset class.
  * The ProgrammerAsset class is generated using the AssetWriter utility
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerAssetAdapter.java,v 1.1 2000-12-15 20:19:03 mthome Exp $
+ * @version $Id: ProgrammerAssetAdapter.java,v 1.2 2000-12-18 15:41:13 wwright Exp $
  */
 public class ProgrammerAssetAdapter extends Asset {
   private tutorial.Schedule schedule = new Schedule();

@@ -9,10 +9,10 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
-import alp.ldm.asset.*;
-import alp.ldm.plan.*;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.domain.planning.ldm.plan.*;
 
 /**
  * This ALP PlugIn creates and publishes "CODE" tasks

@@ -10,10 +10,10 @@
 package tutorial;
 
 import tutorial.assets.*;
-import alp.util.UnaryPredicate;
-import alp.cluster.*;
-import alp.ldm.plan.*;
-import alp.ui.planserver.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.cluster.*;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.lib.planserver.*;
 import java.io.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ScheduleVacation.java,v 1.1 2000-12-15 20:19:03 mthome Exp $
+ * @version $Id: PSP_ScheduleVacation.java,v 1.2 2000-12-18 15:41:13 wwright Exp $
  */
 public class PSP_ScheduleVacation extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {

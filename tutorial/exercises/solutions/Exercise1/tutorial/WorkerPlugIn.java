@@ -9,10 +9,10 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
 import java.util.Enumeration;
-import alp.util.UnaryPredicate;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * This UnaryPredicate matches all Job objects
@@ -26,7 +26,7 @@ class myPredicate implements UnaryPredicate{
 /**
  * This ALP PlugIn subscribes to Job objects and prints them out.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: WorkerPlugIn.java,v 1.1 2000-12-15 20:19:00 mthome Exp $
+ * @version $Id: WorkerPlugIn.java,v 1.2 2000-12-18 15:41:05 wwright Exp $
  **/
 public class WorkerPlugIn extends SimplePlugIn {
   // holds my subscription for Job objects (matching predicate above)

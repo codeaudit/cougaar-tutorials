@@ -9,14 +9,14 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
 import java.util.*;
-import alp.util.UnaryPredicate;
-import alp.ldm.plan.*;
-import alp.ldm.asset.*;
-import mil.darpa.log.alp.domain.asset.Organization;
-import mil.darpa.log.alp.domain.asset.OrganizationPG;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**

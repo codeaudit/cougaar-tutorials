@@ -9,14 +9,14 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
 import java.util.*;
-import alp.util.UnaryPredicate;
-import alp.ldm.plan.*;
-import alp.ldm.asset.*;
-import mil.darpa.log.alp.domain.asset.Organization;
-import mil.darpa.log.alp.domain.asset.OrganizationPG;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.domain.glm.asset.Organization;
+import org.cougaar.domain.glm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
@@ -39,6 +39,7 @@ protected void setupSubscriptions() {
   publishAdd(what_to_code);
   publishAdd(makeTask(what_to_code));
 
+/*
   // Create a task to code something java
   what_else_to_code = theLDMF.createInstance(what_to_code);
   iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
@@ -62,6 +63,7 @@ protected void setupSubscriptions() {
   what_else_to_code.setItemIdentificationPG(iipg);
   publishAdd(what_else_to_code);
   publishAdd(makeTask(what_else_to_code));
+*/
 
 
 }
@@ -110,7 +112,7 @@ protected Task makeTask(Asset what) {
       theLDMF.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
-    double end_month = 36;  // give them three years to do it
+    double end_month = 12;  // give them three years to do it
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, end_month));
     pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);

@@ -9,12 +9,12 @@
  */
 package tutorial;
 
-import alp.plugin.SimplePlugIn;
-import alp.cluster.IncrementalSubscription;
-import alp.util.UnaryPredicate;
+import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
-import alp.ldm.plan.*;
-import alp.ldm.asset.*;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.domain.planning.ldm.asset.*;
 import tutorial.assets.*;
 
 /**
@@ -45,7 +45,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.1 2000-12-15 20:19:01 mthome Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2000-12-18 15:41:07 wwright Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 

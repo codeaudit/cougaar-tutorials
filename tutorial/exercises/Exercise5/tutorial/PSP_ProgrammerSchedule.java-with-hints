@@ -10,10 +10,10 @@
 package tutorial;
 
 import tutorial.assets.*;
-import alp.util.UnaryPredicate;
-import alp.cluster.*;
-import alp.ldm.plan.*;
-import alp.ui.planserver.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.cluster.*;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.lib.planserver.*;
 import java.io.*;
 import java.util.*;
 
@@ -33,7 +33,7 @@ import java.util.*;
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java-with-hints,v 1.1 2000-12-15 20:18:58 mthome Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java-with-hints,v 1.2 2000-12-18 15:41:00 wwright Exp $
  */
  // todo:  add code to make this a subclass implementing the needed interfaces
  // hint:  parent class should be PSP_BaseAdapter

@@ -9,10 +9,10 @@
  */
 package tutorial;
 
-import alp.cluster.IncrementalSubscription;
-import alp.ldm.plan.*;
-import alp.plugin.util.PlugInHelper;
-import alp.util.UnaryPredicate;
+import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.core.plugin.util.PlugInHelper;
+import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -24,9 +24,9 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.1 2000-12-15 20:19:01 mthome Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.2 2000-12-18 15:41:06 wwright Exp $
  **/
-public class DevelopmentExpanderPlugIn extends alp.plugin.SimplePlugIn
+public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
@@ -198,7 +198,8 @@ public class DevelopmentExpanderPlugIn extends alp.plugin.SimplePlugIn
       ConstraintEvent ced = c.getConstrainedEventObject();
       if (ced instanceof SettableConstraintEvent)
       {
-        ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue());
+        ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue(),
+	                                        Constraint.COINCIDENT, 0.0 );
 //System.out.println("START_TIME on "+c.getConstrainedTask().getVerb()+" set to "+getStartTime(c.getConstrainedTask()));
         publishAdd(c.getConstrainedTask());
       }

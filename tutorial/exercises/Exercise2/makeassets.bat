@@ -6,6 +6,6 @@ echo on
 
 rem Regenerate and recompile all property/asset files
 cd tutorial\assets
-java -classpath %LIBPATHS% alp.build.AssetWriter  -Ptutorial.assets programmer_assets.def
-java -classpath %LIBPATHS% alp.build.PGWriter properties.def
+java -classpath %LIBPATHS% org.cougaar.tools.build.AssetWriter  -Ptutorial.assets programmer_assets.def
+java -classpath %LIBPATHS% org.cougaar.tools.build.PGWriter properties.def
 cd ..\..
