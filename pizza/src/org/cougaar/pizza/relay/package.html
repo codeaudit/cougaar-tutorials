@@ -1,0 +1,14 @@
+<body>
+This package contains the definitions of the Relays used to invite
+guest to the pizza party.
+<p>
+Note the use of separate Classes for the Source (created by the
+sender, Alice), Target (the version of the Relay seen by the
+recipients of the invitation), and
+TargetRelayFactory (creates the Target objects in the destination
+agent blackboards). 
+This makes the code easier to read and slightly
+less error-prone. Many implementations however will use a single class
+for all of these. 
+The RSVPReply is the Response object set on the Relay.Targets.
+</body>
