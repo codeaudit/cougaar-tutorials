@@ -31,13 +31,16 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 
 import org.cougaar.pizza.Constants;
+import org.cougaar.pizza.servlet.HistoryServletFriendly;
 
 /**
  * Stores mapping from friend to their pizza preference
@@ -45,7 +48,7 @@ import org.cougaar.pizza.Constants;
  * Counts meat and veg preferences.
  */
 
-public class PizzaPreferences implements UniqueObject {
+public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
   private UID uid;
   private Map friendToPizza = new HashMap();
 
@@ -104,6 +107,36 @@ public class PizzaPreferences implements UniqueObject {
 
   public int getNumVeg() {
     return numVeg;
+  }
+
+  public String toHTML (int type) {
+    StringBuffer buf = new StringBuffer();
+    buf.append("<table border=1 align=center>");
+    buf.append("<tr>");
+    buf.append("<th>");
+    buf.append("Friend");
+    buf.append("</th>");
+    buf.append("<th>");
+    buf.append("Preference");
+    buf.append("</th>");
+    buf.append("</tr>");
+    for (Iterator iter = new TreeSet(getFriends()).iterator(); iter.hasNext(); ) {
+      buf.append("<tr>");
+
+      buf.append("<td>");
+      String friend = (String) iter.next();
+      buf.append(friend);
+      buf.append("</td>");
+
+      buf.append("<td>");
+      String preference = getPreferenceForFriend(friend);
+      buf.append(preference);
+      buf.append("</td>");
+
+      buf.append("</tr>");
+    }
+    buf.append("</table>");
+    return buf.toString();
   }
 
   public String toString() {
