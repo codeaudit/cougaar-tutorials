@@ -26,13 +26,8 @@
 
 package org.cougaar.pizza;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.domain.DomainAdapter;
-import org.cougaar.core.domain.Factory;
-import org.cougaar.core.domain.RootPlan;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.DomainService;
@@ -41,6 +36,9 @@ import org.cougaar.pizza.asset.PropertyGroupFactory;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.LDMService;
+
+import java.util.Collection;
+import java.util.Collections;
 
 
 /**
@@ -83,7 +81,7 @@ public class PizzaDomain extends DomainAdapter {
 
   public void initialize() {
     super.initialize();
-    Constants.Role.init();    // Insure that our Role constants are initted
+    Constants.Roles.init();    // Insure that our Role constants are initted
   }
 
   public void unload() {

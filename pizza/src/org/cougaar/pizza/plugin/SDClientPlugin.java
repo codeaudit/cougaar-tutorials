@@ -22,20 +22,16 @@
 
 package org.cougaar.pizza.plugin;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
+import org.cougaar.pizza.Constants;
+import org.cougaar.pizza.util.RoleScorer;
 import org.cougaar.planning.ldm.PlanningDomain;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Entity;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.Disposition;
 import org.cougaar.planning.ldm.plan.PrepositionalPhrase;
@@ -58,13 +54,13 @@ import org.cougaar.util.TimeSpan;
 import org.cougaar.util.TimeSpans;
 import org.cougaar.util.UnaryPredicate;
 
-
-import org.cougaar.pizza.Constants;
-import org.cougaar.pizza.util.RoleScorer;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Test implementation -  generates a MMQueryRequest for a spare part service
- *
  */
 public class SDClientPlugin extends ComponentPlugin {
   private IncrementalSubscription myLocalEntitySubscription;
@@ -106,9 +102,9 @@ public class SDClientPlugin extends ComponentPlugin {
   private UnaryPredicate myFindProvidersTaskPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
-	return ((Task) o).getVerb().equals(Constants.FIND_PROVIDERS);
+        return ((Task) o).getVerb().equals(Constants.Verbs.FIND_PROVIDERS);
       } else {
-	return false;
+        return false;
       }
     }
   };
@@ -145,13 +141,10 @@ public class SDClientPlugin extends ComponentPlugin {
   public void load() {
     super.load();
 
-    myLoggingService =
-      (LoggingService) getBindingSite().getServiceBroker().getService(this, LoggingService.class, null);
+    myLoggingService = (LoggingService) getBindingSite().getServiceBroker().getService(this, LoggingService.class, null);
 
-    mySDFactory = 
-      (SDFactory) getDomainService().getFactory(SDDomain.SD_NAME);
-    myPlanningFactory = 
-      (PlanningFactory) getDomainService().getFactory(PlanningDomain.PLANNING_NAME);
+    mySDFactory = (SDFactory) getDomainService().getFactory(SDDomain.SD_NAME);
+    myPlanningFactory = (PlanningFactory) getDomainService().getFactory(PlanningDomain.PLANNING_NAME);
   }
 
   protected void setupSubscriptions() {
@@ -164,68 +157,53 @@ public class SDClientPlugin extends ComponentPlugin {
   public void execute() {
     if (myFindProvidersTaskSubscription.hasChanged()) {
       Collection adds = myFindProvidersTaskSubscription.getAddedCollection();
-      for (Iterator addIterator = adds.iterator();
-	   addIterator.hasNext();) {
-	Task findProviderTask = (Task) addIterator.next();
-	Role taskRole = getRole(findProviderTask);
-	myLoggingService.shout("execute: findProviders task = " + findProviderTask + 
-			       " role = " + taskRole);
-	queryServices(taskRole);
+      for (Iterator addIterator = adds.iterator(); addIterator.hasNext();) {
+        Task findProviderTask = (Task) addIterator.next();
+        Role taskRole = getRole(findProviderTask);
+        myLoggingService.shout("execute: findProviders task = " + findProviderTask + " role = " + taskRole);
+        queryServices(taskRole);
       }
 
       if (myLoggingService.isDebugEnabled()) {
-	Collection changes = 
-	  myFindProvidersTaskSubscription.getChangedCollection();
-	Collection removes = 
-	  myFindProvidersTaskSubscription.getRemovedCollection();
-	if (!changes.isEmpty() ||
-	    !removes.isEmpty()) {
-	  myLoggingService.debug("execute: ignoring changed/deleted FindProvider tasks - " +
-				 " changes = " + changes +
-				 ", removes = " + removes);
-	}
+        Collection changes = myFindProvidersTaskSubscription.getChangedCollection();
+        Collection removes = myFindProvidersTaskSubscription.getRemovedCollection();
+        if (!changes.isEmpty() || !removes.isEmpty()) {
+          myLoggingService.debug("execute: ignoring changed/deleted FindProvider tasks - " + " changes = " + changes
+                                 + ", removes = " + removes);
+        }
       }
     }
-	    
-      
+
+
     if (myMMRequestSubscription.hasChanged()) {
-      for (Iterator iterator =
-        myMMRequestSubscription.getChangedCollection().iterator();
-           iterator.hasNext();) {
+      for (Iterator iterator = myMMRequestSubscription.getChangedCollection().iterator(); iterator.hasNext();) {
         MMQueryRequest mmRequest = (MMQueryRequest) iterator.next();
 
         if (myLoggingService.isDebugEnabled()) {
-          myLoggingService.debug("execute: MMQueryRequest has changed." +
-                                 mmRequest);
+          myLoggingService.debug("execute: MMQueryRequest has changed." + mmRequest);
         }
         if (mmRequest.getResult() != null) {
           Collection services = mmRequest.getResult();
 
 
           // print all results
-	  if (myLoggingService.isDebugEnabled()) {
+          if (myLoggingService.isDebugEnabled()) {
 
-	    myLoggingService.debug("Results for query "+mmRequest.getQuery().toString());
-	    for (Iterator serviceIterator = services.iterator();
-		 serviceIterator.hasNext();) {
-	      ScoredServiceDescription serviceDescription =
-		(ScoredServiceDescription) serviceIterator.next();
-	      myLoggingService.debug("Score " + serviceDescription.getScore());
-	      myLoggingService.debug("Provider name " + serviceDescription.getProviderName());
-	      myLoggingService.debug("*********");
-	    }
-	  }
+            myLoggingService.debug("Results for query " + mmRequest.getQuery().toString());
+            for (Iterator serviceIterator = services.iterator(); serviceIterator.hasNext();) {
+              ScoredServiceDescription serviceDescription = (ScoredServiceDescription) serviceIterator.next();
+              myLoggingService.debug("Score " + serviceDescription.getScore());
+              myLoggingService.debug("Provider name " + serviceDescription.getProviderName());
+              myLoggingService.debug("*********");
+            }
+          }
 
-          for (Iterator serviceIterator = services.iterator();
-               serviceIterator.hasNext();) {
-            ScoredServiceDescription serviceDescription =
-              (ScoredServiceDescription) serviceIterator.next();
-	    if (myLoggingService.isDebugEnabled()) {
-	      myLoggingService.debug(getAgentIdentifier() +
-				     " execute: - provider: " +
-				     serviceDescription.getProviderName() +
-				     " score: " + serviceDescription.getScore());
-	    }
+          for (Iterator serviceIterator = services.iterator(); serviceIterator.hasNext();) {
+            ScoredServiceDescription serviceDescription = (ScoredServiceDescription) serviceIterator.next();
+            if (myLoggingService.isDebugEnabled()) {
+              myLoggingService.debug(getAgentIdentifier() + " execute: - provider: " +
+                                     serviceDescription.getProviderName() + " score: " + serviceDescription.getScore());
+            }
 
             requestServiceContract(serviceDescription);
 	    
@@ -240,68 +218,55 @@ public class SDClientPlugin extends ComponentPlugin {
     }
 
     if (myServiceContractRelaySubscription.hasChanged()) {
-      Collection changedRelays =
-	myServiceContractRelaySubscription.getChangedCollection();
+      Collection changedRelays = myServiceContractRelaySubscription.getChangedCollection();
 
       // Update disposition on FindProviders task
       if (changedRelays.size() > 0) {
         if (myLoggingService.isDebugEnabled()) {
-          myLoggingService.debug(getAgentIdentifier() +
-                                 " changedRelays.size = " + 
-				 changedRelays.size() + 
-				 ", updateFindProvidersTaskDispositions");
+          myLoggingService.debug(getAgentIdentifier() + " changedRelays.size = " + changedRelays.size() +
+                                 ", updateFindProvidersTaskDispositions");
         }
-	updateFindProvidersTaskDispositions(changedRelays);
+        updateFindProvidersTaskDispositions(changedRelays);
       }
     }
 
   }
 
   /**
-   * create & publish a relay with service request to the provider specified in the
-   * serviceDescription for the specified time interval.
+   * create & publish a relay with service request to the provider specified in the serviceDescription for the specified
+   * time interval.
    */
   protected void requestServiceContract(ServiceDescription serviceDescription) {
     Role role = getRole(serviceDescription);
     if (role == null) {
       if (myLoggingService.isWarnEnabled()) {
-        myLoggingService.warn(getAgentIdentifier() +
-                               ": error requesting service contract: a null role");
+        myLoggingService.warn(getAgentIdentifier() + ": error requesting service contract: a null role");
       }
     } else {
-      TimeSpan timeSpan = 
-	TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
+      TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
       String providerName = serviceDescription.getProviderName();
-      ServiceRequest request =
-          mySDFactory.newServiceRequest(getLocalEntity(),
-					role,
-					mySDFactory.createTimeSpanPreferences(timeSpan));
+      ServiceRequest request = mySDFactory.newServiceRequest(getLocalEntity(), role,
+                                                             mySDFactory.createTimeSpanPreferences(timeSpan));
 
-      ServiceContractRelay relay =
-          mySDFactory.newServiceContractRelay(MessageAddress.getMessageAddress(providerName),
-					      request);
+      ServiceContractRelay relay = mySDFactory.newServiceContractRelay(MessageAddress.getMessageAddress(providerName),
+                                                                       request);
       getBlackboardService().publishAdd(relay);
     }
   }
 
   protected Entity getLocalEntity() {
-    for (Iterator iterator = myLocalEntitySubscription.iterator();
-         iterator.hasNext();) {
+    for (Iterator iterator = myLocalEntitySubscription.iterator(); iterator.hasNext();) {
       return (Entity) iterator.next();
     }
-
     return null;
   }
 
   protected Role getRole(ServiceDescription serviceDescription) {
 
-    for (Iterator iterator = serviceDescription.getServiceClassifications().iterator();
-         iterator.hasNext();) {
-      ServiceClassification serviceClassification =
-        (ServiceClassification) iterator.next();
+    for (Iterator iterator = serviceDescription.getServiceClassifications().iterator(); iterator.hasNext();) {
+      ServiceClassification serviceClassification = (ServiceClassification) iterator.next();
       if (serviceClassification.getClassificationSchemeName().equals(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME)) {
-        Role role =
-          Role.getRole(serviceClassification.getClassificationName());
+        Role role = Role.getRole(serviceClassification.getClassificationName());
         return role;
       }
     }
@@ -312,14 +277,11 @@ public class SDClientPlugin extends ComponentPlugin {
     Entity localEntity = getLocalEntity();
 
     RelationshipSchedule relSchedule = localEntity.getRelationshipSchedule();
-      TimeSpan timeSpan = 
-	TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
-    Collection providerRelationships = 
-      relSchedule.getMatchingRelationships(role, timeSpan);
+    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
+    Collection providerRelationships = relSchedule.getMatchingRelationships(role, timeSpan);
     Collection currentProviders = new ArrayList();
-    
-    for (Iterator iterator = providerRelationships.iterator();
-	 iterator.hasNext();) {
+
+    for (Iterator iterator = providerRelationships.iterator(); iterator.hasNext();) {
       Relationship relationship = (Relationship) iterator.next();
       Entity other = (Entity) relSchedule.getOther(relationship);
       currentProviders.add(other.getItemIdentificationPG().getItemIdentification());
@@ -327,10 +289,9 @@ public class SDClientPlugin extends ComponentPlugin {
 
     return currentProviders;
   }
-    
+
   private Role getRole(Task findProvidersTask) {
-    PrepositionalPhrase asPhrase = 
-      findProvidersTask.getPrepositionalPhrase(org.cougaar.planning.Constants.Preposition.AS);
+    PrepositionalPhrase asPhrase = findProvidersTask.getPrepositionalPhrase(org.cougaar.planning.Constants.Preposition.AS);
 
     if (asPhrase == null) {
       return null;
@@ -344,48 +305,38 @@ public class SDClientPlugin extends ComponentPlugin {
       // Nothing to update
       return;
     }
-    
-    for (Iterator relayIterator = changedServiceContractRelays.iterator();
-	 relayIterator.hasNext();) {
+
+    for (Iterator relayIterator = changedServiceContractRelays.iterator(); relayIterator.hasNext();) {
       ServiceContractRelay relay = (ServiceContractRelay) relayIterator.next();
-      
+
       if (relay.getServiceContract() != null) {
-	Role relayRole = relay.getServiceContract().getServiceRole();
-	
-	for (Iterator taskIterator = myFindProvidersTaskSubscription.iterator();
-	     taskIterator.hasNext();) {
-	  Task findProvidersTask = (Task) taskIterator.next();
+        Role relayRole = relay.getServiceContract().getServiceRole();
 
-	  Disposition disposition = 
-	    (Disposition) findProvidersTask.getPlanElement();
+        for (Iterator taskIterator = myFindProvidersTaskSubscription.iterator(); taskIterator.hasNext();) {
+          Task findProvidersTask = (Task) taskIterator.next();
 
-	  if (disposition == null) {
-	    Role taskRole = getRole(findProvidersTask);
+          Disposition disposition = (Disposition) findProvidersTask.getPlanElement();
 
-	    // Assuming only 1 open task per role.
-	    if (taskRole.equals(relayRole)) {
-	      AllocationResult estResult =
-		PluginHelper.createEstimatedAllocationResult(findProvidersTask,
-							     myPlanningFactory,
-							     1.0,
-							     true);
-	      disposition =
-		myPlanningFactory.createDisposition(findProvidersTask.getPlan(), 
-						    findProvidersTask, 
-						    estResult);
-	      
-	      getBlackboardService().publishAdd(disposition);
-	    }
-	  }
-	}
+          if (disposition == null) {
+            Role taskRole = getRole(findProvidersTask);
+
+            // Assuming only 1 open task per role.
+            if (taskRole.equals(relayRole)) {
+              AllocationResult estResult = PluginHelper.createEstimatedAllocationResult(findProvidersTask,
+                                                                                        myPlanningFactory, 1.0, true);
+              disposition = myPlanningFactory.createDisposition(findProvidersTask.getPlan(), findProvidersTask,
+                                                                estResult);
+
+              getBlackboardService().publishAdd(disposition);
+            }
+          }
+        }
       }
     }
   }
-  
-  
-  private void queryServices(Role role) {
 
-    String clientName=null;
+
+  private void queryServices(Role role) {
     MMQueryRequest mmRequest;
 
     /*
@@ -395,8 +346,7 @@ public class SDClientPlugin extends ComponentPlugin {
     */
     
     myLoggingService.shout("queryService  asking MatchMaker for : " + role);
-    ServiceInfoScorer roleScorer = new RoleScorer(role, 
-						  getCurrentProviders(role));
+    ServiceInfoScorer roleScorer = new RoleScorer(role, getCurrentProviders(role));
     MMRoleQuery roleQuery = new MMRoleQuery(role, roleScorer);
     mmRequest = mySDFactory.newMMQueryRequest(roleQuery);
     getBlackboardService().publishAdd(mmRequest);
