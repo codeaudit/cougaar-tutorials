@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-11 20:02:43 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2003-04-11 20:51:15 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -181,41 +181,51 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     Preference ePref = task.getPreference(AspectType.START_TIME);
     Preference dPref = task.getPreference(AspectType.DURATION);
     Preference lPref = task.getPreference(AspectType.END_TIME);
-    long earliest = Math.max ((long) ePref.getScoringFunction().getBest().getValue(), prevEnd);
+    long earliest = (long) ePref.getScoringFunction().getBest().getValue();
     int duration = (int) dPref.getScoringFunction().getBest().getValue();
     long latest = (long) lPref.getScoringFunction().getBest().getValue();
+    boolean possiblyAtBeginning = prevEnd <= earliest;
+    earliest = Math.max (earliest, prevEnd);
 
-    // select an available programmer at random
+    // select best available programmer
+    ProgrammerAsset bestAsset = null;
+    long bestTime = 0L;
     Vector programmers = new Vector(allProgrammers.getCollection());
-    AllocationResult estAR = null;
-    ProgrammerAsset asset = null;
-    while ((estAR == null) && (programmers.size() > 0)) {
+    while (programmers.size() > 0) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
-      asset = (ProgrammerAsset)programmers.elementAt(stuckee);
+      ProgrammerAsset asset = (ProgrammerAsset)programmers.elementAt(stuckee);
       programmers.remove(asset);
-
-      System.out.println("\nAllocating the following task to "
-          +asset.getTypeIdentificationPG().getTypeIdentification()+": "
-          +asset.getItemIdentificationPG().getItemIdentification());
-      System.out.println("Task: "+task);
-
-      // find the times and make the allocation result that
-      // assigns these times
-      // if can't fit, go on to next programmer
-      AspectValue[] inter = findInterval (asset, earliest, latest, duration);
-      if (inter == null)
-        continue;
-      estAR = new AllocationResult (1.0, true, inter);
+      if ((possiblyAtBeginning && asset.getRoleSchedule().isEmpty()) ||
+          ((! asset.getRoleSchedule().isEmpty()) &&
+           (asset.getRoleSchedule().getEndTime() >= earliest))) {
+        long newTime = asset.getRoleSchedule().isEmpty() ? earliest :
+                       asset.getRoleSchedule().getEndTime();
+        if ((bestAsset == null) || (newTime < bestTime)) {
+          bestAsset = asset;
+          bestTime = newTime;
+        }
+      }
     }
 
-    if (estAR == null)
-      estAR = new AllocationResult (1.0, false, new AspectValue[] {
+    System.out.println("\nAllocating the following task to "
+        +bestAsset.getTypeIdentificationPG().getTypeIdentification()+": "
+        +bestAsset.getItemIdentificationPG().getItemIdentification());
+    System.out.println("Task: "+task);
+
+    // find the times and make the allocation result that
+    // assigns these times
+    // if can't fit, go on to next programmer
+    AspectValue[] inter = findInterval (bestAsset, earliest, latest, duration);
+    boolean success = inter != null;
+    if (! success)
+      inter = new AspectValue[] {
         AspectValue.newAspectValue (AspectType.START_TIME, latest),
-        AspectValue.newAspectValue (AspectType.END_TIME, latest) } );
+        AspectValue.newAspectValue (AspectType.END_TIME, latest) };
+    AllocationResult estAR = new AllocationResult (1.0, success, inter);
     Allocation allocation =
       ((PlanningFactory)getDomainService().getFactory("planning")).
         createAllocation (task.getPlan(), task,
-                          asset, estAR, Role.ASSIGNED);
+                          bestAsset, estAR, Role.ASSIGNED);
 
     getBlackboardService().publishAdd(allocation);
   }
