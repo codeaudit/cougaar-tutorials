@@ -53,9 +53,6 @@ public class RSVPPlugin extends ComponentPlugin {
 
   private IncrementalSubscription sub;
 
-  /** BOZO - probably want this to be keyed from a self-asset property? */
-  protected boolean iLikeMeat = true;
-
   public void load() {
     super.load();
 
@@ -98,7 +95,8 @@ public class RSVPPlugin extends ComponentPlugin {
 
       if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
         // send back reply
-	String preference = (iLikeMeat) ? "meat" : "veg";
+	PizzaPreferenceHelper prefHelper = new PizzaPreferenceHelper();
+	String preference = (prefHelper.iLikeMeat(log, blackboard)) ? "meat" : "veg";
 
 	RSVPReply reply = new RSVPReply (agentId.toString(), preference); 
 

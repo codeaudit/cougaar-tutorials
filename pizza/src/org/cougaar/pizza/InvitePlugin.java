@@ -67,13 +67,11 @@ public class InvitePlugin extends ServiceUserPlugin {
   /** my list of pizza preferences generated from RSVPs */
   protected PizzaPreferences pizzaPreferences;
 
-  // protected int numRSVPsExpected = 0;
-  protected boolean iLikeMeat = true;
+  /** How long to wait before publish preferences */
   protected long WAIT_FOR_RSVP_DURATION = 45000;
-  protected boolean publishedPreferences = false;
 
-  /** the query to my friends */
-  public static final String INVITATION_QUERY = "invitation-meat_or_veg";
+  /** Have we published preferences */
+  protected boolean publishedPreferences = false;
 
   public InvitePlugin() {
     super(new Class[0]);
@@ -123,11 +121,12 @@ public class InvitePlugin extends ServiceUserPlugin {
     pizzaPreferences.setUID (uids.nextUID());
 
     // record inviter's preference
-    String preference = (iLikeMeat) ? "meat" : "veg";
+    PizzaPreferenceHelper prefHelper = new PizzaPreferenceHelper();
+    String preference = (prefHelper.iLikeMeat(log, blackboard)) ? "meat" : "veg";
     pizzaPreferences.addFriendToPizza (agentId.toString(), preference);
 
     // send invitation
-    Relay sourceRelay = new RSVPRelaySource(log, target, INVITATION_QUERY, pizzaPreferences);
+    Relay sourceRelay = new RSVPRelaySource(log, target, Constants.INVITATION_QUERY, pizzaPreferences);
     sourceRelay.setUID (uid);
 
     log.info (getAgentIdentifier () + " - Sending "+sourceRelay);
