@@ -9,24 +9,18 @@ goto :main
 echo Usage:  %0 [-v] {NUMBER}
 echo.
 echo /v        verbose output
-echo /s        compile solution code
 echo NUMBER    an exercise number (1 to 11)
 echo.
-echo Compile exercise source from:
-echo $CIP/exercises
 echo Creates a new jar:
-echo $CIP/lib/exercise{NUMBER}.jar
-echo.
-echo Note that the solutions in "src" are compiled by the
-echo "build.xml" ANT script.
+echo %COUGAAR_INSTALL_PATH%\lib\exercise{NUMBER}.jar
 echo.
 echo Example:
-echo # compile Exercise1 to $CIP/lib/exercise1.jar
+echo # compile Exercise1 to %COUGAAR_INSTALL_PATH%\lib\exercise1.jar
 echo %0 1
 echo.
 echo Example:
-echo # compile Exercise1 solution to $CIP/lib/exercise1.jar with verbose output
-echo %0 /v /s 1
+echo # compile Exercise1 solution to %COUGAAR_INSTALL_PATH%\lib\exercise1.jar with verbose output
+echo %0 /v 1
 echo.
 goto :end
 
@@ -42,13 +36,6 @@ if "%1" == "/v" (
   shift 1
 )
 
-REM take SOLUTION flag
-SET SOLUTION=0
-if "%1" == "/s" (
-  SET SOLUTION=1
-  shift 1
-)
-
 REM take exercise number
 SET NUMBER=%1
 shift 1
@@ -61,10 +48,7 @@ if "%COUGAAR_INSTALL_PATH%"=="" (
 
 REM set config options
 SET JAR=%COUGAAR_INSTALL_PATH%\lib\exercise%NUMBER%.jar
-if %SOLUTION%==1 (
-  SET BASE=%COUGAAR_INSTALL_PATH%\tutorial\exercises\org\cougaar\tutorial
-) ELSE (
-  SET BASE=%COUGAAR_INSTALL_PATH%\tutorial\src\org\cougaar\tutorial
+SET BASE=%COUGAAR_INSTALL_PATH%\tutorial\src\org\cougaar\tutorial
 )
 SET ASSET=%BASE%\assets
 SET SRC=%BASE%\exercise%NUMBER%
@@ -128,6 +112,6 @@ if exist %COUGAAR_INSTALL_PATH%\lib\tutorial.jar (
   ECHO Warning: removed %COUGAAR_INSTALL_PATH%\lib\tutorial.jar
 )
 
-ECHO Successfully compiled %COUGAAR_INSTALL_PATH%\lib\exercise%NUMBER%.jar
+ECHO Created jar %COUGAAR_INSTALL_PATH%\lib\exercise%NUMBER%.jar
 
 :end
