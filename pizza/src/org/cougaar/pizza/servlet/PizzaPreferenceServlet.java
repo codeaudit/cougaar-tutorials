@@ -31,7 +31,6 @@ import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.pizza.Constants;
-import org.cougaar.pizza.plugin.InvitePlugin;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -46,11 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * The main UI for the application: shows collected RSVPs from invited guests 
@@ -144,7 +139,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
     /**
      * Write the servlet response into the given response's stream.
      */
-    public void execute(HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletResponse response) throws IOException {
       response.setContentType("text/html");
 
       // This worker only has one call to PrintWriter.print, with the sub-methods

@@ -1400,7 +1400,7 @@ public class HistoryServlet extends ComponentPlugin {
     /**
      * Execute the request - print the web page
      */
-    public void execute(HttpServletResponse response) throws IOException, ServletException {
+    public void execute(HttpServletResponse response) throws IOException {
       if (format == FORMAT_HTML) {
         response.setContentType("text/html");
 
