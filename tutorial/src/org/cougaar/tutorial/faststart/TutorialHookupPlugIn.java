@@ -1,3 +1,12 @@
+/*
+ * <copyright>
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
+ * </copyright>
+ */
 package org.cougaar.tutorial.faststart;
 
 import java.util.*;
@@ -9,7 +18,7 @@ import org.cougaar.core.cluster.ClusterIdentifier;
  * Plugin to facilitate simple hooking up of clusters 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: TutorialHookupPlugIn.java,v 1.2 2001-04-05 19:28:50 mthome Exp $
  */
 public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

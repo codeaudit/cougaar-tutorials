@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 package tutorial;
@@ -24,7 +24,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.4 2001-03-29 21:51:38 mthome Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.5 2001-04-05 19:28:38 mthome Exp $
  **/
 public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

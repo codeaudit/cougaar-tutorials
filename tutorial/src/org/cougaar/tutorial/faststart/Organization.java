@@ -1,3 +1,12 @@
+/*
+ * <copyright>
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
+ * </copyright>
+ */
 package org.cougaar.tutorial.faststart;
 
 import org.cougaar.domain.planning.ldm.*;
@@ -9,7 +18,7 @@ import org.cougaar.domain.planning.ldm.plan.*;
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.2 2001-03-29 21:51:51 mthome Exp $
+ * @version $Id: Organization.java,v 1.3 2001-04-05 19:28:50 mthome Exp $
  */
 public class Organization extends org.cougaar.domain.planning.ldm.asset.Asset {
 

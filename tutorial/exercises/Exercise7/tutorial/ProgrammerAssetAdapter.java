@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 package tutorial;
@@ -15,7 +15,7 @@ import org.cougaar.domain.planning.ldm.asset.Asset;
  * This COUGAAR Asset class serves as a base class for the ProgrammerAsset class.
  * The ProgrammerAsset class is generated using the AssetWriter utility
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerAssetAdapter.java,v 1.3 2001-03-29 21:51:42 mthome Exp $
+ * @version $Id: ProgrammerAssetAdapter.java,v 1.4 2001-04-05 19:28:42 mthome Exp $
  */
 public class ProgrammerAssetAdapter extends Asset {
   private tutorial.Schedule schedule = new Schedule();

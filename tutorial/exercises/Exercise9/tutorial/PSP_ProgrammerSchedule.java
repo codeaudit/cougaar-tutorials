@@ -1,10 +1,10 @@
 /*
  * <copyright>
- *  Copyright 1997-2000 Defense Advanced Research Projects
- *  Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
- *  Raytheon Systems Company (RSC) Consortium).
- *  This software to be used only in accordance with the
- *  COUGAAR licence agreement.
+ * Copyright 1997-2001 Defense Advanced Research Projects
+ * Agency (DARPA) and ALPINE (a BBN Technologies (BBN) and
+ * Raytheon Systems Company (RSC) Consortium).
+ * This software to be used only in accordance with the
+ * COUGAAR licence agreement.
  * </copyright>
  */
 package tutorial;
@@ -31,7 +31,7 @@ class GetProgrammersPredicate implements UnaryPredicate {
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.2 2000-12-18 15:41:05 wwright Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.3 2001-04-05 19:28:44 mthome Exp $
  */
 public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {
