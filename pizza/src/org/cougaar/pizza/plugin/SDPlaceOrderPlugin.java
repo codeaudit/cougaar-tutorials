@@ -60,7 +60,7 @@ import java.util.Vector;
  * the plugin continues as in the PlaceOrderPlugin.
  * <p/>
  * If the Expansion on the order task fails, i.e., the provider could not complete the
- * pizza order, then the  plugin will remove the Allocations on the subtasks of the Expansion and
+ * pizza order, then the plugin will remove the Allocations on the subtasks of the Expansion and
  * request a new provider from Service Discovery.  To exclude the provider that
  * previously failed, the plugin adds a prepositional phrase of {@link Constants.Prepositions.NOT} with the name of the
  * provider as the indirect object on the FindProviders task.  Once a new provider is
