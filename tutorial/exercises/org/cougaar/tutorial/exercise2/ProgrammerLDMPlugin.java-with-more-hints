@@ -75,14 +75,14 @@ protected void setupSubscriptions() {
     // more hints: PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
     // hint: see  addPropertyGroupFactory()
     // more hints: pass in a new tutorial.assets.PropertyGroupFactory()
-    // more hints: factory.addPropertyGroupFactory(new tutorial.assets.PropertyGroupFactory());
+    // more hints: factory.addPropertyGroupFactory(new org.cougaar.tutorial.assets.PropertyGroupFactory());
 
     // todo: Create the prototypes that will be used to create the programmer assets
     // hint: see  createPrototype
     // hint: see  cachePrototype
     // hint: run build and see tutorial.assets.NewLanguagePG
     // hint: see helper function makeALanguagePG (later in this file)
-    // more hints: ProgrammerAsset new_prototype = (ProgrammerAsset)factory.createPrototype(tutorial.assets.ProgrammerAsset.class, "programmer");
+    // more hints: ProgrammerAsset new_prototype = (ProgrammerAsset)factory.createPrototype(org.cougaar.tutorial.assets.ProgrammerAsset.class, "programmer");
     // more hints: new_prototype.setLanguagePG(makeALanguagePG(true, false) );  // knows Java but not JavaScript
     // more hints: getPrototypeRegistryService().cachePrototype("programmer", new_prototype);
 

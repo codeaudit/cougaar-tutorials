@@ -57,7 +57,7 @@ protected void setupSubscriptions() {
     // todo: Create the prototypes that will be used to create the programmer assets
     // hint: see  createPrototype
     // hint: see  cachePrototype
-    // hint: run build and see tutorial.assets.NewLanguagePG
+    // hint: run build and see org.cougaar.tutorial.assets.NewLanguagePG
     // hint: see setSkillsPG() and setLanguagePG() in ProgrammerAsset
     
     // todo: Create an asset for programmer 'Bill Gates' based on an existing prototype
