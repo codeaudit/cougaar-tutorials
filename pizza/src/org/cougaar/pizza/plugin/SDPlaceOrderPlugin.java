@@ -31,9 +31,9 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
-import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.PizzaAsset;
 import org.cougaar.pizza.util.PGCreator;
+import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.*;
@@ -123,7 +123,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       }
       // For now we assume only one, but we should enhance to accommodate many
       publishFindProvidersTask(null);
-      Task orderTask = makeOrderTask();
+      Task orderTask = makeTask(Constants.ORDER, planningFactory.createInstance(Constants.PIZZA));
       Collection subtasks = expandTask(pizzaPrefs, orderTask);
       allocateTasks(subtasks, null);
     }
@@ -201,12 +201,12 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    */
   private Collection expandTask(PizzaPreferences pizzaPrefs, Task parentTask) {
     ArrayList tasksToAllocate = new ArrayList();
-    NewTask meatPizzaTask = makePizzaTask(MEAT);
+    NewTask meatPizzaTask = makeTask(Constants.ORDER, makePizzaAsset(MEAT));
     Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
     meatPizzaTask.setPreference(meatPref);
     meatPizzaTask.setParentTask(parentTask);
 
-    NewTask veggiePizzaTask = makePizzaTask(VEGGIE);
+    NewTask veggiePizzaTask = makeTask(Constants.ORDER, makePizzaAsset(VEGGIE));
     Preference veggiePref = makeQuantityPreference(pizzaPrefs.getNumVeg());
     veggiePizzaTask.setPreference(veggiePref);
     veggiePizzaTask.setParentTask(parentTask);
@@ -233,7 +233,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
 
   /**
    * Utility method to create a task preference representing the quantity of pizza.
-   * @param num The preferred number of pizzas (TODO: Is that right or is it the number of people that want this type of pizza??)
+   * @param num The number of guests that requested this type of pizza
    * @return A Task quantity preference.
    */
   private Preference makeQuantityPreference(int num) {
@@ -246,13 +246,10 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   /**
    * Create the Find Providers task that is used by service discovery to find our pizza providers.
    * @param excludePhrase A Prepositional Phrase that tells the service discovery mechanism that we need
-   * a provider other then the one listed in the phrase.
+   * a provider other than the one listed in the phrase.
    */
   private void publishFindProvidersTask(PrepositionalPhrase excludePhrase) {
-    NewTask newTask = planningFactory.newTask();
-    newTask.setVerb(Verb.get(Constants.FIND_PROVIDERS));
-    newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(self);
+    NewTask newTask = makeTask(Constants.FIND_PROVIDERS, self);
     Vector prepPhrases = new Vector();
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition(AS);
@@ -266,28 +263,15 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   }
 
   /**
-   * Utility method to make a pizza task
-   * @param pizzaType The type of pizza we want - meat or veggie
+   * Utility method to make a basic task
+   *
    * @return The new pizza task.
    */
-  private NewTask makePizzaTask(String pizzaType) {
+  private NewTask makeTask(String verb, Asset directObject) {
     NewTask newTask = planningFactory.newTask();
-    newTask.setVerb(Verb.get(Constants.ORDER));
+    newTask.setVerb(Verb.get(verb));
     newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(makePizzaAsset(pizzaType));
-    return newTask;
-  }
-
-  /**
-   * Utility method to create the top level order task.
-   * @return The order pizza task.
-   */
-  private Task makeOrderTask() {
-    NewTask newTask = planningFactory.newTask();
-    newTask.setVerb(Verb.get(Constants.ORDER));
-    newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(planningFactory.createInstance(Constants.PIZZA));
-    blackboard.publishAdd(newTask);
+    newTask.setDirectObject(directObject);
     return newTask;
   }
 
