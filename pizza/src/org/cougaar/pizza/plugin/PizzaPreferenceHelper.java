@@ -29,7 +29,6 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.asset.Entity;
-import org.cougaar.planning.ldm.plan.Role;
 
 /**
  * Checks if entity likes meat or veg pizza by checking its role -
@@ -44,15 +43,14 @@ public class PizzaPreferenceHelper {
    * @return "meat" if carnivore, "veg" if herbivore
    */
   public String getPizzaPreference(LoggingService log, Entity entity) {
-    boolean likeMeat = entity.getEntityPG().getRoles().contains(
-        Role.getRole(Constants.CARNIVORE));
+    boolean likeMeat = entity.getEntityPG().getRoles().contains(Constants.Roles.CARNIVORE);
     log.info("roles for entity " + entity + " are " +
              entity.getEntityPG().getRoles());
 
     if (likeMeat) {
-      return Constants.INVITATION_REPLY_MEAT;
+      return Constants.MEAT_PIZZA;
     } else {
-      return Constants.INVITATION_REPLY_VEG;
+      return Constants.VEGGIE_PIZZA;
     }
   }
 }

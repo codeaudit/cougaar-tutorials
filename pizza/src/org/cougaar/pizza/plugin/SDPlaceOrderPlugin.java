@@ -125,7 +125,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       }
       // For now we assume only one, but we should enhance to accommodate many
       publishFindProvidersTask(null);
-      Task orderTask = makeTask(Constants.ORDER, planningFactory.createInstance(Constants.PIZZA));
+      Task orderTask = makeTask(Constants.Verbs.ORDER, planningFactory.createInstance(Constants.PIZZA));
       Collection subtasks = makeExpansionAndPublish(pizzaPrefs, orderTask);
       allocateTasks(subtasks, null);
     }
@@ -188,7 +188,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
         Task newTask = (Task) i.next();
         AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
         Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
-                                                            Constants.Role.PIZZAPROVIDER);
+                                                            Constants.Roles.PIZZAPROVIDER);
         blackboard.publishAdd(alloc);
         if (logger.isDebugEnabled()) {
           logger.debug(" allocating task " + newTask);
@@ -205,12 +205,12 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    * @return A collection of pizza order tasks.
    */
   private Collection makeExpansionAndPublish(PizzaPreferences pizzaPrefs, Task parentTask) {
-    NewTask meatPizzaTask = makeTask(Constants.ORDER, makePizzaAsset(MEAT));
+    NewTask meatPizzaTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(MEAT));
     Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
     meatPizzaTask.setPreference(meatPref);
     meatPizzaTask.setParentTask(parentTask);
 
-    NewTask veggiePizzaTask = makeTask(Constants.ORDER, makePizzaAsset(VEGGIE));
+    NewTask veggiePizzaTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(VEGGIE));
     Preference veggiePref = makeQuantityPreference(pizzaPrefs.getNumVeg());
     veggiePizzaTask.setPreference(veggiePref);
     veggiePizzaTask.setParentTask(parentTask);
@@ -257,11 +257,11 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    *                      other than the one listed in the phrase.
    */
   private void publishFindProvidersTask(PrepositionalPhrase excludePhrase) {
-    NewTask newTask = makeTask(Constants.FIND_PROVIDERS, self);
+    NewTask newTask = makeTask(Constants.Verbs.FIND_PROVIDERS, self);
     Vector prepPhrases = new Vector();
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition(org.cougaar.planning.Constants.Preposition.AS);
-    pp.setIndirectObject(Constants.Role.PIZZAPROVIDER);
+    pp.setIndirectObject(Constants.Roles.PIZZAPROVIDER);
     prepPhrases.add(pp);
     if (excludePhrase != null) {
       prepPhrases.add(excludePhrase);
@@ -275,9 +275,9 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    *
    * @return The new pizza task.
    */
-  private NewTask makeTask(String verb, Asset directObject) {
+  private NewTask makeTask(Verb verb, Asset directObject) {
     NewTask newTask = planningFactory.newTask();
-    newTask.setVerb(Verb.get(verb));
+    newTask.setVerb(verb);
     newTask.setPlan(planningFactory.getRealityPlan());
     newTask.setDirectObject(directObject);
     return newTask;
@@ -304,7 +304,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       blackboard.publishRemove(result.getTask().getPlanElement());
     }
     NewPrepositionalPhrase excludePP = planningFactory.newPrepositionalPhrase();
-    excludePP.setPreposition(Constants.Preposition.NOT);
+    excludePP.setPreposition(Constants.Prepositions.NOT);
     excludePP.setIndirectObject(failedSupplier);
     publishFindProvidersTask(excludePP);
   }
@@ -319,7 +319,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    */
   private Entity checkFindProvidersTask(Task findProvidersTask) {
     Entity excludedEntity = null;
-    PrepositionalPhrase notPP = findProvidersTask.getPrepositionalPhrase(Constants.Preposition.NOT);
+    PrepositionalPhrase notPP = findProvidersTask.getPrepositionalPhrase(Constants.Prepositions.NOT);
     if (notPP != null) {
       excludedEntity = (Entity) notPP.getIndirectObject();
     }
@@ -362,7 +362,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   public Collection getProviders() {
     TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = self.getRelationshipSchedule();
-    Collection relationships = relSched.getMatchingRelationships(Constants.Role.PIZZAPROVIDER, timeSpan);
+    Collection relationships = relSched.getMatchingRelationships(Constants.Roles.PIZZAPROVIDER, timeSpan);
     List providers = new ArrayList();
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
@@ -411,7 +411,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     public boolean execute(Object o) {
       if (o instanceof Disposition) {
         Task task = ((Disposition) o).getTask();
-        return task.getVerb().equals(Verb.get(Constants.FIND_PROVIDERS));
+        return task.getVerb().equals(Constants.Verbs.FIND_PROVIDERS);
       }
       return false;
     }
@@ -437,7 +437,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     public boolean execute(Object o) {
       if (o instanceof Expansion) {
         Task task = ((Expansion) o).getTask();
-        return task.getVerb().equals(Verb.get(Constants.ORDER));
+        return task.getVerb().equals(Constants.Verbs.ORDER);
       }
       return false;
     }
@@ -450,7 +450,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     public boolean execute(Object o) {
       if (o instanceof Task) {
         Task task = (Task) o;
-        return (task.getVerb().equals(Constants.ORDER));
+        return (task.getVerb().equals(Constants.Verbs.ORDER));
       }
       return false;
     }
@@ -463,7 +463,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     public boolean execute(Object o) {
       if (o instanceof Allocation) {
         Task task = ((Allocation) o).getTask();
-        return (task.getVerb().equals(Constants.ORDER));
+        return (task.getVerb().equals(Constants.Verbs.ORDER));
       }
       return false;
     }
