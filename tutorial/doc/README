@@ -1,0 +1,18 @@
+Planning tutorials.
+
+For documentation, see the "basic course" slides:
+  http://tutorials.cougaar.org
+
+To run exercise 5:
+  cd $CIP/tutorial/bin
+  ./run.sh 5      # or any number 1 .. 11
+
+Solution source is in:
+  $CIP/tutorial/src/org/cougaar/tutorial
+
+Exercise source is in:
+  $CIP/tutorial/exercises/org/cougaar/tutorial
+The above directory includes a build script:
+  ./build.sh 5     # or any number 1 .. 11
+and a run script:
+  ./run.sh 5       # or any number 1 .. 11

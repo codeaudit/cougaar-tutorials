@@ -167,12 +167,12 @@
     
     <!-- jarfiles required by this module, relative to various other paths -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/glm.jar,${target.lib}/util.jar,${target.sys}/xerces.jar"/>
+    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/glm.jar,${target.lib}/util.jar,${target.sys}/xerces.jar,${target.sys}/servlet.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="compile.abs.jarlist" value=""/>
 
     <!-- javadoc package spec for building javadocs -->
-    <property name="javadoc.packages" value="org.cougaar.tutorial.faststart,org.cougaar.tutorial.faststart.binary,org.cougaar.tutorial.faststart.calendar,org.cougaar.tutorial.faststart.computer,org.cougaar.tutorial.faststart.computer.assets,org.cougaar.tutorial.faststart.hanoi"/>
+    <property name="javadoc.packages" value=""/>
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
