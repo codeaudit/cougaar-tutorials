@@ -406,8 +406,8 @@
 	<!-- Respond to ServiceContractRelays, agreeing to be their
 	provider -->
 	<component
-          name='org.cougaar.pizza.plugin.SDProviderPlugin'
-          class='org.cougaar.pizza.plugin.SDProviderPlugin'
+          name='org.cougaar.servicediscoery.plugin.AgreeableProviderPlugin'
+          class='org.cougaar.servicediscovery.plugin.AgreeableProviderPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
