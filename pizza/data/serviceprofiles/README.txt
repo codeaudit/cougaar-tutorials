@@ -24,7 +24,7 @@ the files from  scratch -
     
 	(b) cd COUGAAR_INSTALL_PATH/pizza/data/serviceprofiles.
 
-	(c) perl generateDAML.pl agent-input.txt profile-template.txt
+	(c) perl generateOWL.pl agent-input.txt profile-template.txt
  
 ------------
 FAQ:
