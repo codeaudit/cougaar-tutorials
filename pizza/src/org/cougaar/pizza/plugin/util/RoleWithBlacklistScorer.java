@@ -44,25 +44,29 @@ import org.cougaar.util.log.Logging;
  * exclusion list.<br>
  * <pre>
  * Uses 2 criteria -  
- *   service role must match scorer role
+ *   service role must match scorer role (in Commercial Service Scheme)
  *   service provider name must not match one of the names on the blacklist.
  *</pre><p>
  * All passing descriptions get a score of 1, all failing descriptions get
  * a score of -1.
  * <p>
- * <code>SDClientPlugin</code> creates the <code>RoleScorer</code> and attaches it to the <code>MMQueryRequest</code>.
- * <code>MatchmakerPlugin</code> uses the <code>RoleScorer</code> to evaluate service descriptions
+ * <code>SDClientPlugin</code> creates the <code>RoleWithBlacklistScorer</code> and attaches it to the <code>MMQueryRequest</code>.
+ * <code>MatchmakerPlugin</code> uses the <code>RoleWithBlacklistScorer</code> to evaluate service descriptions
  * returned from the yellow pages. All passing service descriptions are added
  * to the <code>MMQueryRequest</code> results field.
- * 
+ *<p>
+ * This Scorer is a simple variation on the RoleScorer in the ServiceDiscovery module, as an example
+ * of how to modify this.
+ *
+ * @see org.cougaar.servicediscovery.util.RoleScorer
  */
-public class RoleScorer implements ServiceInfoScorer, Serializable {
+public class RoleWithBlacklistScorer implements ServiceInfoScorer, Serializable {
   // Note this is how a non-component can get a Logger
-  private static Logger logger = Logging.getLogger(RoleScorer.class);
+  private static Logger logger = Logging.getLogger(RoleWithBlacklistScorer.class);
   private Role myRole; // The role we want
   private Collection myBlacklist; // providers to exclude -- for example, those we've already tried
 
-  public RoleScorer(Role role, Collection blacklist) {
+  public RoleWithBlacklistScorer(Role role, Collection blacklist) {
     myRole = role;
     myBlacklist = blacklist;
   }
@@ -106,7 +110,10 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
     return roleScore;
   }
 
-  /** Score the role portion -- lowest non-negative score is best */
+  /** 
+   * Score the role portion -- lowest non-negative score is best. 
+   * Note that it assumes that the Role is in the Commercial Service Scheme.
+   */
   private int getRoleScore(ServiceInfo serviceInfo) {
     String serviceRole = null;
 
@@ -115,6 +122,7 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
 	 iterator.hasNext();) {
       ServiceClassification classification =
 	(ServiceClassification) iterator.next();
+      // Here we assume / require where the Role will be classified
       if (classification.getClassificationSchemeName().equals(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME)) {
 
 	serviceRole = classification.getClassificationCode();
@@ -170,7 +178,7 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
   }
 
   public String toString() {
-    return "<RoleScorer Role: " + myRole + ", Blacklist: " + myBlacklist + ">";
+    return "<RoleWithBlacklistScorer Role: " + myRole + ", Blacklist: " + myBlacklist + ">";
   }
 
 }

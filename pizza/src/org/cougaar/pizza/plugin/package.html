@@ -45,7 +45,7 @@ Task, with an IndirectObject indicating it wants a PizzaProvider.
 The SDClientPlugin subscribes to those Tasks, and then publishes
 an MMQueryRequest, including an MMRoleQuery that specifies it wants a
 PizzaProvider, and includes the Scoring function
-({@link org.cougaar.pizza.plugin.util.RoleScorer}) to use in weighing
+({@link org.cougaar.pizza.plugin.util.RoleWithBlacklistScorer}) to use in weighing
 different possible providers. 
 <p>
 The MatchmakerPlugin picks up the MMQueryRequest, and issues an
