@@ -26,32 +26,32 @@
 
 package org.cougaar.pizza.plugin;
 
-import java.util.Collection;
-
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.service.BlackboardService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.util.UnaryPredicate;
 
 /**
- * Checks if entity likes meat or veg pizza by checking its role - Carnivore or Vegetarian.
+ * Checks if entity likes meat or veg pizza by checking its role -
+ * Carnivore or Vegetarian.
  */
 public class PizzaPreferenceHelper {
+
   /**
-   * Using self entity from blackboard, get its entity pg, and see if it includes a role "carnivore"
+   * Using self entity from blackboard, get its entity pg, and see if it
+   * includes a role "carnivore"
    *
    * @return "meat" if carnivore, "veg" if herbivore
    */
-  public String getPizzaPreference (LoggingService log, Entity entity) {
-    boolean likeMeat = entity.getEntityPG ().getRoles().contains (Role.getRole(Constants.CARNIVORE));
-    log.info ("roles for entity " + entity + " are " + entity.getEntityPG().getRoles());
+  public String getPizzaPreference(LoggingService log, Entity entity) {
+    boolean likeMeat = entity.getEntityPG().getRoles().contains(
+        Role.getRole(Constants.CARNIVORE));
+    log.info("roles for entity " + entity + " are " +
+             entity.getEntityPG().getRoles());
 
     if (likeMeat) {
       return Constants.INVITATION_REPLY_MEAT;
-    }
-    else {
+    } else {
       return Constants.INVITATION_REPLY_VEG;
     }
   }
