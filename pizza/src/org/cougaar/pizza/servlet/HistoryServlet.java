@@ -74,6 +74,7 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.AssetTransfer;
 import org.cougaar.planning.ldm.plan.Expansion;
 import org.cougaar.planning.ldm.plan.PlanElement;
 import org.cougaar.planning.ldm.plan.Preference;
@@ -115,6 +116,8 @@ import org.cougaar.util.log.Logger;
  */
 public class HistoryServlet extends ComponentPlugin {
   protected final int INITIAL_MAX_ENTRIES=1000;
+  protected final int INITIAL_MAX_ROLE_SCHEDULE_ELEMENTS=5;
+  protected final int INITIAL_MAX_CHILD_TASKS=5;
 
   /** initialize args to the empty instance */
   private Arguments args = Arguments.EMPTY_INSTANCE;
@@ -140,6 +143,8 @@ public class HistoryServlet extends ComponentPlugin {
   private Date myDateInstance = new Date();
   private FieldPosition myFieldPos = new FieldPosition(SimpleDateFormat.YEAR_FIELD);
   private int maxEvents;
+  private int maxRoleScheduleElements;
+  private int maxChildTasks;
   private boolean didDropOldEntries = false;
 
   // what are we looking at?
@@ -210,8 +215,11 @@ public class HistoryServlet extends ComponentPlugin {
     // larger value depending on how much of the heap you want
     // to fill up with events
     maxEvents = args.getInt("MAX_EVENTS_REMEMBERED", INITIAL_MAX_ENTRIES);
-    logger.warn ("max events " + args.getInt("MAX_EVENTS_REMEMBERED", 55));
-    logger.warn ("args is " + args);
+    maxRoleScheduleElements = 
+      args.getInt("MAX_ROLE_SCHEDULE_ELEMENTS", INITIAL_MAX_ROLE_SCHEDULE_ELEMENTS);
+    maxChildTasks = args.getInt("MAX_CHILD_TASKS", INITIAL_MAX_CHILD_TASKS);
+    logger.info ("max events " + args.getInt("MAX_EVENTS_REMEMBERED", 55));
+    logger.info ("args is " + args);
   }
 
   public String encodeAgentName(String name) {
@@ -341,10 +349,10 @@ public class HistoryServlet extends ComponentPlugin {
 	  " - " + task.getVerb() + " was published by " + ((Claimable)task).getClaim();
 				   
 	addEvent (new EventInfo (task.getUID().toString(),
-				   event,
-				   now,
-				   getTaskPreferences(task),
-				   encodeHTML(task.toString())));
+				 event,
+				 now,
+				 getAddedTaskComment(task),
+				 encodeHTML(task.toString())));
       }
 
       Collection changed = tasksSubscription.getChangedCollection();
@@ -367,6 +375,18 @@ public class HistoryServlet extends ComponentPlugin {
 				   ""));
       }
     }
+  }
+
+  protected String getAddedTaskComment (Task task) {
+    StringBuffer buf = new StringBuffer();
+
+    if (task.getDirectObject() != null) {
+      buf.append (" direct object ");
+      buf.append (getTypeAndItemInfo(task.getDirectObject()));
+    }
+    buf.append (getTaskPreferences(task));
+
+    return buf.toString();
   }
 
   protected void checkPlanElements(long now) {
@@ -492,10 +512,13 @@ public class HistoryServlet extends ComponentPlugin {
   protected String getChangedAssetComment (Asset asset) {
     StringBuffer buf = new StringBuffer();
 
+    buf.append (getClassName(asset));
+    buf.append (" : <b>");
+    buf.append (getTypeAndItemInfo(asset));
+    buf.append ("<b/><br/>"); 
+
     if (asset instanceof Entity) {
       Entity entity = (Entity) asset;
-      buf.append(" Asset <b>" + asset.getItemIdentificationPG().getItemIdentification());
-      buf.append ("</b>"); 
 
       if (!entity.getEntityPG ().getRoles().isEmpty()) {
 	buf.append (" with roles : "); 
@@ -564,23 +587,34 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append("<br/>with role schedule : "); 
     }
 
-    for (Enumeration enum = asset.getRoleSchedule().getRoleScheduleElements(); enum.hasMoreElements(); ) {
+    int numShown = 0;
+    for (Enumeration enum = asset.getRoleSchedule().getRoleScheduleElements(); 
+	 enum.hasMoreElements(); numShown++) {
       buf.append(
 		 "<font size=small color=mediumblue>"+
 		 "<li>");
       Object elem = enum.nextElement();
-
-      if (elem instanceof Allocation) {
-	buf.append("Allocation to " + getTypeAndItemInfo (((Allocation) elem).getAsset()));
-      }
-      else if (elem instanceof PlanElement) {
-	buf.append (getAddedComment ((PlanElement) elem));
+      if (numShown >= maxRoleScheduleElements) {
+	buf.append("... (more than ");
+	buf.append(maxRoleScheduleElements);
+	buf.append(")");
+	buf.append("</li>"+
+		   "</font>\n");
+	break;
       }
       else {
-	buf.append (enum.nextElement());
+	if (elem instanceof Allocation) {
+	  buf.append("Allocation to " + getTypeAndItemInfo (((Allocation) elem).getAsset()));
+	}
+	else if (elem instanceof PlanElement) {
+	  buf.append (getAddedComment ((PlanElement) elem));
+	}
+	else {
+	  buf.append (enum.nextElement());
+	}
       }
-      buf.append(
-		 "</li>"+
+
+      buf.append("</li>"+
 		 "</font>\n");
     }
 
@@ -906,22 +940,38 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append ("Child tasks are :" );
       buf.append ("</td></tr>");
 
-      for (Enumeration e = expansion.getWorkflow().getTasks(); e.hasMoreElements();) {
+      int numShown = 0;
+      for (Enumeration e = expansion.getWorkflow().getTasks(); e.hasMoreElements(); numShown++) {
 	Task task = (Task) e.nextElement();
 	buf.append ("<tr><td>");
 	
-	buf.append ("Task " + getURL(task.getUID(), TASK) + " " + task.getVerb());
-
-	if (task.getDirectObject() != null) {
-	  buf.append (" direct object ");// + getURL(task.getDirectObject().getUID(), DIRECT_OBJECT) + " ");
-	  buf.append (getTypeAndItemInfo(task.getDirectObject()));
+	if (numShown >= maxChildTasks) {
+	  buf.append ("... (more than ");
+	  buf.append (maxChildTasks);
+	  buf.append (")");
+	  buf.append ("</td></tr>");
+	  break;
 	}
+	else {
+	  buf.append ("Task " + getURL(task.getUID(), TASK) + " " + task.getVerb());
 
-	buf.append ("</td></tr>");
+	  if (task.getDirectObject() != null) {
+	    buf.append (" direct object ");// + getURL(task.getDirectObject().getUID(), DIRECT_OBJECT) + " ");
+	    buf.append (getTypeAndItemInfo(task.getDirectObject()));
+	  }
+	  
+	  buf.append ("</td></tr>");
+	}
       }
 
       buf.append ("</table>");
       return buf.toString();
+    }
+    else if (planElement instanceof AssetTransfer) {
+      AssetTransfer transfer = (AssetTransfer) planElement;
+      return "Transfer of "+getTypeAndItemInfo(transfer.getAsset())+
+	" from "+transfer.getAssignor()+
+	" to "+getTypeAndItemInfo(transfer.getAssignee());
     }
 
     return "";
