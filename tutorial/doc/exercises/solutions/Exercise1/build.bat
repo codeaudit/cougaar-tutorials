@@ -1,3 +1,4 @@
+@echo off
 
 REM "<copyright>"
 REM " Copyright 2001 BBNT Solutions, LLC"
@@ -20,15 +21,19 @@ REM "</copyright>"
 
 rem Script to compile tutorial project
 
-echo on
 
 rem Regenerate and recompile all property/asset files
-call makeassets
+if exist makeassets.bat call makeassets
 
 rem compile the code
+if not exist bin mkdir bin
 set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\build.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\glm.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\planserver.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\servlet.jar
-javac -d bin -classpath %LIBPATHS% tutorial\*.java && jar cf %COUGAAR_INSTALL_PATH%\sys\course.jar -C bin ./tutorial
+
+set FILES=tutorial\*.java
+if exist tutorial\assets set FILES=%FILES% tutorial\assets\*.java
+
+@echo on
+javac -deprecation -d bin -classpath %LIBPATHS% %FILES% && jar cf %COUGAAR_INSTALL_PATH%\sys\course.jar -C bin ./tutorial

@@ -24,15 +24,12 @@ import org.cougaar.core.servlet.SimpleServletComponent;
 
 public class ScheduleServlet extends HttpServlet
 {
-	private Properties properties = null;
-	private PrintWriter out;
 	private SimpleServletSupport support;
 
 	public ScheduleServlet(SimpleServletSupport support)
 	{
 		super();
 		this.support = support;
-		properties = new Properties();
 	}
 
 	public void doGet(
@@ -41,7 +38,7 @@ public class ScheduleServlet extends HttpServlet
 	{
 		execute(request, response);
 	}
- 
+
 	public void doPost(
 	        HttpServletRequest request,
 	        HttpServletResponse response) throws IOException, ServletException
@@ -54,28 +51,22 @@ public class ScheduleServlet extends HttpServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
-		properties.clear();
-		this.out = response.getWriter();
-		ServletUtil.ParamVisitor vis = new ServletUtil.ParamVisitor()
-		                               {
-			                               public void setParam(String name, String value)
-			                               {
-				                               name = name.toUpperCase();
-				                               System.out.println(name + "      " + value);
-				                               properties.setProperty(name, value);
-			                               }
-		                               };
-		ServletUtil.parseParams(vis, request);
+		PrintWriter out = response.getWriter();
 
 		try
 		{
-			System.out.println("Servlet called." );
-			PageGenerator gen=new PageGenerator();
-			gen.execute(out);
+  		  System.out.println("Servlet called." );
+
+                  Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
+		  Iterator iter = programmers.iterator();
+		  while (iter.hasNext()) {
+		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
+		    dumpProgrammerSchedule(pa, out);
+		  }
 		}
 		catch (Exception ex)
 		{
-			out.println(ex.getMessage());
+			out.println("Error processing servlet:"+ex.getMessage());
 			ex.printStackTrace(out);
 			System.out.println(ex);
 			out.flush();
@@ -83,30 +74,6 @@ public class ScheduleServlet extends HttpServlet
 
 	}
 
-    private class PageGenerator {
-	
-	PageGenerator() {
-	}
-	void execute(PrintWriter out) {
-	    try {
-		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
-		
-		Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
-		Iterator iter = programmers.iterator();
-		while (iter.hasNext()) {
-		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
-		}
-		
-	    } catch (Exception ex) {
-		out.println(ex.getMessage());
-		ex.printStackTrace(out);
-		System.out.println(ex);
-	    } finally {
-		out.flush();
-	    }
-	}
-    }
 
   /**
    * Print an HTML table of this programmer's schedule to the PrintStream
