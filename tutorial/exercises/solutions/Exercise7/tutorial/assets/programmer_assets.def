@@ -1,0 +1,7 @@
+;!generate: alp.ldm.asset.AssetWriter -Ptutorial.assets programmer_assets.def
+;; Basis for generating class definitions for Subclasses of Assets
+;;
+
+[ProgrammerAsset tutorial.ProgrammerAssetAdapter]
+slots = LanguagePG, SkillsPG
+doc=Representation of a programmer with languages and skills represented
