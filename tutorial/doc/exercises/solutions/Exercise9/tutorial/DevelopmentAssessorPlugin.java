@@ -38,7 +38,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.4 2003-04-11 18:16:47 dmontana Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.5 2003-04-11 20:02:43 dmontana Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -107,6 +107,16 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
       // first, find vacation task on schedule
       RoleSchedule sched = asset.getRoleSchedule();
       Enumeration enum = sched.getRoleScheduleElements();
+      while (enum.hasMoreElements()) {
+        Allocation alloc = (Allocation) enum.nextElement();
+        if (! alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION")))
+          blackboard.publishRemove (alloc);
+      }
+  }
+}
+      
+
+/*
       Allocation vacAlloc = null;
       while (enum.hasMoreElements()) {
         Allocation alloc = (Allocation) enum.nextElement();
@@ -142,4 +152,4 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
 
 }
 
-
+*/
