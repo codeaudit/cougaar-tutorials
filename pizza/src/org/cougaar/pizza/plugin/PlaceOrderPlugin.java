@@ -29,12 +29,14 @@ import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.pizza.Constants;
+import org.cougaar.pizza.asset.PizzaAsset;
+import org.cougaar.pizza.util.PGCreator;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.*;
 import org.cougaar.planning.ldm.asset.Entity;
-import org.cougaar.planning.ldm.asset.EntityPG;
 
 import java.util.*;
 
@@ -44,25 +46,29 @@ import java.util.*;
 public class PlaceOrderPlugin extends ComponentPlugin {
   private LoggingService logger;
   private DomainService domainService;
-  private IncrementalSubscription selfOrgSub;
-  private IncrementalSubscription inviteSub;
+  private IncrementalSubscription selfSub;
+  private IncrementalSubscription pizzaPrefSub;
+  private IncrementalSubscription findProvidersSub;
   private IncrementalSubscription taskSub;
   private IncrementalSubscription allocationSub;
-  private Entity selfOrg = null;
+  private IncrementalSubscription expansionSub;
+  private Entity self;
+  private PlanningFactory planningFactory;
+  private List tasksToAllocate = new ArrayList();
 
   public void load() {
     super.load();
-    logger = getLoggingService(this);
-  }
-
-  private LoggingService getLoggingService(Object requestor) {
-    return (LoggingService) getServiceBroker().getService(requestor, LoggingService.class, null);
+    LoggingService ls = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
+    logger = LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
+    planningFactory = getPlanningFactory();
   }
 
   protected void setupSubscriptions() {
+    logger.error(" setupSubscriptions called");
     domainService = getDomainService();
-    selfOrgSub = (IncrementalSubscription) blackboard.subscribe(selfOrgPred);
-    inviteSub = (IncrementalSubscription) blackboard.subscribe(inviteListPred);
+    selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
+    pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
+    findProvidersSub = (IncrementalSubscription) blackboard.subscribe(findProvidersPred);
     allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
 
   }
@@ -82,30 +88,59 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   }
 
   protected void execute() {
-    if (! selfOrgSub.getAddedCollection().isEmpty()) {
-      selfOrg = (Entity) selfOrgSub.getAddedList().nextElement();
-    } else {
-      //cannot do anything until our self org is set
-      return;
+    if (self == null) {
+      if ( selfSub.getAddedCollection().isEmpty()) {
+        //cannot do anything until our self org is set
+        return;
+      } else {
+        self = (Entity) selfSub.getAddedList().nextElement();
+      }
     }
 
+    for (Enumeration enum = pizzaPrefSub.getAddedList(); enum.hasMoreElements();) {
 
-    if (inviteSub.getAddedList().hasMoreElements()) {
-
+      PizzaPreferences pizzaPrefs = (PizzaPreferences) enum.nextElement();
+      logger.error(" found pizzaPrefs "  + pizzaPrefSub);
+      // For now we assume only one, but we should enhance to accommodate many
+      publishFindProvidersTask();
+      createOrderTaskAndExpand(pizzaPrefs);
     }
 
-    makeFindProvidersTask();
-    createOrderTaskAndExpand();
-    allocateTasks();
-
+    for (Enumeration enum = findProvidersSub.getAddedList(); enum.hasMoreElements();) {
+      Disposition disposition = (Disposition) enum.nextElement();
+      if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
+        allocateTasks();
+      }
+    }
   }
 
   private void allocateTasks() {
     //To change body of created methods use File | Settings | File Templates.
   }
 
-  private void createOrderTaskAndExpand() {
-    //To change body of created methods use File | Settings | File Templates.
+  private void createOrderTaskAndExpand(PizzaPreferences pizzaPrefs) {
+    Task parentTask = makeOrderTask();
+    NewTask meatPizzaTask = makeTask("Meat");
+    meatPizzaTask.setParentTask(parentTask);
+    NewTask veggiePizzaTask = makeTask("Veggie");
+    veggiePizzaTask.setParentTask(parentTask);
+    blackboard.publishAdd(parentTask);
+
+    NewWorkflow wf = planningFactory.newWorkflow();
+    wf.setParentTask(parentTask);
+    wf.setIsPropagatingToSubtasks(true);
+    wf.addTask(meatPizzaTask);
+    wf.addTask(veggiePizzaTask);
+    meatPizzaTask.setWorkflow(wf);
+    veggiePizzaTask.setWorkflow(wf);
+    Expansion expansion = planningFactory.createExpansion(parentTask.getPlan(), parentTask, wf, null);
+
+    logger.error(" publishing expansion and subtasks ");
+    blackboard.publishAdd(expansion);
+    blackboard.publishAdd(meatPizzaTask);
+    blackboard.publishAdd(veggiePizzaTask);
+    tasksToAllocate.add(meatPizzaTask);
+    tasksToAllocate.add(veggiePizzaTask);
   }
 
   private PlanningFactory getPlanningFactory() {
@@ -116,49 +151,59 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return factory;
   }
 
-  private Task makeFindProvidersTask() {
-    /** That's fine. I was going to propose the following structure for FindProviders task -
-     verb == FindProviders
-     AS prep phrase
-     indirect object == required role
-     direct object == self entity (planning level version of the self org)
-     */
+  private void publishFindProvidersTask() {
     PlanningFactory planningFactory = getPlanningFactory();
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.FIND_PROVIDERS));
     newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(selfOrg);
-    NewPrepositionalPhrase pp = getPlanningFactory().newPrepositionalPhrase();
+    newTask.setDirectObject(self);
+    NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition("AS");
     pp.setIndirectObject(Role.getRole(Constants.PIZZA_PROVIDER));
     newTask.setPrepositionalPhrases(pp);
-    return newTask;
+    blackboard.publishAdd(newTask);
   }
 
   // TODO:  placeholder for now, may need to change significantly
-  private Task makeTask() {
-    /** That's fine. I was going to propose the following structure for FindProviders task -
-     verb == FindProviders
-     AS prep phrase
-     indirect object == required role
-     direct object == self entity (planning level version of the self org)
-     */
-    PlanningFactory planningFactory = getPlanningFactory();
+  private NewTask makeTask(String pizzaType) {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
     newTask.setPlan(planningFactory.getRealityPlan());
-    // TODO: update to real pizza asset
-    newTask.setDirectObject(planningFactory.createAsset("Pizza"));
+    newTask.setDirectObject(makePizzaAsset(pizzaType));
     return newTask;
   }
 
+// TODO:  placeholder for now, may need to change significantly
+  private Task makeOrderTask() {
+    NewTask newTask = planningFactory.newTask();
+    newTask.setVerb(Verb.get(Constants.ORDER));
+    newTask.setPlan(planningFactory.getRealityPlan());
+    newTask.setDirectObject(planningFactory.createInstance("pizza"));
+    return newTask;
+  }
 
+  private PizzaAsset makePizzaAsset (String pizzaType) {
+    // Create a Veggie Pizza Asset based on the existing pizza prototype
+    PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance("pizza");
+
+    if (pizzaType.equals("Veggie")) {
+      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(planningFactory, true));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, "Veggie Pizza"));
+    }
+
+    // Create a Meat Pizza Asset based on the existing pizza prototype
+    if (pizzaType.equals("Meat")) {
+      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAMeatPG(planningFactory, true));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, "Meat Pizza"));
+    }
+    return pizzaAsset;
+  }
 
   public Collection getProviderOrgAssets() {
     TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
-    RelationshipSchedule relSched = selfOrg.getRelationshipSchedule();
+    RelationshipSchedule relSched = self.getRelationshipSchedule();
     Collection relationships = relSched.getMatchingRelationships(Role.getRole(Constants.PIZZA_PROVIDER), timeSpan);
-    ArrayList providers = new ArrayList();
+    List providers = new ArrayList();
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
       providers.add(relSched.getOther(r));
@@ -166,7 +211,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return providers;
   }
 
-  private static UnaryPredicate selfOrgPred = new UnaryPredicate() {
+  private static UnaryPredicate selfPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Entity) {
         return ((Entity) o).isSelf();
@@ -176,16 +221,42 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   };
 
   /**
-   * A predicate that filters for InviteList objects
+   * A predicate that matches PizzaPreferences objects
    */
-  private static UnaryPredicate inviteListPred = new UnaryPredicate() {
+  private static UnaryPredicate pizzaPrefPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      //return (o instanceof InviteList);
+      return (o instanceof PizzaPreferences);
+    }
+  };
+
+  /**
+   * A predicate that matches dispositions of "FindProviders" tasks
+   */
+  private static UnaryPredicate findProvidersPred = new UnaryPredicate (){
+    public boolean execute(Object o) {
+      if (o instanceof Disposition) {
+        Task task = ((Disposition) o).getTask();
+        return task.getVerb().equals(Verb.get(Constants.FIND_PROVIDERS));
+      }
       return false;
     }
   };
+
+   /**
+   * A predicate that matches expansions of "ORDER" tasks
+   */
+  private static UnaryPredicate expansionPred = new UnaryPredicate (){
+    public boolean execute(Object o) {
+      if (o instanceof Expansion) {
+        Task task = ( (Expansion) o).getTask();
+        return task.getVerb().equals(Verb.get(Constants.ORDER));
+      }
+      return false;
+    }
+  };
+
   /**
-   * A predicate that filters for allocations of "ORDER" tasks
+   * A predicate that matches allocations of "ORDER" tasks
    */
   private static UnaryPredicate allocationPred = new UnaryPredicate (){
     public boolean execute(Object o) {
