@@ -59,7 +59,7 @@ public class ManagerPlugin extends ComponentPlugin {
    */
 protected void setupSubscriptions() {
   // Get the PlanningFactory from the DomainService
-  PlanningFactory factory = getDomainService().getFactory();
+  PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
   // Create a task to code the next killer app
   what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
@@ -108,7 +108,7 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    PlanningFactory factory = getDomainService().getFactory();
+    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
     NewTask new_task = factory.newTask();
 
@@ -150,12 +150,12 @@ protected Task makeTask(Asset what) {
     Preference pref;
     ScoringFunction scorefcn;
     // hint: see AspectType constants
-    // hint: see AspectValue constructor
+    // hint: see AspectValue.newAspectValue()
     // hint: see ScoringFunction.createStrictlyAtValue()
     // hint: see PlanningFactory.newPreference()
     // hint: see Vector.add
     // more hints: ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-    // more hints:   (new AspectValue(AspectType.START_TIME, start_month));
+    // more hints:   (AspectValue.newAspectValue(AspectType.START_TIME, start_month));
     // more hints: Preference pref =
     // more hints:   factory.newPreference(AspectType.START_TIME, scorefcn);
     // more hints: preferences.add(pref);
@@ -171,7 +171,7 @@ protected Task makeTask(Asset what) {
     // hint:  see add start_time (above)
     double end_month = 12;  // give them one year to do it
     // more hints: scorefcn = ScoringFunction.createStrictlyAtValue
-    // more hints:   (new AspectValue(AspectType.END_TIME, end_month));
+    // more hints:   (AspectValue.newAspectValue(AspectType.END_TIME, end_month));
     // more hints: pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     // more hints: preferences.add(pref);
 
@@ -185,7 +185,7 @@ protected Task makeTask(Asset what) {
     // hint:  see add start_time (above)
     double duration = 6;  // it will take them 6 months effort
     // more hints: scorefcn = ScoringFunction.createStrictlyAtValue
-    // more hints:   (new AspectValue(AspectType.DURATION, duration));
+    // more hints:   (AspectValue.newAspectValue(AspectType.DURATION, duration));
     // more hints: pref = factory.newPreference(AspectType.DURATION, scorefcn);
     // more hints: preferences.add(pref);
 

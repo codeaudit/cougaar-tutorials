@@ -29,6 +29,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -37,7 +38,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.2 2002-11-19 17:33:00 twright Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.3 2003-01-22 14:16:49 mbarger Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -170,16 +171,17 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       //        the success of the allocation
       // hint: see PlanningFactory.newAllocationResult()
       AllocationResult estAR = null;
-      // more hints: int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
-      // more hints: double []results = {earliest, end, duration};
-      // more hints: estAR =  getDomainService().getFactory().newAllocationResult(1.0, // rating
-      // more hints:             onTime,
-      // more hints:             aspect_types,
-      // more hints:             results);
+      // more hints: AspectValue avs[] = new AspectValue[3];
+      // more hints: avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, earliest);
+      // more hints: avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, end);
+      // more hints: avs[2] = AspectValue.newAspectValue(AspectType.DURATION, duration);
+      // more hints: estAR =  ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(
+      // more hints:             1.0, // rating
+      // more hints:             onTime, avs);
 
 
       Allocation allocation =
-        getDomainService().getFactory().createAllocation(task.getPlan(), task,
+        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
                       asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);

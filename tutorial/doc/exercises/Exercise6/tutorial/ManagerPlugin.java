@@ -59,7 +59,7 @@ public class ManagerPlugin extends ComponentPlugin {
    */
 protected void setupSubscriptions() {
   // Get the PlanningFactory from the DomainService
-  PlanningFactory factory = getDomainService().getFactory();
+  PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
   // Create a task to code the next killer app
   what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
@@ -108,7 +108,7 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    PlanningFactory factory = getDomainService().getFactory();
+    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
     NewTask new_task = factory.newTask();
 

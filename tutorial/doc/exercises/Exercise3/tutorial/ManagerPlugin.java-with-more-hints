@@ -68,7 +68,7 @@ protected void setupSubscriptions() {
   // hint: see PlanningFactory.createPropertyGroup()
   // hint: see tutorial.assets.NewItemIdentificationPG class
   // hint: add a reference to the new NewItemIdentificationPG object to 'what_to_code'
-  // more hints: PlanningFactory factory = getDomainService().getFactory();
+  // more hints: PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
   // more hints: what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
   // more hints: NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   // more hints: iipg.setItemIdentification("e-somthing");
@@ -115,9 +115,9 @@ protected Task makeTask(Asset what) {
     // hint: see PlanningFactory.getRealityPlan()
     // hint: see NewTask.setPlan()
     // hint: see NewTask.setDirectObject()
-    // more hints: NewTask new_task = getDomainService().getFactory().newTask();
+    // more hints: NewTask new_task = ((PlanningFactory)getDomainService().getFactory("planning")).newTask();
     // more hints: new_task.setVerb(Verb.getVerb("CODE"));
-    // more hints: new_task.setPlan(getDomainService().getFactory().getRealityPlan());
+    // more hints: new_task.setPlan(((PlanningFactory)getDomainService().getFactory("planning")).getRealityPlan());
     // more hints: new_task.setDirectObject(what);
 
     return new_task;

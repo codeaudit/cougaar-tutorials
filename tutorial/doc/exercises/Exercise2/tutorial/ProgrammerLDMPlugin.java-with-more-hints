@@ -26,12 +26,13 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.core.service.*;
+import org.cougaar.planning.service.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java-with-more-hints,v 1.4 2002-11-19 17:32:58 twright Exp $
+ * @version $Id: ProgrammerLDMPlugin.java-with-more-hints,v 1.5 2003-01-22 14:16:47 mbarger Exp $
  */
 
  // todo:  add code to make this a subclass
@@ -72,8 +73,10 @@ public class ProgrammerLDMPlugin {
 protected void setupSubscriptions() {
 
     // todo: Register our new PropertyFactory so we can refer to properties by name
+    // more hints: PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
     // hint: see  addPropertyGroupFactory()
     // more hints: pass in a new tutorial.assets.PropertyGroupFactory()
+    // more hints: factory.addPropertyGroupFactory(new tutorial.assets.PropertyGroupFactory());
 
     // todo: Create the prototypes that will be used to create the programmer assets
     // hint: see  createPrototype
@@ -110,7 +113,7 @@ protected void setupSubscriptions() {
 private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
   // hint: see  createPropertyGroup
   // hint: run build and see tutorial.assets.NewLanguagePG
-  // more hints: NewLanguagePG new_language_pg = (NewLanguagePG)getDomainService().getFactory().createPropertyGroup("LanguagePG");
+  // more hints: NewLanguagePG new_language_pg = (NewLanguagePG)((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
   // more hints: new_language_pg.setKnowsJava(knowsJava);
   // more hints: new_language_pg.setKnowsJavaScript(knowsJavaScript);
   // more hints: return new_language_pg;
@@ -121,7 +124,7 @@ private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
  */
 private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
   // hint: see  makeALanguagePG above
-  // more hints: NewSkillsPG new_skills_pg = (NewSkillsPG)getDomainService().getFactory().createPropertyGroup("SkillsPG");
+  // more hints: NewSkillsPG new_skills_pg = ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
   // more hints: new_skills_pg.setYearsExperience(yearsExperience);
   // more hints: new_skills_pg.setSLOCPerDay(productivity);
   // more hints: return new_skills_pg;
@@ -132,7 +135,7 @@ private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
  */
 private ItemIdentificationPG makeAItemIdentificationPG(String name) {
   // hint: see  makeALanguagePG above
-  // more hints: NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)getDomainService().getFactory().createPropertyGroup("ItemIdentificationPG");
+  // more hints: NewItemIdentificationPG new_item_id_pg = ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
   // more hints: new_item_id_pg.setItemIdentification(name);
   // more hints: return new_item_id_pg;
 }

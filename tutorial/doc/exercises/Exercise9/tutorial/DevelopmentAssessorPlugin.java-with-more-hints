@@ -29,6 +29,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -39,7 +40,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.3 2002-11-19 17:33:01 twright Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.4 2003-01-22 14:16:51 mbarger Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -154,21 +155,21 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
               asset.getSchedule().getWork(scheduled_month));
 
             // todo: publish ReportedResult indicating a failed AllocationResult
-            //       (use the next two lines)
+            //       (use the next five lines)
             // hint:  see PlanningFactory.newAllocationResult()
             // hint:  see PlanElementForAssessor.setReceivedResult()
             // hint:  see BlackboardService.publishChange()
-            int []aspects = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
-            double []results = {(double)scheduled_start_month, (double)scheduled_end_month,
-                                alloc.getEstimatedResult().getValue(AspectType.DURATION)};
+            AspectValue avs[] = new AspectValue[3];
+            avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, (double)scheduled_start_month);
+            avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, (double)scheduled_end_month);
+            avs[2] = AspectValue.newAspectValue(AspectType.DURATION,
+                                                alloc.getEstimatedResult().getValue(AspectType.DURATION));
 
             // add code here ....
 
             // more hints: AllocationResult failed_result =
-            // more hints:   getDomainService().getFactory().newAllocationResult(1.0, // rating,
-            // more hints:      false,
-            // more hints:      aspects,
-            // more hints:      results);
+            // more hints:   ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(1.0, // rating,
+            // more hints:   false, avs);
 
             // Set reported result on allocation
             // Note : This is an operation intended only for assessors

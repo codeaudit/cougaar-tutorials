@@ -30,6 +30,7 @@ import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * A predicate that matches all "CODE" tasks
@@ -80,7 +81,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.1 2002-02-12 19:30:04 jwinston Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2003-01-22 14:16:49 mbarger Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 
@@ -168,70 +169,20 @@ protected void execute () {
 
 }
 
-/**
- * Allocate the task to the asset
- */
-private void allocateTo(Asset asset, Task task) {
+  /**
+   * Allocate the task to the asset
+   */
+  private void allocateTo(Asset asset, Task task) {
 
-	  AllocationResult estAR = null;
+          AllocationResult estAR = null;
 
-	  // Create an estimate that reports that we did just what we
-	  // were asked to do
-	  int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME};
-	  double []results = {getStartTime(task), getEndTime(task)};
-    estAR = getDomainService().getFactory().newAllocationResult(1.0, //rating
-					      true, // success,
-					      aspect_types,
-					      results);
-
-	  Allocation allocation =
-      getDomainService().getFactory().createAllocation(task.getPlan(), task,
-				     asset, estAR, Role.ASSIGNED);
+          Allocation allocation =
+      ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
+                                     asset, estAR, Role.ASSIGNED);
 
     System.out.println("Allocating to programmer: "+asset.getItemIdentificationPG().getItemIdentification());
-	  getBlackboardService().publishAdd(allocation);
+          getBlackboardService().publishAdd(allocation);
 
-}
-  /**
-   * Get the END_TIME preference for the task
-   */
-  private double getEndTime(Task t) {
-    double end = 0.0;
-    Preference pref = getPreference(t, AspectType.END_TIME);
-    if (pref != null)
-      end = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return end;
-  }
-
-  /**
-   * Get the START_TIME preference for the task
-   */
-  private double getStartTime(Task t) {
-    double start = 0.0;
-    Preference pref = getPreference(t, AspectType.START_TIME);
-    if (pref != null)
-      start = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return start;
-  }
-
-  /**
-   * Return the preference for the given aspect
-   * @param task for which to return given preference
-   * @paran int aspect type
-   * @return Preference (or null) from task for given aspect
-   **/
-  private Preference getPreference(Task task, int aspect_type)
-  {
-    Preference aspect_pref = null;
-    for(Enumeration e = task.getPreferences(); e.hasMoreElements();)
-    {
-      Preference pref = (Preference)e.nextElement();
-      if (pref.getAspectType() == aspect_type) {
-        aspect_pref = pref;
-        break;
-      }
-    }
-    return aspect_pref;
   }
 
 }

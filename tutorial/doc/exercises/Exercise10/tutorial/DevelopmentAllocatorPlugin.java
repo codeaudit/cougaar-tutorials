@@ -27,6 +27,7 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -35,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2002-02-12 19:29:49 jwinston Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.2 2003-01-22 14:16:46 mbarger Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -235,16 +236,16 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       tmpstr +=  " onTime: "+onTime;
       System.out.println(tmpstr);
 
-      int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
-      double []results = {earliest, end, duration};
-      estAR =  getDomainService().getFactory().newAllocationResult(1.0, // rating
-                  onTime, // success or not
-                  aspect_types,
-                  results);
+      AspectValue avs[] = new AspectValue[3];
+      avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, earliest);
+      avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, end);
+      avs[2] = AspectValue.newAspectValue(AspectType.DURATION, duration);
+      estAR =  ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(1.0, // rating
+                  onTime, avs);
 
       Allocation allocation =
-        getDomainService().getFactory().createAllocation(task.getPlan(), task,
-                                  asset, estAR, Role.ASSIGNED);
+        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
+                      asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);
       allocated = true;

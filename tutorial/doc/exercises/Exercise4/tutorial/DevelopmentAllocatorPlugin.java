@@ -28,6 +28,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -36,7 +37,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2002-04-05 19:27:03 mbarger Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-01-22 14:16:48 mbarger Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {

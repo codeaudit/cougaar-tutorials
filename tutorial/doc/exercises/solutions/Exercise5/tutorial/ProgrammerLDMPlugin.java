@@ -26,12 +26,13 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.core.service.*;
+import org.cougaar.planning.service.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.3 2002-11-19 17:33:02 twright Exp $
+ * @version $Id: ProgrammerLDMPlugin.java,v 1.4 2003-01-22 14:16:53 mbarger Exp $
  */
 public class ProgrammerLDMPlugin extends ComponentPlugin {
 
@@ -75,7 +76,7 @@ public class ProgrammerLDMPlugin extends ComponentPlugin {
 protected void setupSubscriptions() {
 
     // Get the PlanningFactory
-    PlanningFactory factory = getDomainService().getFactory();
+    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
     // Register our new PropertyFactory so we can refer to properties by name
     factory.addPropertyGroupFactory(new tutorial.assets.PropertyGroupFactory());
@@ -109,7 +110,7 @@ protected void setupSubscriptions() {
  */
 private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
   NewLanguagePG new_language_pg = (NewLanguagePG)
-              getDomainService().getFactory().createPropertyGroup("LanguagePG");
+              ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
   new_language_pg.setKnowsJava(knowsJava);
   new_language_pg.setKnowsJavaScript(knowsJavaScript);
   return new_language_pg;
@@ -120,7 +121,7 @@ private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
  */
 private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
   NewSkillsPG new_skills_pg = (NewSkillsPG)
-          getDomainService().getFactory().createPropertyGroup("SkillsPG");
+          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
   new_skills_pg.setYearsExperience(yearsExperience);
   new_skills_pg.setSLOCPerDay(productivity);
   return new_skills_pg;
@@ -131,7 +132,7 @@ private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
  */
 private ItemIdentificationPG makeAItemIdentificationPG(String name) {
   NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
-          getDomainService().getFactory().createPropertyGroup("ItemIdentificationPG");
+          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
   new_item_id_pg.setItemIdentification(name);
   return new_item_id_pg;
 }

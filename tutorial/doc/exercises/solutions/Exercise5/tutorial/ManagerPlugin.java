@@ -57,7 +57,7 @@ public class ManagerPlugin extends ComponentPlugin {
    */
 protected void setupSubscriptions() {
   // Get the PlanningFactory
-  PlanningFactory factory = getDomainService().getFactory();
+  PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
   // Create a task to code the next killer app
   what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
   NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
@@ -103,13 +103,13 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    NewTask new_task = getDomainService().getFactory().newTask();
+    NewTask new_task = ((PlanningFactory)getDomainService().getFactory("planning")).newTask();
 
     // Set the verb as given
     new_task.setVerb(Verb.getVerb("CODE"));
 
     // Set the reality plan for the task
-    new_task.setPlan(getDomainService().getFactory().getRealityPlan());
+    new_task.setPlan(((PlanningFactory)getDomainService().getFactory("planning")).getRealityPlan());
 
     new_task.setDirectObject(what);
 

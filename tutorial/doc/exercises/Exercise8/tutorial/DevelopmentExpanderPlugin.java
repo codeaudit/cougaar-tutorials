@@ -28,6 +28,7 @@ import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 
 /**
@@ -37,7 +38,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.4 2002-11-19 17:33:00 twright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.5 2003-01-22 14:16:50 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -154,7 +155,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
-    NewTask new_task = domainService.getFactory().newTask();
+    NewTask new_task = ((PlanningFactory)domainService.getFactory("planning")).newTask();
 
     new_task.setParentTask(parent_task);
     new_task.setWorkflow(wf);
@@ -179,19 +180,19 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 
     // Add a start_time, end_time, and duration strict preference
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.START_TIME, start));
+      (AspectValue.newAspectValue(AspectType.START_TIME, start));
     Preference pref =
-      domainService.getFactory().newPreference(AspectType.START_TIME, scorefcn);
+      ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, deadline));
-    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
+      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.DURATION, duration));
-    pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
+      (AspectValue.newAspectValue(AspectType.DURATION, duration));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -205,13 +206,13 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     Vector preferences = new Vector();
 
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.DURATION, duration));
-    Preference pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
+      (AspectValue.newAspectValue(AspectType.DURATION, duration));
+    Preference pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, deadline));
-    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
+      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());

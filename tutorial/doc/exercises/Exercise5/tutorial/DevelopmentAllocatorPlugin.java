@@ -29,6 +29,7 @@ import org.cougaar.core.service.*;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -37,7 +38,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2002-02-12 19:29:57 jwinston Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.2 2003-01-22 14:16:48 mbarger Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -161,7 +162,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       System.out.println(tmpstr);
 
       Allocation allocation =
-        getDomainService().getFactory().createAllocation(task.getPlan(), task,
+        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
                                   asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);

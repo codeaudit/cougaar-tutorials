@@ -29,6 +29,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -39,7 +40,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.2 2002-03-15 21:34:19 mbarger Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.3 2003-01-22 14:16:51 mbarger Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -141,10 +142,12 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
               asset.getSchedule().getWork(scheduled_month));
 
             // todo: publish ReportedResult indicating a failed AllocationResult
-            //       (use the next two lines)
-            int []aspects = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
-            double []results = {(double)scheduled_start_month, (double)scheduled_end_month,
-                                alloc.getEstimatedResult().getValue(AspectType.DURATION)};
+            //       (use the next five lines)
+            AspectValue avs[] = new AspectValue[3];
+            avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, (double)scheduled_start_month);
+            avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, (double)scheduled_end_month);
+            avs[2] = AspectValue.newAspectValue(AspectType.DURATION,
+                                                alloc.getEstimatedResult().getValue(AspectType.DURATION));
 
             // add code here ....
 

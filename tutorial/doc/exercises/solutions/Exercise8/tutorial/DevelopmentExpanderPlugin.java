@@ -28,6 +28,7 @@ import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 
 /**
@@ -37,7 +38,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.5 2002-11-19 17:33:03 twright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.6 2003-01-22 14:16:54 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -130,14 +131,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 
       // Create expansion and workflow to represent the expansion
       // of this task
-      NewWorkflow new_wf = domainService.getFactory().newWorkflow();
+      NewWorkflow new_wf = ((PlanningFactory)domainService.getFactory("planning")).newWorkflow();
       new_wf.setParentTask(task);
 
       plan(new_wf);
 
       AllocationResult estAR = null;
       Expansion new_exp =
-        domainService.getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
+        ((PlanningFactory)domainService.getFactory("planning")).createExpansion(task.getPlan(), task, new_wf, estAR);
       getBlackboardService().publishAdd(new_exp);
     }
 
@@ -160,7 +161,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
-    NewTask new_task = domainService.getFactory().newTask();
+    NewTask new_task = ((PlanningFactory)domainService.getFactory("planning")).newTask();
 
     new_task.setParentTask(parent_task);
     new_task.setWorkflow(wf);
@@ -182,19 +183,19 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 
     // Add a start_time, end_time, and duration strict preference
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.START_TIME, start));
+      (AspectValue.newAspectValue(AspectType.START_TIME, start));
     Preference pref =
-      domainService.getFactory().newPreference(AspectType.START_TIME, scorefcn);
+      ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, deadline));
-    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
+      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.DURATION, duration));
-    pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
+      (AspectValue.newAspectValue(AspectType.DURATION, duration));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -205,13 +206,13 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     Vector preferences = new Vector();
 
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.DURATION, duration));
-    Preference pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
+      (AspectValue.newAspectValue(AspectType.DURATION, duration));
+    Preference pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, deadline));
-    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
+      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
+    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -270,7 +271,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     Vector constraints = new Vector();
 
     // End(t1) must be before Start(t2)
-    NewConstraint c1 = domainService.getFactory().newConstraint();
+    NewConstraint c1 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
     c1.setConstrainingTask(t1);
     c1.setConstrainingAspect(AspectType.END_TIME);
     c1.setConstrainedTask(t2);
@@ -279,7 +280,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     constraints.addElement(c1);
 
     // End(t2) must be before Start(t3)
-    NewConstraint c2 = domainService.getFactory().newConstraint();
+    NewConstraint c2 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
     c2.setConstrainingTask(t2);
     c2.setConstrainingAspect(AspectType.END_TIME);
     c2.setConstrainedTask(t3);

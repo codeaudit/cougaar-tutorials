@@ -26,12 +26,13 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.core.service.*;
+import org.cougaar.planning.service.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.3 2002-11-19 17:32:58 twright Exp $
+ * @version $Id: ProgrammerLDMPlugin.java,v 1.4 2003-01-22 14:16:47 mbarger Exp $
  */
 
  // todo:  add code to make this a subclass

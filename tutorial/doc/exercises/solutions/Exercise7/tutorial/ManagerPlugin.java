@@ -62,7 +62,7 @@ public class ManagerPlugin extends ComponentPlugin {
    */
 protected void setupSubscriptions() {
   // Get the PlanningFactory from the DomainService
-  PlanningFactory factory = getDomainService().getFactory();
+  PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
   // Create a task to code the next killer app
   what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
@@ -111,7 +111,7 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    PlanningFactory factory = getDomainService().getFactory();
+    PlanningFactory factory = (PlanningFactory) getDomainService().getFactory("planning");
 
     NewTask new_task = factory.newTask();
 
@@ -140,20 +140,20 @@ protected Task makeTask(Asset what) {
     // Add a start_time and end_time strict preference
     double start_month = 0;
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.START_TIME, start_month));
+      (AspectValue.newAspectValue(AspectType.START_TIME, start_month));
     Preference pref =
       factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     double end_month = 12;  // give them one year to do it
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, end_month));
+      (AspectValue.newAspectValue(AspectType.END_TIME, end_month));
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     double duration = 6;  // it will take them 6 months effort
     scorefcn = ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.DURATION, duration));
+      (AspectValue.newAspectValue(AspectType.DURATION, duration));
     pref = factory.newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 

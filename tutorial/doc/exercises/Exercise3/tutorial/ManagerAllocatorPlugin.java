@@ -28,6 +28,7 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import tutorial.assets.*;
 import org.cougaar.core.service.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * todo: Create a predicate class that matches all ProgrammerAssets
@@ -41,7 +42,7 @@ import org.cougaar.core.service.*;
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2002-03-15 21:29:24 mbarger Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.3 2003-01-22 14:16:47 mbarger Exp $
  **/
 // todo:  Make ManagerAllocatorPlugin a subclass
 public class ManagerAllocatorPlugin  {

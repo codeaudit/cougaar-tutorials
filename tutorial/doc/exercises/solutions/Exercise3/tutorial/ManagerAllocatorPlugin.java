@@ -28,6 +28,7 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.service.*;
 import tutorial.assets.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * A predicate that matches all "CODE" tasks
@@ -56,7 +57,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.1 2002-02-12 19:30:23 jwinston Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2003-01-22 14:16:52 mbarger Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 
@@ -113,10 +114,10 @@ protected void execute () {
  * Allocate the task to the asset
  */
 private void allocateTo(Asset asset, Task task) {
-	  AllocationResult estAR = null;
+    AllocationResult estAR = null;
 
-	  Allocation allocation =
-      getDomainService().getFactory().createAllocation(task.getPlan(), task,
+    Allocation allocation =
+      ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
 				     asset, estAR, Role.ASSIGNED);
 
     System.out.println("\nAllocating the following task to "

@@ -29,6 +29,7 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
 
@@ -39,7 +40,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.1 2002-02-12 19:29:50 jwinston Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.2 2003-01-22 14:16:46 mbarger Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -126,14 +127,15 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
               alloc + " " +
               asset.getSchedule().getWork(scheduled_month));
 
-            int []aspects = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
-            double []results = {(double)scheduled_start_month, (double)scheduled_end_month,
-                                alloc.getEstimatedResult().getValue(AspectType.DURATION)};
+            AspectValue avs[] = new AspectValue[3];
+            avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, (double)scheduled_start_month);
+            avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, (double)scheduled_end_month);
+            avs[2] = AspectValue.newAspectValue(AspectType.DURATION, 
+                                                alloc.getEstimatedResult().getValue(AspectType.DURATION));
+
             AllocationResult failed_result =
-              getDomainService().getFactory().newAllocationResult(1.0, // rating,
-                 false,
-                 aspects,
-                 results);
+              ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(1.0, // rating,
+                 false, avs);
 
             // Set reported result on allocation
             // Note : This is an operation intended only for assessors
