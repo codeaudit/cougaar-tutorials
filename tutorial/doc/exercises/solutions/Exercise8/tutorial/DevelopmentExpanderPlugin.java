@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.11 2003-04-18 17:36:12 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.12 2003-07-20 23:10:50 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -112,10 +112,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
    * Create a task.
    * @param verb The string for the verb for the task.
    * @param parent_task The task being expanded
-   * @param start the start month for the task
-   * @param deadline the end month for the task
-   * @param duration the length (in months) of the task
-   * @param workflow the workflow being filled out
+   * @param wf the workflow being filled out
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
