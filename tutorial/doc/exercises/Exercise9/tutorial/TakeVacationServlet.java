@@ -42,7 +42,7 @@ import org.cougaar.core.service.*;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.2 2002-04-05 19:32:33 mbarger Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.3 2002-05-13 17:27:36 mbarger Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent 
@@ -153,7 +153,7 @@ implements BlackboardClient
 		  }
 	      }
 	  } finally {
-	      blackboard.closeTransaction(false);
+	      blackboard.closeTransactionDontReset();
 	      out.println("<BR>Done.</body></html>");
 	      out.flush();
 	  }
