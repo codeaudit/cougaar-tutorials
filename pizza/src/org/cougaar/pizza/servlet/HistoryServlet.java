@@ -480,7 +480,7 @@ public class HistoryServlet extends ComponentPlugin {
 				   "New asset " + getURL(asset.getUID(), ASSET)+ 
 				   " was published",
 				   now,
-				   getNewAssetComment(asset),
+				   getAddedAssetComment(asset),
 				   encodeHTML(asset.toString())));
       }
 
@@ -505,7 +505,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  protected String getNewAssetComment (Asset asset) {
+  protected String getAddedAssetComment (Asset asset) {
     return getChangedAssetComment(asset);
   }
 
@@ -515,7 +515,7 @@ public class HistoryServlet extends ComponentPlugin {
     buf.append (getClassName(asset));
     buf.append (" : <b>");
     buf.append (getTypeAndItemInfo(asset));
-    buf.append ("<b/><br/>"); 
+    buf.append ("</b><br/>"); 
 
     if (asset instanceof Entity) {
       Entity entity = (Entity) asset;
@@ -627,11 +627,11 @@ public class HistoryServlet extends ComponentPlugin {
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	UniqueObject uniqueObject = (UniqueObject) iter.next();
 	addEvent (new EventInfo (uniqueObject.getUID().toString(),
-				   "New uniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT)+ 
-				   " was published",
-				   now,
-				   "",
-				   encodeHTML(uniqueObject.toString())));
+				 "New uniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT)+ 
+				 " was published",
+				 now,
+				 getAddedUniqueObjectComment (uniqueObject),
+				 encodeHTML(uniqueObject.toString())));
       }
 
       Collection changed = uniqueObjectsSubscription.getChangedCollection();
@@ -640,7 +640,7 @@ public class HistoryServlet extends ComponentPlugin {
 	addEvent (new EventInfo (uniqueObject.getUID().toString(),
 				   "UniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT) + " changed.",
 				   now,
-				   "",
+				   getChangedUniqueObjectComment(uniqueObject),
 				   encodeHTML(uniqueObject.toString())));
       }
 
@@ -650,9 +650,21 @@ public class HistoryServlet extends ComponentPlugin {
 	addEvent (new EventInfo (uniqueObject.getUID().toString(),
 				   "UniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT) + " was removed.",
 				   now,
-				   ""));
+				   getRemovedUniqueObjectComment(uniqueObject)));
       }
     }
+  }
+
+  protected String getAddedUniqueObjectComment (UniqueObject unique) {
+    return "A " + getClassName(unique) + " object";
+  }
+
+  protected String getChangedUniqueObjectComment (UniqueObject unique) {
+    return getAddedUniqueObjectComment (unique);
+  }
+
+  protected String getRemovedUniqueObjectComment (UniqueObject unique) {
+    return getAddedUniqueObjectComment (unique);
   }
 
   protected String getClassName (Object obj) {
@@ -684,7 +696,14 @@ public class HistoryServlet extends ComponentPlugin {
 	buf.append("Entity " + targetRelay.getSource() + " registers with community " + community.getName());
       }
       else {
-	buf.append("Target Relay Source  : " + encodeHTML(((Relay.Target)relay).getSource().toString()));
+	Relay.Target target = (Relay.Target) relay;
+	String targetSource = "-NO SOURCE SET-";
+
+	if (target.getSource () != null) {
+	  targetSource = target.getSource().toString();
+	}
+
+	buf.append("Target Relay Source  : " + encodeHTML(targetSource));
       }
     }
 
@@ -969,9 +988,9 @@ public class HistoryServlet extends ComponentPlugin {
     }
     else if (planElement instanceof AssetTransfer) {
       AssetTransfer transfer = (AssetTransfer) planElement;
-      return "Transfer of "+getTypeAndItemInfo(transfer.getAsset())+
-	" from "+transfer.getAssignor()+
-	" to "+getTypeAndItemInfo(transfer.getAssignee());
+      return "Transfer of <b>"+getTypeAndItemInfo(transfer.getAsset())+
+	"</b> from <b>"+transfer.getAssignor()+
+	"</b> to <b>"+getTypeAndItemInfo(transfer.getAssignee()) + "</b>";
     }
 
     return "";
