@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- This file is the configuration file for 4 of the agents in the
- Pizza Party application. You must run both to run the application. -->
+ Pizza Party application. You must run both this and the other Node
+ (SDPizzaNode1) to run the application. -->
 <!-- To run, use bin/XSLNode.bat SDPizzaNode2.xml SDPizzaNode2 -->
+
+<!-- This is the ServiceDiscovery version of the application. See -->
+<!-- also PizzaNode1 and PizzaNode2 -->
+
 <!-- If you would like to break the agents up across different nodes, or hosts, -->
 <!-- create a new <node name=name_here> section within the host element.  -->
 <!-- Then remove the desired <agent>'s from the current <node> and place them -->
@@ -14,36 +20,58 @@
   xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
   <host name="localhost">
     <node name="SDPizzaNode2">
+      <!-- The Java class to execute. -->
       <class>org.cougaar.bootstrap.Bootstrapper</class>
+      <!-- Argument to the Java program. In this case, the actual
+      class to run, once the Boostrapper finds the Jar files -->
       <prog_parameter>org.cougaar.core.node.Node</prog_parameter>
+
       <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/XSLNode -->
       <!-- Make sure these SDPizzaNode2 references match: -->
       <vm_parameter>-Dorg.cougaar.node.name=SDPizzaNode2</vm_parameter>
       <vm_parameter>-Dorg.cougaar.society.file="SDPizzaNode2.xml"</vm_parameter>
       <!-- The following parameters are standard -->
       <vm_parameter>-Djava.class.path="$COUGAAR_INSTALL_PATH/lib/bootstrap.jar"</vm_parameter>
+
+      <!-- You could specify custom directories here - for example, to
+      override the implementation of one of the Pizza plugins -->
       <vm_parameter>-Dorg.cougaar.class.path=</vm_parameter>
+      <!-- Where to look for config files, in order -->
       <vm_parameter>-Dorg.cougaar.config.path="$COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty\;$COUGAAR_INSTALL_PATH/configs/common\;" </vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.agent.startTime="08/10/2005 00:05:00"</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.node.InitializationComponent=XML</vm_parameter>
+
+      <!-- Specify the Cougaar installation directory -->
       <vm_parameter>-Dorg.cougaar.install.path="$COUGAAR_INSTALL_PATH"</vm_parameter>
+      <!-- Where to find third party Jar files -->
       <vm_parameter>-Dorg.cougaar.system.path="$COUGAAR_INSTALL_PATH/sys"</vm_parameter>
+
+      <!-- Tune the community service for a small society -->
       <vm_parameter>-Dorg.cougaar.community.update.interval=2000</vm_parameter>
+      <!-- Tune the WP for a small society -->
       <vm_parameter>-Dorg.cougaar.core.wp.resolver.rmi.minLookup=500</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.resolver.rmi.maxLookup=2000</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.server.failTTD=1000</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.server.successTTD=2000</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.mts.destq.retry.maxTimeout=3000</vm_parameter>
+      <!-- Configure the logging service from this file -->
       <vm_parameter>-Dorg.cougaar.core.logging.config.filename="loggingConfig.conf"</vm_parameter>
+      <!-- The workspace is where Agents write output -->
       <vm_parameter>-Dorg.cougaar.workspace=$COUGAAR_INSTALL_PATH/workspace</vm_parameter>
       <vm_parameter>-Duser.timezone=GMT</vm_parameter>
+      <!-- Use our JDK over-rides for persistence -->
       <vm_parameter>-Xbootclasspath/p:"$COUGAAR_INSTALL_PATH/lib/javaiopatch.jar"</vm_parameter>
+
+      <!-- Give the VM enough memory -->
       <vm_parameter>-Xms100m</vm_parameter>
       <vm_parameter>-Xmx300m</vm_parameter>
       <!-- Disable default load of WP server -->
       <vm_parameter>-Dorg.cougaar.core.load.wp.server=false</vm_parameter>
       <!-- Explicitly make Node1 the WP Server -->
       <vm_parameter>-Dorg.cougaar.name.server=SDPizzaNode1@localhost:8888</vm_parameter>
+
+      <!-- Now load components into the Node or NodeAgent -->
+
       <!-- Helper servlet to change Logging levels for the Node -->
       <component
 	 name='org.cougaar.core.logging.LoggingConfigServlet()'
@@ -54,8 +82,6 @@
 
       <!-- Tony is a party guest -->
       <agent name="Tony">
-        <facet org_id="Tony"/>
-        <facet orig_org_id="Tony"/>
 	<!-- Tasks servlet shows Blackboard contents - for debugging -->
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
@@ -73,7 +99,6 @@
           <argument>ItemIdentificationPG:Nomenclature:String:Tony</argument>
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Tony</argument>
-	  <!-- Add Meat/Veggie preference PG -->
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Carnivore</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
@@ -90,19 +115,24 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- Add RSVPPI -->
+	<!-- Respond to incoming RSVP Relays with our pizza preference -->
         <component
           name='org.cougaar.pizza.plugin.RSVPPlugin'
           class='org.cougaar.pizza.plugin.RSVPPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-
+	<!-- Show the history of Blackboard changes in this Agent -->
+        <component
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
+
       <!-- Mark is a party guest -->
       <agent name="Mark">
-        <facet org_id="Mark"/>
-        <facet orig_org_id="Mark"/>
 	<!-- Tasks servlet shows Blackboard contents - for debugging -->
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
@@ -120,7 +150,6 @@
           <argument>ItemIdentificationPG:Nomenclature:String:Mark</argument>
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Mark</argument>
-	  <!-- Add Meat/Veggie preference PG -->
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Vegetarian</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
@@ -137,19 +166,24 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- Add RSVPPI -->
+	<!-- Respond to incoming RSVP Relays with our pizza preference -->
         <component
           name='org.cougaar.pizza.plugin.RSVPPlugin'
           class='org.cougaar.pizza.plugin.RSVPPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-
+	<!-- Show the history of Blackboard changes in this Agent -->
+        <component
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
+
       <!-- This agent just serves as a YPServer and community manager -->
       <agent name="MA">
-        <facet org_id="MA"/>
-        <facet orig_org_id="MA"/>
 	<!-- Tasks servlet shows Blackboard contents - for debugging -->
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
@@ -182,7 +216,7 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- YPServers need this  plugin -->
+	<!-- YPServers need this plugin -->
         <component
           name='org.cougaar.yp.YPServer()'
           class='org.cougaar.yp.YPServer'
@@ -203,11 +237,17 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.YPService'>
         </component>
+	<!-- Show the history of Blackboard changes in this Agent -->
+        <component
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
+
       <!-- Joes is a Pizza Provider for Cambridge only -->
       <agent name="JoesLocalPizzaShack">
-        <facet org_id="JoesLocalPizzaShack"/>
-        <facet orig_org_id="JoesLocalPizzaShack"/>
 	<!-- Tasks servlet shows Blackboard contents - for debugging -->
         <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
@@ -225,6 +265,9 @@
           <argument>ItemIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
+	  <!-- Note that we do not specify the PizzaProvider
+          relationship with Alice here. Instead, we will use
+          ServiceDiscovery -->
         </component>
 	<!-- Community members need the CommunityPlugin -->
         <component
@@ -254,8 +297,8 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
-	SDRegistrationPI, PizzaOrderServlet, PizzaMenuServlet -->
+	<!-- Create the KitchenAsset, specifying the types of Pizza
+	we provide -->
 	<component
           name='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
           class='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
@@ -265,12 +308,14 @@
             PIZZA_TYPES_PROVIDED=meat_only
           </argument>
 	</component>
+	<!-- Handle incoming Order tasks -->
 	<component
           name='org.cougaar.pizza.plugin.ProcessOrderPlugin'
           class='org.cougaar.pizza.plugin.ProcessOrderPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
+	<!-- Register our services in the named YP -->
 	<component
           name='org.cougaar.pizza.plugin.SDRegistrationPlugin'
           class='org.cougaar.pizza.plugin.SDRegistrationPlugin'
@@ -280,15 +325,15 @@
 	    Cambridge
 	  </argument>
 	</component>
+	<!-- Respond to ServiceContractRelays, agreeing to be their
+	provider -->
 	<component
           name='org.cougaar.pizza.plugin.SDProviderPlugin'
           class='org.cougaar.pizza.plugin.SDProviderPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-	  <argument>
-	    Cambridge
-	  </argument>
 	</component>
+	<!-- Show the history of Blackboard changes in this Agent -->
         <component
           name='org.couqgaar.pizza.servlet.HistoryServlet'
           class='org.cougaar.pizza.servlet.HistoryServlet'
