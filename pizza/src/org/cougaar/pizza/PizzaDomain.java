@@ -32,7 +32,6 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.pizza.asset.AssetFactory;
-import org.cougaar.pizza.asset.PropertyGroupFactory;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.LDMService;
@@ -116,7 +115,7 @@ public class PizzaDomain extends DomainAdapter {
     }
 
     ldmf.addAssetFactory(new AssetFactory());
-    ldmf.addPropertyGroupFactory(new PropertyGroupFactory());
+    ldmf.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
   }
 
   protected void loadXPlan() {
