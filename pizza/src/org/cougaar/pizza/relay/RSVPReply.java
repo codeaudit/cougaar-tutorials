@@ -32,8 +32,8 @@ import java.io.Serializable;
  * the RSVP reply - just the friend and their pizza preference
  */
 public class RSVPReply implements Serializable {
-  public String friend;
-  public String pizzaPreference;
+  private String friend;
+  private String pizzaPreference;
 
   public RSVPReply(String friend, String pizzaPreference) {
     this.friend = friend;
@@ -49,6 +49,6 @@ public class RSVPReply implements Serializable {
   }
 
   public String toString() {
-    return "RSVPReply : " + friend + " - " + pizzaPreference;
+    return "RSVPReply : " + friend + "=" + pizzaPreference;
   }
 }
