@@ -28,17 +28,20 @@
       <vm_parameter>-Dorg.cougaar.core.node.InitializationComponent=XML</vm_parameter>
       <vm_parameter>-Dorg.cougaar.install.path="$COUGAAR_INSTALL_PATH"</vm_parameter>
       <vm_parameter>-Dorg.cougaar.system.path="$COUGAAR_INSTALL_PATH/sys"</vm_parameter>
-      <vm_parameter>-Dorg.cougaar.workspace=$COUGAAR_INSTALL_PATH/workspace</vm_parameter>
-      <vm_parameter>-Duser.timezone=GMT</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.community.update.interval=2000</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.resolver.rmi.minLookup=500</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.resolver.rmi.maxLookup=2000</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.wp.server.failTTD=1000</vm_parameter>
-      <vm_parameter>-Dorg.cougaar.core.wp.server.successTTD=30000</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.core.wp.server.successTTD=2000</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.core.mts.destq.retry.maxTimeout=3000</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.core.logging.config.filename="loggingConfig.conf"</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.workspace=$COUGAAR_INSTALL_PATH/workspace</vm_parameter>
+      <vm_parameter>-Duser.timezone=GMT</vm_parameter>
       <vm_parameter>-Xbootclasspath/p:"$COUGAAR_INSTALL_PATH/lib/javaiopatch.jar"</vm_parameter>
       <vm_parameter>-Xms100m</vm_parameter>
       <vm_parameter>-Xmx300m</vm_parameter>
       <!-- Disable default load of WP server -->
-      <vm_parameter>-Dorg.cougaar.core.load.wp.server=true</vm_parameter>
+      <vm_parameter>-Dorg.cougaar.core.load.wp.server=false</vm_parameter>
       <!-- Explicitly make Node1 the WP Server -->
       <vm_parameter>-Dorg.cougaar.name.server=SDPizzaNode1@localhost:8888</vm_parameter>
       <!-- Helper servlet to change Logging levels for the Node -->
@@ -188,8 +191,8 @@
         </component>
 	<!-- YPServers must also have a Taxonomy for SD -->
         <component
-          name='org.cougaar.servicediscovery.util.yp.PublishTaxonomy()'
-          class='org.cougaar.servicediscovery.util.yp.PublishTaxonomy'
+          name='org.cougaar.pizza.plugin.util.PublishTaxonomy()'
+          class='org.cougaar.pizza.plugin.util.PublishTaxonomy'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
@@ -222,10 +225,7 @@
           <argument>ItemIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
-	  <!-- For non-SD, add relationships of PizzaProvider with
-          Alice -->
         </component>
-	<!-- For non-SD, add AssetReportPlugin to report to Alice -->
 	<!-- Community members need the CommunityPlugin -->
         <component
           name='org.cougaar.community.CommunityPlugin()'
@@ -270,6 +270,24 @@
           class='org.cougaar.pizza.plugin.ProcessOrderPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
+	<component
+          name='org.cougaar.pizza.plugin.SDRegistrationPlugin'
+          class='org.cougaar.pizza.plugin.SDRegistrationPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	  <argument>
+	    Cambridge
+	  </argument>
+	</component>
+	<component
+          name='org.cougaar.pizza.plugin.SDProviderPlugin'
+          class='org.cougaar.pizza.plugin.SDProviderPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	  <argument>
+	    Cambridge
+	  </argument>
 	</component>
       </agent>
     </node>
