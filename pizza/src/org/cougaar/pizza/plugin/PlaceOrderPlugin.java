@@ -179,30 +179,33 @@ public class PlaceOrderPlugin extends ComponentPlugin {
    * @param exp The Expansion of the root Order task, whose details we print
    */
   protected void logExpansionResults(Expansion exp) {
-    Task t = exp.getTask();
-    Verb v = t.getVerb();
-    boolean succ = exp.getReportedResult().isSuccess();
-
-    // The sub-tasks (1 per pizza type)
-    Enumeration subs = exp.getWorkflow().getTasks();
-
-    logger.shout("Pizza " + v + " Task " + (succ ? "SUCCEEDED " : "FAILED "));
-
-    // Log details of each sub-task
-    while (subs.hasMoreElements()) {
-      Task sub = (Task)subs.nextElement();
-
-      // Get number servings, type of pizza ordered
-      double qty = sub.getPreferredValue(AspectType.QUANTITY);
-      String piztype = sub.getDirectObject().getItemIdentificationPG().getItemIdentification();
-
-      // Get the store we ordered from
-      String store = ((Allocation)sub.getPlanElement()).getAsset().getItemIdentificationPG().getItemIdentification();
-
-      // Remember that each sub-task succeeds or fails independently
-      boolean subSucc = sub.getPlanElement().getReportedResult().isSuccess();
-      logger.shout("     " + store + " could" + (subSucc ? "" : " NOT") + " handle " + v + " for " + qty + " servings of " + piztype);
-    } // loop over sub-tasks
+    boolean succ = false;
+    if (exp != null) {
+      Task t = exp.getTask();
+      Verb v = t.getVerb();
+      succ = exp.getReportedResult().isSuccess();
+      
+      // The sub-tasks (1 per pizza type)
+      Enumeration subs = exp.getWorkflow().getTasks();
+      
+      logger.shout("Pizza " + v + " Task " + (succ ? "SUCCEEDED " : "FAILED "));
+      
+      // Log details of each sub-task
+      while (subs.hasMoreElements()) {
+	Task sub = (Task)subs.nextElement();
+	
+	// Get number servings, type of pizza ordered
+	double qty = sub.getPreferredValue(AspectType.QUANTITY);
+	String piztype = sub.getDirectObject().getItemIdentificationPG().getItemIdentification();
+	
+	// Get the store we ordered from
+	String store = ((Allocation)sub.getPlanElement()).getAsset().getItemIdentificationPG().getItemIdentification();
+	
+	// Remember that each sub-task succeeds or fails independently
+	boolean subSucc = sub.getPlanElement().getReportedResult().isSuccess();
+	logger.shout("     " + store + " could" + (subSucc ? "" : " NOT") + " handle " + v + " for " + qty + " servings of " + piztype);
+      } // loop over sub-tasks
+    }
 
     if (succ)
       logger.shout("The Party is on!");
@@ -331,7 +334,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   protected void allocateSubtasks(Collection subtasks, Entity provider) {
     if (provider == null) {
       if (logger.isErrorEnabled()) {
-        logger.error(" Provider is null, check config files for provider relationship");
+        logger.error("No pizza provider found -- can't order pizza!  Check config files for provider relationship. (Did you start PizzaNode2?)");
       }
       return;
     }
