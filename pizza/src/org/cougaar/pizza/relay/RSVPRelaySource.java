@@ -29,7 +29,6 @@ package org.cougaar.pizza.relay;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.persist.NotPersistable;
 import org.cougaar.core.relay.Relay;
-import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 import org.cougaar.pizza.Constants;
@@ -61,11 +60,11 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
    */
   private Set targets = new HashSet();
 
-  // The source-side accumulation of RSVPs
+  /** The source-side accumulation of RSVPs, so we can automatically accumulate responses */
   private PizzaPreferences pizzaPreferences;
 
   /**
-   *  A static logger for all rsvp relay source objects.
+   * A static logger for all rsvp relay source objects.
    * Note that this is a nice way to use the Cougaar logger from an object that
    * is not a Component, and therefore can't easily get an instace of the LoggingService.
    */
@@ -134,11 +133,11 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   public int updateResponse(MessageAddress target, Object response) {
     RSVPReply rsvpReply = (RSVPReply) response;
 
-    // Accumulate the response
+    // Accumulate the response automatically
     pizzaPreferences.addFriendToPizza(rsvpReply.getFriend(),
                                       rsvpReply.getPizzaPreference());
 
-    // INFO logging.....
+    // INFO logging of what we have so far.
     if (classLogger.isInfoEnabled()) {
       classLogger.info("RSVPRelaySource - pizza prefs now : " + pizzaPreferences);
       
@@ -152,6 +151,13 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
     }
     
     return Relay.RESPONSE_CHANGE;
+  }
+
+  /**
+   * @return the PizzaPreferences object in which our answers are collected
+   */
+  public PizzaPreferences getPizzaPrefs() {
+    return pizzaPreferences;
   }
 
   /** 
