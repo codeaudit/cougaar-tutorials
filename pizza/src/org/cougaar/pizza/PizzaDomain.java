@@ -42,12 +42,15 @@ import java.util.Collections;
 
 /**
  * PizzaDomain definition -
- * Required to ensure the Roles and Assets specific to the pizza
+ * Required to ensure that Roles and Assets specific to the pizza
  * application are initialized correctly. PizzaDomain does not include any
- * domain specific LogicProviders.
+ * domain specific LogicProviders. It only initializes our Constants
+ * and loads our Asset Factory
  **/
 public class PizzaDomain extends DomainAdapter {
 
+  // Note the constant for the domain name, with the constant
+  // following the <domain>_NAME variable naming pattern
   public static final String PIZZA_NAME = "pizza";
 
   private DomainService domainService;
@@ -60,6 +63,10 @@ public class PizzaDomain extends DomainAdapter {
   public PizzaDomain() {
     super();
   }
+
+  // Note the use of the introspection-based service retrieving
+  // methods. These guarantee that the component
+  // will not load if the services are not available.
 
   public void setDomainService(DomainService domainService) {
     this.domainService = domainService;
@@ -80,6 +87,7 @@ public class PizzaDomain extends DomainAdapter {
   }
 
   public void unload() {
+    // Unload any services we loaded earlier
     ServiceBroker sb = getServiceBroker();
     if (ldmService != null) {
       sb.releaseService(

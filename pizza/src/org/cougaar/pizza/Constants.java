@@ -30,17 +30,27 @@ import org.cougaar.planning.ldm.plan.Verb;
 import java.io.File;
 
 /**
- * Constants for the pizza party application
+ * Constants for the pizza party application. Initialized by the 
+ * load of the PizzaDomain, so Roles in particular are well defined.
+ * 
+ * Having a Domain-specific Constants file for Roles, Verbs, 
+ * and other objects that Plugins will match on off the Blackboard
+ * is fairly typical usage.
  */
 public class Constants {
   // Private constructor prevents instantiation
   private Constants() {
   }
 
+  // Some heavily used Strings. In particular, the invitation Relay
+  // uses these.
   public static final String PIZZA = "Pizza";
   public static final String INVITATION_QUERY = "invitation-meat_or_veg";
   public static final String MEAT_PIZZA = "Meat Pizza";
   public static final String VEGGIE_PIZZA = "Veggie Pizza";
+
+  // Standard constants for Role definition. Defined here
+  // to avoid GLM dependency
   public static final String PROVIDER_SUFFIX = "Provider";
   public static final String CUSTOMER_SUFFIX = "Customer";
 
@@ -105,6 +115,7 @@ public class Constants {
   /**
    * Returns the path to the data files required to support the pizza application e.g.
    * $COUGAAR_INSTALL_PATH/pizza/data
+   * Used by ServiceDiscovery in particular.
    *
    * @return a string representing the file path
    */
