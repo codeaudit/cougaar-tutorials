@@ -192,11 +192,13 @@ public class TakeVacationServlet extends BaseServletComponent
       task.setDirectObject (pa);
       blackboard.publishAdd (task);
 
-      // allocate it to current first month of schedule
+      // allocate it to current first month of schedule that is not vacation
       Enumeration e = pa.getRoleSchedule().getRoleScheduleElements();
       while (e.hasMoreElements()) {
 	Allocation alloc = (Allocation) e.nextElement();
 	if (! alloc.getEstimatedResult().isSuccess())
+	  continue;
+	if (alloc.getTask().getVerb().toString()=="VACATION")
 	  continue;
 	long start = alloc.getStartTime();
 	GregorianCalendar cal = new GregorianCalendar();

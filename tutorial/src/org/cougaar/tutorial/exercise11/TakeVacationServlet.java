@@ -51,7 +51,7 @@ import java.util.Iterator;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.4 2004-02-02 17:05:54 jwong Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent
@@ -194,12 +194,14 @@ implements BlackboardClient
     task.setDirectObject (pa);
     blackboard.publishAdd (task);
 
-    // allocate it to current first month of schedule
+    // allocate it to current first month of schedule that is not vacation
     Enumeration e = pa.getRoleSchedule().getRoleScheduleElements();
     while (e.hasMoreElements()) {
       Allocation alloc = (Allocation) e.nextElement();
       if (! alloc.getEstimatedResult().isSuccess())
         continue;
+	  if (alloc.getTask().getVerb().toString()=="VACATION")
+	    continue;
       long start = alloc.getStartTime();
       GregorianCalendar cal = new GregorianCalendar();
       cal.setTime (new Date (start));
