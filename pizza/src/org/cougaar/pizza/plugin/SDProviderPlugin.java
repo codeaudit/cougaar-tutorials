@@ -56,7 +56,9 @@ import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
 /**
- * SDProviderPlugin generates the LineageLists for the Agent.
+ * SDProviderPlugin responds to ServiceContractRelays. This version says 
+ * yes to all requests - generating a contract which exactly matches
+ * the request.
  */
 public class SDProviderPlugin extends ComponentPlugin {
   private static Integer START_TIME_KEY = new Integer(AspectType.START_TIME);
