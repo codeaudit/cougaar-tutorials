@@ -10,6 +10,8 @@ cougaarOWLSFilename=cougaar.owl #you shouldn't need to change this.
 
 agentName = JoesLocalPizzaShack
 roleName = PizzaProvider
+---
+roleName = SaladProvider
 
 agentName = Dominos
 roleName = PizzaProvider

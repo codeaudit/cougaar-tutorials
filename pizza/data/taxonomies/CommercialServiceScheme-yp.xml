@@ -8,6 +8,10 @@
       keyName="PizzaProvider"
       keyValue="PizzaProvider">
     </keyedReference>
+    <keyedReference
+      keyName="SaladProvider"
+      keyValue="SaladProvider">
+    </keyedReference>
   </categoryBag>
 </tModel>
 

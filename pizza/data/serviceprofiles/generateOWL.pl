@@ -53,12 +53,14 @@ sub error_out {
 sub setup_descriptions{
     %serviceDescriptions = (
     "PizzaProvider" => "Make and deliver pizzas. ",
+    "SaladProvider" => "Make and deliver salads. ",
     );		    
 }
 
 sub setup_generic_wsdl{
     %genericProviders = (
     "PizzaProvider" => "PizzaProvider",
+    "SaladProvider" => "PizzaProvider",
     );			
 }
 
