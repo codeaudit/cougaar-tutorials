@@ -32,10 +32,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.PropertyGroup;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.pizza.Constants;
@@ -78,6 +75,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
   protected void setupSubscriptions() {
     tasksSub = (IncrementalSubscription) blackboard.subscribe(OrderTasksPred);
     kitchenAssetSub = (IncrementalSubscription) blackboard.subscribe(KitchenAssetPred);
+    getPlanningFactory();
   }
 
   private LoggingService getLoggingService(Object requestor) {
@@ -117,7 +115,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       // make a successful or unsuccessful allocation result.
       boolean kitchenCanMake = checkWithKitchen(newTask);
       AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
-      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar, null);
+      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar,
+                                                   Role.getRole(Constants.PIZZA_PROVIDER));
       blackboard.publishAdd(alloc);
     }
   }
@@ -134,7 +133,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
     Enumeration pgs = (directObject.fetchAllProperties()).elements();
     while (pgs.hasMoreElements()) {
       PropertyGroup pg = (PropertyGroup) pgs.nextElement();
-      PropertyGroup match = kitchen.searchForPropertyGroup(pg);
+      PropertyGroup match = kitchen.searchForPropertyGroup(pg.getPrimaryClass());
       if (match != null) {
         //TODO: turn down logging to debug
         if (logger.isErrorEnabled()) {
@@ -144,7 +143,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       } else {
         //TODO: turn down logging to debug
         if (logger.isErrorEnabled()) {
-          logger.error("Did NOT find a match for the pizza in the kitchen for PG: " + pg);
+          logger.error("Did NOT find a match for the pizza in the kitchen for PG: " + pg + " match: " + match + " calling" +
+                       "Kitchen pg directly " + kitchen.getItemIdentificationPG().getItemIdentification());
         }
         canMakePizza = false;
       }
