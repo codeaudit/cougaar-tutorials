@@ -6,6 +6,13 @@
 # the template file. Use pizza/data/serviceprofiles/agent-input.txt
 # for the input file.
 #
+# Assumes the set of roles defined by 
+# pizza/data/taxonomies/CommercialServiceScheme-yp.xml. Can add the ability
+# to register additional roles by editing CommercialServiceScheme-yp.xml -
+# one keyedReference definition per role. Look at the entry for 
+# JoesLocalPizzaShack in agent-input.txt for an example of adding multiple
+# roles for a single agent.
+#
 # usage is generateOWL <inputfile> <templatefile>
 ################################################################
 
@@ -50,6 +57,7 @@ sub error_out {
     exit(1);
 } # error_out
 
+// Add a description for each role 
 sub setup_descriptions{
     %serviceDescriptions = (
     "PizzaProvider" => "Make and deliver pizzas. ",
