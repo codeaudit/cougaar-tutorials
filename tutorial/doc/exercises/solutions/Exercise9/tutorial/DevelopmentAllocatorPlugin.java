@@ -21,11 +21,11 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import java.util.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
@@ -33,10 +33,10 @@ import tutorial.assets.*;
 
 
 /**
- * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
- * the workflow sub-tasks to programmer assets.
+ * This COUGAAR Plugin subscribes to tasks and allocates
+ * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2003-01-23 19:44:32 mthome Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-11 18:16:47 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -57,10 +57,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     return domainService;
   }
 
-  private IncrementalSubscription allMyTasks;   // Tasks that I'm interested in
+  private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
   private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
   private IncrementalSubscription allMyAllocations;  // Allocations that I made
-
   /**
    * Predicate matching all ProgrammerAssets
    */
@@ -105,12 +104,12 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   };
 
   /**
-   * Establish subscription for tasks, allocations, and assets
+   * Establish subscription for tasks and assets
    **/
   public void setupSubscriptions() {
     allProgrammers =
       (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
-    allMyTasks =
+    allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
     allMyAllocations =
       (IncrementalSubscription)getBlackboardService().subscribe(allocPredicate);
@@ -122,19 +121,12 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentAllocatorPlugin::execute");
 
-    // un-plan any rescinded tasks
-    for(Enumeration e = allMyTasks.getRemovedList();e.hasMoreElements();)
-    {
-      Task task = (Task)e.nextElement();
-      releaseWork(task);
-    }
-
-    // Plan any new software development tasks with a start month but no allocation
-    Enumeration task_enum = allMyTasks.elements();
+    // process unallocated tasks
+    Enumeration task_enum = allCodeTasks.elements();
     while (task_enum.hasMoreElements()) {
       Task task = (Task)task_enum.nextElement();
       if (task.getPlanElement() == null)
-        allocateTask(task, startMonth(task));
+        allocateTask(task);
     }
 
     // Re-plan any changed allocations
@@ -145,60 +137,34 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
         continue;
 
       Task task = alloc.getTask();
-      releaseWork(task); // remove the obligation from this asset
       getBlackboardService().publishRemove(alloc);
-      allocateTask(task, startMonth(task));
+      allocateTask(task);
     }
 
     // dump alloc results for debugging:
     // dumpAllocResults();
   }
 
-
-
-  /**
-   * Extract the start month from a task
-   */
-  private int startMonth(Task t) {
-      int ret = -1;
-      Preference start_pref = t.getPreference(AspectType.START_TIME);
-      if (start_pref != null)
-        ret = (int)start_pref.getScoringFunction().getBest().getValue();
-      return ret;
-  }
-
-  /**
-   * Reset the ProgrammerAsset's schedule to remove this task
-   */
-  private void releaseWork(Task t) {
-    Enumeration progs = allProgrammers.elements();
-    // have to find the programmer assigned to this task
-    while (progs.hasMoreElements()) {
-      ProgrammerAsset pa = (ProgrammerAsset)progs.nextElement();
-      Schedule sched = pa.getSchedule();
-      Enumeration tasks = sched.keys();
-      while (tasks.hasMoreElements()) {
-        Integer month = (Integer)tasks.nextElement();
-        if (sched.getWork(month.intValue()) == t) {
-          sched.clearWork(month.intValue());
-        }
-      }
-
-    }
-  }
-
   /**
    * Find an available ProgrammerAsset for this task.  Task must be scheduled
    * after the month "after"
    */
-  private int allocateTask(Task task, int after) {
-    int end = after;
-      // select an available programmer at random
+  private void allocateTask(Task task) {
+    // extract from preferences
+    Preference ePref = task.getPreference(AspectType.START_TIME);
+    Preference dPref = task.getPreference(AspectType.DURATION);
+    Preference lPref = task.getPreference(AspectType.END_TIME);
+    long earliest = (long) ePref.getScoringFunction().getBest().getValue();
+    int duration = (int) dPref.getScoringFunction().getBest().getValue();
+    long latest = (long) lPref.getScoringFunction().getBest().getValue();
+
+    // select an available programmer at random
     Vector programmers = new Vector(allProgrammers.getCollection());
-    boolean allocated = false;
-    while ((!allocated) && (programmers.size() > 0)) {
+    AllocationResult estAR = null;
+    ProgrammerAsset asset = null;
+    while ((estAR == null) && (programmers.size() > 0)) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
-      ProgrammerAsset asset = (ProgrammerAsset)programmers.elementAt(stuckee);
+      asset = (ProgrammerAsset)programmers.elementAt(stuckee);
       programmers.remove(asset);
 
       System.out.println("\nAllocating the following task to "
@@ -206,99 +172,56 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
           +asset.getItemIdentificationPG().getItemIdentification());
       System.out.println("Task: "+task);
 
-      Preference duration_pref = task.getPreference(AspectType.DURATION);
-      Preference end_time_pref = task.getPreference(AspectType.END_TIME);
-      Schedule sched = asset.getSchedule();
-      int duration = (int)duration_pref.getScoringFunction().getBest().getValue();
-      int desired_delivery = (int)end_time_pref.getScoringFunction().getBest().getValue();
-
-      // Check the programmer's schedule
-      int earliest = findEarliest(sched, after, duration);
-
-      end = earliest + duration - 1;
-
-      // Add the task to the programmer's schedule
-      for (int i=earliest; i<=end; i++) {
-        sched.setWork(i, task);
-      }
-      getBlackboardService().publishChange(asset);
-
-      AllocationResult estAR = null;
-
-      // Create an estimate that reports that we did just what we
-      // were asked to do
-
-      boolean onTime = (end <= desired_delivery);
-      String tmpstr =  " start_month: "+earliest;
-      tmpstr +=  " duration: "+duration;
-      tmpstr +=  " end_month: "+end;
-      tmpstr +=  " desired_delivery: "+desired_delivery;
-      tmpstr +=  " onTime: "+onTime;
-      System.out.println(tmpstr);
-
-      AspectValue avs[] = new AspectValue[3];
-      avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, earliest);
-      avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, end);
-      avs[2] = AspectValue.newAspectValue(AspectType.DURATION, duration);
-      estAR =  ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(1.0, // rating
-                  onTime, avs);
-
-      Allocation allocation =
-        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
-                      asset, estAR, Role.ASSIGNED);
-
-      getBlackboardService().publishAdd(allocation);
-      allocated = true;
+      // find the times and make the allocation result that
+      // assigns these times
+      // if can't fit, go on to next programmer
+      AspectValue[] inter = findInterval (asset, earliest, latest, duration);
+      if (inter == null)
+        continue;
+      estAR = new AllocationResult (1.0, true, inter);
     }
-    return end;
+
+    if (estAR == null)
+      estAR = new AllocationResult (1.0, false, new AspectValue[] {
+        AspectValue.newAspectValue (AspectType.START_TIME, latest),
+        AspectValue.newAspectValue (AspectType.END_TIME, latest) } );
+    Allocation allocation =
+      ((PlanningFactory)getDomainService().getFactory("planning")).
+        createAllocation (task.getPlan(), task,
+                          asset, estAR, Role.ASSIGNED);
+
+    getBlackboardService().publishAdd(allocation);
   }
 
   /**
-   * find the earliest available time in the schedule.
-   * @param sched the programmer's schedule
-   * @param earliest the earliest month to look for
-   * @param duration the number of months we want to schedule
+   * Find the three-month interval starting either the beginning of
+   * next month or the end of the last task on the asset, and
+   * return an array of aspect values indicating the time interval
    */
-  private int findEarliest(Schedule sched, int earliest, int duration) {
-    boolean found = false;
-    int month = earliest;
-    while (!found) {
-      found = true;
-      for (int i=month; i<month+duration; i++) {
-        if (sched.getWork(i) != null) {
-          found = false;
-          month = i+1;
-          break;
-        }
-      }
-    }
-    return month;
-  }
-    private void dumpRoleSchedule(Asset pa) {
-    RoleSchedule rs = pa.getRoleSchedule();
-    Enumeration en = rs.getRoleScheduleElements();
-    while (en.hasMoreElements()) {
-      Allocation allo = (Allocation)en.nextElement();
-      Task t = allo.getTask();
-      System.out.println("Task: "+t.getVerb()+" "+t.getDirectObject().getItemIdentificationPG().getItemIdentification());
-      System.out.print("Alloc: ["+allo.getEstimatedResult().getValue(AspectType.START_TIME));
-      System.out.println(","+allo.getEstimatedResult().getValue(AspectType.END_TIME)+"]");
+  private AspectValue[] findInterval (Asset asset, long earliest,
+                                      long latest, int durationMonths) {
+    // figure out time interal, inserting at earliest possible time
+    RoleSchedule sched = asset.getRoleSchedule();
+    long start = sched.isEmpty() ? earliest :
+                 Math.max (earliest, sched.getEndTime());
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.setTime (new Date (start));
+    cal.add (GregorianCalendar.MONTH, durationMonths);
+    long end = cal.getTime().getTime();
+    String str = " start: " + new Date (start) + " end: " + new Date (end);
 
+    // check that does not violate constraint
+    if (end > latest) {
+      System.out.println (" Cannot schedule with" + str);
+      return null;
     }
-  }
 
-  private void dumpAllocResults(){
-    System.out.println("----------------------------------------------------");
-    Iterator iter = allProgrammers.getCollection().iterator();
-    while (iter.hasNext()) {
-      ProgrammerAsset as = (ProgrammerAsset)iter.next();
-      System.out.print("-----------------------");
-      System.out.print(as.getItemIdentificationPG().getItemIdentification());
-      System.out.println("-----------------------");
-      dumpRoleSchedule(as);
-    }
+    // tell the dates chosen and return the aspect values
+    System.out.println (str);
+    return new AspectValue[] {
+      AspectValue.newAspectValue (AspectType.START_TIME, start),
+      AspectValue.newAspectValue (AspectType.END_TIME, end) };
   }
-
 
 }
 
