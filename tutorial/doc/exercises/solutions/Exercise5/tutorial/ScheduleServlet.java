@@ -109,12 +109,16 @@ public class ScheduleServlet extends HttpServlet
         if (o instanceof Allocation) {
           Allocation alloc = (Allocation) o;
           SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
-          out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
-                     "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
-                     "</td><td>" + alloc.getTask().getVerb() + " " +
-                     alloc.getTask().getDirectObject().
-                       getItemIdentificationPG().getItemIdentification() +
-                     "</td></tr>");
+          out.print ("<tr><td>");
+          out.print (sdf.format (alloc.getStartDate()));
+          out.print ("-");
+          out.print (sdf.format (new Date (alloc.getEndTime() - 1)));
+          out.print ("</td><td>");
+          out.print (alloc.getTask().getVerb());
+          out.print (" ");
+          out.print (alloc.getTask().getDirectObject().
+                       getItemIdentificationPG().getItemIdentification());
+          out.print ("</td></tr>");
         }
       }
       out.println("</table>");
