@@ -174,7 +174,7 @@
     <property name="compile.abs.jarlist" value=""/>
 
     <!-- javadoc package spec for building javadocs -->
-    <property name="javadoc.packages" value="org.cougaar.pizza,org.cougaar.pizza.asset,org.cougaar.pizza.plugin,org.cougaar.pizza.plugin.util,org.cougaar.pizza.relay,org.cougaar.pizza.servlet,org.cougaar.pizza.util"/>
+    <property name="javadoc.packages" value="org.cougaar.pizza,org.cougaar.pizza.asset,org.cougaar.pizza.plugin,org.cougaar.pizza.plugin.util,org.cougaar.pizza.relay,org.cougaar.pizza.servlet"/>
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
@@ -205,6 +205,7 @@
       <path location="${module.classes}" />
       <path location="${module.regress}" />
       <filelist dir="." files="${run.jarlist}"/>
+      <pathelement path="${target.clib}/build.jar"/>
       <pathelement path="${run.abs.jarlist}"/>
     </path>
 
@@ -595,7 +596,7 @@
 	       additionalparam="-breakiterator -source 1.4 -tagletpath ${target.clib}/build.jar -taglet org.cougaar.tools.javadoc.PropertyTaglet -taglet org.cougaar.tools.javadoc.NoteTaglet -taglet org.cougaar.tools.javadoc.ToDoTaglet -taglet org.cougaar.tools.javadoc.GeneratedTaglet"
 	       windowtitle="${moduleUp} API"
 	       doctitle="${moduleUp} API"
-	       bottom="Copyright &#169; 2003 by BBNT Solutions LLC, all rights reserved.">
+	       bottom="Copyright &#169; 2004 by BBNT Solutions LLC, all rights reserved.">
 	<classpath refid="javadoc.path" />
       </javadoc>
     </target>
