@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.cougaar.core.service.AgentIdentificationService;
+import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
@@ -154,7 +156,7 @@ public class InvitePlugin extends ServiceUserPlugin {
 	if (keyAndValue[0].equals("WAIT_FOR_RSVP_DURATION")) {
 	  try { 
 	    waitParam = Integer.parseInt(keyAndValue[1]); 
-	    log.info ("We will wait " + (WAIT_FOR_RSVP_DURATION/1000) + 
+	    log.info ("We will wait " + (waitParam/1000) + 
 		      " seconds before publishing pizza prefs.");
 
 	  } catch (Exception e) {
@@ -230,7 +232,7 @@ public class InvitePlugin extends ServiceUserPlugin {
    */ 
   private class MyPred implements UnaryPredicate {
     public boolean execute(Object o) {
-      if (o instanceof Relay.Source) {
+      if (o instanceof RSVPRelaySource) {
 	return true;
       }
       else if (o instanceof Relay) {
