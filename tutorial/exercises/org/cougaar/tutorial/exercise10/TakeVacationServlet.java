@@ -51,7 +51,7 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
  * for the vacation month.  It responds with text describing what it did.
  */
 
-//todo extend appropriate base servlet
+// todo: extend appropriate base servlet
 
 public class TakeVacationServlet
   implements BlackboardClient
@@ -75,22 +75,11 @@ public class TakeVacationServlet
 
   private BlackboardService blackboard;
 
-
-//todo return name (path) of servlet
-
+  protected String getPath() {
+    return "/takeVacationServlet";
+  }
 
   protected Servlet createServlet() {
-    // get the blackboard service
-    blackboard = (BlackboardService) serviceBroker.getService(
-							      this,
-							      BlackboardService.class,
-							      null);
-    if (blackboard == null) {
-      throw new RuntimeException(
-				 "Unable to obtain blackboard service");
-    }
-
-
     // We could inline "MyServlet" here as an anonymous
     // inner-class (like HelloBaseServletComponent does). Instead,
     // we'll move it to a simple inner-class, which will make the
@@ -99,7 +88,7 @@ public class TakeVacationServlet
   }
 
 
-//todo set the BlackboardService
+// todo: set the BlackboardService
 
 
   //
@@ -140,15 +129,17 @@ public class TakeVacationServlet
 	}
       };
 
+    public void doGet(
+		      HttpServletRequest req,
+		      HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
+    public void doPost(
+		       HttpServletRequest req,
+		       HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
 
-//todo define doGet and doPost methods
-
-    public void doGet
-
-    public void doPost
-
-
-//todo define execute method to use makeVacation to have each programmer take some vacation
     /**
      * Iterate over the list of programmers and have each take some vacation.
      * Print the programmers name and vacation month to the Servlet response.
@@ -156,8 +147,19 @@ public class TakeVacationServlet
     public void execute (
 			 HttpServletRequest req,
 			 HttpServletResponse res) throws IOException {
-
-
+      PrintWriter out = res.getWriter();
+      out.println("<html><head></head><body>");
+		
+      Collection col;
+      try {
+// todo: use makeVacation to have each programmer take some vacation
+	      
+      } finally {
+	blackboard.closeTransactionDontReset();
+	out.println("<BR>Done.</body></html>");
+	out.flush();	
+      }	 
+    }
 
     /**
      * Find and take a vacation month for this programmer.  Print the vacation

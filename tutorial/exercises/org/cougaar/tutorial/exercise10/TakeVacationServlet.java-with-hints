@@ -74,22 +74,11 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
 
   private BlackboardService blackboard;
 
-//todo return name (path) of servlet
-//hints: return protected String using getPath() method
-
+  protected String getPath() {
+    return "/takeVacationServlet";
+  }
 
   protected Servlet createServlet() {
-    // get the blackboard service
-    blackboard = (BlackboardService) serviceBroker.getService(
-							      this,
-							      BlackboardService.class,
-							      null);
-    if (blackboard == null) {
-      throw new RuntimeException(
-				 "Unable to obtain blackboard service");
-    }
-
-
     // We could inline "MyServlet" here as an anonymous
     // inner-class (like HelloBaseServletComponent does). Instead,
     // we'll move it to a simple inner-class, which will make the
@@ -139,14 +128,17 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
 	}
       };
 
-//todo define doGet and doPost methods
-//hints: these methods should call the same execute method below
-	public void doGet
-	public void doPost
+    public void doGet(
+		      HttpServletRequest req,
+		      HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
+    public void doPost(
+		       HttpServletRequest req,
+		       HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
 
-
-
-//todo define execute method to use makeVacation to have each programmer take some vacation
    /**
      * Iterate over the list of programmers and have each take some vacation.
      * Print the programmers name and vacation month to the Servlet response.
@@ -154,13 +146,21 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
     public void execute (
 			 HttpServletRequest req,
 			 HttpServletResponse res) throws IOException {
-//hints:  get PrintWriter
-//hints:  use PrintWriter to prepare to print HTML to the response
-//hints: define Collection
+      PrintWriter out = res.getWriter();
+      out.println("<html><head></head><body>");
+		
+      Collection col;
+      try {
+// todo: use makeVacation to have each programmer take some vacation
 //hints: try opening a blackboard transaction and use collection to get a blackboard query of the
 //hints:      UnaryPredicate 'pred' defined above
 //hints: iterate over the ProgrammerAssets and call 'makeVacation' defined below
-//hints: close the blackboard transaction and flush the PrintWriter
+      } finally {
+	blackboard.closeTransactionDontReset();
+	out.println("<BR>Done.</body></html>");
+	out.flush();		 
+      }
+    }
 
 
     /**

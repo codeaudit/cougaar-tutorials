@@ -74,23 +74,11 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
 
   private BlackboardService blackboard;
 
-//todo return name (path) of servlet
-//more hints:  protected String getPath() {
-//more hints:    return "/takeVacationServlet";
-//more hints:  }
+  protected String getPath() {
+    return "/takeVacationServlet";
+  }
 
   protected Servlet createServlet() {
-    // get the blackboard service
-    blackboard = (BlackboardService) serviceBroker.getService(
-							      this,
-							      BlackboardService.class,
-							      null);
-    if (blackboard == null) {
-      throw new RuntimeException(
-				 "Unable to obtain blackboard service");
-    }
-
-
     // We could inline "MyServlet" here as an anonymous
     // inner-class (like HelloBaseServletComponent does). Instead,
     // we'll move it to a simple inner-class, which will make the
@@ -141,32 +129,30 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
 	}
       };
 
-//todo define doGet and doPost methods
-//more hints:    public void doGet(
-//more hints:		      HttpServletRequest req,
-//more hints:		      HttpServletResponse res) throws IOException {
-//more hints:    execute(req, res);
-//more hints:    }
-//more hints:    public void doPost(
-//more hints:		       HttpServletRequest req,
-//more hints:		       HttpServletResponse res) throws IOException {
-//more hints:      execute(req, res);
-//more hints:    }
+    public void doGet(
+		      HttpServletRequest req,
+		      HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
+    public void doPost(
+		       HttpServletRequest req,
+		       HttpServletResponse res) throws IOException {
+      execute(req, res);
+    }
 
-
-//todo define execute method to use makeVacation to have each programmer take some vacation
    /**
      * Iterate over the list of programmers and have each take some vacation.
      * Print the programmers name and vacation month to the Servlet response.
      */
-//more hints:    public void execute (
-//more hints:			 HttpServletRequest req,
-//more hints:			 HttpServletResponse res) throws IOException {
-//more hints:      PrintWriter out = res.getWriter();
-//more hints:      out.println("<html><head></head><body>");
-//more hints:
-//more hints:      Collection col;
-//more hints:      try {
+    public void execute (
+			 HttpServletRequest req,
+			 HttpServletResponse res) throws IOException {
+      PrintWriter out = res.getWriter();
+      out.println("<html><head></head><body>");
+		
+      Collection col;
+      try {
+// todo: use makeVacation to have each programmer take some vacation
 //more hints:	ProgrammerAsset pa;
 //more hints:	blackboard.openTransaction();
 //more hints:	col = blackboard.query(pred);
@@ -174,13 +160,12 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
 //more hints:	  pa=(ProgrammerAsset)it.next();
 //more hints:	  makeVacation (pa, out);
 //more hints:	}
-//more hints:      } finally {
-//more hints:	blackboard.closeTransactionDontReset();
-//more hints:	out.println("<BR>Done.</body></html>");
-//more hints:	out.flush();
-//more hints:      }
-//more hints:
-//more hints:    }
+      } finally {
+	blackboard.closeTransactionDontReset();
+	out.println("<BR>Done.</body></html>");
+	out.flush();	
+      }	 
+    }
 
     /**
      * Find and take a vacation month for this programmer.  Print the vacation
