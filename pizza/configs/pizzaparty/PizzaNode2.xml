@@ -188,13 +188,6 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- YPServers must also have a Taxonomy for SD -->
-        <component
-          name='org.cougaar.servicediscovery.util.yp.PublishTaxonomy()'
-          class='org.cougaar.servicediscovery.util.yp.PublishTaxonomy'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
 	<!-- Need YPClient component when acting as server -->
         <component
           name='org.cougaar.yp.YPClientComponent()'
@@ -256,15 +249,7 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.YPService'>
         </component>
-	<!-- To register with YP need the UDDI4J Registration service -->
-        <component
-          name='org.cougaar.servicediscovery.service.UDDI4JRegistrationServiceComponent()'
-          class='org.cougaar.servicediscovery.service.UDDI4JRegistrationServiceComponent'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
-	<!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
-	SDRegistrationPI, PizzaOrderServlet, PizzaMenuServlet -->
+	<!-- Add PizzaPrototypeProvider, ProcessOrderPI, PizzaOrderServlet, PizzaMenuServlet -->
 	<component
           name='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
           class='org.cougaar.pizza.plugin.KitchenPrototypePlugin'

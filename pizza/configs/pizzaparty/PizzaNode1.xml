@@ -93,44 +93,13 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- Any agent querying the YP needs the YPClientComponent and
-	the UDDI4JRegistryQueryServiceComponent -->
         <component
           name='org.cougaar.yp.YPClientComponent()'
           class='org.cougaar.yp.YPClientComponent'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.YPService'>
         </component>
-        <component
-          name='org.cougaar.servicediscovery.service.UDDI4JRegistryQueryServiceComponent()'
-          class='org.cougaar.servicediscovery.service.UDDI4JRegistryQueryServiceComponent'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
-	<!-- FIXME: Is this right? -->
-	<!-- Actually submits SD queries, scores results -->
-	<!-- Note that this Plugin must be loaded after the above
-	UDDI4JRegistryQueryService has loaded -->
-        <component
-          name='org.cougaar.servicediscovery.plugin.MatchmakerStubPlugin()'
-          class='org.cougaar.servicediscovery.plugin.MatchmakerStubPlugin'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-	</component>
-	<!-- Debug servlet to see what SD queries we made -->
-        <component
-          name='org.cougaar.servicediscovery.servlet.MatchMakerQueryServletComponent(org.cougaar.servicediscovery.servlet.MatchMakerQueryServlet,/matchmaker_query)'
-          class='org.cougaar.servicediscovery.servlet.MatchMakerQueryServletComponent'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-          <argument>
-            org.cougaar.servicediscovery.servlet.MatchMakerQueryServlet
-          </argument>
-          <argument>
-            /matchmaker_query
-          </argument>
-        </component>
-	<!-- Add InvitePI(argument of 4 invitees), SDClientPI, PlaceOrderPI, RSVPPI,
+	<!-- Add InvitePI(argument of 4 invitees),, PlaceOrderPI, RSVPPI,
 	PizzaOrderServlet, PartyPlanServlet -->
         <component
           name='org.cougaar.pizza.plugin.InvitePlugin'
@@ -256,13 +225,6 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- YPServer must get a Taxonomy for SD -->
-        <component
-          name='org.cougaar.servicediscovery.util.yp.PublishTaxonomy()'
-          class='org.cougaar.servicediscovery.util.yp.PublishTaxonomy'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
 	<!-- Need YPClient component when acting as server -->
         <component
           name='org.cougaar.yp.YPClientComponent()'
@@ -317,15 +279,7 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.YPService'>
         </component>
-	<!-- Need UDDI Registration plugin to register in YP -->
-        <component
-          name='org.cougaar.servicediscovery.service.UDDI4JRegistrationServiceComponent()'
-          class='org.cougaar.servicediscovery.service.UDDI4JRegistrationServiceComponent'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
-        <!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
-	SDRegistrationPI, PizzaOrderServlet, PizzaMenuServlet -->
+        <!-- Add PizzaPrototypeProvider, ProcessOrderPI, PizzaOrderServlet, PizzaMenuServlet -->
 	<component
           name='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
           class='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
