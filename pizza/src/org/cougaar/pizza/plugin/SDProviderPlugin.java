@@ -33,14 +33,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
+import org.cougaar.planning.ldm.PlanningDomain;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.planning.ldm.plan.Schedule;
 import org.cougaar.planning.ldm.plan.ScheduleElement;
-import org.cougaar.planning.plugin.legacy.SimplePlugin;
 import org.cougaar.servicediscovery.SDDomain;
 import org.cougaar.servicediscovery.SDFactory;
 import org.cougaar.servicediscovery.description.ProviderCapabilities;
@@ -57,8 +60,7 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * SDProviderPlugin generates the LineageLists for the Agent.
  */
-public class SDProviderPlugin extends SimplePlugin
-{
+public class SDProviderPlugin extends ComponentPlugin {
   private static Integer START_TIME_KEY = new Integer(AspectType.START_TIME);
   private static Integer END_TIME_KEY = new Integer(AspectType.END_TIME);
 
@@ -66,12 +68,12 @@ public class SDProviderPlugin extends SimplePlugin
   private IncrementalSubscription myServiceContractRelaySubscription;
   private IncrementalSubscription myProviderCapabilitiesSubscription;
   
-
   private String myAgentName;
 
   protected LoggingService myLoggingService;
-
+  protected DomainService myDomainService;
   protected SDFactory mySDFactory;
+  protected PlanningFactory myPlanningFactory;
 
   private UnaryPredicate myServiceContractRelayPred = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -108,20 +110,39 @@ public class SDProviderPlugin extends SimplePlugin
     }
   };
 
-  protected void setupSubscriptions() {
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService domainService) {
+    myDomainService = domainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return myDomainService;
+  }
+
+  public void load() {
+    mySDFactory = (SDFactory) getDomainService().getFactory(SDDomain.SD_NAME);
+    myPlanningFactory = (PlanningFactory) getDomainService().getFactory(PlanningDomain.PLANNING_NAME);
+
     myLoggingService =
       (LoggingService) getBindingSite().getServiceBroker().getService(this, LoggingService.class, null);
 
-    myAgentName = getBindingSite().getAgentIdentifier().toString();
-
-    myServiceContractRelaySubscription = (IncrementalSubscription) subscribe(myServiceContractRelayPred);
-    myLocalEntitySubscription = (IncrementalSubscription) subscribe(myLocalEntityPred);
-    myProviderCapabilitiesSubscription = 
-      (IncrementalSubscription)subscribe(myProviderCapabilitiesPred);
-
-    mySDFactory = (SDFactory) getFactory(SDDomain.SD_NAME);
+    myAgentName = getAgentIdentifier().toString();
   }
 
+  protected void setupSubscriptions() {
+    myServiceContractRelaySubscription = 
+      (IncrementalSubscription) getBlackboardService().subscribe(myServiceContractRelayPred);
+    myLocalEntitySubscription = 
+      (IncrementalSubscription) getBlackboardService().subscribe(myLocalEntityPred);
+    myProviderCapabilitiesSubscription = 
+      (IncrementalSubscription) getBlackboardService().subscribe(myProviderCapabilitiesPred);
+  }
 
   public void execute() {
     if (myServiceContractRelaySubscription.hasChanged()) {
@@ -303,7 +324,7 @@ public class SDProviderPlugin extends SimplePlugin
     }
 
     if ((!contractExists) || (contractChanged)) {
-      publishChange(relay);
+      getBlackboardService().publishChange(relay);
     }
     
   }
@@ -385,7 +406,7 @@ public class SDProviderPlugin extends SimplePlugin
 				    " handleChangeProviderCap " +" publish change relay for "
 + contract.getServiceRole() + "  " + contract);
 	    }
-	    publishChange(relay);
+	    getBlackboardService().publishChange(relay);
           }
         }
       }
@@ -495,9 +516,9 @@ public class SDProviderPlugin extends SimplePlugin
       Preference original = (Preference) iterator.next();
       
       Preference copy =
-	getFactory().newPreference(original.getAspectType(),
-				   original.getScoringFunction(),
-				   original.getWeight());
+	myPlanningFactory.newPreference(original.getAspectType(),
+					original.getScoringFunction(),
+					original.getWeight());
       preferenceMap.put(new Integer(copy.getAspectType()), copy);
     }
 
