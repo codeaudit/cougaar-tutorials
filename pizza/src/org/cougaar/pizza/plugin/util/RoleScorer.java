@@ -26,6 +26,7 @@
 
 package org.cougaar.pizza.plugin.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -54,7 +55,7 @@ import org.cougaar.util.log.Logging;
  * to the MMQueryRequest results field.
  * 
  */
-public class RoleScorer implements ServiceInfoScorer {
+public class RoleScorer implements ServiceInfoScorer, Serializable {
   // Note this is how a non-component can get a Logger
   private static Logger logger = Logging.getLogger(RoleScorer.class);
   Role myRole; // The role we want
