@@ -90,7 +90,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
 
     // Create a Veggie Pizza Asset based on the existing pizza prototype
     PizzaAsset veggie_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    veggie_pizza_asset.setVeggiePG(makeAVeggiePG(true));  // Veggie pizza
+    veggie_pizza_asset.addOtherPropertyGroup(makeAVeggiePG(true));
     veggie_pizza_asset.setItemIdentificationPG(makeAItemIdentificationPG("Veggie Pizza"));
     getBlackboardService().publishAdd(veggie_pizza_asset);
 //    System.out.println("publishAdding veggie pizza asset: "+ veggie_pizza_asset +
@@ -98,7 +98,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
 
     // Create a Meat Pizza Asset based on the existing pizza prototype
     PizzaAsset meat_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    meat_pizza_asset.setMeatPG(makeAMeatPG(true));   // Meat pizza
+    meat_pizza_asset.addOtherPropertyGroup(makeAMeatPG(true));
     meat_pizza_asset.setItemIdentificationPG(makeAItemIdentificationPG("Meat Pizza"));
     getBlackboardService().publishAdd(meat_pizza_asset);
 //    System.out.println("publishAdding meat pizza asset: " + meat_pizza_asset +
@@ -118,10 +118,10 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   /**
    * Create and populate a Meat property group
    */
-  private MeatPG makeAMeatPG(boolean meatOnly) {
+  private MeatPG makeAMeatPG(boolean meatOK) {
     NewMeatPG new_meat_pg = (NewMeatPG)
       ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("MeatPG");
-    new_meat_pg.setMeatOnly(meatOnly);
+    new_meat_pg.setMeatOK(meatOK);
     return new_meat_pg;
   }
 
