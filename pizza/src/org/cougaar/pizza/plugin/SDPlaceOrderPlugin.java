@@ -184,7 +184,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
         Task newTask = (Task) i.next();
         AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
         Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
-                                                            Role.getRole(Constants.PIZZA_PROVIDER));
+                                                            Constants.Role.PIZZAPROVIDER);
         blackboard.publishAdd(alloc);
         if (logger.isDebugEnabled()) {
           logger.debug(" allocating task " + newTask);
@@ -256,7 +256,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     Vector prepPhrases = new Vector();
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition(AS);
-    pp.setIndirectObject(Role.getRole(Constants.PIZZA_PROVIDER));
+    pp.setIndirectObject(Constants.Role.PIZZAPROVIDER);
     prepPhrases.add(pp);
     if (excludePhrase != null) {
       prepPhrases.add(excludePhrase);
@@ -311,7 +311,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
       blackboard.publishRemove(result.getTask().getPlanElement());
     }
     NewPrepositionalPhrase excludePP = planningFactory.newPrepositionalPhrase();
-    excludePP.setPreposition(Constants.NOT);
+    excludePP.setPreposition(Constants.Preposition.NOT);
     excludePP.setIndirectObject(failedSupplier);
     publishFindProvidersTask(excludePP);
   }
@@ -325,7 +325,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    */
   private Entity checkFindProvidersTask(Task findProvidersTask) {
     Entity excludedEntity = null;
-    PrepositionalPhrase notPP = findProvidersTask.getPrepositionalPhrase(Constants.NOT);
+    PrepositionalPhrase notPP = findProvidersTask.getPrepositionalPhrase(Constants.Preposition.NOT);
     if (notPP != null) {
       excludedEntity = (Entity) notPP.getIndirectObject();
     }
@@ -362,7 +362,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   public Collection getProviderOrgAssets() {
     TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = self.getRelationshipSchedule();
-    Collection relationships = relSched.getMatchingRelationships(Role.getRole(Constants.PIZZA_PROVIDER), timeSpan);
+    Collection relationships = relSched.getMatchingRelationships(Constants.Role.PIZZAPROVIDER, timeSpan);
     List providers = new ArrayList();
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
