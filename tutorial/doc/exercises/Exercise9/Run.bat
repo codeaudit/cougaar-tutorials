@@ -24,19 +24,15 @@ if "%COUGAAR_INSTALL_PATH%"=="" goto AIP_ERROR
 if "%1"=="" goto ARG_ERROR
 
 set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\glm.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\planserver.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\xerces.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\log4j.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\j2ee.jar
-set LIBPATHS=.;%LIBPATHS%
 
 REM pass in "NodeName" to run a specific named Node
 
-set MYPROPERTIES=
+set MYPROPERTIES= -Dorg.cougaar.system.path=%COUGAAR_INSTALL_PATH%\sys -Dorg.cougaar.install.path=%COUGAAR_INSTALL_PATH% -Dorg.cougaar.core.servlet.enable=true -Dorg.cougaar.lib.web.scanRange=100 -Dorg.cougaar.lib.web.http.port=8800 -Dorg.cougaar.lib.web.https.port=-1 -Dorg.cougaar.lib.web.https.clientAuth=true
+
 set MYMEMORY=
 set MYCLASSES=org.cougaar.core.node.Node
 set MYARGUMENTS= -c -n "%1"
+
 
 @ECHO ON
 
