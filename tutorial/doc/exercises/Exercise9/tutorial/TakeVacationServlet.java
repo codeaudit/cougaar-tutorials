@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 2000-2001 BBNT Solutions, LLC
+ *  Copyright 2000-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ import org.cougaar.core.service.*;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.4 2002-11-19 17:33:01 twright Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.5 2003-01-23 19:44:25 mthome Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent 

@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import org.cougaar.planning.ldm.asset.Asset;
  * This COUGAAR Asset class serves as a base class for the ProgrammerAsset class.
  * The ProgrammerAsset class is generated using the AssetWriter utility
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerAssetAdapter.java,v 1.3 2001-12-27 23:52:56 bdepass Exp $
+ * @version $Id: ProgrammerAssetAdapter.java,v 1.4 2003-01-23 19:44:17 mthome Exp $
  */
 public class ProgrammerAssetAdapter extends Asset {
   private tutorial.Schedule schedule = new Schedule();

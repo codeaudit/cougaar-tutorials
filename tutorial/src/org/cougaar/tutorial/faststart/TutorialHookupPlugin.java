@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.5 2003-01-22 23:09:10 mbarger Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.6 2003-01-23 19:44:33 mthome Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {

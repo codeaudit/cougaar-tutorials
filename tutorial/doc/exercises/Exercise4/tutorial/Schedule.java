@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@ import java.util.Enumeration;
  * Mapping is key=Ingeter(month) value=assignment where assignment is either
  * a string like "Vacation" or a Task object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Schedule.java,v 1.2 2001-08-22 20:30:44 mthome Exp $
+ * @version $Id: Schedule.java,v 1.3 2003-01-23 19:44:19 mthome Exp $
  */
 public class Schedule extends Hashtable implements Serializable {
 

@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * Holds the pole identifier number for the Tower of Hanoi demo.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PolePosition.java,v 1.3 2001-08-22 20:30:52 mthome Exp $
+ * @version $Id: PolePosition.java,v 1.4 2003-01-23 19:44:33 mthome Exp $
  */
 public class PolePosition implements Serializable {
 

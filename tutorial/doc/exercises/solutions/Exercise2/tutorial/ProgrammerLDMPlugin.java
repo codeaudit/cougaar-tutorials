@@ -1,12 +1,12 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- *
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- *
+ * 
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -32,7 +32,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.4 2003-01-22 14:16:52 mbarger Exp $
+ * @version $Id: ProgrammerLDMPlugin.java,v 1.5 2003-01-23 19:44:27 mthome Exp $
  */
 public class ProgrammerLDMPlugin extends ComponentPlugin {
 

@@ -1,6 +1,6 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import org.cougaar.planning.ldm.plan.*;
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.8 2002-11-19 17:33:03 twright Exp $
+ * @version $Id: Organization.java,v 1.9 2003-01-23 19:44:33 mthome Exp $
  */
 public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 

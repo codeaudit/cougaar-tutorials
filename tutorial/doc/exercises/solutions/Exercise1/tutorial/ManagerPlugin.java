@@ -1,12 +1,12 @@
 /*
  * <copyright>
- *  Copyright 1997-2001 BBNT Solutions, LLC
+ *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- *
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- *
+ * 
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -23,7 +23,7 @@ package tutorial;
 /**
  * This COUGAAR Plugin publishes a Job object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerPlugin.java,v 1.1 2002-02-12 19:30:20 jwinston Exp $
+ * @version $Id: ManagerPlugin.java,v 1.2 2003-01-23 19:44:25 mthome Exp $
  **/
 import org.cougaar.core.plugin.*;
 public class ManagerPlugin extends ComponentPlugin {
