@@ -113,12 +113,17 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       // See if our kitchen can make the type of pizza requested and then
       // make a successful or unsuccessful allocation result.
       boolean kitchenCanMake = checkWithKitchen(newTask);
-      AllocationResult ar = 
-	PluginHelper.createEstimatedAllocationResult(newTask, pFactory,
-						     1.0, kitchenCanMake);
-      Allocation alloc = 
-	pFactory.createAllocation(newTask.getPlan(), newTask,
-				  kitchen, ar, Constants.Role.PIZZAPROVIDER);
+      AllocationResult ar;
+      if (kitchenCanMake) {
+        ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
+      } else {
+        // if we can't make the pizza provide a failed allocation result with a quantity of zero.
+        AspectValue qtyAspectValue = AspectValue.newAspectValue(AspectType.QUANTITY, 0);
+        AspectValue[] aspectValueArray = {qtyAspectValue};
+        ar = pFactory.newAllocationResult(1.0, kitchenCanMake, aspectValueArray);
+      }
+      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask,kitchen,
+                                                   ar, Constants.Role.PIZZAPROVIDER);
       blackboard.publishAdd(alloc);
     }
   }
