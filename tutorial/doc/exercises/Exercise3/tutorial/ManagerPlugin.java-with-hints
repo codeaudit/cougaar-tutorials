@@ -68,7 +68,7 @@ protected void setupSubscriptions() {
   // hint: see tutorial.assets.NewItemIdentificationPG class
   // hint: add a reference to the new NewItemIdentificationPG object to 'what_to_code'
 
-  // todo: Part 2: put the 'what_to_code' asset on the LogPlan
+  // todo: Part 2: put the 'what_to_code' asset on the Blackboard
   // hint: see BlackboardService.publishAdd()
 
   // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset

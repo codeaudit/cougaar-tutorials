@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,9 +21,9 @@
 package tutorial;
 
 /**
- * This class can be published to the PLAN and subscribed to by Plugins
+ * This class can be published to the Blackboard and subscribed to by Plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Job.java,v 1.3 2002-02-12 19:29:49 jwinston Exp $
+ * @version $Id: Job.java,v 1.4 2002-03-15 21:25:18 mbarger Exp $
  **/
 public class Job implements java.io.Serializable {
 
@@ -35,4 +35,4 @@ public class Job implements java.io.Serializable {
   public String toString() {
     return what;
   }
-} 
+}

@@ -63,7 +63,7 @@ protected void setupSubscriptions() {
   // todo: Part 1: create the AbstractAsset representing the project.
   //       Store it in instance variable 'what_to_code'
 
-  // todo: Part 2: put the 'what_to_code' asset on the LogPlan
+  // todo: Part 2: put the 'what_to_code' asset on the Blackboard
 
   // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset
   //       (complete and use the makeTask function which is later in this file)

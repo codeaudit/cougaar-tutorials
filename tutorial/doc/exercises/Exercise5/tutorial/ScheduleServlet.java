@@ -28,7 +28,7 @@ import org.cougaar.core.servlet.SimpleServletComponent;
 
 
  // todo:  add code to make this a servlet subclass
-public class ScheduleServlet 
+public class ScheduleServlet
 {
 	private Properties properties = null;
 	private PrintWriter out;
@@ -47,7 +47,7 @@ public class ScheduleServlet
 	{
 		execute(request, response);
 	}
- 
+
 	public void doPost(
 	        HttpServletRequest request,
 	        HttpServletResponse response) throws IOException, ServletException
@@ -63,9 +63,9 @@ public class ScheduleServlet
 		// todo:  get the PrintWriter which sends data to HTTP
 	    try {
 		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
-		
-		// todo: query the PLAN for a Collection of ProgrammerAssets
-           }	
+
+		// todo: query the Blackboard for a Collection of ProgrammerAssets
+           }
 		catch (Exception ex)
 		{
 			out.println(ex.getMessage());

@@ -31,7 +31,7 @@ import org.cougaar.core.domain.RootFactory;
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.1 2002-02-12 19:29:55 jwinston Exp $
+ * @version $Id: ProgrammerLDMPlugin.java,v 1.2 2002-03-15 21:29:24 mbarger Exp $
  */
 public class ProgrammerLDMPlugin extends ComponentPlugin {
 
@@ -70,7 +70,7 @@ public class ProgrammerLDMPlugin extends ComponentPlugin {
   }
 
   /**
-   * Used for initialization to populate the PLAN with ProgrammerAsset objects
+   * Used for initialization to populate the Blackboard with ProgrammerAsset objects
    */
 protected void setupSubscriptions() {
 

@@ -41,7 +41,7 @@ import org.cougaar.core.service.*;
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.1 2002-02-12 19:29:53 jwinston Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2002-03-15 21:29:24 mbarger Exp $
  **/
 // todo:  Make ManagerAllocatorPlugin a subclass
 public class ManagerAllocatorPlugin  {
@@ -114,7 +114,7 @@ private void allocateTo(Asset asset, Task task) {
 
     // todo:  Allocate the task to the asset (Note: estAR can remain null)
 
-    // todo:  Put the allocation on the LogPlan
+    // todo:  Put the allocation on the Blackboard
 
 }
 

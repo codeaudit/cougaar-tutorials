@@ -74,7 +74,7 @@ protected void setupSubscriptions() {
   // more hints: iipg.setItemIdentification("e-somthing");
   // more hints: what_to_code.setItemIdentificationPG(iipg);
 
-  // todo: Part 2: put the 'what_to_code' asset on the LogPlan
+  // todo: Part 2: put the 'what_to_code' asset on the Blackboard
   // hint: see BlackboardService.publishAdd()
   // more hints: getBlackboardService().publishAdd(what_to_code);
 

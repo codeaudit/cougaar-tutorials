@@ -74,7 +74,7 @@ public class ScheduleServlet
 	    try {
 		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
 		
-		// todo: query the PLAN for a Collection of ProgrammerAssets
+		// todo: query the Blackboard for a Collection of ProgrammerAssets
 		// hint: use the SimpleServletSupport object
 		// more hints:  Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
 		// more hints:  Iterator iter = programmers.iterator();
