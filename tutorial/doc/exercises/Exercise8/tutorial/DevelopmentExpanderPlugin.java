@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.8 2003-04-14 14:08:25 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.9 2003-04-17 14:51:14 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -105,25 +105,13 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
    * Create a task.
    * @param verb The string for the verb for the task.
    * @param parent_task The task being expanded
-   * @param start the start month for the task
-   * @param deadline the end month for the task
-   * @param duration the length (in months) of the task
    * @param workflow the workflow being filled out
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
     NewTask new_task = ((PlanningFactory)domainService.getFactory("planning")).newTask();
 
-    new_task.setParentTask(parent_task);
-    new_task.setWorkflow(wf);
-
-    // Set the verb as given
-    new_task.setVerb(Verb.getVerb(verb));
-
-    // Copy important fields from the parent task
-    new_task.setPlan(parent_task.getPlan());
-    new_task.setDirectObject(parent_task.getDirectObject());
-    new_task.setPrepositionalPhrases(parent_task.getPrepositionalPhrases());
+// todo: fill in all the fields of new_task, include the parent task field
 
     return new_task;
   }
@@ -185,19 +173,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     getBlackboardService().publishAdd(t3);  
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
-    new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow
-
-    // Add constraints onto the workflow that t1 < t2 < t3
-    Vector constraints = new Vector();
-
-    // End(t1) must be before Start(t2)
-// todo : add new constraint for t1 before t2
-
-    // End(t2) must be before Start(t3)
-// todo : add new constraint for t2 before t3
-
-    // set the constraints on the workflow
-    new_wf.setConstraints(constraints.elements());
+// todo: add the new tasks to the old task's workflow
   }
 
   /**

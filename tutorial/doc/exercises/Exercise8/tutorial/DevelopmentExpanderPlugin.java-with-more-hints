@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.8 2003-04-10 16:00:57 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.9 2003-04-17 14:51:14 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -62,12 +62,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
 
-  // Subscription for all of my expansions
-  private IncrementalSubscription allMyExpansions;
-
-  // Subscription for allocations of all subtasks that I make
-  private IncrementalSubscription allSubTaskAllocations;
-
   // This predicate matches all tasks with verb "CODE"
   private UnaryPredicate allCodeTasksPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -80,43 +74,12 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     }
   };
 
-  // This predicate matches all of my subtask plan elements
-  private UnaryPredicate allSubTasksPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      boolean ret = false;
-      if (o instanceof PlanElement) {
-        Task t = ((PlanElement)o).getTask();
-        Verb v = t.getVerb();
-        ret = v.equals("DESIGN") || v.equals("DEVELOP") || v.equals("TEST");
-      }
-      return ret;
-    }
-  };
-
-  /**
-   * Predicate that matches all Expansion of CODE tasks
-   * todo: subscribe to expansions of CODE tasks
-   */
-  private UnaryPredicate expansionPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      // hints: use Expansion.getTask() to get the parent task
-      // more hints:       if (o instanceof Expansion)
-      // more hints:       {
-      // more hints:         Expansion exp = (Expansion)o;
-      // more hints:         return (exp.getTask().getVerb().equals(Verb.getVerb("CODE")));
-      // more hints:       }
-      return false;
-    }
-  };
-
   /**
    * Establish subscription for CODE tasks
    **/
   public void setupSubscriptions() {
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
-    allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-    allSubTaskAllocations =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
@@ -125,72 +88,55 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentExpanderPlugin::execute");
 
-    // todo: Now look through all new 'CODE' tasks
+    // Now look through all new 'CODE' tasks
     // and expand
     for(Enumeration e = allCodeTasks.getAddedList();e.hasMoreElements();)
     {
-      // todo: Create expansion and workflow to represent the expansion
-      // of this task.  Publish the expansion, workflow and subtasks.
-      // hints: PlanningFactory.newWorkflow()
-      // hints: RootFacotry.createExpansion()
+      Task task = (Task) e.nextElement();
 
-      // more hints: Task task = (Task) e.nextElement();
-      // more hints: NewWorkflow new_wf = ((PlanningFactory)domainService.getFactory("planning")).newWorkflow();
-      // more hints: new_wf.setParentTask(task);
-
-      // more hints: plan(new_wf);
-
-      // more hints: AllocationResult estAR = null;
-      // more hints: Expansion new_exp =
-      // more hints:   ((PlanningFactory)domainService.getFactory("planning")).createExpansion(task.getPlan(), task, new_wf, estAR);
-      // more hints: getBlackboardService().publishAdd(new_exp);
-
-
-
-
-
+      // Create expansion and workflow to represent the expansion
+      // of this task
+// todo: create a new workflow, call plan to fill it out, and
+// todo: create and publish a new expansion
+// hints: PlanningFactory.newWorkflow
+// hints: Workflow.setParentTask
+// hints: PlanningFactory.createExpansion
+// hints: BlackboardService.publishAdd
+// more hints: NewWorkflow new_wf = ((PlanningFactory)domainService.getFactory("planning")).newWorkflow();
+// more hints: new_wf.setParentTask(task);
+// more hints: plan(new_wf);
+// more hints: AllocationResult estAR = null;
+// more hints: Expansion new_exp =
+// more hints:   ((PlanningFactory)domainService.getFactory("planning")).createExpansion(task.getPlan(), task, new_wf, estAR);
+// more hints: getBlackboardService().publishAdd(new_exp);
     }
-
-    // Now look through all changed expansions and update the allocation result
-    Enumeration exps = allMyExpansions.elements();
-    while (exps.hasMoreElements()) {
-       checkForReplan((Expansion)exps.nextElement());
-    }
-// todo: report allocation results
-// hints: use PluginHelper.updateAllocationResult to report back results
-// more hints:    PluginHelper.updateAllocationResult(allMyExpansions);
   }
 
   /**
    * Create a task.
    * @param verb The string for the verb for the task.
    * @param parent_task The task being expanded
-   * @param start the start month for the task
-   * @param deadline the end month for the task
-   * @param duration the length (in months) of the task
    * @param workflow the workflow being filled out
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
     NewTask new_task = ((PlanningFactory)domainService.getFactory("planning")).newTask();
 
-    new_task.setParentTask(parent_task);
-    new_task.setWorkflow(wf);
-
-    // Set the verb as given
-    new_task.setVerb(Verb.getVerb(verb));
-
-    // Copy important fields from the parent task
-    new_task.setPlan(parent_task.getPlan());
-    new_task.setDirectObject(parent_task.getDirectObject());
-    new_task.setPrepositionalPhrases(parent_task.getPrepositionalPhrases());
+// todo: fill in all the fields of new_task, include the parent task field
+// hint: Task.setParentTask
+// hint: Task.setWorkflow
+// hint: Task.setVerb
+// hint: Task.setPlan, Task.setDirectObject, Task.setPrepositionalPhrases
+// more hints:    new_task.setParentTask(parent_task);
+// more hints:    new_task.setWorkflow(wf);
+// more hints:    new_task.setVerb(Verb.getVerb(verb));
+// more hints:    new_task.setPlan(parent_task.getPlan());
+// more hints:    new_task.setDirectObject(parent_task.getDirectObject());
+// more hints:    new_task.setPrepositionalPhrases(parent_task.getPrepositionalPhrases());
 
     return new_task;
   }
 
-  /**
-   * This convenience function is complete as-is
-   */
   private void setPreferences(NewTask new_task, long start, int duration, long deadline) {
     // Establish preferences for task
     Vector preferences = new Vector();
@@ -216,48 +162,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   }
 
   /**
-   * This convenience function is complete as-is
-   */
-  private void setPreferences(NewTask new_task, int duration, long deadline) {
-    // Establish preferences for task (just duration and deadline, not start)
-    Vector preferences = new Vector();
-
-    ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.DURATION, duration));
-    Preference pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
-    preferences.add(pref);
-
-    scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
-    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
-    preferences.add(pref);
-
-    new_task.setPreferences(preferences.elements());
-  }
-
-  /**
-   * Determine if we should replan this expansion because something changed
-   */
-  private void checkForReplan(Expansion exp) {
-  // todo: get the next pending constraint and update the constrained task's preferences
-  // hints: use Workflow.getNextPendingConstraint  to get the next constraint to work on
-  // hints: use SettableConstraintEvent.setValue and Constraint.computeValidConstrainedValue
-  // hints:   to update the preferences on the constrain-ed task
-  // hints: Don't forget to publishAdd the constrained task
-
-  // more hints: Workflow wf = exp.getWorkflow();
-  // more hints:   Constraint c = wf.getNextPendingConstraint();
-  // more hints:   if (c != null) {
-  // more hints:     ConstraintEvent ced = c.getConstrainedEventObject();
-  // more hints:     if (ced instanceof SettableConstraintEvent)
-  // more hints:     {
-  // more hints:       ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue());
-  // more hints:       getBlackboardService().publishAdd(c.getConstrainedTask());
-  // more hints:    }
-  // more hints:   }
-  }
-
-  /**
    * This VERY primitive scheduler just keeps moving the whole workflow later until it can be scheduled
    */
   private void plan(NewWorkflow new_wf) {
@@ -267,66 +171,32 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     long start_month    = getStartTime(task);
     long deadline_month = latest_end;
 
-		Vector tasks = new Vector(); // Vector in which to hold subtasks
+    Vector tasks = new Vector();  // Vector in which to hold new subtasks
 
-    // todo : use makeTask and setPreferences convenience functions to create a "DESIGN" task
     // assign one month for design
     int this_task_duration = 1;
-    // hints: The first task should have a START_TIME preference.  Use the setPreferneces (below) that takes 4 arguments
-    // hints: Don't forget to publish the new subtask and add it to the Workflow
-    // more hints: NewTask t1 = makeTask("DESIGN", task, new_wf);
-    // more hints: setPreferences(t1, start_month, this_task_duration, deadline_month);
-    // more hints: getBlackboardService().publishAdd(t1);      // Add the task to the Blackboard
-		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
+    NewTask t1 = makeTask("DESIGN", task, new_wf);
+    setPreferences(t1, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t1);      // Add the task to the Blackboard
+    tasks.addElement(t1);  // Add the task to the vector of subtasks
 
     // assign three months for development
     this_task_duration = 3;
-    // hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
-    // hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
-    // more hints: NewTask t2 = makeTask("DEVELOP", task, new_wf);
-    // more hints: setPreferences(t2, this_task_duration, deadline_month);
-    // //getBlackboardService().publishAdd(t2);      // Don't add the task to the Blackboard yet
-		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
+    NewTask t2 = makeTask("DEVELOP", task, new_wf);
+    setPreferences(t2, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t2); 
+    tasks.addElement(t2); // Add the task to the vector of subtasks
 
-    // testing takes two months
+    // testing takes two month
     this_task_duration = 2;
-    // hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
-    // hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
-    // more hints: NewTask t3 = makeTask("TEST", task, new_wf);
-    // more hints: setPreferences(t3, this_task_duration, deadline_month);
-    // //getBlackboardService().publishAdd(t2);      // Don't add the task to the Blackboard yet
-		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
+    NewTask t3 = makeTask("TEST", task, new_wf);
+    setPreferences(t3, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t3);  
+    tasks.addElement(t3); // Add the task to the vector of subtasks
 
-		// more hints: new_wf.setTasks(tasks.elements());
-
-    // todo: Add constraints onto the workflow that t1 < t2 < t3
-    // hints: see PlanningFactory().newConstraint();
-    // hints: see NewConstraint.setConstrainingTask()
-    // hints: see NewConstraint.setConstrainingAspect()
-    // hints: see NewConstraint.setConstrainedTask()
-    // hints: see NewConstraint.setConstrainedAspect()
-    // hints: see NewConstraint.setConstraintOrder()
-
-    // End(t1) must be before Start(t2)
-    // more hints: NewConstraint c1 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
-    // more hints: c1.setConstrainingTask(t1);
-    // more hints: c1.setConstrainingAspect(AspectType.END_TIME);
-    // more hints: c1.setConstrainedTask(t2);
-    // more hints: c1.setConstrainedAspect(AspectType.START_TIME);
-    // more hints: c1.setConstraintOrder(Constraint.BEFORE);
-    // more hints: constraints.addElement(c1);
-
-    // End(t2) must be before Start(t3)
-    // more hints: NewConstraint c2 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
-    // more hints: c2.setConstrainingTask(t2);
-    // more hints: c2.setConstrainingAspect(AspectType.END_TIME);
-    // more hints: c2.setConstrainedTask(t3);
-    // more hints: c2.setConstrainedAspect(AspectType.START_TIME);
-    // more hints: c2.setConstraintOrder(Constraint.BEFORE);
-    // more hints: constraints.addElement(c2);
-
-    // set the constraints on the workflow
-    // more hints: new_wf.setConstraints(constraints.elements());
+// todo: add the new tasks to the old task's workflow
+// hint: Workflow.setTasks
+// more hints: new_wf.setTasks(tasks.elements());
   }
 
   /**
