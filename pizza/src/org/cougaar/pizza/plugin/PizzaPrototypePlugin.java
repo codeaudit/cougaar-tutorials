@@ -25,7 +25,6 @@ import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.PizzaAsset;
-//import org.cougaar.pizza.util.PGCreator;
 
 /**
  * This COUGAAR Plugin creates and publishes Pizza Asset objects.
@@ -84,26 +83,11 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
     // as an asset that is available in subscriptions, but can
     // be used to build 'real' assets when asked for by prototype name
     getPrototypeRegistryService().cachePrototype("pizza", new_prototype);
-
-    // Create a Veggie Pizza Asset based on the existing pizza prototype
-    //TODO: Lora put this in the place order plugin
-    //PizzaAsset veggie_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    //veggie_pizza_asset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
-    //veggie_pizza_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Veggie Pizza"));
-    //getBlackboardService().publishAdd(veggie_pizza_asset);
-
-    // Create a Meat Pizza Asset based on the existing pizza prototype
-    //PizzaAsset meat_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    //meat_pizza_asset.addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
-    //meat_pizza_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Meat Pizza"));
-    //getBlackboardService().publishAdd(meat_pizza_asset);
-    // TODO: End of new stuff for invite plugin
   }
 
   /**
    * No subscriptions, so this method does nothing
    */
   protected void execute () {}
-
 }
 
