@@ -133,7 +133,7 @@ import org.cougaar.util.UnaryPredicate;
  */
 public class HistoryServlet extends ComponentPlugin {
   // Some defaults
-  protected final int INITIAL_MAX_ENTRIES=1000; // Default mas # events to track
+  protected final int INITIAL_MAX_ENTRIES=1000; // Default max # events to track
   protected final int INITIAL_MAX_ROLE_SCHEDULE_ELEMENTS=5;
   protected final int INITIAL_MAX_CHILD_TASKS=5;
 
@@ -160,7 +160,7 @@ public class HistoryServlet extends ComponentPlugin {
   protected static SimpleDateFormat format = new SimpleDateFormat ("MM-dd hh:mm:ss,SSS");
   protected String encAgentName;
 
-  // The actual Blackboard history we collect
+  /** The actual Blackboard history we collect */
   protected SortedSet events = new TreeSet();
 
   // Has the events list been trimmed?
@@ -223,7 +223,7 @@ public class HistoryServlet extends ComponentPlugin {
     };
 
   /** 
-   * "setParameter" is only called if a plugin has parameters.
+   * Only called if a plugin has parameters.
    * We over-ride this to use the Arguments utility, since all our
    * arguments are NAME=VALUE format.
    */
@@ -231,7 +231,7 @@ public class HistoryServlet extends ComponentPlugin {
     args = new Arguments(o);
   }  
 
-  // Get the ServletService via reflection
+  /** Get the ServletService via reflection */
   public void setServletService(ServletService servletService) {
     this.servletService = servletService;
   }
@@ -293,7 +293,7 @@ public class HistoryServlet extends ComponentPlugin {
 
   }
 
-  // Load this servlet at /history
+  /** Load this servlet at "/history" */
   protected String getPath() {
     return "/history";
   }
@@ -367,8 +367,10 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // Generate a link to the PlanView (/tasks) servlet
-  // for full details on the objet.
+  /**
+   * Generate a link to the PlanView (/tasks) servlet
+   * for full details on the objet.
+   */
   protected String getURL (UID uid, int which) {
     int mode=0;//PlanViewServlet.MODE_FRAME;
     switch (which) {
@@ -418,7 +420,7 @@ public class HistoryServlet extends ComponentPlugin {
     return eventNum++;
   }
 
-  // Check the Tasks subscription adding any new events to the list
+  /** Check the Tasks subscription adding any new events to the list */
   protected void checkTasks (long now) {
     // If there were any Task events
     if (tasksSubscription.hasChanged()) {
@@ -470,7 +472,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // description of an added Task shows the verb, DO, and preferences.
+  /** description of an added Task shows the verb, DO, and preferences. */
   protected String getAddedTaskComment (Task task) {
     StringBuffer buf = new StringBuffer();
 
@@ -486,7 +488,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Add any PlanElement events to the Set
+  /** Add any PlanElement events to the Set */
   protected void checkPlanElements(long now) {
     if (planElementsSubscription.hasChanged()) {
       Collection added = planElementsSubscription.getAddedCollection();
@@ -541,7 +543,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // Add any Relay events
+  /** Add any Relay events */
   protected void checkRelays (long now) {
     if (relaysSubscription.hasChanged()) {
       Collection added = relaysSubscription.getAddedCollection();
@@ -582,7 +584,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // Add any Asset events to the Set
+  /** Add any Asset events to the Set */
   protected void checkAssets (long now) {
     if (assetsSubscription.hasChanged()) {
       Collection added = assetsSubscription.getAddedCollection();
@@ -705,8 +707,10 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   } // end of getChangedAssetComment
 
-  // Print the RoleSchedule of the Asset if any, up to the
-  // maxRoleScheduleElements
+  /**
+   * Print the RoleSchedule of the Asset if any, up to the
+   * maxRoleScheduleElements
+   */
   protected String getRoleSchedule (Asset asset) {
     StringBuffer buf = new StringBuffer();
 
@@ -748,7 +752,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Add any added/changed/removed UniqueObjects
+  /** Add any added/changed/removed UniqueObjects */
   protected void checkUniqueObjects (long now) {
     if (uniqueObjectsSubscription.hasChanged()) {
       Collection added = uniqueObjectsSubscription.getAddedCollection();
@@ -788,8 +792,10 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // For an Added unique object, print it's name, and any
-  // HistoryServletFriendly content
+  /**
+   * For an Added unique object, print it's name, and any
+   * HistoryServletFriendly content
+   */
   protected String getAddedUniqueObjectComment (UniqueObject unique) {
     StringBuffer buf = new StringBuffer();
 
@@ -804,7 +810,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Changed/Removed unique objects use the same comment as for Add
+  /** Changed/Removed unique objects use the same comment as for Add */
   protected String getChangedUniqueObjectComment (UniqueObject unique) {
     return getAddedUniqueObjectComment (unique);
   }
@@ -813,7 +819,7 @@ public class HistoryServlet extends ComponentPlugin {
     return getAddedUniqueObjectComment (unique);
   }
 
-  // Get the non-Package name of the Class
+  /** Get the non-Package name of the Class */
   protected String getClassName (Object obj) {
     String classname = obj.getClass().getName ();
     int index = classname.lastIndexOf (".");
@@ -885,7 +891,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Show the target(s) of a relay, including ABAs
+  /** Show the target(s) of a relay, including ABAs */
   protected String showTargetAddresses (Relay.Source sourceRelay) {
     StringBuffer buf = new StringBuffer();
 
@@ -960,7 +966,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Describe this Community by name, entities
+  /** Describe this Community by name, entities */
   protected String getCommunityText(String prefix, Community community) {
     StringBuffer buf = new StringBuffer();
     buf.append (prefix);
@@ -977,7 +983,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Show the results on the PE
+  /** Show the results on the PE */
   protected String getChangedPEComment (PlanElement planElement) {
     StringBuffer buf = new StringBuffer();
 
@@ -1014,7 +1020,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Get an HTML table of these Aspect Values (id'd by the prefix)
+  /** Get an HTML table of these Aspect Values (id'd by the prefix) */
   protected String getAspectValues(AspectValue [] values, String prefix) {
     StringBuffer buf = new StringBuffer();
     buf.append ("<table>");
@@ -1033,7 +1039,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Get String representation of these Aspect Values
+  /** Get String representation of these Aspect Values */
   protected String getAspectValues2 (AspectValue [] values) {
     StringBuffer buf = new StringBuffer();
     // for all (type, result) pairs
@@ -1044,7 +1050,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Get a String representation of this AspectValue
+  /** Get a String representation of this AspectValue */
   protected String getAspectValue(AspectValue avi) {
     StringBuffer buf = new StringBuffer();
     buf.append(
@@ -1070,8 +1076,6 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   /**
-   * getTimeString.
-   * <p>
    * Formats long millis time to Date Format String.
    */
   protected String getTimeString(long time) {
@@ -1087,7 +1091,7 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
 
-  // Get a String HTML table of the Task's preferences
+  /** Get a String HTML table of the Task's preferences */
   protected String getTaskPreferences(Task task) {
     Enumeration prefs = task.getPreferences();
     StringBuffer buf = new StringBuffer();
@@ -1204,7 +1208,7 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
-  // Get the type & item ID of an Asset -- to ID it in the display
+  /** Get the type & item ID of an Asset -- to ID it in the display */
   protected String getTypeAndItemInfo (Asset asset) {
     StringBuffer buf = new StringBuffer();
 
@@ -1241,7 +1245,9 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // Add a new event to the list
+  /**
+   * Add a new event to the list
+   */
   protected void addEvent (EventInfo newEvent) {
     events.add (newEvent);
 
@@ -1270,12 +1276,16 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // Reset the stored event list -- used when we've resorted the list
+  /**
+   * Reset the stored event list -- used when we've resorted the list.
+   */
   protected void setEvents (SortedSet events) {
     this.events = events;
   }
 
-  // The inner class used by the servlet to format the request results
+  /**
+   *  The inner class used by the servlet to format the request results.
+   */
   protected class HistoryFormatter {
     public static final int FORMAT_DATA = 0;
     public static final int FORMAT_XML = 1;
@@ -1293,9 +1303,10 @@ public class HistoryServlet extends ComponentPlugin {
       execute (response);
     }         
 
-    // Interpret the Format requested (only HTML supported)
-    // sort the events as requested before we do printing
-
+    /**
+     * Interpret the Format requested (only HTML supported), 
+     * sort the events as requested before we do printing.
+     */
     protected void processParams (HttpServletRequest request) {
       // Set page format. Default is HTML
       String formatParam = request.getParameter("format");
@@ -1334,7 +1345,7 @@ public class HistoryServlet extends ComponentPlugin {
       }
     } // done processParams
 
-    // Execute the request - print the web page
+    /** Execute the request - print the web page */
     public void execute(HttpServletResponse response) throws IOException, ServletException {
       if (format == FORMAT_HTML) {
         response.setContentType("text/html");
@@ -1397,7 +1408,7 @@ public class HistoryServlet extends ComponentPlugin {
       // FIXME: Add support for FORMAT_XML and FORMAT_DATA
     } // end of execute()
 
-    // Print the actual table of events
+    /** Print the actual table of events */
     protected String getHtmlForState () {
       StringBuffer buf = new StringBuffer();
 
@@ -1486,8 +1497,10 @@ public class HistoryServlet extends ComponentPlugin {
     } // end of getHTMLForState helper method, called by execute()
   } // end of HistoryFormatter inner class
 
-  // Sort the events collection by UID and then time. Then type, then meaning.
-  // Updates the single events collection Set
+  /**
+   * Sort the events collection by UID and then time. Then type, then meaning.
+   * Updates the single events collection Set
+   */
   protected void sortByUIDThenTime () {
     SortedSet events2 = new TreeSet(new Comparator () {
 	public int compare(Object o1, Object o2) {
@@ -1585,8 +1598,10 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  // This is the class that stores the information about an event
-  // Basic information about a particular event in a Transaction
+  /**
+   * This is the class that stores the information about an event
+   * Basic information about a particular event in a Transaction
+   */
   private static class EventInfo implements Comparable {
     public int num; // Event number
     public String uid; // The UID of the object
@@ -1625,8 +1640,10 @@ public class HistoryServlet extends ComponentPlugin {
       this.toStringResult = toStringResult;
     }
 
-    // compare first by timestamp, and withing that, by UID
-    // Then by type (A/C/R), and finally by the String meaning.
+    /**
+     * compare first by timestamp, and withing that, by UID
+     * Then by type (A/C/R), and finally by the String meaning.
+     */
     public int compareTo (Object other) {
       EventInfo otherEvent = (EventInfo) other;
       
@@ -1653,7 +1670,7 @@ public class HistoryServlet extends ComponentPlugin {
       return toString (true, false, false);
     }
 
-    // Odd boolean used to alternate colors for rows
+    /** Odd boolean used to alternate colors for rows */
     public String toString (boolean odd, boolean showChangeReport, boolean showDetails) {
       String color = odd ? "#FFFFFF" : "#c0c0c0";
       StringBuffer buf = new StringBuffer();

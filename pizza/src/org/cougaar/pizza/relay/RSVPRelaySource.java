@@ -41,11 +41,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A source-side  {@link Relay} for RSVPs.
+ * A source-side {@link Relay} for RSVPs.
  * <p/>
  * As responses come back from remote agents, the updateResponse
- * method is called and entries are added to the PizzaPreferences 
+ * method is called and entries are added to the {@link PizzaPreferences} 
  * object.
+ * @see org.cougaar.pizza.plugin.InvitePlugin
+ * @see org.cougaar.pizza.plugin.PizzaPreferences
  */
 public class RSVPRelaySource implements Relay.Source, UniqueObject {
   private final Object query; // The query in our RSVP -- meat or veg?
@@ -81,7 +83,7 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   }
 
   /**
-   * Relay.Source implementation
+   * Who gets this invitation?
    *
    * @return set of targets (For us, just one member - the AttributeBasedAddress)
    */
@@ -90,7 +92,7 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   }
 
   /**
-   * Relay.Source implementation
+   * The query in the relay.
    *
    * @return the query in the RSVP - meat or veg?
    */
@@ -99,7 +101,7 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   }
 
   /**
-   * Relay.Source implementation
+   * Get the Factory for RSVPTargets. 
    * <p/>
    * Make sure on the target side we create a target relay.
    * The target relay has just 
@@ -118,8 +120,6 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   }
 
   /**
-   * Relay.Source implementation
-   * <p/>
    * Record responses from remote agents as they come in on the pizza
    * preferences object.
    * <p/>
@@ -161,13 +161,13 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   public UID getUID() { return uid; }
 
   /** 
-   * Implemented for UniqueObject interface.
    * Does nothing - not allowed to reset UID.
+   * Implemented for UniqueObject interface.
    **/
   public void setUID(UID uid) {}
 
   public String toString() {
-    return "RSVPRelaySource : " +
+    return "RSVPRelaySource: " +
         " query=" + getContent() +
         " target=" + targets +
         " preferences=" + pizzaPreferences;

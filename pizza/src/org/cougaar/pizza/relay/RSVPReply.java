@@ -51,6 +51,6 @@ public class RSVPReply implements Serializable {
   }
 
   public String toString() {
-    return "RSVPReply : " + friend + "=" + pizzaPreference;
+    return "RSVPReply: " + friend + "=" + pizzaPreference;
   }
 }

@@ -41,12 +41,13 @@ import java.util.Collections;
 
 
 /**
- * PizzaDomain definition -
+ * PizzaDomain definition
+ * <p>
  * Required to ensure that Roles and Assets specific to the pizza
- * application are initialized correctly. PizzaDomain does not include any
- * domain specific LogicProviders. It only initializes our Constants
- * and loads our Asset Factory.
- *
+ * application are initialized correctly. The PizzaDomain does not include any
+ * domain specific LogicProviders. It only initializes our {@link Constants}
+ * and loads our AssetFactory.
+ *<p>
  * Other applications might have custom objects to transmit between
  * agents, and therefore need their own LogicProviders. Similarly,
  * they might want their own XPlan, to have custom-tuned lookup
@@ -55,8 +56,10 @@ import java.util.Collections;
  **/
 public class PizzaDomain extends DomainAdapter {
 
-  // Note the constant for the domain name, with the constant
-  // following the <domain>_NAME variable naming pattern
+  /**
+   * Name of this Domain. 
+   * Note the <domain>_NAME variable naming pattern
+   */
   public static final String PIZZA_NAME = "pizza";
 
   private DomainService domainService;
@@ -82,6 +85,9 @@ public class PizzaDomain extends DomainAdapter {
     this.ldmService = ldmService;
   }
 
+  /**
+   * Initialize this domain, specifically our {@link Constants.Roles}
+   */
   public void initialize() {
     super.initialize();
 
@@ -112,6 +118,9 @@ public class PizzaDomain extends DomainAdapter {
     return Collections.EMPTY_LIST;
   }
 
+  /**
+   * Load the PlanningFactory and our Domain-specify Asset and PropertyGroup Factories
+   **/
   protected void loadFactory() {
     LDMServesPlugin ldm = ldmService.getLDM();
     PlanningFactory ldmf = (PlanningFactory) ldm.getFactory("planning");

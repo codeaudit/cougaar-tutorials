@@ -28,12 +28,15 @@ package org.cougaar.pizza.plugin.util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.cougaar.pizza.Constants;
 
 /**
- *
+ * Simple extension of the main ServiceDiscovery PublishTaxonomy support class, 
+ * to point to the tModelNames needed by the pizza application, and point to the 
+ * pizza app Taxonomy files. 
+ * Note that this class could be used by any simple SD application that needs only
+ * the Commercial Service Scheme, by simply using your own Constants.getDataPath().
  */
 public class PublishTaxonomy extends org.cougaar.servicediscovery.util.yp.PublishTaxonomy {
 
@@ -43,15 +46,15 @@ public class PublishTaxonomy extends org.cougaar.servicediscovery.util.yp.Publis
     // Add taxonomies required for pizza application. 
     // Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME lists all
     // recognized roles.
-    // Constants.UDDIConstants.ORGANIZATION_TYPES) lists the recognized
-    // organization types e.g. military or commercial.
+    // Constants.UDDIConstants.ORGANIZATION_TYPES lists the recognized
+    // organization types e.g. Military or Commercial (which we want).
     ArrayList tModelNames = new ArrayList();
     tModelNames.add(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME);
     tModelNames.add(Constants.UDDIConstants.ORGANIZATION_TYPES);
 
     setTModelNames(tModelNames);
 
-    // Define file path for above taxonomy files - located in 
+    // Define file path for above taxonomy files - for pizza app, located in 
     // $CIP/pizza/data/taxonomies.
     setBasePath(Constants.getDataPath() + File.separator + 
 		"taxonomies" + File.separator);

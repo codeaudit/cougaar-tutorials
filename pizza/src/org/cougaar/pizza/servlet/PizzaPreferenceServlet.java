@@ -49,8 +49,8 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 
 /**
- * Shows collected RSVPs from invited guests.
- * Runs at /pizza. Load into the agent doing the inviting (has the PizzaPreferences object).
+ * Shows collected RSVPs from invited guests at "/pizza".
+ * Load into the Agent doing the inviting (has the {@link PizzaPreferences} object).
  * In our case, that is Alice.
  */
 public class PizzaPreferenceServlet extends BaseServletComponent {

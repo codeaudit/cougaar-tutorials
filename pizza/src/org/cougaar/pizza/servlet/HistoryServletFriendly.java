@@ -34,7 +34,7 @@ package org.cougaar.pizza.servlet;
  */
 public interface HistoryServletFriendly {
   /**
-   * @param int HistoryServlet.ADDED, CHANGED, or REMOVED in this transaction
+   * @param whichState HistoryServlet.ADDED, CHANGED, or REMOVED in this transaction
    * @return HTML-formatted description of the object for servlet display
    */
   public String toHTML (int whichState);

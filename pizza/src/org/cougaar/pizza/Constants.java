@@ -57,6 +57,9 @@ public class Constants {
   /* used when showing how long it takes for this number of friends to reply */
   public static final int EXPECTED_NUM_FRIENDS = 4;
 
+  /**
+   * Verbs used by the Pizza application plugins.
+   */
   public interface Verbs {
     /** Verb for ordering pizzas */
     public static final Verb ORDER = Verb.get("Order");
@@ -64,16 +67,28 @@ public class Constants {
     public static final Verb FIND_PROVIDERS = Verb.get("FindProviders");
   }
 
+  /**
+   * Special Prepositions used by the pizza application
+   */
   public interface Prepositions {
     /* Used in excluding a particular provider */
     public static final String NOT = "Not";
   }
 
+  /**
+   * Relationship Types needed by the Pizza application
+   */
   public interface RelationshipTypes {
+    /**
+     * A service providing relationship
+     */
     org.cougaar.planning.ldm.plan.RelationshipType PROVIDER =
         org.cougaar.planning.ldm.plan.RelationshipType.create(PROVIDER_SUFFIX, CUSTOMER_SUFFIX);
   }
 
+  /**
+   * Roles used on Assets in the Pizza application.
+   */
   public static class Roles {
     /**
      * Ensure that Role constants are initialized. Actually does nothing, but
@@ -81,14 +96,14 @@ public class Constants {
      * before executing any code in this class. This ensures that Roles 
      * required for the Pizza app are created properly before a application
      * code calls Role.get(Constants.Role.XXX)
-     *
+     *<p>
      * All Roles have a converse - PizzaProvider/PizzaConsumer for example.
      * The following Role.create calls specify both the Role and its converse. 
      * In the case of the Carnivore Role - the Role and its converse are the
      * same. The call to create PizzaProvider, however, designates 
      * PizzaConsumer as the converse. (See RelationshipType.PROVIDER definition
      * above.
-     *
+     *<p>
      * If Role.get(XXX) is called before a proper Role.create, the Role code 
      * will create a default pairing of XXX and ConverseOfXXX Roles. The 
      * ConverseOfXXX Role is typically unusable.
@@ -103,11 +118,22 @@ public class Constants {
     }
 
     // organization roles
+    /**
+     * Someone who wants a meat pizza
+     */
     public static final org.cougaar.planning.ldm.plan.Role CARNIVORE = org.cougaar.planning.ldm.plan.Role.getRole("Carnivore");
+    /**
+     * Someone who wants a Veggie pizza - no meat!
+     */
     public static final org.cougaar.planning.ldm.plan.Role VEGETARIAN = org.cougaar.planning.ldm.plan.Role.getRole("Vegetarian");
-
+    /**
+     * An Agent that provides the PizzaProvider service
+     */
     public static final org.cougaar.planning.ldm.plan.Role PIZZAPROVIDER =
         org.cougaar.planning.ldm.plan.Role.getRole(Constants.PIZZA + PROVIDER_SUFFIX);
+    /**
+     * The inverse of a PizzaProvider; orders pizza.
+     */
     public static final org.cougaar.planning.ldm.plan.Role PIZZACUSTOMER =
         org.cougaar.planning.ldm.plan.Role.getRole(Constants.PIZZA + CUSTOMER_SUFFIX);
   }
@@ -123,6 +149,9 @@ public class Constants {
     return System.getProperty("org.cougaar.install.path") + File.separator + "pizza" + File.separator + "data";
   }
 
+  /**
+   * Constants needed for ServiceDiscovery in the Pizza application.
+   */
   public interface UDDIConstants {
     // References pizza/data/taxonomies/CommercialServiceScheme-yp.xml which
     // defines the set of Roles which a provider can register.

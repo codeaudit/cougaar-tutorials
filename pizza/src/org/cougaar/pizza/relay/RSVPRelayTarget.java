@@ -33,7 +33,7 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 
 /**
- * A target-side relay {@link Relay}.  It has a slot for the query (from the sender) and the
+ * A target-side {@link Relay}.  It has a slot for the query (from the sender) and the
  * local response.
  * <p/>
  * The target relay has just a source address, and no target address, so that the
@@ -44,7 +44,7 @@ import org.cougaar.core.util.UniqueObject;
  * where the target address is an ABA broadcast to all members of the
  * community (as in this pizza app).
  * <p/>
- * In contrast, @see org.cougaar.core.relay.SimpleRelayImpl which
+ * In contrast, {@link org.cougaar.core.relay.SimpleRelayImpl} which
  * implements both source and target.
  */
 public class RSVPRelayTarget implements Relay.Target, UniqueObject {
@@ -60,6 +60,7 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
+   * Who sent this relay?
    * Relay.Target implementation
    *
    * @return source (sender or inviter) address
@@ -69,6 +70,7 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
+   * Specify the reply to the invite.
    * @param response - reply to relay (should be an RSVPReply object)
    */
   public void setResponse(Object response) {
@@ -76,8 +78,8 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
+   * Used by the RelayLP to get the response to send back the the Relay sender.
    * Relay.Target implementation
-   * Used by the RelayLP.
    * @return reply to relay
    */
   public Object getResponse() {
@@ -95,6 +97,7 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
+   * Used by the RelayLP to update the query from the Relay sender. Not used in our application.
    * Relay.Target implementation
    *
    * @return Relay.NO_CHANGE - content doesn't need to be updated, only the
