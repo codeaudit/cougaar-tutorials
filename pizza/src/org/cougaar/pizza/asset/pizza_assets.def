@@ -26,5 +26,4 @@ package=org.cougaar.pizza.asset
 propertydefs = properties.def
 
 [PizzaAsset org.cougaar.planning.ldm.asset.Asset]
-slots = VeggiePG, MeatPG
 doc=Representation of a Pizza

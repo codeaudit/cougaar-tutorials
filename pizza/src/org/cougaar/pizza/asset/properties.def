@@ -34,5 +34,5 @@ veggieOnly.doc=True if the pizza should only have veggies
 
 [MeatPG]
 doc=Meat or meat and veggie.
-slots=boolean meatOnly
-onlyMeat.doc=True if the pizza should only have meat, false if it can have veggies and meat
+slots=boolean meatOK
+onlyMeat.doc=True if the pizza can have meat on it
