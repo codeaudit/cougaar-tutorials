@@ -42,9 +42,9 @@ to the pizza provider it found on its self Entity (Joes in our example).
 In the SD version, the SDPlaceOrderPlugin kicks off ServiceDiscovery by
 publishing a {@link org.cougaar.pizza.Constants.Verbs.FINDPROVIDERS}
 Task, with an IndirectObject indicating it wants a PizzaProvider. 
-The SDClientPlugin subscribes to those Tasks, and then publishes
+The {@link org.cougaar.servicediscovery.plugin.SDClientPlugin} subscribes to those Tasks, and then publishes
 an MMQueryRequest, including an MMRoleQuery that specifies it wants a
-PizzaProvider, and includes the Scoring function
+PizzaProvider, and includes the service scoring function
 ({@link org.cougaar.pizza.plugin.util.RoleWithBlacklistScorer}) to use in weighing
 different possible providers. 
 <p>
@@ -55,9 +55,10 @@ matching the query (so it finds Cambridge first, and then MA, as
 necessary). On getting a callback with a provider, it publishChanges
 the MMQueryRequest. 
 <p>
-The SDClientPlugin picks up the answer to its request, and sends a
+The {@link org.cougaar.pizza.plugin.SDClientPlugin} picks up the answer to its request, and sends a
 ServiceContractRelay to the named provider Agent, asking for a
-Relationship. The SDProviderPlugin in our example immediately says yes
+Relationship. Our example uses the {@link org.cougaar.servicediscovery.plugin.AgreeableProviderPlugin} from the
+servicediscovery module, which will immediately say yes
 (a more complex plugin might for example check capacity). The
 infrastructure then establishes the needed Relationship.
 <p>
