@@ -49,6 +49,9 @@ public class Constants {
   public static final String MEAT_PIZZA = "Meat Pizza";
   public static final String VEGGIE_PIZZA = "Veggie Pizza";
 
+  /** Name of Alice's buddy list - her friends to invite. */
+  public static final String COMMUNITY = "FriendsOfMark-COMM";
+
   // Standard constants for Role definition. Defined here
   // to avoid GLM dependency
   public static final String PROVIDER_SUFFIX = "Provider";

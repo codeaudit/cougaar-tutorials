@@ -71,8 +71,6 @@ import java.util.Iterator;
  */
 public class InvitePlugin extends ComponentPlugin {
 
-  // Name of community or "buddy list"
-  private static final String COMMUNITY = "FriendsOfMark-COMM";
   private static final String ATTRIBUTE_TYPE  = "Role";
   private static final String ATTRIBUTE_VALUE = "Member";
 
@@ -268,7 +266,7 @@ public class InvitePlugin extends ComponentPlugin {
     // any message sent to this ABA. You just have to wait for people
     // to join the community.
     MessageAddress target =
-      AttributeBasedAddress.getAttributeBasedAddress(COMMUNITY, 
+      AttributeBasedAddress.getAttributeBasedAddress(Constants.COMMUNITY, 
 						     ATTRIBUTE_TYPE, 
 						     ATTRIBUTE_VALUE);
 
@@ -296,7 +294,7 @@ public class InvitePlugin extends ComponentPlugin {
 					    Constants.INVITATION_QUERY,
 					    pizzaPreferences);
     
-    log.shout("Sending '" + Constants.INVITATION_QUERY + "' to my Buddy list: " + COMMUNITY);
+    log.shout("Sending '" + Constants.INVITATION_QUERY + "' to my Buddy list: " + Constants.COMMUNITY);
     
     blackboard.publishAdd(sourceRelay);
   }
