@@ -13,7 +13,7 @@
 <!ATTLIST Attribute Value CDATA #REQUIRED>
 ]>
 <Communities>
-  <!-- Community of people to invite to the party. This is Alices  buddy list -->
+  <!-- Community of people to invite to the party. This is Alices buddy list -->
   <Community Name='FriendsOfMark-COMM' >
     <Attribute ID='CommunityType' Value='Domain' />
     <!-- You do not always need to specify the CommunityManager, but it helps -->
@@ -48,6 +48,7 @@
       <!-- this role duplicates the info of the YPServerAgent attribute -->
       <Attribute ID='Role' Value='YPServer' />
     </Entity>
+    <!-- Here we have a contained / hierarchical Community -->
     <Entity Name='Cambridge-YPCOMMUNITY' >
       <Attribute ID='EntityType' Value='Community' />
       <Attribute ID='Role' Value='Member' />
