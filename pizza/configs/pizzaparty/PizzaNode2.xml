@@ -280,6 +280,12 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
+        <component
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
     </node>
   </host>
