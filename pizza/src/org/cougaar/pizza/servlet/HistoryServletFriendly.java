@@ -28,6 +28,7 @@ package org.cougaar.pizza.servlet;
 /**
  * Simple interface for Blackboard objects to supply pretty HTML descriptions 
  * of themselves, for use in servlets like the History servlet.
+ * HistoryServlet uses this as the default for the Meaning column.
  *
  * @see HistoryServlet
  */

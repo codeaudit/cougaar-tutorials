@@ -82,7 +82,8 @@ import org.cougaar.util.Arguments;
 import org.cougaar.util.UnaryPredicate;
 
 /**
- * Generic debugging servlet that displays all Adds/Changes/Removes on Blackboard objects. 
+ * Generic debugging servlet/plugin that displays all Adds/Changes/Removes 
+ * on Blackboard objects, accessed at "/history".
  * <p>
  * Specifically tracks changes on Relays, Tasks, PlanElements, Assets,
  * UniqueObjects, and implementations of {@link HistoryServletFriendly}.  
@@ -99,12 +100,19 @@ import org.cougaar.util.UnaryPredicate;
  * object is drawn with the same background color.
  * <p>
  * The servlet has a "show details" link which will show the toString for 
- * the blackboard object at that time.
+ * the blackboard object at that time. This is a spot where developers
+ * can tune how this servlet displays their objects.
+ * <p>
+ * The "Meaning" column uses the HistoryServletFriendly's toHTML() method
+ * to fill in content when available.
  * <p>
  * Also shows which plugin initially published an object to the Blackboard
  * if that information is available (for Claimables).
  * <p>
  *
+ * Try it in any Cougaar Application! Simply add this as a Plugin
+ * in any Agent! 
+ * <p>
  * Has a default limit of 1000 events, but this can be set by the 
  * MAX_EVENTS_REMEMBERED component argument to the servlet.
  * E.g. :
@@ -118,6 +126,10 @@ import org.cougaar.util.UnaryPredicate;
  * to all the blackboard changes, and keep a SortedSet of these Events, 
  * ready for display. It then provides an inner Serlvet to the ServletService,
  * so a user can view the pre-collected Events Set.
+ * <p>
+ * Note that this Servlet has heavy Planning dependencies. It has minor
+ * community dependencies, to allow printing details in the Meaning column.
+ * By commenting out those items, this dependency could be removed.
  */
 public class HistoryServlet extends ComponentPlugin {
   // Some defaults
