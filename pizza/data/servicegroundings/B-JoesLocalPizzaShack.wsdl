@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<definitions
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  name="B_JoesLocalPizzaShack-Service"
+  targetNamespace="file://../../../pizza/data/servicegroundings/B-JoesLocalPizzaShack.wsdl"
+  xmlns:provider="file://UNUSED/pizza/data/servicegroundings/PizzaProviderCougaarGrounding.wsdl"
+  xmlns:cougaar="file://UNUSED/pizza/data/servicegroundings/cougaar.wsdl" >
+
+<service name="B_JoesLocalPizzaShack">
+  <port binding="provider:PizzaProviderCougaarBinding" name="CougaarAgentCommunicationsPort">
+    <cougaar:address agentName="JoesLocalPizzaShack"/>
+  </port>
+</service>
+
+</definitions>
+
