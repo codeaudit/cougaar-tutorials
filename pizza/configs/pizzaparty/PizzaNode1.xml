@@ -70,6 +70,7 @@
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Alice</argument>
 	  <!-- Add Meat/Veggie preference PG -->
+          <argument>EntityPG:Roles:Collection&lt;Role&gt;:Vegetarian</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
         <component
@@ -157,6 +158,7 @@
           <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Bob</argument>
 	  <!-- Add Meat/Veggie preference PG -->
+          <argument>EntityPG:Roles:Collection&lt;Role&gt;:Carnivore</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
         <component
