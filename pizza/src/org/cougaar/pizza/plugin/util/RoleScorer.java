@@ -59,9 +59,8 @@ import org.cougaar.util.log.Logging;
 public class RoleScorer implements ServiceInfoScorer, Serializable {
   // Note this is how a non-component can get a Logger
   private static Logger logger = Logging.getLogger(RoleScorer.class);
-  Role myRole; // The role we want
-  String myAgentName = null;
-  Collection myBlacklist; // providers to exclude -- for example, those we've already tried
+  private Role myRole; // The role we want
+  private Collection myBlacklist; // providers to exclude -- for example, those we've already tried
 
   public RoleScorer(Role role, Collection blacklist) {
     myRole = role;
@@ -69,6 +68,7 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
   }
 
   /**
+   * What Role is being requested?
    * @return the Role required for this request
    **/
   public Role getRole() {
@@ -77,6 +77,7 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
   
 
   /**
+   * Which providers are not acceptable?
    * @return the Collection of excluded provider names (Strings)
    **/
   public Collection getBlacklist() {
@@ -87,6 +88,7 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
    * Will be called by MatchmakerPlugin for each ServiceInfo. Returned score will
    * be added to the ScoredServiceDescription associated with the Service.
    * 
+   * @param serviceInfo The ServiceInfo returned by the YP for which we want a score
    * @return int representing score. Client responsible for 
    * understanding the precise value. Current usage assumes lowest value >= 0
    * is the best. Values less than 0 indicate the provider is not suitable.
@@ -101,14 +103,10 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
     // Otherwise, we just use the role score
     int roleScore = getRoleScore(serviceInfo);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("scoreServiceProvider: Role score " + roleScore);
-    }
-
     return roleScore;
   }
 
-  // Score the role portion -- lowest non-negative score is best
+  /** Score the role portion -- lowest non-negative score is best */
   private int getRoleScore(ServiceInfo serviceInfo) {
     String serviceRole = null;
 
@@ -126,26 +124,30 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
 
     if (serviceRole == null) {
       if (logger.isInfoEnabled()) {
-	logger.info(myAgentName + 
-		    ": Ignoring service with a bad service role for provider: " + 
+	logger.info("Ignoring service (score is -1) with a bad service role for provider: " + 
 		    serviceInfo.getProviderName());
       }
       return -1;
     } else if (!serviceRole.equals(myRole.toString())) {
       // If this is not the role we're looking for, score it down
       if (logger.isInfoEnabled()) {
-	logger.info(myAgentName + ": Ignoring service with Role of : " +
-		    serviceRole + 
+	logger.info("Ignoring service (score is -1) with (wrong) Role of: " +
+		    serviceRole + ", was looking for role " + myRole + 
 		    " for provider: " + serviceInfo.getProviderName());
       }
       return -1;
     } else {
       // This is the role we're looking for!
+      if (logger.isInfoEnabled()) {
+	logger.info("Found good service (score is 0) with matching Role of: " +
+		    serviceRole + 
+		    " on provider: " + serviceInfo.getProviderName());
+      }
       return 0;
     }
   }
 
-  // Score the service provider relative to the blacklist - if it's blacklisted, it gets -1
+  /** Score the service provider relative to the blacklist - if it's blacklisted, it gets -1 */
   private int getBlacklistScore(ServiceInfo serviceInfo) {
     // Look for the serviceInfo's ProviderName on the blacklist
     for (Iterator iterator = myBlacklist.iterator();
@@ -154,27 +156,17 @@ public class RoleScorer implements ServiceInfoScorer, Serializable {
 
       if (serviceInfo.getProviderName().equals(blacklistedProvider)) {
 	if (logger.isInfoEnabled()) {
-	  logger.info(myAgentName + 
-		      ": Ignoring service from provider - " + 
+	  logger.info("Ignoring service (score is -1) from blacklisted provider - " + 
 		      serviceInfo.getProviderName() +
 		      ". Provider on the blacklist - " + myBlacklist);
 	}
+	// -1 means don't use this provider
 	return -1;
       }
-    }
+    } // loop over blacklist entries
 
     // Didn't find it on the Blacklist -- its good
     return 0;
-  }
-
-  public boolean equals(Object o) {
-    if (o instanceof RoleScorer) {
-      RoleScorer scorer = (RoleScorer) o;
-
-      return (scorer.getRole().equals(getRole()));
-    } else {
-      return false;
-    }
   }
 
   public String toString() {
