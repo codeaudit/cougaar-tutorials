@@ -349,7 +349,7 @@
           <argument>TypeIdentificationPG:TypeIdentification:String:Store</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Dominos</argument>
         </component>
-	<!-- Community members need the CommunityPlugin -->
+	<!-- Community members need the CommunityPlugin. SD uses Communities. -->
         <component
           name='org.cougaar.community.CommunityPlugin()'
           class='org.cougaar.community.CommunityPlugin'
