@@ -26,7 +26,6 @@
 package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.Entity;
@@ -43,7 +42,6 @@ import org.cougaar.planning.ldm.plan.RelationshipSchedule;
 import org.cougaar.planning.ldm.plan.SubTaskResult;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.util.Filters;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.TimeSpans;
 import org.cougaar.util.UnaryPredicate;
@@ -53,26 +51,36 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * This Plugin manages ordering pizzas at customer agents.
+ * This Plugin manages ordering pizzas at customer agents. It extends the PlaceOrderPlugin adding a request to Service
+ * Discover to find pizza providers.
+ * <p/>
+ * The SDPlaceOrderPlugin publishes a Find Providers task with the role of PizzaProvider.  This task will be handled by
+ * Service Discovery.  Once completed, Service Discovery will add a Dispostion PlanElement on the Find Providers task
+ * indicating that a provider(s) was found.  The plugin can now allocate Order pizza tasks to a provider.
+ * <p/>
+ * The plugin monitors the AllocationResults on the allocated tasks and determines if the Order tasks were successfully
+ * completed.  If an allocation is not successful, the plugin will issue a new request to find another pizza provider.
+ * To avoid getting the original provider that was unable to satisfy the pizza order, the plugin adds a prepositional
+ * phrase of "Not" with the name of the provider to exclude as the indirect object on the Find Providers task.
  */
 public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   private IncrementalSubscription disposedFindProvidersSub;
   private IncrementalSubscription expansionSub;
-  private Subscription taskSub;
+  private IncrementalSubscription unallocatedTaskSub;
 
   /**
    * Create our blackboard subscriptions.
    */
   protected void setupSubscriptions() {
     super.setupSubscriptions();
-    disposedFindProvidersSub = (IncrementalSubscription) blackboard.subscribe(FIND_PROVIDERS_DISPOSITION_PRED);
+    disposedFindProvidersSub = (IncrementalSubscription) blackboard.subscribe(DISPOSED_FIND_PROVIDERS_PRED);
     expansionSub = (IncrementalSubscription) blackboard.subscribe(EXPANSION_PRED);
-    taskSub = blackboard.subscribe(TASK_PRED);
+    unallocatedTaskSub = (IncrementalSubscription) blackboard.subscribe(UNALLOCATED_TASK_PRED);
   }
 
   protected void execute() {
     // Create pizza orders when we find a new PizzaPreference object on our getBlackboardService().
-    // The Pizza Preference object serves as a repository for party invitation responses.
+    // The Pizza Preference object contains the party invitation responses.
     for (Iterator iterator = pizzaPrefSub.getAddedCollection().iterator(); iterator.hasNext();) {
       PizzaPreferences pizzaPrefs = (PizzaPreferences) iterator.next();
       if (logger.isDebugEnabled()) {
@@ -91,11 +99,10 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     for (Iterator i = disposedFindProvidersSub.getAddedCollection().iterator(); i.hasNext();) {
       Disposition disposition = (Disposition) i.next();
       if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
-        Collection tasks = getUnallocatedTasks();
-        if (!tasks.isEmpty()) {
-          // check the find providers task for exclusions
-          Entity exclusion = checkFindProvidersTask(disposition.getTask());
-          allocateTasks(getUnallocatedTasks(), exclusion);
+        if (!unallocatedTaskSub.isEmpty()) {
+          // check the find providers task for providers to be excluded
+          Entity excludeProvider = checkFindProvidersTask(disposition.getTask());
+          allocateTasks(unallocatedTaskSub, excludeProvider);
         }
       }
     }
@@ -125,10 +132,9 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   }
 
   /**
-   * Create the Find Providers task that is used by service discovery to find our pizza providers.
+   * Create and plublish the Find Providers task that is used by service discovery to find pizza providers.
    *
-   * @param excludePhrase A Prepositional Phrase that tells the service discovery mechanism that we need a provider
-   *                      other than the one listed in the phrase.
+   * @param excludePhrase a Prepositional Phrase that tells the service discovery to exclude the given provider
    */
   private void publishFindProvidersTask(PrepositionalPhrase excludePhrase) {
     NewTask newTask = makeTask(Constants.Verbs.FIND_PROVIDERS, getSelfEntity());
@@ -147,9 +153,9 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   /**
    * Allocate our pizza order tasks to a pizza provider.
    *
-   * @param tasks           The tasks to send to the pizza provider.
-   * @param excludeProvider A provider that has previously failed our pizza order.  This parameter can be null if we
-   *                        don't have any providers that we need to exclude from our provider list.
+   * @param tasks           tasks to send to the pizza provider.
+   * @param excludeProvider a provider that has previously failed a pizza order.  This parameter can be null if we don't
+   *                        have any providers that we need to exclude from our provider list.
    */
   private void allocateTasks(Collection tasks, Entity excludeProvider) {
     Entity provider = getProvider(excludeProvider);
@@ -168,9 +174,9 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   }
 
   /**
-   * Find the pizza provider entities that we can send our pizza orders to.
+   * Find a pizza provider entity that we can send our pizza orders to.
    *
-   * @return A collection of pizza providers to use.
+   * @return entity representing a pizza provider
    */
   public Entity getProvider(Entity excludeProvider) {
     TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
@@ -188,19 +194,19 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   }
 
   /**
-   * If our order task fails because one or both of our pizza order subtasks fail, request a new provider from service
-   * discovery that is not the provider that failed our task(s).  Also, rescind the orders that we placed with that
-   * provider so that we can order all of our pizza from a single provider.
+   * If one or both of pizza order subtasks fail, request a new provider from service discovery that is not the provider
+   * that failed our task(s).  Rescind the both pizza orders that we placed with that provider so that we can order all
+   * of our pizza from a single provider.
    *
-   * @param exp The order task expansion that contains our pizza orders.
+   * @param exp order task expansion that contains our pizza orders.
    */
   private void processFailedExpansion(Expansion exp) {
-    // Find the supplier to that failed and rescind the allocations
-    Asset failedSupplier = null;
+    // Find the provider that failed and rescind the allocations
+    Asset failedProvider = null;
     for (Iterator resultsIt = exp.getWorkflow().getSubtaskResults().iterator(); resultsIt.hasNext();) {
       SubTaskResult result = (SubTaskResult) resultsIt.next();
       if (!result.getAllocationResult().isSuccess()) {
-        failedSupplier = ((Allocation) result.getTask().getPlanElement()).getAsset();
+        failedProvider = ((Allocation) result.getTask().getPlanElement()).getAsset();
       }
       //rescind all task allocations since we will replan with a new provider.
       //Note we are rescinding the successful meat pizza order because we want our entire order to
@@ -209,17 +215,17 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     }
     NewPrepositionalPhrase excludePP = planningFactory.newPrepositionalPhrase();
     excludePP.setPreposition(Constants.Prepositions.NOT);
-    excludePP.setIndirectObject(failedSupplier);
+    excludePP.setIndirectObject(failedProvider);
     publishFindProvidersTask(excludePP);
   }
 
   /**
-   * Look at the FindProviders task to see if it has the exclusion prepositional phrase that alerts us not to use that
-   * provider. Presumably that provider has been unable to satisfy previous pizza orders.
+   * Check the FindProviders task to see if it has the "Not" prepositional indicating the provider to exclude.
+   * Presumably this provider is unable to satisfy previous pizza orders.
    *
-   * @param findProvidersTask The task to look at.
-   * @return The entity (provider) that we wish to exclude.  Note that this value can be null if the find providers task
-   *         did not contain the special exclude phrase.
+   * @param findProvidersTask the task to look at.
+   * @return The entity (provider) to exclude.  Will return null if the find providers task does not contain the "Not"
+   *         preposition (exclude phrase).
    */
   private Entity checkFindProvidersTask(Task findProvidersTask) {
     Entity excludedEntity = null;
@@ -230,21 +236,11 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     return excludedEntity;
   }
 
-  /**
-   * This method filters the task subscription for any tasks that are not disposed of or allocated. Tasks might be
-   * unallocated to a provider if we were waiting for a provider or we rescinded our orders from a provider that could
-   * not fill our order.
-   *
-   * @return A collection of tasks that are ready to be allocated.
-   */
-  private Collection getUnallocatedTasks() {
-    return Filters.filter((Collection) taskSub, UNDISPOSED_TASKS);
-  }
 
   /**
-   * A predicate that matches dispositions of "FindProviders" tasks
+   * A predicate that matches a "FindProviders" task with a Disposition PlanElement.
    */
-  private static UnaryPredicate FIND_PROVIDERS_DISPOSITION_PRED = new UnaryPredicate() {
+  private static UnaryPredicate DISPOSED_FIND_PROVIDERS_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Disposition) {
         Task task = ((Disposition) o).getTask();
@@ -255,20 +251,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   };
 
   /**
-   * This predicate matches tasks that have no plan element.
-   */
-  private static UnaryPredicate UNDISPOSED_TASKS = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task) {
-        Task task = (Task) o;
-        return (task.getPlanElement() == null);
-      }
-      return false;
-    }
-  };
-
-  /**
-   * This predicate matches expansions of "Order" tasks.
+   * This predicate matches an "Order" task with an Expansion PlanElement.
    */
   private static UnaryPredicate EXPANSION_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -281,13 +264,15 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   };
 
   /**
-   * This predicate matches "Order" tasks.
+   * This predicate matches an "Order" task without a PlanElement.  There are three types of PlanElements: Expansions,
+   * Allocations and Dispostions -- see the CDG for more details.  This plugin will not allocate tasks(add an Allocation
+   * PlanElement) until it has found a provider.
    */
-  private static UnaryPredicate TASK_PRED = new UnaryPredicate() {
+  private static UnaryPredicate UNALLOCATED_TASK_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
         Task task = (Task) o;
-        return (task.getVerb().equals(Constants.Verbs.ORDER));
+        return (task.getVerb().equals(Constants.Verbs.ORDER) && task.getPlanElement() == null);
       }
       return false;
     }
