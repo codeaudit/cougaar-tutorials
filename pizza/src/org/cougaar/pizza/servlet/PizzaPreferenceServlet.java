@@ -136,59 +136,40 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
    * Worker class that actually produces HTML for the servlet.
    */
   protected class PizzaFormatter {
-    public static final int FORMAT_DATA = 0; // Not yet supported
-    public static final int FORMAT_XML = 1; // Not yet supported
-    public static final int FORMAT_HTML = 2;
-
-    private int format = FORMAT_HTML;
-
     public PizzaFormatter(HttpServletRequest request,
                           HttpServletResponse response) throws IOException, ServletException {
-      getFormat(request);
       execute(response);
-    }
-
-    /**
-     * Parse the requested format. A similar pattern could be used to
-     * handle other parameters.
-     * Note however that only HTML is currently supported.
-     */
-    protected void getFormat(HttpServletRequest request) {
-      String formatParam = request.getParameter("format");
-      if ("data".equals(formatParam)) {
-        format = FORMAT_DATA;
-      } else if ("xml".equals(formatParam)) {
-        format = FORMAT_XML;
-      } else {
-        format = FORMAT_HTML; // default
-      }
     }
 
     /**
      * Write the servlet response into the given response's stream.
      */
     public void execute(HttpServletResponse response) throws IOException, ServletException {
-      if (format == FORMAT_HTML) {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.print("<html><head><title>" +
+      response.setContentType("text/html");
+
+      // This worker only has one call to PrintWriter.print, with the sub-methods
+      // calling StringBuffer.append()...
+      // An alternative approach would be to keep an inner-class member variable
+      // for the PrintWriter, and instead of those buf.append calls, the sub-methods
+      // could write directly to the output stream.
+      PrintWriter out = response.getWriter();
+      out.print("<html><head><title>" +
 		  "The " + Constants.PIZZA + " Party" +
 		  "</title></head>" +
 		  "<body>" +
-		  "<p/>" +
 		  "<p/><center><h1>" + Constants.PIZZA + " Party Planner Notes</h1></center><p/>" +
-		  "<br><center><a href=\"/$" + agentID + "/list\">" + agentID + "</a> is having a " + Constants.PIZZA + " party, and inviting everyone on her \"buddy list\", the people in the <a href=\"/$" + agentID + "/communityViewer?community=" + Constants.COMMUNITY + "\">" + Constants.COMMUNITY + "</a> community. She sends them a Relay, with the invitation: `" + Constants.INVITATION_QUERY + "'. After waiting a little while for them to reply, she will find a " + Constants.PIZZA + " parlor, and order them each the kind of " + Constants.PIZZA + " that they prefer - if she can find " + Constants.PIZZA + " parlors to satisfy her guests!</center><br><br>" +  
+		  "<center><a href=\"/$" + agentID + "/list\">" + agentID + "</a> is having a " + Constants.PIZZA + " party, and inviting everyone on her \"buddy list\", the people in the <a href=\"/$" + agentID + "/communityViewer?community=" + Constants.COMMUNITY + "\">" + Constants.COMMUNITY + "</a> community. She sends them a Relay, with the invitation: `" + Constants.INVITATION_QUERY + "'. After waiting a little while for them to reply, she will find a " + Constants.PIZZA + " parlor, and order them each the kind of " + Constants.PIZZA + " that they prefer - if she can find " + Constants.PIZZA + " parlors to satisfy her guests!" +
+		  "<br><br>Parlors each have a Kitchen with specific capabilities. Some serve " + Constants.MEAT_PIZZA + ", some " + Constants.VEGGIE_PIZZA + ", and some both. " + agentID + " wants to order all her " + Constants.PIZZA + " from one parlor. If the parlor can't deliver the " + Constants.PIZZA + " she wants, that order Task fails. " + agentID + " will try to find another " + Constants.PIZZA + " provider, if she knows how to do Service Discovery...." + 
+		  "</center><br><br>" +  
 		  "<center><b>RSVP from each invited guest, invited by host " +
 		  agentID +
 		  "</b>:</center><p/>" +
 		  getHtmlForPreferences() +
-		  "<br><br>" +
+		  "<br>" +
 		  getHtmlForOrders() +
-		  "<br><br><hr><center>Status at: " + new Date(System.currentTimeMillis()) + "</center></body>" +
+		  "<br><hr><center>Status at: " + new Date(System.currentTimeMillis()) + "</center></body>" +
 		  "</html>\n");
-        out.flush();
-      }
-      // FIXME: Add support for FORMAT_XML and FORMAT_DATA
+      out.flush();
     }
 
     /**
@@ -262,7 +243,8 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 		buf.append("<font color=green>" + orderlink + " filled!</font>");
 	      } else {
 		orderOK = false;
-		buf.append("<font color=red>" + orderlink + " FAILed!</font>");
+		// Provider failed this order task. Say so, with link to explanation
+		buf.append("<font color=red>" + orderlink + " FAILed!<a href=\"#why\">*</a></font>");
 		// FIXME: Here, we could indicate if there is
 		// an outstanding FindProviders task, including
 		// the Role / exclusions if any
@@ -278,7 +260,13 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
             buf.append("</td>");
             buf.append("</tr>");
           }
-          buf.append("</table></center>");
+          buf.append("</table>");
+
+	  // If an order failed, include the footnote explaining why
+	  if (!orderOK)
+	    buf.append("<br><a name=\"why\"/>* This failure may be because the parlor does not have the topping ordered.");
+
+	  buf.append("</center>");
 
 	  // Create the table title: Link the word order to the root Pizza order task in the
 	  // PlanViewerServlet (/tasks)
@@ -287,9 +275,9 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 	  head = "<center><b><a href=\"/$" + agentID + "/tasks?mode=3&uid=" + exp.getTask().getUID() + "\">Order</a> ";
 	  if (orderSent) {
 	    if (orderOK)
-	      head += "Placed <font color=green>Succesfully</font> - Party is on!</b></center>";
+	      head += "Placed <font color=green>Succesfully</font> - Party is on!</b></center><p/>";
 	    else
-	      head += "<font color=red>Failed</font> - guests will not be happy!</b></center>";
+	      head += "<font color=red>Failed</font> - guests will not be happy!</b></center><p/>";
 	  } else {
 	    head += "not yet placed.</b></center>";
 	  }
