@@ -60,8 +60,9 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
-   * Who sent this relay?
-   * Relay.Target implementation
+   * Get Relay sender.  
+   *
+   * Relay.Target implementation.
    *
    * @return source (sender or inviter) address
    */

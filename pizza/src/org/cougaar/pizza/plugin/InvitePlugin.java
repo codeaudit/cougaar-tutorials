@@ -134,7 +134,7 @@ public class InvitePlugin extends ComponentPlugin {
   }
 
   /**
-   * Looks for argument to plugin like : "WAIT_FOR_RSVP_DURATION:60000"
+   * Looks for argument to plugin like: "WAIT_FOR_RSVP_DURATION:60000". 
    * <p/>
    * <pre>
    * <p/>

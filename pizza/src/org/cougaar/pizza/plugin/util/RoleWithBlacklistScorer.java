@@ -41,8 +41,8 @@ import org.cougaar.util.log.Logging;
 
 /**
  * ServiceDiscovery Service scoring function using <code>Role</code> name and an
- * exclusion list.<br>
- * <pre>
+ * exclusion list. 
+ * <br><pre>
  * Uses 2 criteria -  
  *   service role must match scorer role (in Commercial Service Scheme)
  *   service provider name must not match one of the names on the blacklist.

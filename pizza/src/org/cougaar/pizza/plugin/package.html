@@ -13,12 +13,12 @@ Each member of the Community receives the Relay, and responds using
 the {@link org.cougaar.pizza.plugin.RSVPPlugin}. They then use the
 {@link org.cougaar.pizza.plugin.util.PizzaPreferenceHelper} to look at the
 local self Entity, looking for the 
-{@link org.cougaar.pizza.Constants.Roles.CARNIVORE} or {@link org.cougaar.pizza.Constants.Roles.VEGETARIAN} Roles, to decide what kind of pizza they
+{@link org.cougaar.pizza.Constants.Roles#CARNIVORE} or {@link org.cougaar.pizza.Constants.Roles#VEGETARIAN} Roles, to decide what kind of pizza they
 eat. They then set that {@link org.cougaar.pizza.relay.RSVPReply}
 Response on the {@link org.cougaar.pizza.relay.RSVPRelayTarget} Relay, which the
 infrastructure forwards back to Alice. 
 At Alice, the infrastructure collects all the RSVPs on a {@link
-org.cougaar.pizza.plugin.PizzaPrefereces} object, and after waiting
+org.cougaar.pizza.plugin.PizzaPreferences} object, and after waiting
 to give everyone a chance to responsd, the InvitePlugin, publishes the PizzaPreferences object summarizing
 what pizza Alice wants to order. 
 <p>
@@ -36,13 +36,13 @@ and prepares to order the pizza. First it looks to see if it has a
 Relationship on the self Entity to any PizzaProviders. In the SD
 version it does not, and must now do ServiceDiscovery. In the non-SD
 version, it does. So it then creates an {@link
-org.cougaar.pizza.Constants.Verbs.ORDER} Task, ordering {@link org.cougaar.pizza.Constants.PIZZA}. It
+org.cougaar.pizza.Constants.Verbs#ORDER} Task, ordering {@link org.cougaar.pizza.Constants#PIZZA}. It
 then expands that - one for meat pizza (with an appropriate number of
 servings depending on RSVPs) and one for veggie. It Allocates those child tasks
 to the pizza provider it found on its self Entity (Joes in our example).
 <p>
 In the SD version, the SDPlaceOrderPlugin kicks off ServiceDiscovery by
-publishing a {@link org.cougaar.pizza.Constants.Verbs.FINDPROVIDERS}
+publishing a {@link org.cougaar.pizza.Constants.Verbs#FIND_PROVIDERS}
 Task, with an IndirectObject indicating it wants a PizzaProvider. 
 The {@link org.cougaar.servicediscovery.plugin.SDClientPlugin} subscribes to those Tasks, and then publishes
 an MMQueryRequest, including an MMRoleQuery that specifies it wants a

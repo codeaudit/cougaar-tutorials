@@ -50,8 +50,8 @@ import java.util.Vector;
 /**
  * The SDPlaceOrderPlugin extends the {@link PlaceOrderPlugin} to use Service Discovery
  * to find pizza providers dynamically. Once the plugin receives the {@link PizzaPreferences}
- * object, it publishes a {@link Constants.Verbs.FIND_PROVIDERS} task with a Role of {@link Constants.Roles.PIZZAPROVIDER}. This task
- * will be handled by Service Discovery.  The plugin then creates and expands the {@link Constants.Verbs.ORDER}
+ * object, it publishes a {@link org.cougaar.pizza.Constants.Verbs#FIND_PROVIDERS} task with a Role of {@link org.cougaar.pizza.Constants.Roles#PIZZAPROVIDER}. This task
+ * will be handled by Service Discovery.  The plugin then creates and expands the {@link org.cougaar.pizza.Constants.Verbs#ORDER}
  * Task as done in the super class.  However, unlike the super class, this plugin waits
  * until Service Discovery has finished finding a pizza provider and has added a
  * Disposition on the FindProviders task before it can allocate the pizza subtasks.
@@ -62,7 +62,7 @@ import java.util.Vector;
  * If the Expansion on the order task fails, i.e., the provider could not complete the
  * pizza order, then the plugin will remove the Allocations on the subtasks of the Expansion and
  * request a new provider from Service Discovery.  To exclude the provider that
- * previously failed, the plugin adds a prepositional phrase of {@link Constants.Prepositions.NOT} with the name of the
+ * previously failed, the plugin adds a prepositional phrase of {@link org.cougaar.pizza.Constants.Prepositions#NOT} with the name of the
  * provider as the indirect object on the FindProviders task.  Once a new provider is
  * found the tasks will be reallocated -- hopefully more succesfully!
  */
