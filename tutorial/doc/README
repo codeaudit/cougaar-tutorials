@@ -5,6 +5,8 @@ For documentation, see the Cougaar training slides in this directory and:
 
 NOTE: THESE TUTORIALS WERE DESIGNED TO BE USED IN CONJUNCTION WITH THE COURSE SLIDES
 
+RUNNING NOTE:  When running from XML, you cannot have a cougaar.rc on your config path.
+
 ---------------
 Windows:
 To build and run exercise 5:
