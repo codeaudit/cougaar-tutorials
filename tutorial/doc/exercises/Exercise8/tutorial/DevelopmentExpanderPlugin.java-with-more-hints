@@ -24,7 +24,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.4 2002-04-05 19:30:28 mbarger Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.5 2002-11-19 17:33:00 twright Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -130,7 +130,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     {
       // todo: Create expansion and workflow to represent the expansion
       // of this task.  Publish the expansion, workflow and subtasks.
-      // hints: RootFactory.newWorkflow()
+      // hints: PlanningFactory.newWorkflow()
       // hints: RootFacotry.createExpansion()
 
       // more hints: Task task = (Task) e.nextElement();
@@ -299,7 +299,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 		// more hints: new_wf.setTasks(tasks.elements());
 
     // todo: Add constraints onto the workflow that t1 < t2 < t3
-    // hints: see RootFactory().newConstraint();
+    // hints: see PlanningFactory().newConstraint();
     // hints: see NewConstraint.setConstrainingTask()
     // hints: see NewConstraint.setConstrainingAspect()
     // hints: see NewConstraint.setConstrainedTask()

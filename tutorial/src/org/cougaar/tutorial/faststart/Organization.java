@@ -28,13 +28,14 @@ import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
 import org.cougaar.core.mts.Message;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.ldm.*;
 import org.cougaar.planning.ldm.plan.*;
 
 /**
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.7 2002-11-08 16:47:06 mthome Exp $
+ * @version $Id: Organization.java,v 1.8 2002-11-19 17:33:03 twright Exp $
  */
 public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 
@@ -56,7 +57,7 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
    * @param name the name of the organization.
    * @param theFactory used to vreate the ClusterPG property group.
    */
-  public Organization(String name, RootFactory theFactory) {
+  public Organization(String name, PlanningFactory theFactory) {
     NewClusterPG cpg = (NewClusterPG)theFactory.createPropertyGroup(ClusterPGImpl.class);
     cpg.setMessageAddress(MessageAddress.getMessageAddress(name));
     this.setClusterPG(cpg);

@@ -37,7 +37,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.3 2002-04-05 19:27:03 mbarger Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.4 2002-11-19 17:32:59 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -192,7 +192,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       System.out.println(tmpstr);
 
       // todo: Create an allocation and put it on the Blackboard
-      // hint: see RootFactory.createAllocation(...)
+      // hint: see PlanningFactory.createAllocation(...)
       // more hints: Allocation allocation =
       // more hints:  getDomainService().getFactory().createAllocation(task.getPlan(), task,
       // more hints:                            asset, estAR, Role.ASSIGNED);

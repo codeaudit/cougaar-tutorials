@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.binary;
  */
 
 import java.util.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -23,7 +24,7 @@ import org.cougaar.core.service.DomainService;
  * results are copied to estimated, while the BinaryIterator waits for this
  * copy to take place before proceeding.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryDispatcherPlugin.java,v 1.2 2002-11-08 16:47:06 mthome Exp $
+ * @version $Id: BinaryDispatcherPlugin.java,v 1.3 2002-11-19 17:33:04 twright Exp $
  */
 public class BinaryDispatcherPlugin extends ComponentPlugin
 {
@@ -53,6 +54,7 @@ public class BinaryDispatcherPlugin extends ComponentPlugin
   };
 
   private DomainService domainService;
+  private PlanningFactory ldmf;
   public void setDomainService(DomainService value) {
     domainService=value;
   }
@@ -69,6 +71,11 @@ public class BinaryDispatcherPlugin extends ComponentPlugin
    **/
   public void setupSubscriptions() {
     //System.out.println("BinaryDispatcherPlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Subscribe to all support organizations
     allSupportAssets = (IncrementalSubscription)getBlackboardService()
@@ -113,7 +120,7 @@ public class BinaryDispatcherPlugin extends ComponentPlugin
         Task task = (Task)e.nextElement();
 
         if (task.getPlanElement() == null) {
-	    Allocation allocation = getDomainService().getFactory()
+	    Allocation allocation = ldmf
                 .createAllocation(task.getPlan(), task, 
                                   mySupportOrganization, 
                                   null, Role.AVAILABLE);

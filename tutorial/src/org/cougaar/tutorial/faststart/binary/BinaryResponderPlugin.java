@@ -8,6 +8,7 @@ package org.cougaar.tutorial.faststart.binary;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -20,7 +21,7 @@ import org.cougaar.core.service.DomainService;
  * determines if the preferences (numeric bounds on the guess) contain
  * the number, returning success/failure accordingly
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryResponderPlugin.java,v 1.1 2002-02-12 19:30:36 jwinston Exp $
+ * @version $Id: BinaryResponderPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  */
 public class BinaryResponderPlugin extends ComponentPlugin
 {
@@ -29,6 +30,7 @@ public class BinaryResponderPlugin extends ComponentPlugin
   private Asset binary_asset;
 
     private DomainService domainService;
+    private PlanningFactory ldmf;
 
     public void setDomainService(DomainService value) {
 	domainService = value;
@@ -48,6 +50,11 @@ public class BinaryResponderPlugin extends ComponentPlugin
   public void setupSubscriptions() {
     //    System.out.println("BinaryResponderPlugin::setupSubscriptions");
     System.out.println("Solution Value = " + solution_value);
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Subscribe to 'MANAGE' tasks (CHANGED and NEW)
     allManageTasks = 
@@ -55,7 +62,7 @@ public class BinaryResponderPlugin extends ComponentPlugin
 	.subscribe(allManageTasksPredicate);
 
     // Publish dummy asset to LDM to allow for allocating against
-    binary_asset = getDomainService().getFactory()
+    binary_asset = ldmf
 	.createPrototype("AbstractAsset", "BinaryAsset");
     getBlackboardService().publishAdd(binary_asset);
 
@@ -81,7 +88,7 @@ public class BinaryResponderPlugin extends ComponentPlugin
 
 	// Generate an allocation and publish it
 	Allocation allocation = 
-	  getDomainService().getFactory()
+	  ldmf
 	    .createAllocation(task.getPlan(), task, 
 				   binary_asset, estAR,
 				   Role.AVAILABLE);
@@ -139,7 +146,7 @@ public class BinaryResponderPlugin extends ComponentPlugin
     int []aspect_types = {BinaryUtils.BINARY_BOUNDS_ASPECT};
     // Report the high-low gap so we can tell what request our response is against
     double []results = {high_bound-low_bound}; 
-    AllocationResult allocation_result = getDomainService().getFactory()
+    AllocationResult allocation_result = ldmf
 	.newAllocationResult(1.0, // rating
 				 success, // are we in bounds?
 				 aspect_types,

@@ -21,6 +21,7 @@
 package org.cougaar.tutorial.faststart;
 
 import java.util.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.mts.MessageAddress;
@@ -32,12 +33,13 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.3 2002-11-13 18:59:49 ahelsing Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.4 2002-11-19 17:33:03 twright Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
 
     private DomainService domainService;
+    private PlanningFactory ldmf;
     public void setDomainService(DomainService value) {
 	domainService=value;
     }
@@ -51,6 +53,11 @@ public class TutorialHookupPlugin extends ComponentPlugin
   public void setupSubscriptions() 
   {
     parseParameters();
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Create 'SELF' and put in my log plan
     String my_agent_name = getAgentIdentifier().getAddress();
@@ -102,19 +109,19 @@ public class TutorialHookupPlugin extends ComponentPlugin
    */
   private Organization createOrganization(String name, Role []roles, String relationship)
   {
-    Organization org = (Organization)getDomainService().getFactory()
+    Organization org = (Organization)ldmf
 	.createAsset(org.cougaar.tutorial.faststart.Organization.class);
-    NewClusterPG cpg = (NewClusterPG)getDomainService().getFactory()
+    NewClusterPG cpg = (NewClusterPG)ldmf
 	.createPropertyGroup(ClusterPGImpl.class);
     cpg.setMessageAddress(MessageAddress.getMessageAddress(name));
     org.setClusterPG(cpg);
 
-    NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)getDomainService().getFactory()
+    NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)ldmf
 	.createPropertyGroup("TypeIdentificationPG");
     tipg.setTypeIdentification(name);
     org.setTypeIdentificationPG(tipg);
 
-    NewItemIdentificationPG iipg = (NewItemIdentificationPG)getDomainService().getFactory()
+    NewItemIdentificationPG iipg = (NewItemIdentificationPG)ldmf
 	.createPropertyGroup("ItemIdentificationPG");
     iipg.setItemIdentification(name);
     org.setItemIdentificationPG(iipg);
@@ -126,7 +133,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
     // set up this asset's available schedule
     Date start = TutorialUtils.createDate(1990, 1, 1);
     Date end = TutorialUtils.createDate(2010, 1, 1);
-    NewSchedule avail = getDomainService().getFactory().newSimpleSchedule(start, end);
+    NewSchedule avail = ldmf.newSimpleSchedule(start, end);
     ((NewRoleSchedule)org.getRoleSchedule()).setAvailableSchedule(avail);
 
     return org;
@@ -139,24 +146,24 @@ public class TutorialHookupPlugin extends ComponentPlugin
   private void copyAssetToCluster(Asset the_asset, Asset the_receiving_asset)
   {
     // Why do I need a task and schedule element??
-    NewTask task = getDomainService().getFactory().newTask();
+    NewTask task = ldmf.newTask();
     task.setVerb(new Verb("Dummy"));
     task.setParentTask(task);
 
     //This makes asset available to the agent from 01/01/1990 tp 
     //01/01/2010
     NewSchedule schedule = 
-      getDomainService().getFactory().newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
+      ldmf.newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
                                 TutorialUtils.createDate(2010, 1, 1));
 
     int [] aspects = {AspectType.START_TIME, AspectType.END_TIME};
     double [] results = {schedule.getStartTime(), schedule.getEndTime()};
-    AllocationResult est_ar = getDomainService().getFactory()
+    AllocationResult est_ar = ldmf
 	.newAllocationResult(1.0, true, aspects, results);
 
 
     AssetTransfer asset_transfer =
-      getDomainService().getFactory().createAssetTransfer(getDomainService().getFactory()
+      ldmf.createAssetTransfer(ldmf
 							  .getRealityPlan(), // plan
                                   task, // task (dummy)
                                   the_asset,

@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.hanoi;
 **/
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.tutorial.faststart.*;
@@ -35,7 +36,7 @@ import org.cougaar.core.service.*;
  *        satisfaction of preferences [Level4]
  * else error
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiMoverPlugin.java,v 1.1 2002-02-12 19:30:43 jwinston Exp $
+ * @version $Id: HanoiMoverPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  **/
 public class HanoiMoverPlugin extends ComponentPlugin
 {
@@ -47,6 +48,7 @@ public class HanoiMoverPlugin extends ComponentPlugin
   private IncrementalSubscription allTransportTasks;
 
   private DomainService domainService = null;
+  private PlanningFactory ldmf = null;
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -73,11 +75,17 @@ public class HanoiMoverPlugin extends ComponentPlugin
    **/
   public void setupSubscriptions() {
     System.out.println("HanoiMoverPlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
+
     allTransportTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allTransportTasksPredicate);
 
     // Publish dummy asset to LDM to allow for allocating against
-    mover_asset = getDomainService().getFactory().createPrototype("AbstractAsset", "HanoiAsset");
+    mover_asset = ldmf.createPrototype("AbstractAsset", "HanoiAsset");
     getBlackboardService().publishAdd(mover_asset);
   }
 
@@ -117,14 +125,14 @@ public class HanoiMoverPlugin extends ComponentPlugin
 	  // [Level4]
 	  int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME};
 	  double []results = {start_time, end_time};
-	  estAR =  getDomainService().getFactory()
+	  estAR =  ldmf
 	      .newAllocationResult(1.0, // rating
 					      true, // success, 
 					      aspect_types, 
 					      results);
 	  // End [Level4]
 
-	  Allocation allocation = getDomainService().getFactory()
+	  Allocation allocation = ldmf
 	    .createAllocation(task.getPlan(), task, mover_asset,
 				     estAR, Role.AVAILABLE);
 	  System.out.println("Moving from pole " + from_pole + 

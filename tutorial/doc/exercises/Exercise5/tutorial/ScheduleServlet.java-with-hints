@@ -16,7 +16,7 @@ import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.planning.ldm.plan.NewTask;
 import org.cougaar.planning.ldm.plan.TaskImpl;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.servlet.SimpleServletComponent;
 

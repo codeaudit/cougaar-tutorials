@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.calendar;
  */
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
@@ -18,12 +19,13 @@ import org.cougaar.core.service.DomainService;
 /**
  * Class to allocate 'Schedule' tasks to the supporting organization
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAllocatorPlugin.java,v 1.1 2002-02-12 19:30:37 jwinston Exp $
+ * @version $Id: CalendarAllocatorPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  **/
 public class CalendarAllocatorPlugin extends ComponentPlugin
 {
 
     private DomainService domainService;
+    private PlanningFactory ldmf;
     public void setDomainService(DomainService value) {
 	domainService=value;
     }
@@ -62,6 +64,11 @@ public class CalendarAllocatorPlugin extends ComponentPlugin
    **/
   public void setupSubscriptions() {
     // System.out.println("CalendarAllocatorPlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     allScheduleTasks = 
       (IncrementalSubscription)getBlackboardService()
@@ -101,7 +108,7 @@ public class CalendarAllocatorPlugin extends ComponentPlugin
         Task task = (Task)e.nextElement();
 
         if (task.getPlanElement() == null) {
-          Allocation allocation = getDomainService().getFactory()
+          Allocation allocation = ldmf
 	      .createAllocation(task.getPlan(), task,
 				mySupportOrganization, null,
 				Role.AVAILABLE);
@@ -132,8 +139,7 @@ public class CalendarAllocatorPlugin extends ComponentPlugin
             // task must be rescheduled, all days were unavailable
             Task task = alloc.getTask();
             System.out.println("All dates taken.  Attempting to reschedule task");
-            CalendarUtils.modifyPreferences(task, getDomainService()
-					    .getFactory());
+            CalendarUtils.modifyPreferences(task, ldmf);
             getBlackboardService().publishChange(task);  // Change to preferences will propagate
           }
         }

@@ -27,7 +27,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.service.*;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * This COUGAAR Plugin creates and publishes "CODE" tasks
@@ -64,11 +64,11 @@ protected void setupSubscriptions() {
   // todo: Create a task to code "the next killer app"
   // todo: Part 1: create the AbstractAsset representing the project.
   //       Store it in instance variable 'what_to_code'
-  // hint: see RootFactory.createPrototype()
-  // hint: see RootFactory.createPropertyGroup()
+  // hint: see PlanningFactory.createPrototype()
+  // hint: see PlanningFactory.createPropertyGroup()
   // hint: see tutorial.assets.NewItemIdentificationPG class
   // hint: add a reference to the new NewItemIdentificationPG object to 'what_to_code'
-  // more hints: RootFactory factory = getDomainService().getFactory();
+  // more hints: PlanningFactory factory = getDomainService().getFactory();
   // more hints: what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
   // more hints: NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   // more hints: iipg.setItemIdentification("e-somthing");
@@ -110,9 +110,9 @@ protected Task makeTask(Asset what) {
 
     // todo: create the task with the verb "CODE"
     // new_task =
-    // hint: see RootFactory.newTask()
+    // hint: see PlanningFactory.newTask()
     // hint: see NewTask.setVerb()
-    // hint: see RootFactory.getRealityPlan()
+    // hint: see PlanningFactory.getRealityPlan()
     // hint: see NewTask.setPlan()
     // hint: see NewTask.setDirectObject()
     // more hints: NewTask new_task = getDomainService().getFactory().newTask();

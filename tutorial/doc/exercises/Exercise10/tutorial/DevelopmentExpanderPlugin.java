@@ -24,7 +24,7 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.plugin.util.PluginHelper;
+import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.4 2002-04-05 19:22:24 mbarger Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.5 2002-11-19 17:32:58 twright Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {

@@ -39,7 +39,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.2 2002-03-15 21:34:19 mbarger Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.3 2002-11-19 17:33:01 twright Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -155,7 +155,7 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
 
             // todo: publish ReportedResult indicating a failed AllocationResult
             //       (use the next two lines)
-            // hint:  see RootFactory.newAllocationResult()
+            // hint:  see PlanningFactory.newAllocationResult()
             // hint:  see PlanElementForAssessor.setReceivedResult()
             // hint:  see BlackboardService.publishChange()
             int []aspects = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};

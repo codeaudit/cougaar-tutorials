@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.calendar;
  */
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
@@ -23,12 +24,13 @@ import org.cougaar.core.plugin.ComponentPlugin;
  * It has a list of allocations in its RoleSchedule, and 
  * it has a list of appointments.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAssessorPlugin.java,v 1.1 2002-02-12 19:30:37 jwinston Exp $
+ * @version $Id: CalendarAssessorPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  **/
 public class CalendarAssessorPlugin extends ComponentPlugin
 {
 
   private DomainService domainService = null;
+  private PlanningFactory ldmf = null;
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -74,6 +76,11 @@ public class CalendarAssessorPlugin extends ComponentPlugin
   public void execute() 
   {
     //     System.out.println("CalendarAssessorPlugin::execute");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Look at changed calendar asset and see if we need to invalidate
     // reported allocation response
@@ -105,7 +112,7 @@ public class CalendarAssessorPlugin extends ComponentPlugin
             asset.getAssignment(scheduled_day));
           AllocationResult failed_result = 
             CalendarUtils.createAllocationResult
-            (scheduled_day, false, getDomainService().getFactory());
+            (scheduled_day, false, ldmf);
 
           // Set reported result on allocation
           // Note : This is an operation intended only for assessors

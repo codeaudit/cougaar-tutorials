@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.computer;
  */
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
@@ -25,12 +26,13 @@ import org.cougaar.core.service.*;
  * estimate. Given a request for supply, it can commit a computer and return
  * the costs in all aspects
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerStorePlugin.java,v 1.1 2002-02-12 19:30:42 jwinston Exp $
+ * @version $Id: ComputerStorePlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  */
 public class ComputerStorePlugin  extends ComponentPlugin
 {
 
   private DomainService domainService = null;
+  private PlanningFactory ldmf = null;
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -68,6 +70,11 @@ public class ComputerStorePlugin  extends ComponentPlugin
   public void setupSubscriptions() 
   {
     //    System.out.println("ComputerStorePlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Set up subscription for all assets
     allComputerAssets = 
@@ -132,8 +139,8 @@ public class ComputerStorePlugin  extends ComponentPlugin
     {
       // Found one : Create an allocation
       AllocationResult estAR = ComputerUtils.computeAllocationResult
-        (task, true, best_asset, getDomainService().getFactory());
-      plan_element = getDomainService().getFactory()
+        (task, true, best_asset, ldmf);
+      plan_element = ldmf
         .createAllocation(task.getPlan(), task, best_asset, 
       estAR, Role.AVAILABLE);
       System.out.println("Allocating task to " + best_asset + 
@@ -144,8 +151,8 @@ public class ComputerStorePlugin  extends ComponentPlugin
       // Nope : No asset fits the order adequately. Report failure
       AllocationResult estAR = 
         ComputerUtils.computeAllocationResult(task, false, best_asset, 
-					      getDomainService().getFactory());
-      plan_element = getDomainService().getFactory()
+					      ldmf);
+      plan_element = ldmf
         .createFailedDisposition(task.getPlan(), task, estAR);
       //	System.out.println("Failed to allocate");
     }

@@ -8,6 +8,7 @@ package org.cougaar.tutorial.faststart.calendar;
 
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
@@ -21,11 +22,12 @@ import org.cougaar.core.service.DomainService;
  * Plugin to manage the calendar assets for schedule requests, giving
  * an answer of when the scheduling was for, or that it was unfulfilled
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarManagerPlugin.java,v 1.1 2002-02-12 19:30:37 jwinston Exp $
+ * @version $Id: CalendarManagerPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  **/
 public class CalendarManagerPlugin extends ComponentPlugin
 {
     private DomainService domainService=null;
+    private PlanningFactory ldmf=null;
     public void setDomainService(DomainService value) {
 	domainService = value;
     }
@@ -63,6 +65,12 @@ public class CalendarManagerPlugin extends ComponentPlugin
    */
   public void setupSubscriptions()
   {
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
+
     //    System.out.println("CalendarManagerPlugin::setupSubscriptions");
     allScheduleTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allScheduleTasksPredicate);
@@ -70,7 +78,7 @@ public class CalendarManagerPlugin extends ComponentPlugin
       (IncrementalSubscription)getBlackboardService().subscribe(allScheduleAllocationsPredicate);
 
     // Publish the CalendarAsset  to logplan so others can see it
-    theCalendar = (CalendarAsset)getDomainService().getFactory().createAsset(org.cougaar.tutorial.faststart.calendar.CalendarAsset.class);
+    theCalendar = (CalendarAsset)ldmf.createAsset(org.cougaar.tutorial.faststart.calendar.CalendarAsset.class);
     getBlackboardService().publishAdd(theCalendar);
   }
 
@@ -137,7 +145,7 @@ public class CalendarManagerPlugin extends ComponentPlugin
     if (success) {
       // Create allocation Result for success/failure
       AllocationResult allocation_result =
-        CalendarUtils.createAllocationResult(new_day, success, getDomainService().getFactory());
+        CalendarUtils.createAllocationResult(new_day, success, ldmf);
 
       // Modify the allocation with result indicating success
       ((PlanElementForAssessor)alloc).setReceivedResult(allocation_result);
@@ -194,11 +202,11 @@ public class CalendarManagerPlugin extends ComponentPlugin
     // Create allocation Result for success/failure
     AllocationResult allocation_result =
       CalendarUtils.createAllocationResult(scheduled_day, success, 
-					   getDomainService().getFactory());
+					   ldmf);
 
     // Create an allocation with result indicating success/failure
     Allocation allocation =
-      getDomainService().getFactory()
+      ldmf
 	.createAllocation(task.getPlan(), task, theCalendar,
 			  allocation_result,
 			  Role.AVAILABLE);

@@ -37,7 +37,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.1 2002-02-12 19:30:03 jwinston Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-more-hints,v 1.2 2002-11-19 17:33:00 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -168,7 +168,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
 
       // todo:  Set allocation results based on aspect results and
       //        the success of the allocation
-      // hint: see RootFactory.newAllocationResult()
+      // hint: see PlanningFactory.newAllocationResult()
       AllocationResult estAR = null;
       // more hints: int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
       // more hints: double []results = {earliest, end, duration};

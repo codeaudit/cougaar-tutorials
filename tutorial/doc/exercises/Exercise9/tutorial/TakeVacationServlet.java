@@ -33,8 +33,8 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.BlackboardClient;
 import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.core.service.BlackboardService; 
-import org.cougaar.core.servlet.ServletService;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.core.service.ServletService;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.service.*;
 
 /**
@@ -42,7 +42,7 @@ import org.cougaar.core.service.*;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.3 2002-05-13 17:27:36 mbarger Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.4 2002-11-19 17:33:01 twright Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent 

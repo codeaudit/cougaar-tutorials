@@ -8,6 +8,7 @@ package org.cougaar.tutorial.faststart.computer;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
@@ -22,11 +23,12 @@ import org.cougaar.core.service.*;
  * and as soon as possible' with different scoring functions and weights.
  * Operates in both estimate and ordering modes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerShopperPlugin.java,v 1.1 2002-02-12 19:30:41 jwinston Exp $
+ * @version $Id: ComputerShopperPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  */
 public class ComputerShopperPlugin  extends ComponentPlugin
 {  
   private DomainService domainService = null;
+  private PlanningFactory ldmf = null;
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -53,6 +55,11 @@ public class ComputerShopperPlugin  extends ComponentPlugin
   // and generate tasks requesting computers
   public void setupSubscriptions() {
     //    System.out.println("ComputerRequesterPlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Subscribe to new allocations of 'SUPPLY' tasks
     allSupplyPlanElements =
@@ -71,7 +78,7 @@ public class ComputerShopperPlugin  extends ComponentPlugin
 					      ship_weights[i],
 					      cpu_weights[i],
 					      ram_weights[i],
-					      getDomainService().getFactory());
+					      ldmf);
       getBlackboardService().publishAdd(task);
       //      System.out.println("Publishing task!");
     }

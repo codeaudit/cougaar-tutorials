@@ -23,7 +23,7 @@ package tutorial;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
@@ -58,8 +58,8 @@ public class ManagerPlugin extends ComponentPlugin {
    * Using setupSubscriptions to create the initial CODE tasks
    */
 protected void setupSubscriptions() {
-  // Get the RootFactory from the DomainService
-  RootFactory factory = getDomainService().getFactory();
+  // Get the PlanningFactory from the DomainService
+  PlanningFactory factory = getDomainService().getFactory();
 
   // Create a task to code the next killer app
   what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
@@ -108,7 +108,7 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    RootFactory factory = getDomainService().getFactory();
+    PlanningFactory factory = getDomainService().getFactory();
 
     NewTask new_task = factory.newTask();
 

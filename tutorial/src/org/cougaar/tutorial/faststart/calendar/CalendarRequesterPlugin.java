@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.calendar;
  */
 
 import java.awt.event.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 
@@ -16,11 +17,12 @@ import org.cougaar.core.service.DomainService;
  * Simple UI plugin to create a task requesting a free day in the 
  * calendar
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarRequesterPlugin.java,v 1.1 2002-02-12 19:30:39 jwinston Exp $
+ * @version $Id: CalendarRequesterPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  */
 public class CalendarRequesterPlugin extends ComponentPlugin
 {
     private DomainService domainService;
+    private PlanningFactory ldmf;
     public void setDomainService(DomainService value) {
 	domainService=value;
     }
@@ -34,6 +36,11 @@ public class CalendarRequesterPlugin extends ComponentPlugin
   public void setupSubscriptions() 
   {
     //    System.out.println("CalendarRequesterPlugin::setupSubscriptions()");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     ActionListener listener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -50,7 +57,7 @@ public class CalendarRequesterPlugin extends ComponentPlugin
   {
     // System.out.println("Executing new Calendar Request...");
     getBlackboardService().openTransaction();
-    Task task = CalendarUtils.createTask(getDomainService().getFactory());
+    Task task = CalendarUtils.createTask(ldmf);
     getBlackboardService().publishAdd(task);
     getBlackboardService().closeTransaction(false);
   }

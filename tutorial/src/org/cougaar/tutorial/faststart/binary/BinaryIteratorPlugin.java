@@ -8,6 +8,7 @@ package org.cougaar.tutorial.faststart.binary;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
@@ -21,12 +22,13 @@ import org.cougaar.core.service.DomainService;
  * The response will succeed if the solution value is within the given bounds, 
  * and fail if not.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryIteratorPlugin.java,v 1.1 2002-02-12 19:30:36 jwinston Exp $
+ * @version $Id: BinaryIteratorPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  */
 public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugin 
 {
 
   private DomainService domainService;
+  private PlanningFactory ldmf;
   public void setDomainService(DomainService value) {
       domainService = value;
   }
@@ -46,6 +48,11 @@ public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugi
   // Set up 'MANAGE' allocation subscription, and set initial 'guess' task in motion
   public void setupSubscriptions() {
     //    System.out.println("BinaryIteratorPlugin::setupSubscriptions");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     // Subscribe to allocations of 'MANAGE' tasks (CHANGED and NEW)
     allManageAllocations = 
@@ -53,7 +60,7 @@ public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugi
 	.subscribe(allManageAllocationsPredicate);
 
     // Create initial task to search the given range
-    Task task = BinaryUtils.createNewTask(getDomainService().getFactory());
+    Task task = BinaryUtils.createNewTask(ldmf);
     getBlackboardService().publishAdd(task);
     System.out.println("Publishing task!");
   }
@@ -127,7 +134,7 @@ public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugi
               BinaryUtils.UpdatePreferences
                 (task, low_bounds, 
               low_bounds + (high_bounds - low_bounds)/2.0,
-              getDomainService().getFactory());
+              ldmf);
               getBlackboardService().publishChange(task);
             }
           } 
@@ -141,7 +148,7 @@ public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugi
             BinaryUtils.UpdatePreferences
 		(task, high_bounds, 
 		 high_bounds + (orig_high_bounds - high_bounds)/2.0,
-		 getDomainService().getFactory());
+		 ldmf);
             getBlackboardService().publishChange(task);
           }
         }

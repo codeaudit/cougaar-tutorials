@@ -27,7 +27,7 @@ import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.service.*;
-import org.cougaar.core.domain.RootFactory;
+import org.cougaar.planning.ldm.PlanningFactory;
 
 /**
  * This COUGAAR Plugin creates and publishes "CODE" tasks

@@ -7,6 +7,7 @@ package org.cougaar.tutorial.faststart.hanoi;
 **/
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
@@ -30,11 +31,12 @@ import org.cougaar.core.service.*;
  * TRANSPORT <from pole> <to pole> <1>
  * MANAGE <remaining pole> <to pole> <count - 1>
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiPlugin.java,v 1.1 2002-02-12 19:30:44 jwinston Exp $
+ * @version $Id: HanoiPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
  **/
 public class HanoiPlugin  extends ComponentPlugin
 {
   private DomainService domainService = null;
+  private PlanningFactory ldmf = null;
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -74,6 +76,11 @@ public class HanoiPlugin  extends ComponentPlugin
    **/
   public void setupSubscriptions() { 
     System.out.println("HanoiPlugin::setupSubscriptions ");
+    ldmf = (PlanningFactory) getDomainService().getFactory("planning");
+    if (ldmf == null) {
+      throw new RuntimeException(
+          "Unable to find \"planning\" domain factory");
+    }
 
     allManageTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allManageTasksPredicate);
@@ -138,7 +145,7 @@ public class HanoiPlugin  extends ComponentPlugin
 
 	// Create expansion and workflow to represent the expansion 
 	// of this task
-	NewWorkflow new_wf = getDomainService().getFactory().newWorkflow();
+	NewWorkflow new_wf = ldmf.newWorkflow();
 	new_wf.setParentTask(task);
 
 	// Base recursion case : If only one disk to move, generate
@@ -148,7 +155,7 @@ public class HanoiPlugin  extends ComponentPlugin
 	    HanoiUtils.createNewTask
 	    (from_pole, to_pole, 1, 
 	     start_time, end_time,
-	     HanoiUtils.TRANSPORT_VERB, task, getDomainService().getFactory());
+	     HanoiUtils.TRANSPORT_VERB, task, ldmf);
 	  new_wf.addTask(t1);
 	  getBlackboardService().publishAdd(t1);
 	} else {
@@ -161,7 +168,7 @@ public class HanoiPlugin  extends ComponentPlugin
 	     count-1, 
 	     start_time, start_time + third_of_delta,
 	     HanoiUtils.MANAGE_VERB,
-	     task, getDomainService().getFactory());
+	     task, ldmf);
 	  new_wf.addTask(t1);
 	  getBlackboardService().publishAdd(t1);
 
@@ -172,7 +179,7 @@ public class HanoiPlugin  extends ComponentPlugin
 				     start_time + third_of_delta,
 				     end_time - third_of_delta,
 				     HanoiUtils.TRANSPORT_VERB,
-				     task, getDomainService().getFactory());
+				     task, ldmf);
 	  new_wf.addTask(t2);
 	  getBlackboardService().publishAdd(t2);
 
@@ -184,7 +191,7 @@ public class HanoiPlugin  extends ComponentPlugin
 	     end_time - third_of_delta,
 	     end_time,
 	     HanoiUtils.MANAGE_VERB,
-	     task, getDomainService().getFactory());
+	     task, ldmf);
 	  new_wf.addTask(t3);
 	  getBlackboardService().publishAdd(t3);
 
@@ -193,7 +200,7 @@ public class HanoiPlugin  extends ComponentPlugin
 	  Vector constraints = new Vector();
 
 	  // End(t1) must be before Start(t2)
-	  NewConstraint c1 = getDomainService().getFactory().newConstraint();
+	  NewConstraint c1 = ldmf.newConstraint();
 	  c1.setConstrainingTask(t1);
 	  c1.setConstrainingAspect(AspectType.END_TIME);
 	  c1.setConstrainedTask(t2);
@@ -202,7 +209,7 @@ public class HanoiPlugin  extends ComponentPlugin
 	  constraints.addElement(c1);
 
 	  // End(t2) must be before Start(t3)
-	  NewConstraint c2 = getDomainService().getFactory().newConstraint();
+	  NewConstraint c2 = ldmf.newConstraint();
 	  c2.setConstrainingTask(t2);
 	  c2.setConstrainingAspect(AspectType.END_TIME);
 	  c2.setConstrainedTask(t3);
@@ -216,7 +223,7 @@ public class HanoiPlugin  extends ComponentPlugin
 
 	AllocationResult estAR = null;
 	Expansion new_exp = 
-	  getDomainService().getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
+	  ldmf.createExpansion(task.getPlan(), task, new_wf, estAR);
 	getBlackboardService().publishAdd(new_wf);
 	getBlackboardService().publishAdd(new_exp);
 
