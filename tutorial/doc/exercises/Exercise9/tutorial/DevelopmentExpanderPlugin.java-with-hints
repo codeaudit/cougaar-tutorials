@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.9 2003-04-17 15:10:23 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java-with-hints,v 1.9 2003-04-17 15:10:23 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -195,6 +195,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow
 
 // todo: Add constraints onto the workflow that t1 < t2 < t3
+// hint: Vector to hold constraints
+// hint: PlanningFactory.newConstraint
+// hint: Constraint.setConstrainingTask
+// hint: Constraint.setConstrainingAspect
+// hint: Constraint.setConstrainedTask
+// hint: Constraint.setConstrainedAspect
+// hint: Constraint.setConstraintOrder
+// hint: Workflow.setConstraints
   }
 
   /**
