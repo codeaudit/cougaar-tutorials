@@ -12,6 +12,9 @@ components off of.
 
 2. SETUP
 
+Insure that you installed cougaar.zip and cougaar-support.zip and
+that your Cougaar Install Path is setup correctly
+
 3. RUNNING
 
 To run this application, you run the 2 Cougaar Nodes that make up the
@@ -53,3 +56,5 @@ scovery.
 eat Pizza
 16:53:12,757 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 V
 eggie Pizza
+
+5. LEARN MORE
