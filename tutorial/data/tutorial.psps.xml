@@ -20,32 +20,32 @@ Additional PSPs loaded by PSP Launcher
   <!-- Core PSPs  
        Keep the old "alpine/demo" paths, even though these are now core.
   -->
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_EditPSPBlackBoard</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_EditPSPBlackBoard</Classname>
     <PSPName>alpine/demo/EBB.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_KeepAlive</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_KeepAlive</Classname>
     <PSPName>alpine/demo/KEEPALIVE.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_LocateClusters</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_LocateClusters</Classname>
     <PSPName>alpine/demo/CLUSTERS.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_PlanView</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_PlanView</Classname>
     <PSPName>alpine/demo/TASKS.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_ClusterMetrics</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_ClusterMetrics</Classname>
     <PSPName>alpine/demo/CLUSTER_METRICS.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_SocietyMetrics</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_SocietyMetrics</Classname>
     <PSPName>alpine/demo/SOCIETY_METRICS.PSP</PSPName>
   </element>
-  <element type="alp.ui.planserver.NamedPSP">
-    <Classname>alp.ui.planserver.psp.PSP_PlugInLoader</Classname>
+  <element type="org.cougaar.lib.planserver.NamedPSP">
+    <Classname>org.cougaar.lib.planserver.psp.PSP_PlugInLoader</Classname>
     <PSPName>alpine/demo/PLUGIN_LOADER.PSP</PSPName>
   </element>
 

@@ -1,0 +1,14 @@
+#!/bin/sh
+# $id$
+# Recompile all tutorials 
+
+# not sure what to compare to in order to see if this is null...
+if  [ "$ALP_INSTALL_PATH" = "" ]
+ then 
+  echo Please set ALP_INSTALL_PATH
+  exit 2
+fi
+
+clearall
+compileall
+makejar

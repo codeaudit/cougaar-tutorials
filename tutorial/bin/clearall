@@ -1,0 +1,14 @@
+#!/bin/sh
+# Remove all classes and automatically generated files
+# $id$
+
+# make sure this is the correct location of the java files
+LOC=$ALP_INSTALL_PATH/src/org/cougaar/tutorial/faststart
+
+rm $LOC/*.class 
+rm $LOC/binary/*.class
+rm $LOC/hanoi/*.class
+rm $LOC/computer/*.class
+rm $LOC/computer/assets/*.class
+rm $LOC/computer/assets/*.java
+rm $LOC/calendar/*.class

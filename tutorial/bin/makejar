@@ -1,0 +1,10 @@
+#!/bin/sh
+# Create tutorial jar file
+# $id$
+#
+
+# change this to work in your environment
+SOURCE=org/cougaar/tutorial/faststart
+
+cd ../src
+jar cvf ../lib/tutorial.jar $SOURCE/*.class $SOURCE/hanoi/*.class $SOURCE/binary/*.class $SOURCE/computer/*.class $SOURCE/calendar/*.class $SOURCE/computer/assets/*.class

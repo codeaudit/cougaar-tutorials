@@ -18,7 +18,7 @@ import java.util.*;
  * Plugin to manage the calendar assets for schedule requests, giving
  * an answer of when the scheduling was for, or that it was unfulfilled
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarManagerPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: CalendarManagerPlugIn.java,v 1.2 2001-01-30 21:10:25 wwright Exp $
  **/
 public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
@@ -130,7 +130,7 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
         CalendarUtils.createAllocationResult(new_day, success, theLDMF);
 
       // Modify the allocation with result indicating success
-      ((PlanElementForAssessor)alloc).setReportedResult(allocation_result);
+      ((PlanElementForAssessor)alloc).setReceivedResult(allocation_result);
       publishChange(alloc);
 
       // we've successfully allocated, register change to calendar as well

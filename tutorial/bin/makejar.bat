@@ -2,5 +2,5 @@ rem Create tutorial jar file
 REM $id$
 rem
 cd ..\src
-jar cvf ..\lib\tutorial.jar alp\tutorial\*.class alp\tutorial\hanoi\*.class alp\tutorial\binary\*.class alp\tutorial\computer\*.class alp\tutorial\calendar\*.class alp\tutorial\computer\assets\*.class
+jar cvf ..\lib\tutorial.jar org\cougaar\tutorial\faststart\*.class org\cougaar\tutorial\faststart\hanoi\*.class org\cougaar\tutorial\faststart\binary\*.class org\cougaar\tutorial\faststart\computer\*.class org\cougaar\tutorial\faststart\calendar\*.class org\cougaar\tutorial\faststart\computer\assets\*.class
 cd ..\bin

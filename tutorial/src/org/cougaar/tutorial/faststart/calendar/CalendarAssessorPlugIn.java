@@ -21,7 +21,7 @@ import java.util.*;
  * It has a list of allocations in its RoleSchedule, and 
  * it has a list of appointments.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAssessorPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: CalendarAssessorPlugIn.java,v 1.2 2001-01-30 21:10:25 wwright Exp $
  **/
 public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {
@@ -90,7 +90,7 @@ public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
           // Note : This is an operation intended only for assessors
           // so we require a cast to make coder acknowledge 
           // that it is being done
-          ((PlanElementForAssessor)alloc).setReportedResult(failed_result);
+          ((PlanElementForAssessor)alloc).setReceivedResult(failed_result);
           //	    System.out.println("Publishing alloc");
           publishChange(alloc);
         }

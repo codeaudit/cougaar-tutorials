@@ -1,0 +1,18 @@
+#!/bin/sh
+# Script to compile all tutorial files
+
+# library 
+LIBPATHS=$ALP_INSTALL_PATH/lib/core.jar
+LIBPATHS=$LIBPATHS:$ALP_INSTALL_PATH/lib/build.jar
+
+# java files location
+SOURCE_LOC=$ALP_INSTALL_PATH/src/org/cougaar/tutorial/faststart
+
+# echo on
+
+# Regenerate and recompile all property/asset files
+cd ../src/org/cougaar/tutorial/faststart/computer/assets
+java -classpath $LIBPATHS org.cougaar.tools.build.AssetWriter -Porg.cougaar.tutorial.faststart.computer.assets computer_assets.def
+java -classpath $LIBPATHS org.cougaar.tools.build.PGWriter properties.def
+cd ../../../../../..
+javac -deprecation -classpath $LIBPATHS $SOURCE_LOC/*.java $SOURCE_LOC/hanoi/*.java $SOURCE_LOC/binary/*.java $SOURCE_LOC/calendar/*.java $SOURCE_LOC/computer/assets/*.java $SOURCE_LOC/computer/*.java 

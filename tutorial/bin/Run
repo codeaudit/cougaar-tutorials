@@ -1,0 +1,31 @@
+#!/bin/sh
+# @echo OFF
+#  $id$
+
+if [ "$ALP_INSTALL_PATH" = "" ]
+ then
+  echo Please set ALP_INSTALL_PATH
+  exit 2
+fi
+
+if [ "$1" = "" ]
+ then
+   echo Run requires an argument  eg: Run HanoiNode
+   exit 2
+fi
+
+LIBPATHS=$ALP_INSTALL_PATH/lib/core.jar
+LIBPATHS=$LIBPATHS:$ALP_INSTALL_PATH/lib/xml4j_2_0_11.jar
+LIBPATHS=$LIBPATHS:$ALP_INSTALL_PATH/lib/planserver.jar
+LIBPATHS=$ALP_INSTALL_PATH/lib/tutorial.jar:$LIBPATHS
+
+#  pass in "NodeName" to run a specific named Node
+
+MYPROPERTIES=
+MYMEMORY=
+MYCLASSES=org.cougaar.core.society.Node
+MYARGUMENTS=" -c -n $1"
+
+# @ECHO ON
+
+java $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS $MYCLASSES $MYARGUMENTS $2 $3
