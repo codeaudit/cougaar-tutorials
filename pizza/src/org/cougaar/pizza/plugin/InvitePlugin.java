@@ -294,7 +294,7 @@ public class InvitePlugin extends ComponentPlugin {
 					    Constants.INVITATION_QUERY,
 					    pizzaPreferences);
     
-    log.shout("Sending '" + Constants.INVITATION_QUERY + "' to my Buddy list: " + Constants.COMMUNITY);
+    log.shout("Sending `" + Constants.INVITATION_QUERY + "' to my Buddy list: " + Constants.COMMUNITY);
     
     blackboard.publishAdd(sourceRelay);
   }
