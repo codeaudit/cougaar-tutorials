@@ -1,23 +1,14 @@
-<?xml version='1.0'?>
-<society name='Exercise-1'
-  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-  xsi:noNamespaceSchemaLocation='http://www.cougaar.org/2003/society.xsd'>
-<host name="localhost">
-  <node name="Exercise1">
-    <agent name="MyAgent" class="org.cougaar.core.agent.SimpleAgent">
-      <component
-        name="org.cougaar.tutorial.exercise1.ManagerPlugin"
-        class="org.cougaar.tutorial.exercise1.ManagerPlugin"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-      </component>
-      <component
-        name="org.cougaar.tutorial.exercise1.WorkerPlugin"
-        class="org.cougaar.tutorial.exercise1.WorkerPlugin"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-      </component>
-    </agent>
-  </node>
-</host>
+<?xml version="1.0" encoding="UTF-8"?>
+<society
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  name="Exercise-1"
+  xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
+  <host name="localhost">
+    <node name="Exercise1">
+      <agent name="MyAgent">
+        <component class="org.cougaar.tutorial.exercise1.ManagerPlugin"/>
+        <component class="org.cougaar.tutorial.exercise1.WorkerPlugin"/>
+      </agent>
+    </node>
+  </host>
 </society>

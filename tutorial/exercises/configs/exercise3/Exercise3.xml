@@ -1,45 +1,23 @@
-<?xml version='1.0'?>
-<society name='Exercise-3'
-  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-  xsi:noNamespaceSchemaLocation='http://www.cougaar.org/2003/society.xsd'>
-<host name="localhost">
-  <node name="Exercise3">
-    <agent name="MyAgent" class="org.cougaar.core.agent.SimpleAgent">
-      <component
-        name="org.cougaar.tutorial.exercise3.ManagerPlugin"
-        class="org.cougaar.tutorial.exercise3.ManagerPlugin"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-      </component>
-      <component
-        name="org.cougaar.tutorial.exercise3.ManagerAllocatorPlugin"
-        class="org.cougaar.tutorial.exercise3.ManagerAllocatorPlugin"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-      </component>
-      <component
-        name="org.cougaar.tutorial.exercise3.ProgrammerLDMPlugin"
-        class="org.cougaar.tutorial.exercise3.ProgrammerLDMPlugin"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-      </component>
-      <component
-        name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-        class="org.cougaar.core.servlet.SimpleServletComponent"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-        <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-        <argument>/tasks</argument>
-      </component>
-      <component
-        name="org.cougaar.core.servlet.SimpleServletComponent(org.couggar.planning.servlet.CompletionServlet, /completion)"
-        class="org.cougaar.core.servlet.SimpleServletComponent"
-        priority="COMPONENT"
-        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+<?xml version="1.0" encoding="UTF-8"?>
+<society 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  name="Exercise-3" 
+  xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
+  <host name="localhost">
+    <node name="Exercise3">
+      <agent name="MyAgent">
+        <component class="org.cougaar.tutorial.exercise3.ManagerPlugin"/>
+        <component class="org.cougaar.tutorial.exercise3.ManagerAllocatorPlugin"/>
+        <component class="org.cougaar.tutorial.exercise3.ProgrammerLDMPlugin"/>
+        <component class="org.cougaar.core.servlet.SimpleServletComponent">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+        <component class="org.cougaar.core.servlet.SimpleServletComponent">
           <argument>org.cougaar.planning.servlet.CompletionServlet</argument>
           <argument>/completion</argument>
-      </component>
-    </agent>
-  </node>
-</host>
+        </component>
+      </agent>
+    </node>
+  </host>
 </society>
