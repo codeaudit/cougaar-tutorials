@@ -38,7 +38,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.5 2003-04-16 22:37:17 dmontana Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java-with-hints,v 1.1 2003-04-16 22:37:17 dmontana Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -90,6 +90,8 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
 
 // todo: loop through vacationAllocs and call validateSchedule with
 // todo: associated programmer
+// hints: IncrementalSubscription.getAddedList
+// hints: Allocation.getAsset
   }
 
   /**
@@ -104,6 +106,10 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
       // if not a vacation, then remove it
 // todo: loop over asset's role schedule and remove from blackboard
 // todo: all allocations that aren't a vacation
+// hints: Assets.getRoleSchedule
+// hints: RoleSchedule.getRoleScheduleElements
+// hints: Allocation.getTask.getVerb
+// hints: BlackboardService.publishRemove
       }
   }
 }
