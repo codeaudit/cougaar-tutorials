@@ -1,0 +1,4 @@
+If you want the Unix versions of the scripts to work, you
+need to check out and zip the files on a Unix machine.
+Checking out on a Windows machine causes the shell scripts
+to get reformatted.
