@@ -34,8 +34,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -51,22 +49,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.cougaar.community.CommunityDescriptor;
 import org.cougaar.community.manager.Request;
 
-import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.Claimable;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.relay.Relay;
-import org.cougaar.core.service.AgentIdentificationService;
-import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.ServletService;
 import org.cougaar.core.service.community.Community;
 import org.cougaar.core.service.community.CommunityResponse;
-import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 
@@ -87,56 +79,73 @@ import org.cougaar.planning.ldm.plan.TimeAspectValue;
 
 import org.cougaar.util.Arguments;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.log.Logger;
 
 /**
- * Records all adds/changes/removes on blackboard objects and displays
- * them in a servlet.
+ * Generic debugging servlet that displays all Adds/Changes/Removes on Blackboard objects. 
  * <p>
- * Specifically tracks changes on relays, tasks, plan elements, assets,
- * and unique objects.  For every event, attempts to explain the event.
- * For instance, when a relay is first published, it shows which agent
- * the relay is being sent to.
+ * Specifically tracks changes on Relays, Tasks, PlanElements, Assets,
+ * UniqueObjects, and implementations of {@link HistoryServletFriendly}.  
+ * For every event, attempts to explain the event.
+ * For instance, when a Relay is first published, it shows which Agent
+ * the Relay is being sent to.
  * <p>
- * The servlet lets the user sort events by time, then by uid, or by uid
- * only.  Sorting by uid shows the complete lifecycle of a blackboard
- * object, especially useful for transient objects that live on the
- * blackboard only a short time.  When sorting by time, each group of 
+ * The Servlet lets the user sort events by time, then by uid, or by uid
+ * only.  Sorting by uid shows the complete lifecycle of a Blackboard
+ * object; especially useful for transient objects that live on the
+ * Blackboard only a short time.  When sorting by time, each group of 
  * changes that happens in the same execute cycle is drawn with 
  * the same background color.  When sorting by uid, each distinct 
  * object is drawn with the same background color.
  * <p>
- * The servlet has a show details link which will show the toString for 
+ * The servlet has a "show details" link which will show the toString for 
  * the blackboard object at that time.
  * <p>
- * Also shows which plugin initially published an object to the blackboard
- * if that information is available.
+ * Also shows which plugin initially published an object to the Blackboard
+ * if that information is available (for Claimables).
  * <p>
+ *
  * Has a default limit of 1000 events, but this can be set by the 
  * MAX_EVENTS_REMEMBERED component argument to the servlet.
  * E.g. :
- *   <argument>MAX_EVENTS_REMEMBERED=5000</argument>
+ *   &lt;argument&gt;MAX_EVENTS_REMEMBERED=5000&lt;/argument&gt;
+ * FIXME: MAX_ROLE_SCHEDULE_ELEMENTS and MAX_CHILD_TASKS
  */
 public class HistoryServlet extends ComponentPlugin {
-  protected final int INITIAL_MAX_ENTRIES=1000;
+  // Some defaults
+  protected final int INITIAL_MAX_ENTRIES=1000; // Default mas # events to track
   protected final int INITIAL_MAX_ROLE_SCHEDULE_ELEMENTS=5;
   protected final int INITIAL_MAX_CHILD_TASKS=5;
+
+  // Actual value of parametrized preferences
+  private int maxEvents;
+  private int maxRoleScheduleElements;
+  private int maxChildTasks;
 
   /** initialize args to the empty instance */
   private Arguments args = Arguments.EMPTY_INSTANCE;
   protected MessageAddress localAgent;
 
   protected LoggingService logger;
-  protected boolean stopRefresh = false;
   private ServletService servletService;
+
+  // Subscribe to various kinds of objects
   private IncrementalSubscription relaysSubscription;
   private IncrementalSubscription tasksSubscription; 
   private IncrementalSubscription planElementsSubscription;
   private IncrementalSubscription assetsSubscription;
+  // Note that this is an everything-but-the-above subscription
   private IncrementalSubscription uniqueObjectsSubscription;
+
   protected static SimpleDateFormat format = new SimpleDateFormat ("MM-dd hh:mm:ss:SSS");
   protected String encAgentName;
+
+  // The actual Blackboard history we collect
   protected SortedSet events = new TreeSet();
+
+  // Has the events list been trimmed?
+  private boolean didDropOldEntries = false;
+
+  // User preferences
   boolean showChangeReport = false;
   boolean sortByUID = false;
   boolean showDetails = false;
@@ -144,10 +153,6 @@ public class HistoryServlet extends ComponentPlugin {
   private SimpleDateFormat myDateFormat = new SimpleDateFormat("MM_dd_yyyy_h:mma");
   private Date myDateInstance = new Date();
   private FieldPosition myFieldPos = new FieldPosition(SimpleDateFormat.YEAR_FIELD);
-  private int maxEvents;
-  private int maxRoleScheduleElements;
-  private int maxChildTasks;
-  private boolean didDropOldEntries = false;
 
   // what are we looking at?
   public static final int TASK = 0;
@@ -156,6 +161,7 @@ public class HistoryServlet extends ComponentPlugin {
   public static final int UNIQUE_OBJECT = 3;
   public static final int DIRECT_OBJECT = 4;
 
+  // What kind of event was this?
   public static final int ADDED   = 0;
   public static final int CHANGED = 1;
   public static final int REMOVED = 2;
@@ -196,13 +202,16 @@ public class HistoryServlet extends ComponentPlugin {
 
   /** "setParameter" is only called if a plugin has parameters */
   public void setParameter(Object o) {
-    System.err.println ("called with " + o);
     args = new Arguments(o);
-    System.err.println ("args now " + args);
   }  
 
+  // Load this servlet at /history
   protected String getPath() {
     return "/history";
+  }
+
+  public void setServletService(ServletService servletService) {
+    this.servletService = servletService;
   }
 
   public void load() {
@@ -210,8 +219,8 @@ public class HistoryServlet extends ComponentPlugin {
     ServiceBroker sb = getServiceBroker();
     logger = (LoggingService)
       sb.getService(this, LoggingService.class, null);
-    servletService = (ServletService)
-      sb.getService(this, ServletService.class, null);
+    if (logger == null)
+      logger = LoggingService.NULL;
 
     encAgentName = encodeAgentName(agentId.getAddress());
 
@@ -226,6 +235,20 @@ public class HistoryServlet extends ComponentPlugin {
       logger.info ("max events " + args.getInt("MAX_EVENTS_REMEMBERED", 55));
       logger.info ("args is " + args);
     }
+  }
+
+  // Every load() should be matched with an unload() 
+  public void unload() {
+    if (servletService != null) {
+      getServiceBroker().releaseService(this, ServletService.class, servletService);
+      servletService = null;
+    }
+    if (logger != LoggingService.NULL) {
+      getServiceBroker().releaseService(this, LoggingService.class, logger);
+      logger = null;
+    }
+
+    super.unload();
   }
 
   public String encodeAgentName(String name) {
@@ -302,7 +325,8 @@ public class HistoryServlet extends ComponentPlugin {
     try {
       servletService.register(getPath(), createServlet());
     } catch (Exception e) {
-      logger.warn ("could not register servlet?");
+      if (logger.isWarnEnabled())
+	logger.warn ("could not register servlet?");
       e.printStackTrace();
     }
 
@@ -329,8 +353,8 @@ public class HistoryServlet extends ComponentPlugin {
 	checkUniqueObjects(now);
       }
     } catch (Exception e) {
-      logger.warn ("got exception : " + e);
-      e.printStackTrace();
+      if (logger.isWarnEnabled())
+	logger.warn ("got exception", e);
     }
 
     if (logger.isInfoEnabled()) {
