@@ -1,12 +1,13 @@
 /*
  * <copyright>
  *  Copyright 1997-2004 BBNT Solutions, LLC
- *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *  under sponsorship of the Defense Advanced Research Projects Agency
+ *  (DARPA).
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -23,19 +24,17 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PropertyGroupFactory;
 import org.cougaar.pizza.util.PGCreator;
-
-import java.util.Collection;
-import java.util.Iterator;
+import org.cougaar.util.Arguments;
 
 /**
- * This COUGAAR Plugin creates and publishes the Pizza Provider Kitchen Asset object
- * which identifies what kind of pizza that provider's kitchen can make.
+ * This COUGAAR Plugin creates and publishes the Pizza Provider Kitchen
+ * Asset object which identifies what kind of pizza that provider's
+ * kitchen can make.
  */
 public class KitchenPrototypePlugin extends ComponentPlugin {
 
@@ -45,66 +44,58 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype registration services
+  // The prototypeRegistryService acts as a provider of prototype
+  // registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
-  /**
-   * Used by the binding utility through reflection to get my LoggingService
-   */
-  public LoggingService getLoggingService(Object requestor) {
-    LoggingService ls = (LoggingService)
-        getServiceBroker().getService(requestor, LoggingService.class, null);
-    return LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
-  }
+  // The planning factory we use to create planning objects.
+  private PlanningFactory factory;
+
+  // Initialize my plugin args to the empty instance
+  private Arguments args = Arguments.EMPTY_INSTANCE;
 
   /**
-   * Used by the binding utility through reflection to set my DomainService
-   */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
-  }
-
-  /**
-   * Used by the binding utility through reflection to get my DomainService
-   */
-  public DomainService getDomainService() {
-    return domainService;
-  }
-
-  /**
-   * Used by the binding utility through reflection to set my PrototypeRegistryService
-   */
-  public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
-    prototypeRegistryService = aPrototypeRegistryService;
-  }
-
-  /**
-   * Used by the binding utility through reflection to get my PrototypeRegistryService
-   */
-  public PrototypeRegistryService getPrototypeRegistryService() {
-    return prototypeRegistryService;
-  }
-
-  /**
-   * Variables for storing plugin arguments that determine whether the kitchen assets
-   * are capable of creating meat and/or veggie pizzas.
+   * Variables for storing plugin arguments that determine whether the
+   * kitchen assets are capable of creating meat and/or veggie pizzas.
    * Default is to create both.
    */
   private boolean createVeggie = true;
   private boolean createMeat = true;
+  private final String PIZZA_TYPE_PARAM = "PIZZA_TYPES_PROVIDED";
 
   /**
-   * Used to initialize the plugin with the plugin parameters
+   * setParameter is only called by the infrastructure
+   * if a plugin has parameters
    */
-  public void load() {
-    super.load();
-    logger = getLoggingService(this);
-    // The readParameters method will initialize the createVeggie and createMeat booleans
-    readKitchenParameters();
+  public void setParameter(Object o) {
+    args = new Arguments(o);
+    super.setParameter(o);
   }
 
   /**
-   * Used for initialization to populate the Blackboard with Kitchen prototype and Asset objects
+   * Initialize the plugin with the plugin parameters and get our
+   * services.
+   */
+  public void load() {
+    super.load();
+    // get services
+    domainService = (DomainService)
+        getServiceBroker().getService(this, DomainService.class, null);
+    prototypeRegistryService = (PrototypeRegistryService)
+        getServiceBroker().getService(this, PrototypeRegistryService.class,
+                                      null);
+    logger = (LoggingService)
+        getServiceBroker().getService(this, LoggingService.class, null);
+    factory = (PlanningFactory)domainService.getFactory("planning");
+    // Get the plugin params and initialize the createVeggie and
+    // createMeat booleans
+    String pizzaTypeValue = args.getString(PIZZA_TYPE_PARAM);
+    setKitchenParameters(pizzaTypeValue);
+  }
+
+  /**
+   * Used for initialization to populate the Blackboard with Kitchen
+   * prototype and Asset objects
    */
   protected void setupSubscriptions() {
     // create the kitchen prototypes and assets
@@ -112,32 +103,35 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Create the Kitchen prototype and asset instances with the appropriate veggie and/org meat PGs
-   * based on the existing kitchen prototype and the plugin arguments.
+   * Create the Kitchen prototype and asset instances with the appropriate
+   * veggie and/org meat PGs based on the existing kitchen prototype
+   * and the plugin arguments.
    */
   private void createKitchenAssets() {
-    // Get the PlanningFactory
-    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
-
     // Register our PropertyGroupFactory
     factory.addPropertyGroupFactory(new PropertyGroupFactory());
 
-    KitchenAsset new_prototype = (KitchenAsset)factory.createPrototype(KitchenAsset.class, "kitchen");
-    // Cache the prototype in the LDM so that it can be used to create instances of
-    // Kitchen assets when asked for by prototype name
-    getPrototypeRegistryService().cachePrototype("kitchen", new_prototype);
-    KitchenAsset kitchen_asset = (KitchenAsset) factory.createInstance("kitchen");
+    KitchenAsset new_prototype = (KitchenAsset)factory.
+        createPrototype(KitchenAsset.class, "kitchen");
+    // Cache the prototype in the LDM so that it can be used to create
+    // instances of Kitchen assets when asked for by prototype name
+    prototypeRegistryService.cachePrototype("kitchen", new_prototype);
+    KitchenAsset kitchen_asset = (KitchenAsset)
+        factory.createInstance("kitchen");
     // Check the plugin arguments to see if this plugin should create a
     // Kitchen asset that can make veggie pizza.
     if (createVeggie) {
-      kitchen_asset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
+      kitchen_asset.
+          addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
     }
     // Check the plugin arguments to see if this plugin should create a
     // Kitchen asset that can make meat pizza.
     if (createMeat) {
-      kitchen_asset.addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
+      kitchen_asset.
+          addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
     }
-    kitchen_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Pizza Kitchen"));
+    kitchen_asset.setItemIdentificationPG(
+        PGCreator.makeAItemIdentificationPG(factory, "Pizza Kitchen"));
     getBlackboardService().publishAdd(kitchen_asset);
   }
 
@@ -147,36 +141,13 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   protected void execute () {}
 
   /**
-   * Reads the plugin parameters.
-   */
-  private void readKitchenParameters() {
-    Collection params = getParameters();
-    if (params.isEmpty()) {
-      if (logger.isInfoEnabled()) {
-        logger.info("No parameters. Assuming that this kitchen provides both meat and veggie pizzas");
-      }
-      return;
-    }
-    //Walk through the plugin params and find the one we are interested in.
-    int index;
-    for (Iterator i = params.iterator(); i.hasNext();) {
-      String s = (String) i.next();
-      if ((index = s.indexOf('=')) != -1) {
-        String paramName = s.substring(0, index);
-        if (paramName.trim().equals("PIZZA_TYPES_PROVIDED")) {
-          setKitchenParameters(s.substring(index + 1, s.length()));
-          return;
-        }
-      }
-    }
-  }
-
-  /**
-   * Set the createVeggie and createMeat plugin variables according to the plugin param that was read in.
+   * Set the createVeggie and createMeat plugin variables according to
+   * the plugin param that was read in.
    */
   private void setKitchenParameters(String paramValue) {
     if (logger.isDebugEnabled()) {
-      logger.debug("Found PIZZA_TYPES_PROVIDED Plugin param of: " + paramValue.trim());
+      logger.debug("Found " + PIZZA_TYPE_PARAM + " param of: " +
+                   paramValue.trim());
     }
     if (paramValue.trim().equals("all")) {
       createVeggie = true;
