@@ -36,10 +36,28 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.2 2002-03-15 21:30:09 mbarger Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2002-04-05 19:27:03 mbarger Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
+
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // todo:  add instance variables to hold subscriptions
 
 
