@@ -75,17 +75,15 @@ import org.cougaar.util.log.Logger;
 import org.cougaar.core.util.UID;
 import org.cougaar.planning.servlet.PlanViewServlet;
 
-import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 
 /**
- * 
- * 
+ * Shows RSVP from each invited guest.
  */
 public class PizzaPreferenceServlet extends BaseServletComponent {
   protected BlackboardQueryService blackboardQueryService;
   protected LoggingService logger;
+  protected String agentID;
 
   public void load() {
     super.load();
@@ -93,6 +91,11 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
     // get services
     blackboardQueryService= (BlackboardQueryService)
       serviceBroker.getService(this, BlackboardQueryService.class, null);
+    AgentIdentificationService agentIDService = 
+      (AgentIdentificationService) serviceBroker.getService(this, 
+							    AgentIdentificationService.class, 
+							    null);
+    agentID = agentIDService.getMessageAddress().toString();
   }
 
   protected String getPath() {
@@ -161,7 +164,11 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 		  "The Pizza Party"+
 		  "</title></head>"+
 		  "<body>" +
-		  "<p><p><center>Pizza Preferences</center><p>"+
+		  "<p/>" +
+		  "<p/><center><h1>Pizza Preferences</h1><p/>"+
+		  "<b>RSVP from each invited guest, invited by host" +
+		  agentID +
+		  "</b></center><p/>"+
 		  getHtmlForPreferences () +
 		  "</body>" +
 		  "</html>\n");
