@@ -296,9 +296,7 @@ public class InvitePlugin extends ComponentPlugin {
 					    Constants.INVITATION_QUERY,
 					    pizzaPreferences);
     
-    if (log.isInfoEnabled()) {
-      log.info(" Sending " + sourceRelay);
-    }
+    log.shout("Sending '" + Constants.INVITATION_QUERY + "' to my Buddy list: " + COMMUNITY);
     
     blackboard.publishAdd(sourceRelay);
   }
@@ -363,6 +361,8 @@ public class InvitePlugin extends ComponentPlugin {
 	// Publish our final set of attendees with their pizza preferences,
 	// so the PlaceOrderPlugin knows what to get
         blackboard.publishAdd(pizzaPreferences);
+
+	log.shout("RSVP time is up. Got " + pizzaPreferences);
 
 	// Note that we've finished.
         publishedPreferences = true;
