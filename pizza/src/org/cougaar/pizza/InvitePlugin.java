@@ -27,6 +27,7 @@
 package org.cougaar.pizza;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -36,6 +37,7 @@ import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.ServiceUserPlugin;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.relay.Relay;
@@ -48,9 +50,12 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * Sends a simple relay invitation to all "FriendsOfMark".
  *
- * As replies come back, updates the PizzaPreferences object on the blackboard.
+ * Waits for a set amount of time, WAIT_FOR_RSVP_DURATION, until it publishes the 
+ * pizza preference list to the blackboard.  While it's waiting, replies come back
+ * from invitees and update the PizzaPreferences object.
+ *
  */
-public class InvitePlugin extends ComponentPlugin {
+public class InvitePlugin extends ServiceUserPlugin {
   private LoggingService log;
 
   /** the uid service gives me the uid for the relay with a unique id */
@@ -62,8 +67,17 @@ public class InvitePlugin extends ComponentPlugin {
   /** my list of pizza preferences generated from RSVPs */
   protected PizzaPreferences pizzaPreferences;
 
+  // protected int numRSVPsExpected = 0;
+  protected boolean iLikeMeat = true;
+  protected long WAIT_FOR_RSVP_DURATION = 45000;
+  protected boolean publishedPreferences = false;
+
   /** the query to my friends */
   public static final String INVITATION_QUERY = "invitation-meat_or_veg";
+
+  public InvitePlugin() {
+    super(new Class[0]);
+  }
 
   /**
    * Set up the services we need - logging and the uid service
@@ -81,96 +95,127 @@ public class InvitePlugin extends ComponentPlugin {
     // prefix all logging calls with our agent name
     log = LoggingServiceWithPrefix.add(log, agentId+": ");
 
-    if (log.isDebugEnabled()) {
-      log.debug("loaded");
-    }
+    log.debug("loaded");
   }
 
   /**
    * We have one subscription, to the relays (the invitation) we produce.
    *
    * Here we also publish the pizza preferences, although they are empty initially.
+   *
+   * Sets a timer that fires when we have waited long enough for responses to return.
    */
   protected void setupSubscriptions() {
-    if (log.isDebugEnabled()) {
-      log.debug("setupSubscriptions");
-    }
+    log.debug("setupSubscriptions");
 
     // create relay subscription
     sub = (IncrementalSubscription) blackboard.subscribe(new MyPred());
 
     // Create recipient addresses 
     MessageAddress source = getAgentIdentifier(); 
-    MessageAddress target = AttributeBasedAddress.getAttributeBasedAddress("FriendsOfMark-COMM", "Role", "Member"); 
+    MessageAddress target = 
+      AttributeBasedAddress.getAttributeBasedAddress("FriendsOfMark-COMM", "Role", "Member"); 
 
     UID uid = uids.nextUID();
-    SimpleRelay simpleRelay = 
-      new SimpleRelayImpl(uid, agentId, target, INVITATION_QUERY);
-    if (log.isShoutEnabled()) {
-      log.shout(getAgentIdentifier () + " - Sending "+simpleRelay);
-    }
-    blackboard.publishAdd(simpleRelay);
 
-    // publish pizza preferences - change as RSVPs arrive
-
+    // create pizza preferences - update as RSVPs arrive
     pizzaPreferences = new PizzaPreferences ();
     pizzaPreferences.setUID (uids.nextUID());
-    blackboard.publishAdd(pizzaPreferences);
+
+    // record inviter's preference
+    String preference = (iLikeMeat) ? "meat" : "veg";
+    pizzaPreferences.addFriendToPizza (agentId.toString(), preference);
+
+    // send invitation
+    Relay sourceRelay = new RSVPRelaySource(log, target, INVITATION_QUERY, pizzaPreferences);
+    sourceRelay.setUID (uid);
+
+    log.info (getAgentIdentifier () + " - Sending "+sourceRelay);
+
+    blackboard.publishAdd(sourceRelay);
+
+    // get wait parameter
+    WAIT_FOR_RSVP_DURATION = getWaitParameter ();
+	
+    // wait for a time for responses to get back
+    log.info ("Waiting " + (WAIT_FOR_RSVP_DURATION/1000) + " seconds before publishing pizza prefs.");
+    resetTimer (WAIT_FOR_RSVP_DURATION);
+  }
+
+  /**
+   * Look argument to plugin like : "WAIT_FOR_RSVP_DURATION:45000"
+   */
+  protected long getWaitParameter () {
+    // get wait parameter
+    long waitParam = WAIT_FOR_RSVP_DURATION;
+    for (Iterator iter = getParameters().iterator(); iter.hasNext(); ) {
+      String param = (String) iter.next();
+      String [] keyAndValue = param.split(":");
+
+      if (keyAndValue.length == 2) {
+	if (keyAndValue[0].equals("WAIT_FOR_RSVP_DURATION")) {
+	  try { 
+	    waitParam = Integer.parseInt(keyAndValue[1]); 
+	    log.info ("We will wait " + (WAIT_FOR_RSVP_DURATION/1000) + 
+		      " seconds before publishing pizza prefs.");
+
+	  } catch (Exception e) {
+	    log.warn ("Could not parse wait param <" + keyAndValue[1] + ">"); 
+	  }
+	}
+	else {
+	  log.info ("ignoring " + keyAndValue);
+	}
+      }
+      else {
+	log.info ("ignoring " + keyAndValue);
+      }
+    }
+
+    return waitParam;
   }
 
   /**
    * When a relay changes, this method gets called
+   * 
+   * Also, when the timer expires, this method gets called.
    */
   protected void execute() {
-    if (log.isDebugEnabled()) {
-      log.debug("execute");
+    log.info(" execute --------------- ");
+
+    // if we waited long enough, publish pizza preferences so 
+    // OrderPlugin can order the pizza.
+    if (timerExpired()) {
+      Collection relays = sub.getCollection();
+
+      if (publishedPreferences) {
+	log.info ("We published the invite list already, " + 
+		  "so there are no relays in our collection.");
+      }
+      else if (!publishedPreferences) {
+	Object sourceRelay = relays.iterator().next();
+
+	log.info ("We've waited " + (WAIT_FOR_RSVP_DURATION/1000) + 
+		  " seconds, so we're publishing the preference list.");
+
+	log.info ("\nremoving source relay        : " + sourceRelay + 
+		  "\nand adding pizza preferences : " + pizzaPreferences);
+
+	blackboard.publishRemove(sourceRelay); 
+	blackboard.publishAdd(pizzaPreferences);
+	publishedPreferences = true;
+      }
+    }
+    else {
+      log.info("Timer not expired so not publishing..." + 
+	       "\nvs now             : " + new Date() +
+	       "\nExpiration time is : " + new Date(getTimerExpirationTime()));
     }
 
-    if (!sub.hasChanged()) {
-      // usually never happens, since the only reason to execute
-      // is a subscription change
-      return;
-    }
-
-    // observe changed relays
+    // observe changed relay to see when it changes
     for (Enumeration en = sub.getChangedList(); en.hasMoreElements();) {
-      SimpleRelay sr = (SimpleRelay) en.nextElement();
-      if (log.isDebugEnabled()) {
-        log.debug("observe changed "+sr);
-      }
-      if (agentId.equals(sr.getSource())) {
-        // got back answer
-        if (log.isShoutEnabled()) {
-          log.shout("Received "+sr);
-        } 
-
-	// FIXME: The Response content needs to be aggregated from all the friends
-	// in our relay impl, otherwise we could lose a response
-	RSVPReply rsvpReply = (RSVPReply) sr.getReply();
-	if (pizzaPreferences.getFriends().contains(rsvpReply.friend)) {
-	  log.shout("Already have reply from " + rsvpReply.friend);
-	} else {
-	  pizzaPreferences.addFriendToPizza (rsvpReply.friend, rsvpReply.pizzaPreference);
-	  
-	  log.warn ("pizza prefs now : " + pizzaPreferences);
-	  
-	  // remove query both locally and at the remote target.
-	  //
-	  // this is optional, but it's a good idea to clean up and
-	  // free some memory.
-	  
-	  // Can't remove it until all Friends have replied!!!
-	  //blackboard.publishRemove(sr); 
-	  
-	  // update pizza preferences now that a new RSVP arrived
-	  blackboard.publishChange (pizzaPreferences);
-	}
-      } else {
-        // ignore relays from other sources...
-	log.warn ("********************* ignoring " + sr);
-	log.warn ("********************* ignoring " + sr);
-	log.warn ("********************* ignoring " + sr);
-      }
+      Relay sr = (Relay) en.nextElement();
+      log.info("observe changed "+sr);
     }
 
     if (log.isDebugEnabled()) {
@@ -187,29 +232,14 @@ public class InvitePlugin extends ComponentPlugin {
    */ 
   private class MyPred implements UnaryPredicate {
     public boolean execute(Object o) {
-      if (o instanceof SimpleRelay) {
+      if (o instanceof Relay.Source) {
 	return true;
       }
-      else {
-	if (log.isDebugEnabled()) {
-	  log.debug ("\nignored : " + o +
-		     "\nclass   : " + o.getClass());
-	}
+      else if (o instanceof Relay) {
+	log.debug ("\nignored : " + o +
+		   "\nclass   : " + o.getClass());
       }
       return false;
     }
-  }
-
-  /** the RSVP reply - just the friend and their pizza preference */
-  public static class RSVPReply {
-    public String friend;
-    public String pizzaPreference;
-
-    public RSVPReply (String friend, String pizzaPreference) {
-      this.friend = friend;
-      this.pizzaPreference = pizzaPreference;
-    }
-
-    public String toString () { return "RSVPReply : " + friend + " - " + pizzaPreference; }
   }
 }
