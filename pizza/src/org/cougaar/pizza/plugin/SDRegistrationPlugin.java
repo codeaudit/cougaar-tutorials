@@ -32,6 +32,8 @@ import java.net.URL;
 import org.cougaar.pizza.Constants;
 import org.cougaar.servicediscovery.plugin.SimpleSDRegistrationPlugin;
 
+import org.cougaar.util.Configuration;
+
 /**
  * Extension of the SimpleSDRegistrationPlugin to use the pizza serviceprofiles.
  * Registers this agent's services as specified in
@@ -59,7 +61,8 @@ public class SDRegistrationPlugin extends SimpleSDRegistrationPlugin {
    */
   protected URL getServiceProfileURL() {
     try {
-      return new URL(Constants.getDataPath() + File.separator + "serviceprofiles" + File.separator);
+      // URLify the data path, to handle C:/... in Windows paths, for example
+      return new URL(Configuration.urlify(Constants.getDataPath()) + File.separator + "serviceprofiles" + File.separator);
     } catch (java.net.MalformedURLException mue) {
       log.error("Exception constructing service profile URL" , mue);
       return null;
