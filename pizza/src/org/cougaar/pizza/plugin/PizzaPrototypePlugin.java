@@ -1,12 +1,13 @@
 /*
  * <copyright>
  *  Copyright 1997-2004 BBNT Solutions, LLC
- *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *  under sponsorship of the Defense Advanced Research Projects Agency
+ *  (DARPA).
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -17,7 +18,7 @@
  *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  *  PERFORMANCE OF THE COUGAAR SOFTWARE.
  * </copyright>
- */
+*/
 package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.plugin.ComponentPlugin;
@@ -35,55 +36,49 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype registration services
+  // The prototypeRegistryService acts as a provider of prototype
+  // registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
-  /**
-   * Used by the binding utility through reflection to set my DomainService
-   */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
-  }
+  // The planning factory we use to create planning objects.
+  private PlanningFactory factory;
+
 
   /**
-   * Used by the binding utility through reflection to get my DomainService
+   * Set up the services and factories we need.
    */
-  public DomainService getDomainService() {
-    return domainService;
+  public void load() {
+    super.load();
+
+    // get services
+    domainService = (DomainService)
+        getServiceBroker().getService(this, DomainService.class, null);
+    prototypeRegistryService = (PrototypeRegistryService)
+        getServiceBroker().getService(this, PrototypeRegistryService.class,
+                                      null);
+    factory = (PlanningFactory)domainService.getFactory("planning");
   }
 
-  /**
-   * Used by the binding utility through reflection to set my PrototypeRegistryService
-   */
-  public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
-    prototypeRegistryService = aPrototypeRegistryService;
-  }
 
   /**
-   * Used by the binding utility through reflection to get my PrototypeRegistryService
-   */
-  public PrototypeRegistryService getPrototypeRegistryService() {
-    return prototypeRegistryService;
-  }
-
-  /**
-   * Initialize our plugin. Since we don't have any subscriptions, create the Pizza prototype right away.
+   * Initialize our plugin. Since we don't have any subscriptions,
+   * create the Pizza prototype right away.
    */
   protected void setupSubscriptions() {
     createPizzaPrototype();
   }
 
   private void createPizzaPrototype() {
-    // Get the PlanningFactory
-    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
     // Register our new PropertyGroupFactory
-    factory.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
+    factory.addPropertyGroupFactory(
+        new org.cougaar.pizza.asset.PropertyGroupFactory());
 
     PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype
-      (PizzaAsset.class, Constants.PIZZA);
-    // Cache the prototype in the LDM so that other plugins can create Pizza instances
-    // using this prototype.
-    getPrototypeRegistryService().cachePrototype(Constants.PIZZA, new_prototype);
+        (PizzaAsset.class, Constants.PIZZA);
+    // Cache the prototype in the LDM so that other plugins can create
+    // Pizza instances using the new prototype.
+    prototypeRegistryService.cachePrototype(Constants.PIZZA,
+                                            new_prototype);
   }
 
   /**
