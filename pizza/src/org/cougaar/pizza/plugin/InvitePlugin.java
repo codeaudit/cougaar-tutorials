@@ -275,7 +275,6 @@ public class InvitePlugin extends ComponentPlugin {
     Entity selfEntity = null;
     for (Iterator iter = entities.iterator(); iter.hasNext(); ) {
       Entity entity = (Entity) iter.next();
-      log.warn ("agent is " + getAgentIdentifier().getClass());
 
       // if this entity is myself
       String entityItemId = 
@@ -314,16 +313,16 @@ public class InvitePlugin extends ComponentPlugin {
   protected void checkTimer () {
     if (timerExpired()) {
       Collection relays = relaySubscription.getCollection();
-      if (relays.isEmpty()) {
-	log.warn ("Expecting a relay since the timer has expired.");
-      }
-
       if (publishedPreferences) {
 	if (log.isInfoEnabled()) {
 	  log.info("We published the invite list already, " +
 		   "so there are no relays in our collection.");
 	}
       } else {
+	if (relays.isEmpty()) {
+	  log.warn ("Expecting a relay since the timer has expired.");
+	}
+
 	// the timer could only have been started if we 
 	// published the relay, so we are guaranteed it will be in the
 	// collection
