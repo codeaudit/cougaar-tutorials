@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Communities [
+<!ELEMENT Communities (Community+)>
+<!ELEMENT Community (Attribute+, Entity*)>
+<!ATTLIST Community Name CDATA #REQUIRED>
+<!ELEMENT AttributeID EMPTY>
+<!ATTLIST AttributeID ID CDATA #REQUIRED>
+<!ATTLIST AttributeID Access (manager|member|associate|world) #IMPLIED>
+<!ELEMENT Entity (Attribute*)>
+<!ATTLIST Entity Name CDATA #REQUIRED>
+<!ELEMENT Attribute EMPTY>
+<!ATTLIST Attribute ID CDATA #REQUIRED>
+<!ATTLIST Attribute Value CDATA #REQUIRED>
+]>
+<Communities>
+  <!-- Community of people to invite to the party. This is Alices
+  buddy list -->
+  <Community Name='FriendsOfMark-COMM' >
+    <Attribute ID='CommunityType' Value='Domain' />
+    <Attribute ID='CommunityManager' Value='Alice' />
+    <Entity Name='Alice' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+    <Entity Name='Bob' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+    <Entity Name='Mark' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+    <Entity Name='Tony' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+  </Community>
+  <!-- Yellow pages for Massachusetts-wide businesses. Includes all
+  Cambridge businesses. -->
+  <Community Name='MA-YPCOMMUNITY' >
+    <Attribute ID='CommunityType' Value='YPCommunity' />
+    <Attribute ID='YPServerAgent' Value='MA' />
+    <Attribute ID='CommunityManager' Value='MA' />
+    <Entity Name='MA' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+      <Attribute ID='Role' Value='YPServer' />
+    </Entity>
+    <Entity Name='Cambridge-YPCOMMUNITY' >
+      <Attribute ID='EntityType' Value='Community' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+    <Entity Name='Dominos' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+  </Community>
+  <!-- Community for Cambridge local businesses. Those who want to
+  look up businesses in this community are also members. -->
+  <Community Name='Cambridge-YPCOMMUNITY' >
+    <Attribute ID='CommunityType' Value='YPCommunity' />
+    <Attribute ID='YPServerAgent' Value='Cambridge' />
+    <Attribute ID='CommunityManager' Value='Cambridge' />
+    <Entity Name='Cambridge' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+      <Attribute ID='Role' Value='YPServer' />
+    </Entity>
+    <Entity Name='Alice' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+    <Entity Name='JoesLocalPizzaShack' >
+      <Attribute ID='EntityType' Value='Agent' />
+      <Attribute ID='Role' Value='Member' />
+    </Entity>
+  </Community>
+</Communities>
