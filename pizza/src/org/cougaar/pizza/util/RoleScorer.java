@@ -26,6 +26,7 @@
 
 package org.cougaar.pizza.util;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.cougaar.pizza.Constants;
@@ -41,24 +42,21 @@ public class RoleScorer implements ServiceInfoScorer {
   private static Logger logger = Logging.getLogger(RoleScorer.class);
   Role myRole;
   String myAgentName = null;
+  Collection myBlacklist;
 
-  public RoleScorer(Role role) {
+  public RoleScorer(Role role, Collection blacklist) {
     myRole = role;
-  }
-
-  public void setRole(Role role) {
-    if (myRole != null) {
-      logger.warn("setRole: ignoring attempt to change Role from " + 
-		  myRole + " to " + role);
-    } else {
-      myRole = role;
-    }
+    myBlacklist = blacklist;
   }
 
   public Role getRole() {
     return myRole;
   }
   
+
+  public Collection getBlacklist() {
+    return myBlacklist;
+  }
 
   /**
    * Will be called by Matchmaker for each ServiceInfo. Returned score will
@@ -70,6 +68,10 @@ public class RoleScorer implements ServiceInfoScorer {
    * 
    */
   public int scoreServiceInfo(ServiceInfo serviceInfo) {
+    if (getBlacklistScore(serviceInfo) < 0) {
+      return -1;
+    }
+
     int roleScore = getRoleScore(serviceInfo);
 
     if (logger.isDebugEnabled()) {
@@ -79,7 +81,7 @@ public class RoleScorer implements ServiceInfoScorer {
     return roleScore;
   }
 
-  protected int getRoleScore(ServiceInfo serviceInfo) {
+  private int getRoleScore(ServiceInfo serviceInfo) {
     String serviceRole = null;
 
     for (Iterator iterator = serviceInfo.getServiceClassifications().iterator();
@@ -110,6 +112,25 @@ public class RoleScorer implements ServiceInfoScorer {
     } else {
       return 0;
     }
+  }
+
+  private int getBlacklistScore(ServiceInfo serviceInfo) {
+    for (Iterator iterator = myBlacklist.iterator();
+	 iterator.hasNext();) {
+      String blacklistedProvider = (String) iterator.next();
+
+      if (serviceInfo.getProviderName().equals(blacklistedProvider)) {
+	if (logger.isInfoEnabled()) {
+	  logger.info(myAgentName + 
+		      ": Ignoring service from provider - " + 
+		      serviceInfo.getProviderName() +
+		      ". Provider on the blacklist - " + myBlacklist);
+	}
+	return -1;
+      }
+    }
+
+    return 0;
   }
 
   public boolean equals(Object o) {
