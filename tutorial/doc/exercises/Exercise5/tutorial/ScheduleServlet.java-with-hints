@@ -1,0 +1,164 @@
+package tutorial;
+
+import java.io.*;
+import java.util.*;
+import java.text.SimpleDateFormat;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import org.cougaar.core.servlet.*;
+
+import tutorial.assets.*;
+import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.agent.*;
+import org.cougaar.glm.ldm.asset.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.blackboard.Subscription;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.TaskImpl;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.core.domain.RootFactory;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.servlet.SimpleServletComponent;
+
+
+
+  /**
+   * todo:  Create Predicate matching all ProgrammerAssets
+   */
+  // hint:  see UnaryPredicate interface
+
+
+ // todo:  add code to make this a servlet subclass
+ // hint:  parent class should be HttpServlet
+
+public class ScheduleServlet 
+{
+	private Properties properties = null;
+	private PrintWriter out;
+	private SimpleServletSupport support;
+
+	public ScheduleServlet(SimpleServletSupport mySupport)
+	{
+		super();
+		support = mySupport;
+		properties = new Properties();
+	}
+
+	public void doGet(
+	        HttpServletRequest request,
+	        HttpServletResponse response) throws IOException, ServletException
+	{
+		execute(request, response);
+	}
+ 
+	public void doPost(
+	        HttpServletRequest request,
+	        HttpServletResponse response) throws IOException, ServletException
+	{
+		execute(request, response);
+	}
+
+	private void execute(
+	        HttpServletRequest request,
+	        HttpServletResponse response) throws IOException, ServletException
+	{
+
+		properties.clear();
+		// todo:  get the PrintWriter which sends data to HTTP
+		// hint:  get it from the HttpServletResponse
+
+		ServletUtil.ParamVisitor vis = new ServletUtil.ParamVisitor()
+		                               {
+			                               public void setParam(String name, String value)
+			                               {
+				                               name = name.toUpperCase();
+				                               System.out.println(name + "      " + value);
+				                               properties.setProperty(name, value);
+			                               }
+		                               };
+		ServletUtil.parseParams(vis, request);
+
+		try
+		{
+			System.out.println("Servlet called." );
+			PageGenerator gen=new PageGenerator();
+			gen.execute(out);
+		}
+		catch (Exception ex)
+		{
+			out.println(ex.getMessage());
+			ex.printStackTrace(out);
+			System.out.println(ex);
+			out.flush();
+		}
+
+	}
+
+    private class PageGenerator {
+	
+	PageGenerator() {
+	}
+	void execute(PrintWriter out) {
+	    try {
+		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
+		
+		// todo: query the PLAN for a Collection of ProgrammerAssets
+		// hint: use the SimpleServletSupport object
+
+		Iterator iter = programmers.iterator();
+		while (iter.hasNext()) {
+		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
+		    dumpProgrammerSchedule(pa, out);
+		}
+		
+	    } catch (Exception ex) {
+		out.println(ex.getMessage());
+		ex.printStackTrace(out);
+		System.out.println(ex);
+	    } finally {
+		out.flush();
+	    }
+	}
+    }
+
+  /**
+   * Print an HTML table of this programmer's schedule to the PrintStream
+   */
+  private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
+
+      // todo: print programmer's name and a line break
+      // hint:  see Asset.getItemIdentificationPG
+      // hint:  see ItemIdentificatioinPG.getItemIdentification()
+
+      out.println("<table border=1>");
+      Schedule s = pa.getSchedule();
+
+      TreeSet ts = new TreeSet(s.keySet());
+      Iterator iter = ts.iterator();
+
+      out.println("<tr><td>Task<td>Verb<td>Month</tr>");
+      int i = 0;
+      while (iter.hasNext()) {
+        Object key = iter.next();
+        Object o = s.get(key);
+
+        out.print("<tr><td>"+i+++"<td>");
+        if (o instanceof Task) {
+          Task task = (Task)o;
+          // todo:  print the verb and the item to be coded
+          // hint:  see Task.getVerb
+          // hint:  see Task.getDirectObject
+          // hint:  see Asset.getItemIdentificationPG()
+          // hint:  see IdentificationPG.getIdentification()
+        } else {
+          out.print(o);
+        }
+        out.println("<td>"+key+"</tr>");
+      }
+      out.println("</table>");
+      out.flush();
+  }
+
+}
+
+
