@@ -11,6 +11,8 @@ public class Constants {
 
   /** the query to my friends */
   public static final String INVITATION_QUERY = "invitation-meat_or_veg";
+  public static final String INVITATION_REPLY_MEAT = "meat";
+  public static final String INVITATION_REPLY_VEG  = "veg";
 
   /* used when showing how long it takes for this number of friends to reply */
   public static final int EXPECTED_NUM_FRIENDS = 4;
