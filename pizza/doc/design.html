@@ -5,17 +5,44 @@
 pizza party application; Why did we use the mechanisms that we did? 
 How do various things work?
 <p>
+The intentions is that this discussion will help illuminate the intent
+of various Cougaar features, and how to take advantage of various
+Cougaar components.
+<p>
 <h1>In progress......</h1>
 <hr>
 <h2>Why do we use Assets for Kitchens and Pizza?</h2>
 <h3>What is the point of the prototype Pizza Assets?</h3>
 <h2>Why do we use a Relay for the invitation?</h2>
+<h3>What else could have been used to issue the invitations?</h3>
 <h2>Why do we use a Community to define the people to invite?</h2>
 <h3>Could we have used Plugin parameters?</h3>
 <h3>Could we have used Asset PropertyGroups?</h3>
 <h3>Could we have used Relationships?</h3>
 <h2>Why must we have Cambridge and MA agents?</h2>
-<h2>Why are there separate classes for the Relay Target and Source?</h2>
+Some agent has to host the Yellow Pages. The Yellow Pages data is
+stored in an in-memory HSqlDb, not on the Blackboard. So in fact, we
+could have configured the Yellow Pages to be at any Agent that is a
+member of the YP Community. In our case, that means either Alice, or
+the Pizza Provider (Joes or Dominos). It is a little clearer to put
+the YP at a separate Agent, but not necessary.
+<p>
+<h2>Why are there separate classes for the Relay Target and
+Source?</h2>
+See Cougaar <a href="http://bugs.cougaar.org/show_bug.cgi?id=3726">Bug
+3726</a>. There is a bug, which we help to avoid by keeping the Target
+from implementing Relay.Source - which means that it does not have a
+Targets list. As a result, it avoids this bug, which could cause a
+flood of messages.
+<p>
+More generally, it is cleaner to read and understand. The
+Relay Source is the "query" or the source information. The Target is
+the representation of the "query" at the destination Agents. In our
+case, the Relay is a question of sorts, and the same content in both
+the Source and Target. For other applications, the Target could be
+wholly different than the Source.
+<p>
+
 <h2>How get results on PizzaPreferences object with a plugin doing
 anything.</h2>
 <h2>When should you use Communities? Yellow Pages? Service Discovery?
