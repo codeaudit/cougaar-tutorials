@@ -1,8 +1,33 @@
 Planning tutorials.
 
-For documentation, see the "basic course" slides:
-  http://tutorials.cougaar.org
+For documentation, see the Cougaar training slides in this directory and:
+  http://cougaar.org/projects/cougaar/
 
+NOTE: THESE TUTORIALS WERE DESIGNED TO BE USED IN CONJUNCTION WITH THE COURSE SLIDES
+
+---------------
+Windows:
+To build and run exercise 5:
+  cd %COUGAAR_INSTALL_PATH%/tutorial/bin
+  buildExercise.bat 5  (the class files are jarred under %COUGAAR_INSTALL_PATH%\lib)
+  runExercise.bat 5
+  
+To build and run src (solutions) for exercise 5:
+  cd %COUGAAR_INSTALL_PATH%/tutorial/bin
+  buildSrc.bat 5   (the class files are jarred under %COUGAAR_INSTALL_PATH%\lib)
+  runSrc.bat 5
+
+For EXERCISES:
+  code to work on is under %COUGAAR_INSTALL_PATH%\tutorial\exercises\org\cougaar\tutorial
+  configs (some of which need to be modified) are under %COUGAAR_INSTALL_PATH%\tutorial\exercises\configs
+
+For SOLUTIONS (Src):
+  code is under %COUGAAR_INSTALL_PATH%\tutorial\src\org\cougaar\tutorial
+  configs are under %COUGAAR_INSTALL_PATH%\tutorial\configs
+  
+  
+---------------
+Linux:
 To run exercise 5:
   cd $CIP/tutorial/bin
   ./run.sh 5      # or any number 1 .. 11
