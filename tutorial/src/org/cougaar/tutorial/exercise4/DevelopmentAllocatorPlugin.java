@@ -46,7 +46,7 @@ import java.util.Vector;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2003-12-15 19:18:03 tom Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2004-01-21 17:25:50 jwong Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -88,7 +88,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       if (o instanceof Task)
       {
         Task task = (Task)o;
-        return task.getVerb().equals(Verb.getVerb("CODE"));
+        return task.getVerb().equals(Verb.get("CODE"));
       }
       return false;
     }

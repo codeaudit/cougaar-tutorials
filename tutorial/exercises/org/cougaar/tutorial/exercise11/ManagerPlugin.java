@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -128,7 +128,7 @@ public class ManagerPlugin extends ComponentPlugin {
     NewTask new_task = factory.newTask();
 
     // Set the verb as given
-    new_task.setVerb(Verb.getVerb("CODE"));
+    new_task.setVerb(Verb.get("CODE"));
 
     // Set the reality plan for the task
     new_task.setPlan(factory.getRealityPlan());

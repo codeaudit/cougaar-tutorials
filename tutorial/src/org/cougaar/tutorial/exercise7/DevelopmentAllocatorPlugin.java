@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -47,7 +47,7 @@ import java.util.Vector;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.2 2003-12-15 17:36:03 tom Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -89,7 +89,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       {
         Task task = (Task)o;
         System.out.println ("task verb = " + task.getVerb());
-        return task.getVerb().equals(Verb.getVerb("CODE"));
+        return task.getVerb().equals(Verb.get("CODE"));
       }
       return false;
     }

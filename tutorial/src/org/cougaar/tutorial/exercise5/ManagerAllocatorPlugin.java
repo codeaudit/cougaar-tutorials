@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -44,7 +44,7 @@ class myTaskPredicate implements UnaryPredicate{
     boolean ret = false;
     if (o instanceof Task) {
       Task t = (Task)o;
-      ret = t.getVerb().equals(Verb.getVerb("CODE"));
+      ret = t.getVerb().equals(Verb.get("CODE"));
     }
     return ret;
   }
@@ -70,7 +70,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 

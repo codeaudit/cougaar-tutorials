@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -50,7 +50,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -137,7 +137,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     new_task.setWorkflow(wf);
 
     // Set the verb as given
-    new_task.setVerb(Verb.getVerb(verb));
+    new_task.setVerb(Verb.get(verb));
 
     // Copy important fields from the parent task
     new_task.setPlan(parent_task.getPlan());
@@ -194,14 +194,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     this_task_duration = 3;
     NewTask t2 = makeTask("DEVELOP", task, new_wf);
     setPreferences(t2, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t2); 
+    getBlackboardService().publishAdd(t2);
     tasks.addElement(t2); // Add the task to the vector of subtasks
 
     // testing takes two month
     this_task_duration = 2;
     NewTask t3 = makeTask("TEST", task, new_wf);
     setPreferences(t3, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t3);  
+    getBlackboardService().publishAdd(t3);
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
     new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow

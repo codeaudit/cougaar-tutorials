@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -82,9 +82,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       {
         Task task = (Task)o;
         Verb tVerb = task.getVerb();
-        if (   Verb.getVerb("DESIGN").equals(tVerb) ||
-               Verb.getVerb("DEVELOP").equals(tVerb) ||
-               Verb.getVerb("TEST").equals(tVerb))
+        if (   Verb.get("DESIGN").equals(tVerb) ||
+               Verb.get("DEVELOP").equals(tVerb) ||
+               Verb.get("TEST").equals(tVerb))
           return true;
       }
       return false;

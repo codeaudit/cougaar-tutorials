@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 2000-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -51,11 +51,11 @@ import java.util.Iterator;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.2 2003-12-15 17:36:02 tom Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
  */
 
-public class TakeVacationServlet extends BaseServletComponent 
-implements BlackboardClient 
+public class TakeVacationServlet extends BaseServletComponent
+implements BlackboardClient
 {
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
@@ -83,7 +83,7 @@ implements BlackboardClient
   protected Servlet createServlet() {
       // get the blackboard service
       blackboard = (BlackboardService) serviceBroker.getService(
-            this, 
+            this,
             BlackboardService.class,
             null);
       if (blackboard == null) {
@@ -93,8 +93,8 @@ implements BlackboardClient
 
 
     // We could inline "MyServlet" here as an anonymous
-    // inner-class (like HelloBaseServletComponent does). Instead, 
-    // we'll move it to a simple inner-class, which will make the 
+    // inner-class (like HelloBaseServletComponent does). Instead,
+    // we'll move it to a simple inner-class, which will make the
     // code a little easier to read.
     return new MyServlet();
   }
@@ -106,7 +106,7 @@ implements BlackboardClient
 
   //
   // These are required when implementing a BlackboardClient:
-  // A Component must implement BlackboardClient in order 
+  // A Component must implement BlackboardClient in order
   // to obtain BlackboardService.
   //
 
@@ -153,7 +153,7 @@ implements BlackboardClient
     }
 
   /**
-   * Iterate over the list of programmers and have each take some vacation.  
+   * Iterate over the list of programmers and have each take some vacation.
    * Print the programmers name and vacation month to the Servlet response.
    */
       public void execute (
@@ -161,7 +161,7 @@ implements BlackboardClient
 			   HttpServletResponse res) throws IOException {
 	  PrintWriter out = res.getWriter();
 	  out.println("<html><head></head><body>");
-	  
+
 	  Collection col;
 	  try {
 	      ProgrammerAsset pa;
@@ -176,7 +176,7 @@ implements BlackboardClient
 	      out.println("<BR>Done.</body></html>");
 	      out.flush();
 	  }
-	  
+
       }
 
   /**
@@ -189,7 +189,7 @@ implements BlackboardClient
     PlanningFactory factory =
       (PlanningFactory) getDomainService().getFactory("planning");
     NewTask task = factory.newTask();
-    task.setVerb(Verb.getVerb("VACATION"));
+    task.setVerb(Verb.get("VACATION"));
     task.setPlan(factory.getRealityPlan());
     task.setDirectObject (pa);
     blackboard.publishAdd (task);
