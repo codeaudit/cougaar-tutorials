@@ -67,7 +67,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Used for initialization to register the PizzaAsset prototype 
+   * Used for initialization to register the PizzaAsset prototype
    */
   protected void setupSubscriptions() {
 
@@ -86,7 +86,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
     getPrototypeRegistryService().cachePrototype("pizza", new_prototype);
 
     // Create a Veggie Pizza Asset based on the existing pizza prototype
-    //TODO: Lora put this in the invite plugin
+    //TODO: Lora put this in the place order plugin
     //PizzaAsset veggie_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
     //veggie_pizza_asset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
     //veggie_pizza_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Veggie Pizza"));
