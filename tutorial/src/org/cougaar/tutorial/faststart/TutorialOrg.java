@@ -35,9 +35,9 @@ import org.cougaar.planning.ldm.plan.*;
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.9 2003-01-23 19:44:33 mthome Exp $
+ * @version $Id: TutorialOrg.java,v 1.1 2003-05-23 19:35:17 dmontana Exp $
  */
-public class Organization extends org.cougaar.planning.ldm.asset.Asset {
+public class TutorialOrg extends org.cougaar.planning.ldm.asset.Asset {
 
   /**
    * Constants that represent the relationships between clusters.
@@ -49,15 +49,15 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
   /**
    * A zero-argument constructor is required by Asset.clone()
    */
-  public Organization() {
+  public TutorialOrg() {
   }
 
   /**
-   * Create a new Organization and populate its ClusterPG with the name given.
-   * @param name the name of the organization.
+   * Create a new TutorialOrg and populate its ClusterPG with the name given.
+   * @param name the name of the TutorialOrg.
    * @param theFactory used to vreate the ClusterPG property group.
    */
-  public Organization(String name, PlanningFactory theFactory) {
+  public TutorialOrg(String name, PlanningFactory theFactory) {
     NewClusterPG cpg = (NewClusterPG)theFactory.createPropertyGroup(ClusterPGImpl.class);
     cpg.setMessageAddress(MessageAddress.getMessageAddress(name));
     this.setClusterPG(cpg);
@@ -76,7 +76,7 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 
   /**
    * Set the list of roles that this cluster can take.
-   * @param newRoles the array of roles for this organization.
+   * @param newRoles the array of roles for this TutorialOrg.
    */
   public void setRoles(Role[] newRoles) {
     roles = newRoles;
@@ -106,7 +106,7 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
    */
   public Object clone() throws java.lang.CloneNotSupportedException {
 
-    Organization ret = (Organization) super.clone();
+    TutorialOrg ret = (TutorialOrg) super.clone();
     ret.setRoles(getRoles());
     ret.setRelationship(getRelationship());
 
