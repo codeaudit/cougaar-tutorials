@@ -28,9 +28,7 @@ package org.cougaar.pizza.plugin;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.service.community.Community;
@@ -40,7 +38,6 @@ import org.cougaar.core.service.community.CommunityResponse;
 import org.cougaar.core.service.community.CommunityResponseListener;
 import org.cougaar.core.service.community.CommunityService;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.servicediscovery.description.ProviderDescription;
