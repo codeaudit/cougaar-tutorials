@@ -142,17 +142,23 @@ public class SDClientPlugin extends SimpleSDClientPlugin {
 
   ////////////////
   // Now the Unary Predicates for use with subscriptions.
-  // Static Final cause we only need the one, unchanging instance.
-  // Names in all caps since they're constants.
 
-  /** Extenders will probably over-ride this to point to their own Verb Constant */
-  protected static final UnaryPredicate MYFINDPROVIDERSTASKPREDICATE = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task) {
-        return ((Task) o).getVerb().equals(org.cougaar.pizza.Constants.Verbs.FIND_PROVIDERS);
-      } else {
-        return false;
-      }
-    }
-  };
+  /**
+   * Predicate to get the FindProviders Tasks. In the off-chance that your verb is 
+   * slightly different, you can over-ride this method to point to your
+   * domain-specific Verb Constant.
+   *<b>
+   * Note that it is not a constant, just so it can be over-ridden.
+   */ 
+  protected UnaryPredicate getFindProvidersPredicate() {
+    return new UnaryPredicate() {
+	public boolean execute(Object o) {
+	  if (o instanceof Task) {
+	    return ((Task) o).getVerb().equals(org.cougaar.pizza.Constants.Verbs.FIND_PROVIDERS);
+	  } else {
+	    return false;
+	  }
+	}
+      };
+  }
 }
