@@ -23,9 +23,9 @@ package org.cougaar.tutorial.exercise1;
 /**
  * This COUGAAR Plugin publishes a Job object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
+ * @version $Id: ManagerPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  **/
-import org.cougaar.core.plugin.*;
+import org.cougaar.core.plugin.ComponentPlugin;
 public class ManagerPlugin extends ComponentPlugin {
 
 /**

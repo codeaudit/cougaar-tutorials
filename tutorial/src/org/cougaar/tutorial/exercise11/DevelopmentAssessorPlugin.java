@@ -22,14 +22,14 @@ package org.cougaar.tutorial.exercise11;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
 import org.cougaar.util.UnaryPredicate;
-import java.util.*;
-import org.cougaar.planning.ldm.PlanningFactory;
 
-import org.cougaar.tutorial.assets.*;
+import java.util.Enumeration;
 
 
 /**
@@ -38,7 +38,7 @@ import org.cougaar.tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {

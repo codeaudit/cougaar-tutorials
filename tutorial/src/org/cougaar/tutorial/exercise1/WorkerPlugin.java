@@ -20,10 +20,11 @@
  */
 package org.cougaar.tutorial.exercise1;
 
-import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import java.util.Enumeration;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.util.UnaryPredicate;
+
+import java.util.Enumeration;
 
 /**
  * This UnaryPredicate matches all Job objects
@@ -37,7 +38,7 @@ class myPredicate implements UnaryPredicate{
 /**
  * This COUGAAR Plugin subscribes to Job objects and prints them out.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: WorkerPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
+ * @version $Id: WorkerPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  **/
 public class WorkerPlugin extends ComponentPlugin {
   // holds my subscription for Job objects (matching predicate above)

@@ -20,24 +20,24 @@
  */
 package org.cougaar.tutorial.exercise8;
 
-import java.io.*;
-import java.util.*;
-import java.text.SimpleDateFormat;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.cougaar.core.servlet.*;
-
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.core.servlet.SimpleServletSupport;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.mts.*;
-import org.cougaar.core.agent.*;
-import org.cougaar.glm.ldm.asset.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.servlet.SimpleServletComponent;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 
 

@@ -19,30 +19,39 @@
  * </copyright>
  */
 package org.cougaar.tutorial.exercise11;
-import org.cougaar.tutorial.assets.ProgrammerAsset;
-
-import java.io.*;
-import java.util.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-
 import org.cougaar.core.blackboard.BlackboardClient;
+import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.core.service.BlackboardService; 
-import org.cougaar.core.service.ServletService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.core.service.*;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
 
 /**
  * This Servlet assigns a vacation month to each ProgrammerAsset.
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.1 2003-12-15 16:07:02 twright Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent 

@@ -22,13 +22,23 @@ package org.cougaar.tutorial.exercise8;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
 import org.cougaar.util.UnaryPredicate;
+
 import java.util.Enumeration;
 import java.util.Vector;
-import org.cougaar.planning.ldm.PlanningFactory;
 
 
 /**
@@ -38,7 +48,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.1 2003-12-15 16:07:04 twright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2003-12-15 17:36:03 tom Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
