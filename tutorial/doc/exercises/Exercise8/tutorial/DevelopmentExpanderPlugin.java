@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2002-03-07 18:28:38 wwright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.3 2002-04-05 19:30:28 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -125,7 +125,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     for(Enumeration e = allCodeTasks.getAddedList();e.hasMoreElements();)
     {
       // todo: Create expansion and workflow to represent the expansion
-      // of this task.  Publish the expansion, workflow and subtasks.
+      // of this task.  Publish the expansion and subtasks.
 
 
 

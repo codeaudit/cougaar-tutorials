@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.3 2002-03-15 21:32:36 mbarger Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.4 2002-04-05 19:30:28 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -142,7 +142,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
       // more hints: AllocationResult estAR = null;
       // more hints: Expansion new_exp =
       // more hints:   domainService.getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
-      // more hints: getBlackboardService().publishAdd(new_wf);
       // more hints: getBlackboardService().publishAdd(new_exp);
 
 
