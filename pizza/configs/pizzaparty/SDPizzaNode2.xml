@@ -10,7 +10,7 @@
 <!-- <society>, add a new <node> on the new <host> and then place agents on new node -->
 <society 
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  name="Pizza-SOCIETY" 
+  name="SDPizza-SOCIETY" 
   xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
   <host name="localhost">
     <node name="SDPizzaNode2">
