@@ -1,12 +1,13 @@
 /*
  * <copyright>
  *  Copyright 1997-2004 BBNT Solutions, LLC
- *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *  under sponsorship of the Defense Advanced Research Projects
+ *  Agency (DARPA).
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -29,32 +30,44 @@ import org.cougaar.pizza.asset.NewVeggiePG;
 import org.cougaar.pizza.asset.VeggiePG;
 
 /**
- * This is a helper class that creates various types of PropertyGroups (PGs) to place on assets.
+ * This is a helper class that creates various types of
+ * PropertyGroups (PGs) to place on assets.
  */
 public class PGCreator {
 
   /**
    * Create and populate a Veggie property group
+   * @param pFactory The planning factory to create a new PG
+   * @param veggieOnly Fill in the boolean on the PG
    */
-  public static VeggiePG makeAVeggiePG(PlanningFactory pFactory, boolean veggieOnly) {
-    NewVeggiePG new_veggie_pg = (NewVeggiePG) pFactory.createPropertyGroup("VeggiePG");
+  public static VeggiePG makeAVeggiePG(PlanningFactory pFactory,
+                                       boolean veggieOnly) {
+    NewVeggiePG new_veggie_pg = (NewVeggiePG)
+        pFactory.createPropertyGroup("VeggiePG");
     new_veggie_pg.setVeggieOnly(veggieOnly);
     return new_veggie_pg;
   }
 
   /**
    * Create and populate a Meat property group
+   * @param pFactory The planning factory to create a new PG
+   * @param meatOK Fill in the boolean on the PG
    */
-  public static MeatPG makeAMeatPG(PlanningFactory pFactory, boolean meatOK) {
-    NewMeatPG new_meat_pg = (NewMeatPG) pFactory.createPropertyGroup("MeatPG");
+  public static MeatPG makeAMeatPG(PlanningFactory pFactory,
+                                   boolean meatOK) {
+    NewMeatPG new_meat_pg = (NewMeatPG)
+        pFactory.createPropertyGroup("MeatPG");
     new_meat_pg.setMeatOK(meatOK);
     return new_meat_pg;
   }
 
   /**
    * Create and populate an ItemIdentification property group
+   * @param pFactory The planning factory to create a new PG
+   * @param name Fill in the name of the asset on the ItemIDPG
    */
-  public static ItemIdentificationPG makeAItemIdentificationPG(PlanningFactory pFactory, String name) {
+  public static ItemIdentificationPG
+      makeAItemIdentificationPG(PlanningFactory pFactory, String name) {
     NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
         pFactory.createPropertyGroup("ItemIdentificationPG");
     new_item_id_pg.setItemIdentification(name);
