@@ -535,7 +535,8 @@ public class HistoryServlet extends ComponentPlugin {
             planElement.getUID().toString(),
             event,
             now,
-            ""));
+            // Alternative to empty comment would be getAddedPEComment(planElement)
+            "&nbsp;")); 
       }
     }
   }
@@ -874,7 +875,7 @@ public class HistoryServlet extends ComponentPlugin {
         if (buf.length() != 0)
           buf.append("<br/>");
         buf.append("Content: ");
-        buf.append(sourceRelay.getContent());
+        buf.append(encodeHTML(sourceRelay.getContent().toString()));
       }
       buf.append("<br/>");
     }
@@ -1020,25 +1021,13 @@ public class HistoryServlet extends ComponentPlugin {
     StringBuffer buf = new StringBuffer();
 
     if (planElement.getEstimatedResult() != null) {
-      AspectValue[] values = planElement.getEstimatedResult().getAspectValueResults();
-      boolean success = planElement.getEstimatedResult().isSuccess();
-
-      String prefix = "Estimated Allocation Result - " +
-          (success ? "<font color=\"green\">Success</font>" : "<font color=\"red\">Failure</font>");
-      buf.append(prefix + "<br/>");
-      buf.append(getAspectValues2(values));
+      buf.append(getAllocResult("Estimated", planElement.getEstimatedResult()));
     }
 
     if (planElement.getReportedResult() != null) {
-      AspectValue[] values = planElement.getReportedResult().getAspectValueResults();
-      boolean success = planElement.getReportedResult().isSuccess();
-
-      String prefix = "<br/>Reported Allocation Result - " +
-          (success ? "<font color=\"green\">Success</font>" : "<font color=\"red\">Failure</font>");
-      buf.append(prefix + "<br/>");
-      buf.append(getAspectValues2(values));
+      buf.append(getAllocResult("Reported", planElement.getReportedResult()));
       buf.append("<br/>");
-      if (!success) {
+      if (!planElement.getReportedResult().isSuccess()) {
         if (planElement.getTask().getPreferences().hasMoreElements()) {
           buf.append("<br>Failed because reported Aspect Values did not satisfy Task Preferences:");
           buf.append(getTaskPreferences(planElement.getTask()));
@@ -1157,12 +1146,31 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   /**
+   * Return HTML of the success or failure (with Aspect Values) of the given AllocationResult
+   */
+  private String getAllocResult(String type, AllocationResult ar) {
+    if (ar == null)
+      return "";
+
+    StringBuffer buf = new StringBuffer();
+    AspectValue[] values = ar.getAspectValueResults();
+    boolean success = ar.isSuccess();
+    String prefix = "<br/>" + type + " Allocation Result - " +
+      (success ? "<font color=\"green\">Success</font>" : "<font color=\"red\">Failure</font>");
+    buf.append(prefix + "<br/>");
+    buf.append(getAspectValues2(values));
+
+    return buf.toString();
+  }
+
+  /**
    * If it's an Allocation, show the Task Verb and the allocated Asset's Type
-   * and ItemID, RoleSchedule, and Estimated result.
+   * and ItemID, RoleSchedule.
    * For an Expansion, show the child tasks (up to the MAX).
    * For an AssetTransfer, show the moving Asset and destination.
    * For an Aggregation, show just the count of parent tasks.
-   * Also show any Annotation
+   * For a Disposition, show whether it succeed or failed.
+   * Also show any Annotation, Estimated Result, and Reported Result.
    */
   protected String getAddedPEComment(PlanElement planElement) {
     StringBuffer buf = new StringBuffer();
@@ -1180,15 +1188,6 @@ public class HistoryServlet extends ComponentPlugin {
         buf.append(getTypeAndItemInfo(allocation.getAsset()));
         buf.append("<br/>");
         buf.append(getRoleSchedule(allocation.getAsset()));
-
-        if (allocation.getEstimatedResult() != null) {
-          AspectValue[] values = allocation.getEstimatedResult().getAspectValueResults();
-          boolean success = allocation.getEstimatedResult().isSuccess();
-          String prefix = "<br/>Estimated Allocation Result - " +
-              (success ? "<font color=\"green\">success</font>" : "<font color=\"red\">failure</font>");
-          buf.append(prefix + "<br/>");
-          buf.append(getAspectValues2(values));
-        }
       }
     } else if (planElement instanceof Expansion) {
       Expansion expansion = (Expansion) planElement;
@@ -1236,10 +1235,25 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append("Aggregation of ");
       buf.append(((Aggregation) planElement).getComposition().getParentTasks().size());
       buf.append(" parent tasks.");
+    } else if (planElement instanceof Disposition) {
+      boolean suc = ((Disposition)planElement).isSuccess();
+      buf.append("Disposition as ");
+      if (suc)
+	buf.append("<font color=green>Success</font>");
+      else
+	buf.append("<font color=red>Failure</font>");
     }
 
     if (planElement.getAnnotation() != null) {
       buf.append("<br>Annotation: " + planElement.getAnnotation());
+    }
+
+
+    if (planElement.getEstimatedResult() != null) {
+      buf.append(getAllocResult("Estimated", planElement.getEstimatedResult()));
+    }
+    if (planElement.getReportedResult() != null) {
+      buf.append(getAllocResult("Reported", planElement.getReportedResult()));
     }
 
     return buf.toString();
@@ -1600,11 +1614,19 @@ public class HistoryServlet extends ComponentPlugin {
             replacement = "&lt;";
           break;
         case '>':
+	  // put in a line break after '> ' as in the toString of many objects
           if (i + 1 < n && s.charAt(i + 1) == ' ')
             replacement = "&gt;<br/>";
-          else
-            replacement = "&gt;";
+	  else
+	    replacement = "&gt;";
           break;
+        case ',':
+	  // put in a line break after '>,' as in the toString of ServiceContractRelays
+	  if (i > 0 && i + 1 < n && s.charAt(i - 1) == '>' && s.charAt(i + 1) == ' ')
+	    replacement = ",<br/>";
+	  else
+	    replacement = ",";
+	  break;
         case '&':
           replacement = "&amp;";
           break;
