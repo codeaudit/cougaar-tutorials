@@ -50,15 +50,15 @@ import java.util.Vector;
 /**
  * The SDPlaceOrderPlugin extends the {@link PlaceOrderPlugin} to use Service Discovery
  * to find pizza providers dynamically. Once the plugin receives the {@link PizzaPreferences}
- * object, it publishes a {@link Constants.Verbs.FINDPROVIDERS} task with a Role of {@link Constants.Roles.PIZZAPROVIDER}. This task
+ * object, it publishes a {@link Constants.Verbs.FIND_PROVIDERS} task with a Role of {@link Constants.Roles.PIZZAPROVIDER}. This task
  * will be handled by Service Discovery.  The plugin then creates and expands the {@link Constants.Verbs.ORDER}
  * Task as done in the super class.  However, unlike the super class, this plugin waits
  * until Service Discovery has finished finding a pizza provider and has added a
  * Disposition on the FindProviders task before it can allocate the pizza subtasks.
- * <p>
- * ServiceDiscovery will find a provider, creating a PizzaProvider relationship. Then 
+ * <p/>
+ * ServiceDiscovery will find a provider, creating a PizzaProvider relationship. Then
  * the plugin continues as in the PlaceOrderPlugin.
- *<p>
+ * <p/>
  * If the Expansion on the order task fails, i.e., the provider could not complete the
  * pizza order, then the  plugin will remove the Allocations on the subtasks of the Expansion and
  * request a new provider from Service Discovery.  To exclude the provider that
@@ -88,14 +88,14 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   /**
    * When we get the PizzaPreferences object (that subscription is changed), ask ServiceDiscovery to find a provider.
    * Meanwhile, create the root order Task and its expansions - but not yet allocated.
-   * <p>
-   * When the FindProviders task is Disposed (a different subscription change), 
+   * <p/>
+   * When the FindProviders task is Disposed (a different subscription change),
    * we have a provider. Allocate the Order sub-tasks to that provider.
-   * <p>
+   * <p/>
    * As in the base class, update the AllocationResults as they come in from our provider.
-   * <p>
+   * <p/>
    * Finally, when the Expansion of the root Order Task changes, see if we got all
-   * our pizza. If not, remove the old Allocations to the old provider, and ask 
+   * our pizza. If not, remove the old Allocations to the old provider, and ask
    * ServiceDiscovery to find another (different) provider. When that FindProviders
    * is disposed, we'll try again...
    */
@@ -104,7 +104,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     // and indicates we should start.
     // Get any just added PizzaPreferences object.
     PizzaPreferences pizzaPrefs = getPizzaPreferences();
-    if ( pizzaPrefs != null) {
+    if (pizzaPrefs != null) {
       // We get in here only when a PizzaPreferences object has just been added. So
       // in our application, this should happen exactly once.
 
@@ -117,8 +117,8 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
       // Expand the order task and add the subtasks to the workflow.
       makeExpansion(orderTask, pizzaSubtasks);
     }
- 
-   // Service Discovery adds a Disposition to the FindProviders task when it is done.
+
+    // Service Discovery adds a Disposition to the FindProviders task when it is done.
     Disposition disposition = getDisposedFindProvider();
     if (disposition != null) {
       /**
@@ -145,24 +145,24 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
 
       // If the Expansion is confident, then we are done. Print the results.
       if (exp.getReportedResult().getConfidenceRating() == 1.0) {
-	logExpansionResults(exp);
-	
-	// But this is using servicediscovery, so we could try again.
-	if (! exp.getReportedResult().isSuccess() ) {
-	  /**
-	   * Publish remove the Allocations on all subtasks in the Expansion and return the
-	   * provider that failed.  The subtasks will get reallocated when a new provider is
-	   * found.
-	   */
-	  Entity failedProvider = processFailedSubtasks(exp);
+        logExpansionResults(exp);
 
-	  // Request a new provider from Service Discovery, excluding the one that failed.
-	  // We do so by publishing a new FindProviders task. When ServiceDiscovery
-	  // Disposes that Task, this plugin will run again, and re-allocate
-	  // the Order Tasks....
-	  publishFindProvidersTask(failedProvider);
-	  logger.shout("Initial Expansion FAILed. Redo Service Discovery.");
-	}
+        // But this is using servicediscovery, so we could try again.
+        if (!exp.getReportedResult().isSuccess()) {
+          /**
+           * Publish remove the Allocations on all subtasks in the Expansion and return the
+           * provider that failed.  The subtasks will get reallocated when a new provider is
+           * found.
+           */
+          Entity failedProvider = processFailedSubtasks(exp);
+
+          // Request a new provider from Service Discovery, excluding the one that failed.
+          // We do so by publishing a new FindProviders task. When ServiceDiscovery
+          // Disposes that Task, this plugin will run again, and re-allocate
+          // the Order Tasks....
+          publishFindProvidersTask(failedProvider);
+          logger.shout("Initial Expansion FAILed. Redo Service Discovery.");
+        }
       }
     }
   }
@@ -171,7 +171,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * Publishes a FindProviders task, indicating to Service Discovery
    * the desired Role for which you want a relationship (PizzaProvider),
    * and possibly a known provider to ignore.
-   *<p>
+   * <p/>
    * The Task is created with the Verb
    * FindProviders and the direct object is set to the agent's self entity.  The type of
    * provider is defined by creating an "As" Preposition with the indirect object set to a
@@ -181,7 +181,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * task is then published to the blackboard.
    *
    * @param failedProvider the provider to exclude in service discovery.  Can be null if
-   * there is no provider to exclude.
+   *                       there is no provider to exclude.
    */
   private void publishFindProvidersTask(Asset failedProvider) {
     NewTask newTask = makeTask(Constants.Verbs.FIND_PROVIDERS, getSelfEntity());
@@ -211,7 +211,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * FindProviders task of the Disposition.  Get all relationships that match the Role
    * of PizzaProvider from the RelationshipSchedule. Return the first provider found that
    * is not the excluded provider.  Returns null if a provider is not found.
-   *<p>
+   * <p/>
    * Note that only one failed provider can be avoided with this implementation.
    *
    * @param disposition whose previous Provider to avoid
@@ -234,7 +234,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
       Relationship r = (Relationship) iterator.next();
       provider = (Entity) relSched.getOther(r);
       // Return the first provider found that is not the excluded provider
-      if (! provider.equals(excludeProvider))  {
+      if (!provider.equals(excludeProvider)) {
         return provider;
       }
     }
@@ -243,6 +243,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
 
   /**
    * Return the succesful Disposition of the FindProviders task, if it is there.
+   *
    * @return the FindProviders Disposition, null if it is not sucessful and confident
    */
   private Disposition getDisposedFindProvider() {
@@ -257,14 +258,14 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
 
   /**
    * Returns a collection of tasks that do not have PlanElements.  Filters the
-   * task subscription by applying the" tasks with the no PlanElement" Predicate.  
+   * task subscription by applying the" tasks with the no PlanElement" Predicate.
    * The point of this being that only tasks without PlanElements are the
    * subtasks that need to be allocated.
    *
    * @return a collection of Tasks that do not have Allocation PlanElements.
    */
   private Collection getUnallocatedSubtasks() {
-     return Filters.filter((Collection) taskSub, TASK_NO_PE_PRED);
+    return Filters.filter((Collection) taskSub, TASK_NO_PE_PRED);
   }
 
   /**
@@ -272,7 +273,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * If any of the subtasks in the expansion are failed by the provider, the subtask
    * Allocations are publishRemoved so that they can be reallocated to a new provider.
    * Returns the provider that failed (so we can avoid it in future).
-   *<p>
+   * <p/>
    * Note that the assumption is that there is only one failed provider. All the
    * Allocations will be removed, but only the last failed provider is returned,
    * to be excluded.
@@ -285,7 +286,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     for (Iterator resultsIt = exp.getWorkflow().getSubtaskResults().iterator(); resultsIt.hasNext();) {
       SubTaskResult result = (SubTaskResult) resultsIt.next();
       // Grab the provider to be excluded
-      failedProvider = ((Allocation) result.getTask().getPlanElement()).getAsset();
+       failedProvider = ((Allocation) result.getTask().getPlanElement()).getAsset();
       // Rescind all task allocations
       getBlackboardService().publishRemove(result.getTask().getPlanElement());
     }
@@ -343,7 +344,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    */
   private static final UnaryPredicate TASK_NO_PE_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
-        return (((Task) o).getPlanElement() == null);
+      return (((Task) o).getPlanElement() == null);
     }
   };
 }
