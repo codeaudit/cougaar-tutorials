@@ -18,12 +18,6 @@
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
         <component
-          name="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-        </component>
-        <component
           name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
           class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
           priority="COMPONENT"
@@ -89,12 +83,6 @@
         <component
           name="org.cougaar.tutorial.exercise5.DevelopmentAllocatorPlugin"
           class="org.cougaar.tutorial.exercise5.DevelopmentAllocatorPlugin"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-        </component>
-        <component
-          name="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
           priority="COMPONENT"
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
