@@ -316,6 +316,12 @@
             PIZZA_TYPES_PROVIDED=all
           </argument>
         </component>
+	<component
+          name='org.cougaar.pizza.plugin.ProcessOrderPlugin'
+          class='org.cougaar.pizza.plugin.ProcessOrderPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
     </node>
   </host>

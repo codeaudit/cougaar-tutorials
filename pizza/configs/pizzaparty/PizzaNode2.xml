@@ -220,8 +220,15 @@
           <argument>TypeIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
 	  <!-- For non-SD, add relationships of PizzaProvider with
           Alice -->
+	  <argument>Relationship:MessageAddress=Alice,ItemIdentification=Alice,TypeIdentification=UTC/RTOrg,Role=PizzaProvider,StartTime=01/01/2000 12:00 am,EndTime=</argument>
         </component>
 	<!-- For non-SD, add AssetReportPlugin to report to Alice -->
+	<component
+          name='org.cougaar.planning.plugin.asset.AssetReportPlugin()'
+          class='org.cougaar.planning.plugin.asset.AssetReportPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
 	<!-- Community members need the CommunityPlugin -->
         <component
           name='org.cougaar.community.CommunityPlugin()'
@@ -260,6 +267,12 @@
           <argument>
             PIZZA_TYPES_PROVIDED=meat_only
           </argument>
+	</component>
+	<component
+          name='org.cougaar.pizza.plugin.ProcessOrderPlugin'
+          class='org.cougaar.pizza.plugin.ProcessOrderPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
       </agent>
     </node>
