@@ -40,14 +40,19 @@ public class PublishTaxonomy extends org.cougaar.servicediscovery.util.yp.Publis
   public void initialize() {
     super.initialize();
 
+    // Add taxonomies required for pizza application. 
+    // Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME lists all
+    // recognized roles.
+    // Constants.UDDIConstants.ORGANIZATION_TYPES) lists the recognized
+    // organization types e.g. military or commercial.
     ArrayList tModelNames = new ArrayList();
     tModelNames.add(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME);
     tModelNames.add(Constants.UDDIConstants.ORGANIZATION_TYPES);
 
-    //setTModelNames(Collections.singletonList(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME));
-
     setTModelNames(tModelNames);
 
+    // Define file path for above taxonomy files - located in 
+    // $CIP/pizza/data/taxonomies.
     setBasePath(Constants.getDataPath() + File.separator + 
 		"taxonomies" + File.separator);
   }
