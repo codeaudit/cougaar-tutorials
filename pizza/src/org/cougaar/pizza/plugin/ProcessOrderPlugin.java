@@ -53,8 +53,19 @@ public class ProcessOrderPlugin extends ComponentPlugin {
   private DomainService domainService;
   private IncrementalSubscription tasksSubscription;
   private IncrementalSubscription kitchenAssetSubscription;
-  private PlanningFactory pFactory = null;
+  private PlanningFactory planningFactory = null;
   private KitchenAsset kitchen = null;
+
+  /**
+   * Used by the binding utility through introspection to set my DomainService
+   * Services that are required for plugin usage should be set through reflection instead of explicitly
+   * getting each service from your ServiceBroker in the load method. The setter methods are called after
+   * the component is constructed but before the state methods such as initialize, load, setupSubscriptions, etc.
+   * If the service is not available at that time the component will be unloaded.
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
 
   /**
    * Set up our services and our factory.
@@ -63,15 +74,15 @@ public class ProcessOrderPlugin extends ComponentPlugin {
     super.load();
     logger = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
     domainService = (DomainService) getServiceBroker().getService(this, DomainService.class, null);
-    pFactory = (PlanningFactory) domainService.getFactory("planning");
+    planningFactory = (PlanningFactory) domainService.getFactory("planning");
   }
 
   /**
    * Create the subscriptions to my tasks and kitchen assets
    */
   protected void setupSubscriptions() {
-    tasksSubscription = (IncrementalSubscription) getBlackboardService().subscribe(OrderTasksPred);
-    kitchenAssetSubscription = (IncrementalSubscription) getBlackboardService().subscribe(KitchenAssetPred);
+    tasksSubscription = (IncrementalSubscription) getBlackboardService().subscribe(ORDER_TASKS_PRED);
+    kitchenAssetSubscription = (IncrementalSubscription) getBlackboardService().subscribe(KITCHEN_ASSET_PRED);
   }
 
   /**
@@ -81,24 +92,20 @@ public class ProcessOrderPlugin extends ComponentPlugin {
     // Make sure we have a kitchen asset before we allocate our tasks.
     // We only expect 1 kitchen asset so we'll exit if we don't have
     // one and set it when we do.
+    if (kitchenAssetSubscription.isEmpty()) {
+      return;
+    }
     if (kitchen == null) {
-      if (!kitchenAssetSubscription.isEmpty()) {
-        kitchen = (KitchenAsset) kitchenAssetSubscription.first();
-        // allocate all of the tasks on our subscription so far in case we
-        // missed some on the added list while our kitchen asset was null
-        allocateOrderTasks(tasksSubscription.getCollection());
-      }
+      kitchen = (KitchenAsset) kitchenAssetSubscription.first();
+      // allocate all of the tasks on our subscription so far in case we
+      // missed some on the added list while our kitchen asset was null
+      allocateOrderTasks(tasksSubscription.getCollection());
       //if the kitchen asset is still not there return out of the
       // execute cycle
-      if (kitchen == null) {
-        return;
-      }
     } else {
-      //if we have our kitchen asset process our tasks
-      //Right now assume we only get new tasks and no changes
-      Collection newOrderTasks = tasksSubscription.getAddedCollection();
-      // Try to allocate the new Order tasks
-      allocateOrderTasks(newOrderTasks);
+      // if we have our kitchen asset process our tasks
+      // Right now assume we only get new tasks and no changes
+      allocateOrderTasks(tasksSubscription.getAddedCollection());
     }
   }
 
@@ -112,61 +119,57 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       Task newTask = (Task) i.next();
       // See if our kitchen can make the type of pizza requested and then
       // make a successful or unsuccessful allocation result.
-      boolean kitchenCanMake = checkWithKitchen(newTask);
+      boolean kitchenCanMake = canMakePizza(newTask);
       AllocationResult ar;
       if (kitchenCanMake) {
-        ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
+        // This helper method makes an allocation result containing all aspect values that match the current task's
+        // preferences.  Set the confidence value of the allocation result to 1.0 indicating a completed result and set
+        // isSuccess to true.
+        ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
       } else {
-        // if we can't make the pizza provide a failed allocation result
-        // with a quantity of zero.
+        // Since we can't make the pizza we create a new aspect value to represent the zero quantity.
         AspectValue qtyAspectValue = AspectValue.newAspectValue(AspectType.QUANTITY, 0);
         AspectValue[] aspectValueArray = {qtyAspectValue};
-        ar = pFactory.newAllocationResult(1.0, kitchenCanMake, aspectValueArray);
+        // Use the planning factory to create a new allocation result with a confidence of 1.0 and isSuccess is false.
+        ar = planningFactory.newAllocationResult(1.0, false, aspectValueArray);
       }
-      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar, Constants.Role.PIZZAPROVIDER);
+      // Design choice:  The final processing of this task ends as an allocation to the kitchen asset.
+      // TODO:  Fix reference Another option would be to create a Disposition as the plan element instead of an
+      // allocation to an asset.
+      Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar,
+                                                          Constants.Role.PIZZAPROVIDER);
       getBlackboardService().publishAdd(alloc);
     }
   }
 
   /**
-   * Check with our kitchen asset to see if it can make the requested type of pizza
+   * Check the kitchen asset to see if it has the toppings to make the requested type of pizza
    *
    * @param newTask The order task.
-   * @return boolean If we can make the pizza - determines if the AllocationResult is successful or not.
+   * @return boolean If we can make the pizza
    */
-  private boolean checkWithKitchen(Task newTask) {
-    boolean canMakePizza = true;
+  private boolean canMakePizza(Task newTask) {
     PizzaAsset directObject = (PizzaAsset) newTask.getDirectObject();
     // Compare PGs on the pizza to PGs on the kitchen
-    // check the veggie pg
-    boolean vegPG = directObject.hasVeggiePG();
-    if (vegPG) {
-      if (!kitchen.hasVeggiePG()) {
-        canMakePizza = false;
-        //TODO: Turn logging down to debug
-        if (logger.isErrorEnabled()) {
-          logger.error("Provider " + getAgentIdentifier().toString() + " can't make the VeggiePizza that was ordered!");
-        }
+    if (directObject.hasVeggiePG() && !kitchen.hasVeggiePG()) {
+      if (logger.isWarnEnabled()) {
+        logger.warn(" can't make the VeggiePizza that was ordered!");
       }
+      return false;
     }
-    //check the meat pg
-    boolean meatPG = directObject.hasMeatPG();
-    if (meatPG) {
-      if (!kitchen.hasMeatPG()) {
-        canMakePizza = false;
-        //TODO: Turn logging down to debug
-        if (logger.isErrorEnabled()) {
-          logger.error("Provider " + getAgentIdentifier().toString() + " can't make the MeatPizza that was ordered!");
-        }
+    if (directObject.hasMeatPG() && !kitchen.hasMeatPG()) {
+      if (logger.isWarnEnabled()) {
+        logger.warn(" can't make the MeatPizza that was ordered!");
       }
+      return false;
     }
-    return canMakePizza;
+    return true;
   }
 
   /**
-   * A predicate that filters for "ORDER" tasks
+   * A predicate that filters for Verb.Order tasks
    */
-  private static UnaryPredicate OrderTasksPred = new UnaryPredicate() {
+  private final static UnaryPredicate ORDER_TASKS_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
         return ((Task) o).getVerb().equals(Verb.get(Constants.ORDER));
@@ -178,12 +181,9 @@ public class ProcessOrderPlugin extends ComponentPlugin {
   /**
    * A predicate that filters for KitchenAsset objects
    */
-  private static UnaryPredicate KitchenAssetPred = new UnaryPredicate() {
+  private final static UnaryPredicate KITCHEN_ASSET_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if (o instanceof KitchenAsset) {
-        return true;
-      }
-      return false;
+      return (o instanceof KitchenAsset);
     }
   };
 }
