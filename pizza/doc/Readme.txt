@@ -57,4 +57,17 @@ eat Pizza
 16:53:12,757 SHOUT - SDPlaceOrderPlugin - Alice:      Dominos could handle Order for 2.0 V
 eggie Pizza
 
-5. LEARN MORE
+5. OTHER OUTPUT
+The Pizza App also has built in monitoring tools that are available via 
+your browser while the application is running.
+
+In your favorite web browser goto: http://localhost:8800/
+This will display the main access point to all servlets.
+
+To see all the servlets associated with Alice navigate to: 
+http://localhost:8800/$Alice/list
+
+A good starting point would be:
+http://localhost:8800/$Alice/pizza
+
+6. LEARN MORE
