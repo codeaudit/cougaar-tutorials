@@ -38,7 +38,6 @@ import org.cougaar.planning.ldm.plan.AllocationResult;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 
@@ -75,6 +74,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
     logger = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
     domainService = (DomainService) getServiceBroker().getService(this, DomainService.class, null);
     planningFactory = (PlanningFactory) domainService.getFactory("planning");
+    getServiceBroker().releaseService(this, DomainService.class, domainService);
   }
 
   /**
@@ -137,7 +137,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       // TODO:  Fix reference Another option would be to create a Disposition as the plan element instead of an
       // allocation to an asset.
       Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar,
-                                                          Constants.Role.PIZZAPROVIDER);
+                                                          Constants.Roles.PIZZAPROVIDER);
       getBlackboardService().publishAdd(alloc);
     }
   }
@@ -172,7 +172,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
   private final static UnaryPredicate ORDER_TASKS_PRED = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
-        return ((Task) o).getVerb().equals(Verb.get(Constants.ORDER));
+        return ((Task) o).getVerb().equals(Constants.Verbs.ORDER);
       }
       return false;
     }
