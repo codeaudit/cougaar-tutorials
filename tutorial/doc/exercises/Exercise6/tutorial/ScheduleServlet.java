@@ -9,6 +9,7 @@ import org.cougaar.core.servlet.*;
 
 import tutorial.assets.*;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.planning.ldm.asset.*;

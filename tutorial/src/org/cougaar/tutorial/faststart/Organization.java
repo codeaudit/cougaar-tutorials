@@ -22,6 +22,7 @@ package org.cougaar.tutorial.faststart;
 
 import org.cougaar.core.domain.*;
 import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.core.domain.*;
 import org.cougaar.core.blackboard.*;
@@ -33,7 +34,7 @@ import org.cougaar.planning.ldm.plan.*;
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.6 2002-02-05 15:40:05 krotherm Exp $
+ * @version $Id: Organization.java,v 1.7 2002-11-08 16:47:06 mthome Exp $
  */
 public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 
@@ -57,7 +58,7 @@ public class Organization extends org.cougaar.planning.ldm.asset.Asset {
    */
   public Organization(String name, RootFactory theFactory) {
     NewClusterPG cpg = (NewClusterPG)theFactory.createPropertyGroup(ClusterPGImpl.class);
-    cpg.setClusterIdentifier(new ClusterIdentifier(name));
+    cpg.setMessageAddress(MessageAddress.getMessageAddress(name));
     this.setClusterPG(cpg);
   }
 

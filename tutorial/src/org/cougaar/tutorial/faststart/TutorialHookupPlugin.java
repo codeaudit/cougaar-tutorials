@@ -23,7 +23,7 @@ package org.cougaar.tutorial.faststart;
 import java.util.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
@@ -33,7 +33,7 @@ import org.cougaar.core.plugin.PluginBindingSite;
  * Plugin to facilitate simple hooking up of clusters 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.1 2002-02-12 19:30:35 jwinston Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.2 2002-11-08 16:47:06 mthome Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -108,7 +108,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
 	.createAsset(org.cougaar.tutorial.faststart.Organization.class);
     NewClusterPG cpg = (NewClusterPG)getDomainService().getFactory()
 	.createPropertyGroup(ClusterPGImpl.class);
-    cpg.setClusterIdentifier(new ClusterIdentifier(name));
+    cpg.setMessageAddress(MessageAddress.getMessageAddress(name));
     org.setClusterPG(cpg);
 
     NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)getDomainService().getFactory()

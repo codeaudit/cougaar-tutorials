@@ -10,7 +10,7 @@ import java.util.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.agent.ClusterIdentifier;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 
@@ -23,7 +23,7 @@ import org.cougaar.core.service.DomainService;
  * results are copied to estimated, while the BinaryIterator waits for this
  * copy to take place before proceeding.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryDispatcherPlugin.java,v 1.1 2002-02-12 19:30:35 jwinston Exp $
+ * @version $Id: BinaryDispatcherPlugin.java,v 1.2 2002-11-08 16:47:06 mthome Exp $
  */
 public class BinaryDispatcherPlugin extends ComponentPlugin
 {
