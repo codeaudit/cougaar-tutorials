@@ -40,6 +40,7 @@ import org.cougaar.util.*;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.plugin.util.PluginHelper;
+
 import java.util.*;
 
 /**
@@ -103,7 +104,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
     for (Iterator iterator = pizzaPrefSub.getAddedCollection().iterator(); iterator.hasNext();) {
       PizzaPreferences pizzaPrefs = (PizzaPreferences) iterator.next();
-      logger.error(" found pizzaPrefs "  + pizzaPrefSub);
+      if (logger.isDebugEnabled()) {
+        logger.debug(" found pizzaPrefs " + pizzaPrefSub);
+      }
       // For now we assume only one, but we should enhance to accommodate many
       Task orderTask = makeOrderTask();
       Collection subtasks = expandTask(pizzaPrefs, orderTask);
@@ -111,7 +114,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
 
     if (selfSub.getChangedList().hasMoreElements()) {
-      logger.error(" self entity changed,  trying to allocate ");
+      if (logger.isDebugEnabled()) {
+        logger.debug(" self entity changed,  trying to allocate ");
+      }
       Collection tasks = getUnallocatedTasks();
       if (! tasks.isEmpty()) {
         allocateTasks(tasks);
@@ -121,7 +126,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     if ( ! allocationSub.getChangedCollection().isEmpty()) {
       for (Iterator i = allocationSub.iterator(); i.hasNext();) {
         PlanElement pe = (PlanElement) i.next();
-        PluginHelper.updatePlanElement(pe);
+        if (PluginHelper.updatePlanElement(pe)) {
+          blackboard.publishChange(pe);
+        }
       }
     }
   }
@@ -135,11 +142,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     if (provider != null) {
       for (Iterator i = tasks.iterator(); i.hasNext();) {
         Task newTask = (Task) i.next();
-        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
+        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 0.25, true);
         Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
                                                             Role.getRole(Constants.PIZZA_PROVIDER));
         blackboard.publishAdd(alloc);
-        logger.error(" allocating task " + newTask);
+        if (logger.isDebugEnabled()) {
+          logger.debug(" allocating task " + newTask);
+        }
       }
     }
   }
@@ -147,8 +156,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private Collection expandTask(PizzaPreferences pizzaPrefs, Task parentTask) {
     ArrayList tasksToAllocate = new ArrayList();
     NewTask meatPizzaTask = makePizzaTask(MEAT);
+    Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
+    meatPizzaTask.setPreference(meatPref);
     meatPizzaTask.setParentTask(parentTask);
+
     NewTask veggiePizzaTask = makePizzaTask(VEGGIE);
+    Preference veggiePref = makeQuantityPreference(pizzaPrefs.getNumVeg());
+    veggiePizzaTask.setPreference(veggiePref);
     veggiePizzaTask.setParentTask(parentTask);
 
     NewWorkflow wf = planningFactory.newWorkflow();
@@ -160,13 +174,22 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     veggiePizzaTask.setWorkflow(wf);
     Expansion expansion = planningFactory.createExpansion(parentTask.getPlan(), parentTask, wf, null);
 
-    logger.error(" publishing expansion and subtasks ");
+    if (logger.isDebugEnabled()) {
+      logger.debug(" publishing expansion and subtasks ");
+    }
     blackboard.publishAdd(expansion);
     blackboard.publishAdd(meatPizzaTask);
     blackboard.publishAdd(veggiePizzaTask);
     tasksToAllocate.add(meatPizzaTask);
     tasksToAllocate.add(veggiePizzaTask);
     return tasksToAllocate;
+  }
+
+  private Preference makeQuantityPreference(int num) {
+    //logger.debug(" what is the quantity " + num);
+    ScoringFunction sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.QUANTITY, num));
+    Preference pref = planningFactory.newPreference(AspectType.QUANTITY, sf);
+    return pref;
   }
 
   private NewTask makePizzaTask(String pizzaType) {
