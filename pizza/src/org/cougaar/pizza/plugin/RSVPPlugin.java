@@ -147,10 +147,7 @@ public class RSVPPlugin extends ComponentPlugin {
     Collection entities = blackboard.query (new UnaryPredicate() {
 	public boolean execute(Object o) {
 	  if (o instanceof Entity) {
-	    Entity entity = (Entity) o;
-	    String entityItemId = 
-	      entity.getItemIdentificationPG().getItemIdentification();
-	    return (entityItemId.equals(getAgentIdentifier().toString()));
+	    return ((Entity) o).isSelf();
 	  }
 	  else {
 	    return false;

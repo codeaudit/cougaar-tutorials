@@ -258,11 +258,8 @@ public class InvitePlugin extends ComponentPlugin {
     Entity selfEntity = null;
     for (Iterator iter = entities.iterator(); iter.hasNext(); ) {
       Entity entity = (Entity) iter.next();
-
-      // if this entity is myself
-      String entityItemId = 
-	entity.getItemIdentificationPG().getItemIdentification();
-      if (entityItemId.equals(getAgentIdentifier().toString())) {
+      
+      if (entity.isSelf()) {
 	selfEntity = entity;
 	break;
       }

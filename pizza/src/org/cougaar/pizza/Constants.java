@@ -63,21 +63,33 @@ public class Constants {
 
   public static class Roles {
     /**
-     * Insure that Role constants are initialized. Actually does nothing, but the classloader insures that all static
-     * initializers have been run before executing any code in this class.
+     * Insure that Role constants are initialized. Actually does nothing, but
+     * the classloader insures that all static initializers have been run 
+     * before executing any code in this class. This ensures that Roles 
+     * required for the Pizza app are created properly before a application
+     * code calls Role.get(Constants.Role.XXX)
+     *
+     * All Roles have a converse - PizzaProvider/PizzaConsumer for example.
+     * The following Role.create calls specify both the Role and its converse. 
+     * In the case of the Carnivore Role - the Role and its converse are the
+     * same. The call to create PizzaProvider, however, designates 
+     * PizzaConsumer as the converse. (See RelationshipType.PROVIDER definition
+     * above.
+     *
+     * If Role.get(XXX) is called before a proper Role.create, the Role code 
+     * will create a default pairing of XXX and ConverseOfXXX Roles. The 
+     * ConverseOfXXX Role is typically unusable.
      */
     public static void init() {
     }
 
     static {
-      org.cougaar.planning.ldm.plan.Role.create("Self", "Self");
       org.cougaar.planning.ldm.plan.Role.create(Constants.PIZZA, RelationshipTypes.PROVIDER);
       org.cougaar.planning.ldm.plan.Role.create("Carnivore", "Carnivore");
       org.cougaar.planning.ldm.plan.Role.create("Vegetarian", "Vegetarian");
     }
 
     // organization roles
-    public static final org.cougaar.planning.ldm.plan.Role SELF = org.cougaar.planning.ldm.plan.Role.getRole("Self");
     public static final org.cougaar.planning.ldm.plan.Role CARNIVORE = org.cougaar.planning.ldm.plan.Role.getRole("Carnivore");
     public static final org.cougaar.planning.ldm.plan.Role VEGETARIAN = org.cougaar.planning.ldm.plan.Role.getRole("Vegetarian");
 
@@ -87,15 +99,19 @@ public class Constants {
         org.cougaar.planning.ldm.plan.Role.getRole(Constants.PIZZA + CUSTOMER_SUFFIX);
   }
 
+  // Used to find the data files required to support the pizza application e.g.
+  // $CIP/pizza/data
   public static String getDataPath() {
     return System.getProperty("org.cougaar.install.path") + File.separator + "pizza" + File.separator + "data";
   }
 
   public interface UDDIConstants {
+    // References pizza/data/taxonomies/CommercialServiceScheme-yp.xml which
+    // defines the set of Roles which a provider can register.
     public final static String COMMERCIAL_SERVICE_SCHEME = "CommercialServiceScheme";
-    public final static String COMMERCIAL_SERVICE_SCHEME_UUID = "uuid:f0b01564-b8f0-b015-dad5-b49598339719";
+    // References pizza/data/taxonomies/OrganizationTypes-yp.xml which
+    // defines the type of provider e.g. Military vs Commercial
     public final static String ORGANIZATION_TYPES = "OrganizationTypes";
-    public final static String ORGANIZATION_TYPES_UUID = "uuid:c71f3d00-fb35-11d6-8c6a-b8a03c50a862";
   }
 }
 
