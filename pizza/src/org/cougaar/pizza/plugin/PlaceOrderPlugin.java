@@ -37,6 +37,8 @@ import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.*;
 import org.cougaar.planning.ldm.asset.Entity;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 import java.util.*;
 
@@ -48,13 +50,17 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private DomainService domainService;
   private IncrementalSubscription selfSub;
   private IncrementalSubscription pizzaPrefSub;
-  private IncrementalSubscription findProvidersSub;
-  private IncrementalSubscription taskSub;
-  private IncrementalSubscription allocationSub;
+  private IncrementalSubscription findProvidersDispositionSub;
   private IncrementalSubscription expansionSub;
   private Entity self;
   private PlanningFactory planningFactory;
   private List tasksToAllocate = new ArrayList();
+
+  private static final String AS = "AS";
+  private static final String VEGGIE = "Veggie";
+  private static final String MEAT = "Meat";
+  private static final String VEGGIE_PIZZA = "Veggie Pizza";
+  private static final String MEAT_PIZZA = "Meat Pizza";
 
   public void load() {
     super.load();
@@ -68,9 +74,8 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     domainService = getDomainService();
     selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
     pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
-    findProvidersSub = (IncrementalSubscription) blackboard.subscribe(findProvidersPred);
-    allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
-
+    findProvidersDispositionSub = (IncrementalSubscription) blackboard.subscribe(findProvidersDispositionPred);
+    expansionSub = (IncrementalSubscription) blackboard.subscribe(expansionPred);
   }
 
   /**
@@ -97,32 +102,52 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       }
     }
 
-    for (Enumeration enum = pizzaPrefSub.getAddedList(); enum.hasMoreElements();) {
-
-      PizzaPreferences pizzaPrefs = (PizzaPreferences) enum.nextElement();
+    for (Iterator iterator = pizzaPrefSub.getAddedCollection().iterator(); iterator.hasNext();) {
+      PizzaPreferences pizzaPrefs = (PizzaPreferences) iterator.next();
       logger.error(" found pizzaPrefs "  + pizzaPrefSub);
       // For now we assume only one, but we should enhance to accommodate many
       publishFindProvidersTask();
       createOrderTaskAndExpand(pizzaPrefs);
+      allocateTasks();
     }
 
-    for (Enumeration enum = findProvidersSub.getAddedList(); enum.hasMoreElements();) {
-      Disposition disposition = (Disposition) enum.nextElement();
-      if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
-        allocateTasks();
-      }
+    if (selfSub.getChangedList().hasMoreElements()) {
+      logger.error(" self entity changed,  trying to allocate ");
+      allocateTasks();
     }
+//    for (Iterator iterator = findProvidersDispositionSub.getAddedCollection().iterator(); iterator.hasNext();) {
+//      Disposition disposition = (Disposition) iterator.next();
+//      if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
+//        allocateTasks();
+//      }
+//    }
   }
 
   private void allocateTasks() {
-    //To change body of created methods use File | Settings | File Templates.
+    Collection providers = getProviderOrgAssets();
+    Entity provider = null;
+    for (Iterator iterator = providers.iterator(); iterator.hasNext();) {
+      provider = (Entity) iterator.next();
+    }
+    if (provider != null) {
+      for (Iterator i = tasksToAllocate.iterator(); i.hasNext();) {
+        Task newTask = (Task) i.next();
+        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
+        Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
+                                                            Role.getRole(Constants.PIZZA_PROVIDER));
+        blackboard.publishAdd(alloc);
+        logger.error(" allocating task " + newTask);
+        //tasksToAllocate.remove(newTask);
+      }
+      tasksToAllocate.clear();
+    }
   }
 
   private void createOrderTaskAndExpand(PizzaPreferences pizzaPrefs) {
     Task parentTask = makeOrderTask();
-    NewTask meatPizzaTask = makeTask("Meat");
+    NewTask meatPizzaTask = makePizzaTask(MEAT);
     meatPizzaTask.setParentTask(parentTask);
-    NewTask veggiePizzaTask = makeTask("Veggie");
+    NewTask veggiePizzaTask = makePizzaTask(VEGGIE);
     veggiePizzaTask.setParentTask(parentTask);
     blackboard.publishAdd(parentTask);
 
@@ -158,14 +183,14 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     newTask.setPlan(planningFactory.getRealityPlan());
     newTask.setDirectObject(self);
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
-    pp.setPreposition("AS");
+    pp.setPreposition(AS);
     pp.setIndirectObject(Role.getRole(Constants.PIZZA_PROVIDER));
     newTask.setPrepositionalPhrases(pp);
     blackboard.publishAdd(newTask);
   }
 
   // TODO:  placeholder for now, may need to change significantly
-  private NewTask makeTask(String pizzaType) {
+  private NewTask makePizzaTask(String pizzaType) {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
     newTask.setPlan(planningFactory.getRealityPlan());
@@ -178,23 +203,23 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
     newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(planningFactory.createInstance("pizza"));
+    newTask.setDirectObject(planningFactory.createInstance(Constants.PIZZA));
     return newTask;
   }
 
   private PizzaAsset makePizzaAsset (String pizzaType) {
     // Create a Veggie Pizza Asset based on the existing pizza prototype
-    PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance("pizza");
+    PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance(Constants.PIZZA);
 
-    if (pizzaType.equals("Veggie")) {
+    if (pizzaType.equals(VEGGIE)) {
       pizzaAsset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, "Veggie Pizza"));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, VEGGIE_PIZZA));
     }
 
     // Create a Meat Pizza Asset based on the existing pizza prototype
     if (pizzaType.equals("Meat")) {
       pizzaAsset.addOtherPropertyGroup(PGCreator.makeAMeatPG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, "Meat Pizza"));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, MEAT_PIZZA));
     }
     return pizzaAsset;
   }
@@ -232,7 +257,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   /**
    * A predicate that matches dispositions of "FindProviders" tasks
    */
-  private static UnaryPredicate findProvidersPred = new UnaryPredicate (){
+  private static UnaryPredicate findProvidersDispositionPred = new UnaryPredicate (){
     public boolean execute(Object o) {
       if (o instanceof Disposition) {
         Task task = ((Disposition) o).getTask();
@@ -250,21 +275,6 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       if (o instanceof Expansion) {
         Task task = ( (Expansion) o).getTask();
         return task.getVerb().equals(Verb.get(Constants.ORDER));
-      }
-      return false;
-    }
-  };
-
-  /**
-   * A predicate that matches allocations of "ORDER" tasks
-   */
-  private static UnaryPredicate allocationPred = new UnaryPredicate (){
-    public boolean execute(Object o) {
-      if (o instanceof Allocation) {
-        Task t = ((Allocation)o).getTask();
-        if (t != null) {
-          return t.getVerb().equals(Verb.get(Constants.ORDER));
-        }
       }
       return false;
     }
