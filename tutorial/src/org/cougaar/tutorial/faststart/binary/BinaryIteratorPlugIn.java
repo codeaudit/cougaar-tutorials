@@ -12,6 +12,8 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.core.service.DomainService;
+
 /**
  * Binary search plugin
  * For the binary search, we will establish a task with VERB = MANAGE
@@ -19,10 +21,19 @@ import org.cougaar.util.UnaryPredicate;
  * The response will succeed if the solution value is within the given bounds, 
  * and fail if not.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryIteratorPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: BinaryIteratorPlugIn.java,v 1.3 2002-02-01 23:33:35 krotherm Exp $
  */
-public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
+public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.ComponentPlugin 
 {
+
+  private DomainService domainService;
+  public void setDomainService(DomainService value) {
+      domainService = value;
+  }
+
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   // Set up subscription for all plan of tasks with verb 'MANAGE'
   private IncrementalSubscription allManageAllocations;
@@ -38,11 +49,12 @@ public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Subscribe to allocations of 'MANAGE' tasks (CHANGED and NEW)
     allManageAllocations = 
-      (IncrementalSubscription)subscribe(allManageAllocationsPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allManageAllocationsPredicate);
 
     // Create initial task to search the given range
-    Task task = BinaryUtils.createNewTask(theLDMF);
-    publishAdd(task);
+    Task task = BinaryUtils.createNewTask(getDomainService().getFactory());
+    getBlackboardService().publishAdd(task);
     System.out.println("Publishing task!");
   }
 
@@ -115,8 +127,8 @@ public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
               BinaryUtils.UpdatePreferences
                 (task, low_bounds, 
               low_bounds + (high_bounds - low_bounds)/2.0,
-              theLDMF);
-              publishChange(task);
+              getDomainService().getFactory());
+              getBlackboardService().publishChange(task);
             }
           } 
           else {
@@ -127,10 +139,10 @@ public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
             // System.out.println("Iterating on unsuccessful previous guess");
             double orig_high_bounds = low_bounds + 2.0*(high_bounds-low_bounds);
             BinaryUtils.UpdatePreferences
-              (task, high_bounds, 
-            high_bounds + (orig_high_bounds - high_bounds)/2.0,
-            theLDMF);
-            publishChange(task);
+		(task, high_bounds, 
+		 high_bounds + (orig_high_bounds - high_bounds)/2.0,
+		 getDomainService().getFactory());
+            getBlackboardService().publishChange(task);
           }
         }
       }

@@ -14,15 +14,18 @@ import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+
 /**
  * Plugin to dispatch tasks from one cluster to another
  * The Dispatcher looks at the allocation and makes sure that reported
  * results are copied to estimated, while the BinaryIterator waits for this
  * copy to take place before proceeding.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryDispatcherPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: BinaryDispatcherPlugIn.java,v 1.3 2002-02-01 23:33:35 krotherm Exp $
  */
-public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class BinaryDispatcherPlugIn extends ComponentPlugin
 {
 
   // Subscribe to organizations that provide the 'BinaryProvider' role
@@ -49,6 +52,14 @@ public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     }
   };
 
+  private DomainService domainService;
+  public void setDomainService(DomainService value) {
+    domainService=value;
+  }
+
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   /**
    * Initialize plugin by subscribing for support orgs and 
@@ -60,12 +71,12 @@ public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     //System.out.println("BinaryDispatcherPlugIn::setupSubscriptions");
 
     // Subscribe to all support organizations
-    allSupportAssets = 
-      (IncrementalSubscription)subscribe(allSupportAssetsPredicate);
+    allSupportAssets = (IncrementalSubscription)getBlackboardService()
+       .subscribe(allSupportAssetsPredicate);
 
     // Subscribe to 'MANAGE' allocations
-    allManageAllocations = 
-      (IncrementalSubscription)subscribe(allManageAllocationsPredicate);
+    allManageAllocations = (IncrementalSubscription)getBlackboardService()
+       .subscribe(allManageAllocationsPredicate);
   }
 
   /**
@@ -89,8 +100,8 @@ public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     if ((mySupportOrganization != null) && (allManageTasks == null)) {
       // Subscribe to 'MANAGE' tasks, now that we're ready for them
       // NOTE : We don't have to subscribe from within setupSubscriptions
-      allManageTasks = 
-        (IncrementalSubscription)subscribe(allManageTasksPredicate);
+      allManageTasks = (IncrementalSubscription)getBlackboardService()
+	  .subscribe(allManageTasksPredicate);
     }
 
     if (mySupportOrganization != null) {
@@ -102,12 +113,12 @@ public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
         Task task = (Task)e.nextElement();
 
         if (task.getPlanElement() == null) {
-          Allocation allocation = 
-            theLDMF.createAllocation(task.getPlan(), task, 
-          mySupportOrganization, 
-          null, Role.AVAILABLE);
+	    Allocation allocation = getDomainService().getFactory()
+                .createAllocation(task.getPlan(), task, 
+                                  mySupportOrganization, 
+                                  null, Role.AVAILABLE);
           //   System.out.println("Allocating task " + task + " to " + mySupportOrganization);
-          publishAdd(allocation);
+          getBlackboardService().publishAdd(allocation);
         }
       }
     }
@@ -119,7 +130,7 @@ public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
       if (allocation.getReportedResult() != allocation.getEstimatedResult()) {
         //	  System.out.println("Copying results to estimates");
         allocation.setEstimatedResult(allocation.getReportedResult());
-        publishChange(allocation);
+        getBlackboardService().publishChange(allocation);
       }
     }
   }

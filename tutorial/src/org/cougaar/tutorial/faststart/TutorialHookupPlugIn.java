@@ -25,14 +25,26 @@ import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.agent.ClusterIdentifier;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.core.plugin.PluginBindingSite;
+
 /**
  * Plugin to facilitate simple hooking up of clusters 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugIn.java,v 1.4 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: TutorialHookupPlugIn.java,v 1.5 2002-02-01 23:33:19 krotherm Exp $
  */
-public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class TutorialHookupPlugIn extends ComponentPlugin
 {
+
+    private DomainService domainService;
+    public void setDomainService(DomainService value) {
+	domainService=value;
+    }
+    public DomainService getDomainService() {
+	return domainService;
+    }
 
   // At setup time, establish info from parameters
   // Then make copies of all referenced clusters in logplan, 
@@ -42,11 +54,12 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     parseParameters();
 
     // Create 'SELF' and put in my log plan
-    String my_cluster_name = getClusterIdentifier().getAddress();
+    String my_cluster_name = ((PluginBindingSite) getBindingSite())
+	.getAgentIdentifier().getAddress();
     Role []my_self_roles = {};
     Organization my_organization = 
       createOrganization(my_cluster_name, my_self_roles, Organization.SELF_RELATIONSHIP);
-    publishAdd(my_organization);
+    getBlackboardService().publishAdd(my_organization);
 
     // Go over all clusters specified in command line
     for(int i = 0; i < my_related_clusters.size(); i++) {
@@ -59,7 +72,7 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
       Organization my_related_cluster =
          createOrganization(my_related_cluster_name, my_related_roles,
 			   my_relationship);
-      publishAdd(my_related_cluster);
+      getBlackboardService().publishAdd(my_related_cluster);
 
       // And copy self to all specified related clusters
       Organization my_copy =
@@ -91,16 +104,20 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
    */
   private Organization createOrganization(String name, Role []roles, String relationship)
   {
-    Organization org = (Organization)theLDMF.createAsset(org.cougaar.tutorial.faststart.Organization.class);
-    NewClusterPG cpg = (NewClusterPG)theLDMF.createPropertyGroup(ClusterPGImpl.class);
+    Organization org = (Organization)getDomainService().getFactory()
+	.createAsset(org.cougaar.tutorial.faststart.Organization.class);
+    NewClusterPG cpg = (NewClusterPG)getDomainService().getFactory()
+	.createPropertyGroup(ClusterPGImpl.class);
     cpg.setClusterIdentifier(new ClusterIdentifier(name));
     org.setClusterPG(cpg);
 
-    NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)theLDMF.createPropertyGroup("TypeIdentificationPG");
+    NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)getDomainService().getFactory()
+	.createPropertyGroup("TypeIdentificationPG");
     tipg.setTypeIdentification(name);
     org.setTypeIdentificationPG(tipg);
 
-    NewItemIdentificationPG iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+    NewItemIdentificationPG iipg = (NewItemIdentificationPG)getDomainService().getFactory()
+	.createPropertyGroup("ItemIdentificationPG");
     iipg.setItemIdentification(name);
     org.setItemIdentificationPG(iipg);
 
@@ -111,7 +128,7 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     // set up this asset's available schedule
     Date start = TutorialUtils.createDate(1990, 1, 1);
     Date end = TutorialUtils.createDate(2010, 1, 1);
-    NewSchedule avail = theLDMF.newSimpleSchedule(start, end);
+    NewSchedule avail = getDomainService().getFactory().newSimpleSchedule(start, end);
     ((NewRoleSchedule)org.getRoleSchedule()).setAvailableSchedule(avail);
 
     return org;
@@ -124,23 +141,25 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
   private void copyAssetToCluster(Asset the_asset, Asset the_receiving_asset)
   {
     // Why do I need a task and schedule element??
-    NewTask task = theLDMF.newTask();
+    NewTask task = getDomainService().getFactory().newTask();
     task.setVerb(new Verb("Dummy"));
     task.setParentTask(task);
 
     //This makes asset available to the cluster from 01/01/1990 tp 
     //01/01/2010
     NewSchedule schedule = 
-      theLDMF.newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
+      getDomainService().getFactory().newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
                                 TutorialUtils.createDate(2010, 1, 1));
 
     int [] aspects = {AspectType.START_TIME, AspectType.END_TIME};
     double [] results = {schedule.getStartTime(), schedule.getEndTime()};
-    AllocationResult est_ar = theLDMF.newAllocationResult(1.0, true, aspects, results);
+    AllocationResult est_ar = getDomainService().getFactory()
+	.newAllocationResult(1.0, true, aspects, results);
 
 
     AssetTransfer asset_transfer =
-      theLDMF.createAssetTransfer(theLDMF.getRealityPlan(), // plan
+      getDomainService().getFactory().createAssetTransfer(getDomainService().getFactory()
+							  .getRealityPlan(), // plan
                                   task, // task (dummy)
                                   the_asset,
                                   schedule,  // schedule(dummy)
@@ -149,8 +168,8 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 				  Role.AVAILABLE    // role
 				  );
 
-    publishAdd(task);           // This is necessary or else the asset transfer gets rescinded
-    publishAdd(asset_transfer);
+    getBlackboardService().publishAdd(task);           // This is necessary or else the asset transfer gets rescinded
+    getBlackboardService().publishAdd(asset_transfer);
   }
 
   /**
@@ -159,8 +178,8 @@ public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
    */
   private void parseParameters()
   {
-    for(Enumeration e = getParameters().elements();e.hasMoreElements();) {
-      String combined = (String)e.nextElement();
+    for(Iterator it= getParameters().iterator();it.hasNext();) {
+      String combined = (String)it.next();
       int index1 = combined.indexOf('/');
       int index2 = combined.indexOf('/', index1+1);
       String cluster_name = combined.substring(0, index1);

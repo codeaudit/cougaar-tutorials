@@ -13,18 +13,30 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 /**
  * Binary search Responder plugin - Picks a number and
  * determines if the preferences (numeric bounds on the guess) contain
  * the number, returning success/failure accordingly
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryResponderPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: BinaryResponderPlugIn.java,v 1.3 2002-02-01 23:33:35 krotherm Exp $
  */
-public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class BinaryResponderPlugIn extends ComponentPlugin
 {
 
   // Single asset to which to allocate 'MANAGE' tasks
   private Asset binary_asset;
+
+    private DomainService domainService;
+
+    public void setDomainService(DomainService value) {
+	domainService = value;
+    }
+
+    public DomainService getDomainService() {
+	return domainService;
+    }
 
   // Subscription to 'MANAGE' tasks
   private IncrementalSubscription allManageTasks;
@@ -39,11 +51,13 @@ public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Subscribe to 'MANAGE' tasks (CHANGED and NEW)
     allManageTasks = 
-      (IncrementalSubscription)subscribe(allManageTasksPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allManageTasksPredicate);
 
     // Publish dummy asset to LDM to allow for allocating against
-    binary_asset = theLDMF.createPrototype("AbstractAsset", "BinaryAsset");
-    publishAdd(binary_asset);
+    binary_asset = getDomainService().getFactory()
+	.createPrototype("AbstractAsset", "BinaryAsset");
+    getBlackboardService().publishAdd(binary_asset);
 
   }
 
@@ -67,14 +81,15 @@ public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
 	// Generate an allocation and publish it
 	Allocation allocation = 
-	  theLDMF.createAllocation(task.getPlan(), task, 
+	  getDomainService().getFactory()
+	    .createAllocation(task.getPlan(), task, 
 				   binary_asset, estAR,
 				   Role.AVAILABLE);
 
 	//	System.out.println("Publishing new allocation");
 
 	// Publish new allocation for MANAGE task
-	publishAdd(allocation);
+	getBlackboardService().publishAdd(allocation);
       }
 
 
@@ -96,7 +111,7 @@ public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 	//	System.out.println("Publishing change to allocation");
 
 	// Publish the change to the allocation
-	publishChange(allocation);
+	getBlackboardService().publishChange(allocation);
       }
 
   }
@@ -114,7 +129,8 @@ public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     double high_bound = bounds[1];
 
     // Return success value based on whether bounds contain solution value
-    boolean success = ((low_bound <= solution_value) && (high_bound >= solution_value));
+    boolean success = ((low_bound <= solution_value) 
+		       && (high_bound >= solution_value));
 
     System.out.println("computingAllocationResult : " + 
 		       low_bound + " " + high_bound + " => " + success);
@@ -123,8 +139,8 @@ public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     int []aspect_types = {BinaryUtils.BINARY_BOUNDS_ASPECT};
     // Report the high-low gap so we can tell what request our response is against
     double []results = {high_bound-low_bound}; 
-    AllocationResult allocation_result = 
-      theLDMF.newAllocationResult(1.0, // rating
+    AllocationResult allocation_result = getDomainService().getFactory()
+	.newAllocationResult(1.0, // rating
 				 success, // are we in bounds?
 				 aspect_types,
 				 results);
