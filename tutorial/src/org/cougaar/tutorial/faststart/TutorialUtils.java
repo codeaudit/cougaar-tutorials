@@ -17,14 +17,14 @@ import java.awt.*;
 /**
  * Utility class for writing all tutorial plugin classes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialUtils.java,v 1.3 2002-01-31 20:10:04 krotherm Exp $
+ * @version $Id: TutorialUtils.java,v 1.4 2002-03-14 14:58:20 ahelsing Exp $
  **/
 public class TutorialUtils {
 
   /**
    * Return the preference for the given aspect
    * @param task for which to return given preference
-   * @paran int aspect type
+   * @param int aspect type
    * @return Preference (or null) from task for given aspect
    **/
   public static Preference getPreference(Task task, int aspect_type)
