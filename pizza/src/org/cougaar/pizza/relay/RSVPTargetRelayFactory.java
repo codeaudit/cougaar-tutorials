@@ -27,7 +27,6 @@
 package org.cougaar.pizza.relay;
 
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.persist.NotPersistable;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.UID;
 import org.cougaar.pizza.Constants;
@@ -43,6 +42,8 @@ import java.io.Serializable;
  */
 public class RSVPTargetRelayFactory
     implements Relay.TargetFactory, Serializable {
+
+  // Typically you only need one instance of your TargteFactory.
   private final static Relay.TargetFactory SINGLETON_FACTORY = new RSVPTargetRelayFactory();
 
   public static synchronized Relay.TargetFactory getTargetFactory() {
@@ -57,20 +58,22 @@ public class RSVPTargetRelayFactory
    * the factory every time the relay gets sent. (The relay has a reference
    * to this factory.) 
    *
-   * GC will eventually remove them, but this wastes less time.
+   * GC would eventually remove those extra copies, but having a readResolve method wastes less time.
    */
   private Object readResolve () {
     return SINGLETON_FACTORY;
   }
 
   /**
-   * TargetFactory implementation
+   * TargetFactory implementation - create an RSVPRelayTarget.
+   * Note that the RSVPRelay doesn't use the token slot, though some implementations might.
    */
   public Relay.Target create(UID uid, MessageAddress source, Object content,
                              Relay.Token token) {
+    // Note that in our case the content is always Constants.INVITATION_QUERY
     RSVPRelayTarget result = new RSVPRelayTarget(uid,
 						 source,
-                                                 Constants.INVITATION_QUERY);
+                                                 content);
     return result;
   }
 
