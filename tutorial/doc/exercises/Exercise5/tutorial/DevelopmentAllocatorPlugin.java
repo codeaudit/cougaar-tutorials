@@ -29,6 +29,8 @@ import org.cougaar.core.service.*;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Collection;
+import java.util.GregorianCalendar;
+import java.util.Date;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
@@ -38,7 +40,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2003-01-23 19:44:20 mthome Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-08 19:05:40 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -108,24 +110,16 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     while (task_enum.hasMoreElements()) {
       Task task = (Task)task_enum.nextElement();
       if (task.getPlanElement() == null)
-        allocateTask(task, startMonth(task));
+        allocateTask(task);
     }
   }
 
   /**
-   * Extract the start month from a task
+   * Find an available ProgrammerAsset for this task and allocate the
+   * the task to this asset.
    */
-  private int startMonth(Task t) {
-      return 0;
-  }
-
-  /**
-   * Find an available ProgrammerAsset for this task.  Task must be scheduled
-   * after the month "after"
-   */
-  private int allocateTask(Task task, int after) {
-    int end = after;
-      // select an available programmer at random
+  private void allocateTask(Task task) {
+    // select an available programmer at random
     Vector programmers = new Vector(allProgrammers.getCollection());
     boolean allocated = false;
     while ((!allocated) && (programmers.size() > 0)) {
@@ -138,60 +132,58 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
           +asset.getItemIdentificationPG().getItemIdentification());
       System.out.println("Task: "+task);
 
-      Schedule sched = asset.getSchedule();
-
-      // Check the programmer's schedule
-      int duration = 3;
-      int earliest = findEarliest(sched, after, duration);
-
-      end = earliest + duration -1;
-
-      // Add the task to the programmer's schedule
-      for (int i=earliest; i<=end; i++) {
-        sched.setWork(i, task);
-      }
-      getBlackboardService().publishChange(asset);
-
-      AllocationResult estAR = null;
-
-      // Create an estimate that reports that we did just what we
-      // were asked to do
-      String tmpstr =  " start_month: "+earliest;
-      tmpstr +=  " duration: "+duration;
-      tmpstr +=  " end_month: "+end;
-      System.out.println(tmpstr);
+      // find the times and make the allocation result that
+      // assigns these times
+      AllocationResult estAR =
+        new AllocationResult (1.0, true, findInterval (asset));
 
       Allocation allocation =
-        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
+        ((PlanningFactory)getDomainService().getFactory("planning")).
+          createAllocation(task.getPlan(), task,
                                   asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
-    return end;
   }
 
-
   /**
-   * find the earliest available time in the schedule.
-   * @param sched the programmer's schedule
-   * @param earliest the earliest month to look for
-   * @param duration the number of months we want to schedule
+   * Find the three-month interval starting either the beginning of
+   * next month or the end of the last task on the asset, and
+   * return an array of aspect values indicating the time interval
    */
-  private int findEarliest(Schedule sched, int earliest, int duration) {
-    boolean found = false;
-    int month = earliest;
-    while (!found) {
-      found = true;
-      for (int i=month; i<month+duration; i++) {
-        if (sched.getWork(i) != null) {
-          found = false;
-          month = i+1;
-          break;
-        }
-      }
+  private AspectValue[] findInterval (Asset asset) {
+    // figure out time interval
+    RoleSchedule sched = asset.getRoleSchedule();
+    Date startDate = null;
+    if (! sched.isEmpty())
+      // startDate should be right after last task assigned
+      startDate = new Date (sched.getEndTime());
+    else {
+      // startDate should be first day of next month
+      GregorianCalendar cal = new GregorianCalendar();
+      cal.roll (GregorianCalendar.MONTH, true);
+      GregorianCalendar cal2 = new GregorianCalendar();
+      cal2.clear();
+      cal2.set (GregorianCalendar.YEAR, cal.get (GregorianCalendar.YEAR));
+      cal2.set (GregorianCalendar.MONTH, cal.get (GregorianCalendar.MONTH));
+      startDate = cal2.getTime();
     }
-    return month;
+
+    // set end time to be three months later
+    GregorianCalendar cal3 = new GregorianCalendar();
+    cal3.setTime (startDate);
+    cal3.roll (GregorianCalendar.MONTH, 3);
+    Date endDate = cal3.getTime();
+
+    // tell the dates chosen
+    System.out.println (" start: " + startDate + " end: " + endDate);
+
+    return new AspectValue[] {
+      AspectValue.newAspectValue (AspectType.START_TIME,
+                                  startDate.getTime()),
+      AspectValue.newAspectValue (AspectType.END_TIME,
+                                  endDate.getTime()) };
   }
 
 }

@@ -102,27 +102,18 @@ public class ScheduleServlet
 
       // todo: print programmer's name and a line break
       out.println("<table border=1>");
-      Schedule s = pa.getSchedule();
+      RoleSchedule s = pa.getRoleSchedule();
+      Enumeration iter = s.getAllScheduleElements();
 
-      TreeSet ts = new TreeSet(s.keySet());
-      Iterator iter = ts.iterator();
-
-      out.println("<tr><td>Task<td>Verb<td>Month</tr>");
-      int i = 0;
-      while (iter.hasNext()) {
-        Object key = iter.next();
-        Object o = s.get(key);
-
-        out.print("<tr><td>"+i+++"<td>");
-        if (o instanceof Task) {
-          Task task = (Task)o;
-          // todo: print the verb and the item to be coded
-          // NOTE: all the HTML has already been taken care of, so just print
-          //       the verb and item to be coded
-        } else {
-          out.print(o);
+      out.println("<tr><td><b>Month</b></td><td><b>Task</b></td></tr>");
+      while (iter.hasMoreElements()) {
+        Object o = iter.nextElement();
+        if (o instanceof Allocation) {
+          Allocation alloc = (Allocation) o;
+          SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
+          // todo: print the months, verb and items to be coded, all
+          //       formatted in a table
         }
-        out.println("<td>"+key+"</tr>");
       }
       out.println("</table>");
       out.flush();

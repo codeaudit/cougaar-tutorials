@@ -34,9 +34,7 @@ import org.cougaar.core.agent.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.TaskImpl;
-import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.servlet.SimpleServletComponent;
@@ -102,26 +100,22 @@ public class ScheduleServlet extends HttpServlet
       // dump classnames and count to output stream
       out.println("<b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
       out.println("<table border=1>");
-      Schedule s = pa.getSchedule();
+      RoleSchedule s = pa.getRoleSchedule();
+      Enumeration iter = s.getAllScheduleElements();
 
-      TreeSet ts = new TreeSet(s.keySet());
-      Iterator iter = ts.iterator();
-
-      out.println("<tr><td>Task<td>Verb<td>Month</tr>");
-      int i = 0;
-      while (iter.hasNext()) {
-        Object key = iter.next();
-        Object o = s.get(key);
-
-        out.print("<tr><td>"+i+++"<td>");
-        if (o instanceof Task) {
-          Task task = (Task)o;
-          out.print(task.getVerb());
-          out.print(" " + task.getDirectObject().getItemIdentificationPG().getItemIdentification());
-        } else {
-          out.print(o);
+      out.println("<tr><td><b>Month</b></td><td><b>Task</b></td></tr>");
+      while (iter.hasMoreElements()) {
+        Object o = iter.nextElement();
+        if (o instanceof Allocation) {
+          Allocation alloc = (Allocation) o;
+          SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
+          out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
+                     "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
+                     "</td><td>" + alloc.getTask().getVerb() + " " +
+                     alloc.getTask().getDirectObject().
+                       getItemIdentificationPG().getItemIdentification() +
+                     "</td></tr>");
         }
-        out.println("<td>"+key+"</tr>");
       }
       out.println("</table>");
       out.flush();
