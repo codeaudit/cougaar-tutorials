@@ -22,7 +22,7 @@
 
 
 # Regenerate and recompile all property/asset files
-if [ -a makeassets.sh ]; then
+if [ -f makeassets.sh ]; then
   chmod +x ./makeassets.sh
   ./makeassets.sh;
 fi
@@ -31,6 +31,7 @@ fi
 #if not exist bin mkdir bin
 LIBPATHS="$COUGAAR_INSTALL_PATH/lib/bootstrap.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/core.jar"
+LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/planning.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/util.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/build.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/glm.jar"
