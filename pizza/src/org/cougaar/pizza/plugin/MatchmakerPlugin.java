@@ -34,8 +34,8 @@ import java.util.Iterator;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.plan.Role;
 import org.cougaar.servicediscovery.description.MMRoleQuery;
@@ -144,7 +144,8 @@ public class MatchmakerPlugin extends ComponentPlugin {
 					query.getRole().toString(),
 					Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME);
         rq.addServiceClassification(roleSC);
-
+	myLoggingService.debug("RegistryQuery = " +rq + " " +
+			       rq.getServiceClassifications());
 	r = new RQ(queryRequest, query, rq);
 
         postRQ(r);
@@ -219,10 +220,7 @@ public class MatchmakerPlugin extends ComponentPlugin {
     if (myLoggingService.isDebugEnabled()) {
       myLoggingService.debug(": handleResponse - registry query result size is : " + 
 			     services.size() + " for query: " + 
-			     query.getRole().toString() + " " +
-			     new Date(query.getTimeSpan().getStartTime()) +
-			     " to " +
-			     new Date(query.getTimeSpan().getEndTime()));
+			     query.getRole().toString());
     }
 
     ArrayList scoredServiceDescriptions = new ArrayList();

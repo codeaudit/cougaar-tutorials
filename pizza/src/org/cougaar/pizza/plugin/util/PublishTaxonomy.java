@@ -27,6 +27,7 @@
 package org.cougaar.pizza.plugin.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.cougaar.pizza.Constants;
@@ -39,7 +40,13 @@ public class PublishTaxonomy extends org.cougaar.servicediscovery.util.yp.Publis
   public void initialize() {
     super.initialize();
 
-    setTModelNames(Collections.singletonList(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME));
+    ArrayList tModelNames = new ArrayList();
+    tModelNames.add(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME);
+    tModelNames.add(Constants.UDDIConstants.ORGANIZATION_TYPES);
+
+    //setTModelNames(Collections.singletonList(Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME));
+
+    setTModelNames(tModelNames);
 
     setBasePath(Constants.getDataPath() + File.separator + 
 		"taxonomies" + File.separator);

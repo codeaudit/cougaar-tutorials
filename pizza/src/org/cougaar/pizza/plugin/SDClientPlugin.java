@@ -212,7 +212,7 @@ public class SDClientPlugin extends ComponentPlugin {
           }
 
           // Done with the query so clean up
-          getBlackboardService().publishRemove(mmRequest);
+          //getBlackboardService().publishRemove(mmRequest);
         }
       }
     }
@@ -243,7 +243,8 @@ public class SDClientPlugin extends ComponentPlugin {
         myLoggingService.warn(getAgentIdentifier() + ": error requesting service contract: a null role");
       }
     } else {
-      TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
+      TimeSpan timeSpan = 
+	TimeSpans.getSpan(TimeSpan.MIN_VALUE + 1000, TimeSpan.MAX_VALUE - 1000);
       String providerName = serviceDescription.getProviderName();
       ServiceRequest request = mySDFactory.newServiceRequest(getLocalEntity(), role,
                                                              mySDFactory.createTimeSpanPreferences(timeSpan));
@@ -277,8 +278,9 @@ public class SDClientPlugin extends ComponentPlugin {
     Entity localEntity = getLocalEntity();
 
     RelationshipSchedule relSchedule = localEntity.getRelationshipSchedule();
-    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
-    Collection providerRelationships = relSchedule.getMatchingRelationships(role, timeSpan);
+    Collection providerRelationships = 
+      relSchedule.getMatchingRelationships(role);
+
     Collection currentProviders = new ArrayList();
 
     for (Iterator iterator = providerRelationships.iterator(); iterator.hasNext();) {

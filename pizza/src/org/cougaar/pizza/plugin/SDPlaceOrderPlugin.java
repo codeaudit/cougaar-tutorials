@@ -42,8 +42,6 @@ import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Filters;
-import org.cougaar.util.TimeSpan;
-import org.cougaar.util.TimeSpans;
 import org.cougaar.util.UnaryPredicate;
 
 import java.util.ArrayList;
@@ -360,9 +358,9 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
    * @return A collection of pizza providers to use.
    */
   public Collection getProviders() {
-    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = self.getRelationshipSchedule();
-    Collection relationships = relSched.getMatchingRelationships(Constants.Roles.PIZZAPROVIDER, timeSpan);
+    Collection relationships = 
+      relSched.getMatchingRelationships(Constants.Roles.PIZZAPROVIDER);
     List providers = new ArrayList();
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();

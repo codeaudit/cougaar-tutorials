@@ -51,8 +51,7 @@ import org.cougaar.planning.ldm.plan.ScoringFunction;
 import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.util.TimeSpan;
-import org.cougaar.util.TimeSpans;
+import org.cougaar.util.Filters;
 import org.cougaar.util.UnaryPredicate;
 
 import java.util.Collection;
@@ -236,9 +235,10 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private Entity getProvider() {
     // TODO: timeless provider
     Entity provider = null;
-    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = getSelfEntity().getRelationshipSchedule();
-    Collection relationships = relSched.getMatchingRelationships(Constants.Roles.PIZZAPROVIDER, timeSpan);
+    Collection relationships = 
+      relSched.getMatchingRelationships(Constants.Roles.PIZZAPROVIDER);
+
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
       provider = (Entity) relSched.getOther(r);
