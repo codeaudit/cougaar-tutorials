@@ -333,8 +333,8 @@ public class InvitePlugin extends ComponentPlugin {
     if (timerExpired()) {
       Collection relays = relaySubscription.getCollection();
       if (publishedPreferences) {
-	if (log.isInfoEnabled()) {
-	  log.info("We already published the invite list");
+	if (log.isDebugEnabled()) {
+	  log.debug("We already published the invite list, nothing to do.");
 	  // Note that the relaySubscription should be empty too, since
 	  // we remove the relay when we're done
 	}
