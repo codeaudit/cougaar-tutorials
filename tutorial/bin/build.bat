@@ -1,152 +1,133 @@
-@echo OFF
+@echo off
+SETLOCAL
 
-REM "<copyright>"
-REM " Copyright 2001-2003 BBNT Solutions, LLC"
-REM " under sponsorship of the Defense Advanced Research Projects Agency (DARPA)."
-REM ""
-REM " This program is free software; you can redistribute it and/or modify"
-REM " it under the terms of the Cougaar Open Source License as published by"
-REM " DARPA on the Cougaar Open Source Website (www.cougaar.org)."
-REM ""
-REM " THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS"
-REM " PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR"
-REM " IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF"
-REM " MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND WITHOUT"
-REM " ANY WARRANTIES AS TO NON-INFRINGEMENT.  IN NO EVENT SHALL COPYRIGHT"
-REM " HOLDER BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL"
-REM " DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE OF DATA OR PROFITS,"
-REM " TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR"
-REM " PERFORMANCE OF THE COUGAAR SOFTWARE."
-REM "</copyright>"
+if "%1" == "/h" goto :usage
+if "%1" == "-h" goto :usage
+if "%1" == ""   goto :usage
+goto :main
+:usage
+echo Usage:  %0 [-v] {NUMBER}
+echo.
+echo /v        verbose output
+echo /s        compile solution code
+echo NUMBER    an exercise number (1 to 11)
+echo.
+echo Compile exercise source from:
+echo $CIP/exercises
+echo Creates a new jar:
+echo $CIP/lib/exercise{NUMBER}.jar
+echo.
+echo Note that the solutions in "src" are compiled by the
+echo "build.xml" ANT script.
+echo.
+echo Example:
+echo # compile Exercise1 to $CIP/lib/exercise1.jar
+echo %0 1
+echo.
+echo Example:
+echo # compile Exercise1 solution to $CIP/lib/exercise1.jar with verbose output
+echo %0 /v /s 1
+echo.
+goto :end
 
-REM Script to compile tutorial project
+:main
+del %COUGAAR_INSTALL_PATH%\lib\exercise*
 
-REM display usage info
-if [ -z %1 ] || [ %1 = --help ]; then
-  cat << EOF
-Usage:  build.bat [-v] [NUMBER]
-
-  -v        verbose output
-  NUMBER    an exercise number (1 to 11)
-
-Compile exercise source from:
-  \%COUGAAR_INSTALL_PATH%\exercises
-Creates a new jar:
-  \%COUGAAR_INSTALL_PATH%\lib\exercise\${NUMBER}.jar
-
-Note that the solutions in "src" are compiled by the
-"build.xml" ANT script.
-
-Example:
-  # compile Exercise1 to \%COUGAAR_INSTALL_PATH%\lib\exercise1.jar
-  build.bat -jar 1
-EOF
-  exit -1
-fi
+SET CWD=%~d1%~p0
 
 REM take VERBOSE flag
-SET VERBOSE=
-if [ "%1" = "-v" ]; then
+SET VERBOSE=0
+if "%1" == "/v" (
   SET VERBOSE=1
   shift 1
-fi
+)
+
+REM take SOLUTION flag
+SET SOLUTION=0
+if "%1" == "/s" (
+  SET SOLUTION=1
+  shift 1
+)
 
 REM take exercise number
-SET i=%1
+SET NUMBER=%1
 shift 1
 
 REM make sure the %COUGAAR_INSTALL_PATH% is set
-if [ -z %COUGAAR_INSTALL_PATH% ]; then
-  SET CIP=%COUGAAR_INSTALL_PATH%
-  if [ -z %COUGAAR_INSTALL_PATH% ]; then
-    ECHO COUGAAR_INSTALL_PATH not set
-    exit -1
-  fi
-fi
+if "%COUGAAR_INSTALL_PATH%"=="" (
+  ECHO COUGAAR_INSTALL_PATH not set
+  goto :end
+)
 
 REM set config options
-SET JAR="%COUGAAR_INSTALL_PATH%\lib\exercise%i.jar"
-SET BASE="%COUGAAR_INSTALL_PATH%\tutorial\exercises\org\cougaar\tutorial"
-SET ASSET="%BASE%\assets"
-SET SRC="%BASE%\exercise%i"
-SET TMP="%COUGAAR_INSTALL_PATH%\tutorial\tmp\exercise%i"
+SET JAR=%COUGAAR_INSTALL_PATH%\lib\exercise%NUMBER%.jar
+if %SOLUTION%==1 (
+  SET BASE=%COUGAAR_INSTALL_PATH%\tutorial\exercises\org\cougaar\tutorial
+) ELSE (
+  SET BASE=%COUGAAR_INSTALL_PATH%\tutorial\src\org\cougaar\tutorial
+)
+SET ASSET=%BASE%\assets
+SET SRC=%BASE%\exercise%NUMBER%
+SET TMP=%COUGAAR_INSTALL_PATH%\tutorial\tmp\exercise%NUMBER%
 SET ASSET_DEF=%ASSET%\programmer_assets.def
 SET PG_DEF=%ASSET%\properties.def
 
-if [ ! -d $SRC ]; then
-  ECHO Unknown exercise number: %i
-  exit -1
-fi
+if not exist %SRC% (
+  ECHO Unknown exercise number: %NUMBER%
+  ECHO Couldn't find %SRC%
+  goto :end
+)
 
 REM create property_group files
-SET COMMAND="\
-java \
-  -classpath \
-  %COUGAAR_INSTALL_PATH%\lib\core.jar:%COUGAAR_INSTALL_PATH%\clib\build.jar \
-  org.cougaar.tools.build.PGWriter\
-  %PG_DEF%"
-if [ ! -z %VERBOSE% ]; then
+SET COMMAND= java -classpath %COUGAAR_INSTALL_PATH%\lib\core.jar;%COUGAAR_INSTALL_PATH%\clib\build.jar org.cougaar.tools.build.PGWriter %PG_DEF%
+if %VERBOSE%==1 (
   echo %COMMAND%
-fi
-cd $SRC || exit -1
-%COMMAND% || exit -1
-cd -
+)
+cd /D %SRC%
+%COMMAND%
+cd /D %CWD%
 
 REM create asset files
-SET COMMAND="\
-java \
-  -classpath \
-  %COUGAAR_INSTALL_PATH%\lib\core.jar:%COUGAAR_INSTALL_PATH%\clib\build.jar \
-  org.cougaar.tools.build.AssetWriter\
-  %PG_DEF% \
-  -Ptutorial.assets \
-  %ASSET_DEF%"
-if [ ! -z %VERBOSE% ]; then
+SET COMMAND= java -classpath %COUGAAR_INSTALL_PATH%\lib\core.jar;%COUGAAR_INSTALL_PATH%\clib\build.jar org.cougaar.tools.build.AssetWriter %PG_DEF% -Ptutorial.assets %ASSET_DEF%
+if %VERBOSE%==1 (
   echo %COMMAND%
-fi
-cd $SRC || exit -1
-%COMMAND% || exit -1
-cd -
+)
+cd /D %SRC%
+%COMMAND%
+cd /D %CWD%
 
 REM create temp directory for class files
-if [ -d $TMP ]; then
-  rm -rf $TMP || exit -1
-fi
-mkdir -p $TMP || exit -1
+if exist %TMP% (
+  RD /q /s %TMP%
+)
+mkdir %TMP%
 
 REM compile the code
-SET LIBPATHS="%COUGAAR_INSTALL_PATH%\lib\bootstrap.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\lib\core.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\lib\planning.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\lib\util.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\clib\build.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\lib\glm.jar"
-SET LIBPATHS="%LIBPATHS%:%COUGAAR_INSTALL_PATH%\sys\servlet.jar"
-SET COMMAND="\
-javac \
-  -deprecation \
-  -d %TMP% \
-  -classpath %LIBPATHS% \
-  %ASSET%\*.java \
-  %SRC%\*.java"
-if [ ! -z %VERBOSE% ]; then
+SET LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\bootstrap.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\core.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\planning.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\util.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\clib\build.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\glm.jar
+SET LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\servlet.jar
+SET COMMAND= javac -deprecation -d %TMP% -classpath %LIBPATHS% %ASSET%\*.java %SRC%\*.java
+if %VERBOSE%==1 (
   echo %COMMAND%
-fi
-%COMMAND% || exit -1
+)
+%COMMAND%
 
 REM create jar
-SET COMMAND="\
-jar \
-  cf %JAR% \
-  -C %TMP% \
-  org"
-if [ ! -z %VERBOSE% ]; then
+SET COMMAND= jar cf %JAR% -C %TMP% org
+if %VERBOSE%==1 (
   echo %COMMAND%
-fi
-%COMMAND% || exit -1
+)
+%COMMAND%
 
-if [ -e %COUGAAR_INSTALL_PATH%\lib\tutorial.jar ]; then
-  ECHO Warning: remove \%COUGAAR_INSTALL_PATH%\lib\tutorial.jar
-fi
+if exist %COUGAAR_INSTALL_PATH%\lib\tutorial.jar (
+  del %COUGAAR_INSTALL_PATH%\lib\tutorial.jar
+  ECHO Warning: removed %COUGAAR_INSTALL_PATH%\lib\tutorial.jar
+)
 
-ECHO Successfully compiled \%COUGAAR_INSTALL_PATH%\lib\exercise%i.jar
+ECHO Successfully compiled %COUGAAR_INSTALL_PATH%\lib\exercise%NUMBER%.jar
+
+:end
