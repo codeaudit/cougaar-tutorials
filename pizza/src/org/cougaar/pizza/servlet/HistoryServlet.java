@@ -425,8 +425,9 @@ public class HistoryServlet extends ComponentPlugin {
         // Basic description is the UID, verb, publisher
         String event =
             "Task " + getURL(task.getUID(), TASK) +
-            " - " + task.getVerb() +
-            "<br/>was published by " + ((Claimable) task).getClaim();
+            " - " + task.getVerb();
+	event += getClaimerString((Claimable)task);
+
         // Add the event to the set
         addEvent(new EventInfo(ADDED,
             nextEventNum(),
@@ -484,6 +485,20 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   /**
+   * Print out the Claimer of a Claimable, if any.
+   */
+  private String getClaimerString(Claimable cl) {
+    if (cl == null)
+      return "";
+
+    Object claimer = cl.getClaim();
+    if (claimer != null && ! claimer.toString().trim().equals(""))
+      return "<br/>was published by " + claimer.toString();
+    else
+      return "";
+  }
+
+  /**
    * Add any PlanElement events to the Set
    */
   protected void checkPlanElements(long now) {
@@ -495,7 +510,7 @@ public class HistoryServlet extends ComponentPlugin {
             "" + getClassName(planElement) +
             " " + getURL(planElement.getUID(), PLAN_ELEMENT) +
             "<br/>of Task " + getURL(planElement.getTask().getUID(), TASK) +
-            "<br/>was published by " + planElement.getClaimable().getClaim();
+	  getClaimerString(planElement.getClaimable());
 
         addEvent(new EventInfo(ADDED,
             nextEventNum(),
