@@ -23,12 +23,9 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
-
-import org.cougaar.pizza.asset.*;
+import org.cougaar.pizza.asset.KitchenAsset;
+import org.cougaar.pizza.util.PGCreator;
 
 /**
  * This COUGAAR Plugin creates and publishes the Pizza Provider Kitchen Asset object
@@ -103,46 +100,16 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
     // Check the plugin arguments to see if this plugin should create a
     // Kitchen asset that can make veggie pizza.
     if (createVeggie) {
-      kitchen_asset.addOtherPropertyGroup(makeAVeggiePG(true));
+      kitchen_asset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
     }
     // Check the plugin arguments to see if this plugin should create a
     // Kitchen asset that can make meat pizza.
     if (createMeat) {
-      kitchen_asset.addOtherPropertyGroup(makeAMeatPG(true));
+      kitchen_asset.addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
     }
-    kitchen_asset.setItemIdentificationPG(makeAItemIdentificationPG("Pizza Kitchen"));
+    kitchen_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Pizza Kitchen"));
     getBlackboardService().publishAdd(kitchen_asset);
 
-  }
-
-  /**
-   * Create and populate a Veggie property group
-   */
-  private VeggiePG makeAVeggiePG(boolean veggieOnly) {
-    NewVeggiePG new_veggie_pg = (NewVeggiePG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("VeggiePG");
-    new_veggie_pg.setVeggieOnly(veggieOnly);
-    return new_veggie_pg;
-  }
-
-  /**
-   * Create and populate a Meat property group
-   */
-  private MeatPG makeAMeatPG(boolean meatOK) {
-    NewMeatPG new_meat_pg = (NewMeatPG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("MeatPG");
-    new_meat_pg.setMeatOK(meatOK);
-    return new_meat_pg;
-  }
-
-  /**
-   * Create and populate an ItemIdentification property group
-   */
-  private ItemIdentificationPG makeAItemIdentificationPG(String name) {
-    NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
-    new_item_id_pg.setItemIdentification(name);
-    return new_item_id_pg;
   }
 
   /**
