@@ -31,6 +31,7 @@ import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.pizza.Constants;
+import org.cougaar.pizza.plugin.InvitePlugin;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AspectType;
@@ -46,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -58,23 +60,27 @@ import java.util.TreeSet;
  * In our case, that is Alice.
  */
 public class PizzaPreferenceServlet extends BaseServletComponent {
+  // This is a servlet, so no subscriptions -- instead,
+  // we do one-time queries when needed
   protected BlackboardQueryService blackboardQueryService;
   protected LoggingService logger;
-  protected String agentID;
+  protected String agentID; // this Agent's name
 
   /**
-   * Load services needed by this servlet: BlackboardQueryService, AgentIDService.
+   * Load services needed by this servlet: BlackboardQueryService, AgentIDService. 
+   * Uses the BlackboardQueryService to get a snapshot of the blackboard
+   * status when a user asks, and the AgentIDService to get this agent's name.
    */
   public void load() {
     super.load();
 
     // get services
     blackboardQueryService = (BlackboardQueryService)
-        serviceBroker.getService(this, BlackboardQueryService.class, null);
+      serviceBroker.getService(this, BlackboardQueryService.class, null);
     AgentIdentificationService agentIDService =
-        (AgentIdentificationService) serviceBroker.getService(this,
-            AgentIdentificationService.class,
-            null);
+      (AgentIdentificationService) serviceBroker.getService(this,
+							    AgentIdentificationService.class,
+							    null);
     if (agentIDService != null) {
       agentID = agentIDService.getMessageAddress().toString();
       
@@ -87,7 +93,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
   /**
    * Whenever you have a load() method, you should have an unload, to release services.
    */
-   public void unload() {
+  public void unload() {
     if (blackboardQueryService != null) {
       serviceBroker.releaseService(this, BlackboardQueryService.class, blackboardQueryService);
       blackboardQueryService = null;
@@ -127,7 +133,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
   }
 
   /**
-   * Worker class that actually produces HTML for the servlet
+   * Worker class that actually produces HTML for the servlet.
    */
   protected class PizzaFormatter {
     public static final int FORMAT_DATA = 0; // Not yet supported
@@ -166,19 +172,20 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.print("<html><head><title>" +
-            "The Pizza Party" +
-            "</title></head>" +
-            "<body>" +
-            "<p/>" +
-            "<p/><center><h1>Pizza Preferences</h1><p/>" +
-            "<b>RSVP from each invited guest, invited by host " +
-            agentID +
-            "</b></center><p/>" +
-            getHtmlForPreferences() +
-            "<br><br>" +
-            getHtmlForOrders() +
-            "</body>" +
-            "</html>\n");
+		  "The " + Constants.PIZZA + " Party" +
+		  "</title></head>" +
+		  "<body>" +
+		  "<p/>" +
+		  "<p/><center><h1>" + Constants.PIZZA + " Party Planner Notes</h1></center><p/>" +
+		  "<br><center><a href=\"/$" + agentID + "/list\">" + agentID + "</a> is having a " + Constants.PIZZA + " party, and inviting everyone on her \"buddy list\", the people in the <a href=\"/$" + agentID + "/communityViewer?community=" + Constants.COMMUNITY + "\">" + Constants.COMMUNITY + "</a> community. She sends them a Relay, with the invitation: `" + Constants.INVITATION_QUERY + "'. After waiting a little while for them to reply, she will find a " + Constants.PIZZA + " parlor, and order them each the kind of " + Constants.PIZZA + " that they prefer - if she can find " + Constants.PIZZA + " parlors to satisfy her guests!</center><br><br>" +  
+		  "<center><b>RSVP from each invited guest, invited by host " +
+		  agentID +
+		  "</b>:</center><p/>" +
+		  getHtmlForPreferences() +
+		  "<br><br>" +
+		  getHtmlForOrders() +
+		  "<br><br><hr><center>Status at: " + new Date(System.currentTimeMillis()) + "</center></body>" +
+		  "</html>\n");
         out.flush();
       }
       // FIXME: Add support for FORMAT_XML and FORMAT_DATA
@@ -189,31 +196,36 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
      * @return HTML for output
      */
     protected String getHtmlForOrders() {
-      // Get the Expansion of the root Task of verb Order
+      // Get the Expansion of the root Task of verb Order.
+      // Note that this is a typical servlet, that has no subscriptions.
+      // Instead, it just wants to display a snapshot of the current
+      // state, so it uses the BlackboardQueryService.
       Collection pizzaOrders = blackboardQueryService.query(new UnaryPredicate() {
-        public boolean execute(Object o) {
-          if (o instanceof Expansion) {
-            Task task = ((Expansion)o).getTask();
-            return task.getVerb().equals(Constants.Verbs.ORDER);
-          }
-          return false;
-        }
-      });
+	  public boolean execute(Object o) {
+	    if (o instanceof Expansion) {
+	      Task task = ((Expansion)o).getTask();
+	      return task.getVerb().equals(Constants.Verbs.ORDER);
+	    }
+	    return false;
+	  }
+	});
 
       if(pizzaOrders.isEmpty()) {
-        return "<center><b>No Orders placed at the moment.</b></center>";
+        return "<center><b>No Orders placed yet.</b></center>";
       } else {
         Iterator iter = pizzaOrders.iterator();
         StringBuffer buf = new StringBuffer();
 
+	boolean orderOK = true; // if order sent, did it succeed
+	boolean orderSent = true;
+
+	String head = ""; // Fill in header once we have the expansion
 	// Loop over the Expansions (expect only one)
         while(iter.hasNext()) {
           Expansion exp = (Expansion)iter.next();
 
-          // We are completely done when Confidence == 1.
-
           buf.append("<center>");
-          buf.append("<table border=\"1\"><tr><td><b>Quantity</b></td><td><b>Type</b></td><td><b>Ordered From</b></td></tr>");
+          buf.append("<table border=\"1\"><tr><th>Quantity</th><th>Type</th><th>Ordered From</th><th>Status</th></tr>");
           Enumeration enum = exp.getWorkflow().getTasks();
 	  // Loop over the sub-tasks
           while(enum.hasMoreElements()) {
@@ -229,23 +241,63 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
             buf.append(t.getDirectObject().getItemIdentificationPG().getItemIdentification());
             buf.append("</td>");
             buf.append("<td>");
-	    // Store ordered from
-	    if (t.getPlanElement() != null)
-	      buf.append(((Allocation)t.getPlanElement()).getAsset().getItemIdentificationPG().getItemIdentification());
-	    else
-	      buf.append("[Order not allocated yet.]");
+
+	    Allocation pe = (Allocation)t.getPlanElement();
+            if (pe != null) {
+	      // Store ordered from
+	      String store = ((Allocation)pe).getAsset().getItemIdentificationPG().getItemIdentification();
+	      // Link store name to that Agent's list of servlets.
+	      // FIXME: URLEncode.encode(store, "UTF-8") --- to be safe, should encode these arbitrary strings...
+	      buf.append("<a href=\"/$" + store + "/list\">" + store + "</a>");
+	      buf.append("</td>");
+
+	      // Order status
+	      boolean subSucc = pe.getReportedResult().isSuccess();
+	      buf.append("<td>");
+
+	      // Link the word order to the /tasks servlet for the Order Task ordering this
+	      // kind of pizza. Color code text by success result.
+	      String orderlink = "<a href=\"/$" + agentID + "/tasks?mode=3&uid=" + t.getUID() + "\">Order</a>";
+	      if (subSucc) {
+		buf.append("<font color=green>" + orderlink + " filled!</font>");
+	      } else {
+		orderOK = false;
+		buf.append("<font color=red>" + orderlink + " FAILed!</font>");
+		// FIXME: Here, we could indicate if there is
+		// an outstanding FindProviders task, including
+		// the Role / exclusions if any
+	      }
+	    } else {
+	      orderOK = false;
+	      orderSent = false;
+              buf.append("[Order not sent yet.]</td><td>&nbsp;");
+	      // FIXME: Here, we could indicate if there is
+	      // an outstanding FindProviders task, including
+	      // the Role / exclusions if any
+	    }
             buf.append("</td>");
             buf.append("</tr>");
           }
-          buf.append("</table>");
-          buf.append("</center>");   // + getTypeAndItemInfo(.) + "<center><br>");
-          // no plan element or have an allocation  -- have a pref. and a parent task.
+          buf.append("</table></center>");
 
-	  // FIXME: Show the EstimatedResult (success/fail) if any
-        }
-        return "<center><b>Order Placed</b></center>" + buf.toString();
-      }
-    }
+	  // Create the table title: Link the word order to the root Pizza order task in the
+	  // PlanViewerServlet (/tasks)
+	  // FIXME: encode UID --- to be safe, should encode these arbitrary strings...
+	  // FIXME: URLEncode.encode(agentID, "UTF-8")
+	  head = "<center><b><a href=\"/$" + agentID + "/tasks?mode=3&uid=" + exp.getTask().getUID() + "\">Order</a> ";
+	  if (orderSent) {
+	    if (orderOK)
+	      head += "Placed <font color=green>Succesfully</font> - Party is on!</b></center>";
+	    else
+	      head += "<font color=red>Failed</font> - guests will not be happy!</b></center>";
+	  } else {
+	    head += "not yet placed.</b></center>";
+	  }
+        } // loop over expansions
+
+        return head + buf.toString();
+      } // had some Pizza Order task expansions
+    } // end of getHtmlForOrders
 
     /**
      * Query the Blackboard for the {@link PizzaPreferences} object,
@@ -253,13 +305,16 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
      */
     protected String getHtmlForPreferences() {
       Collection pizzaPreferences = blackboardQueryService.query(new UnaryPredicate() {
-        public boolean execute(Object o) {
-          return (o instanceof PizzaPreferences);
-        }
-      });
+	  public boolean execute(Object o) {
+	    return (o instanceof PizzaPreferences);
+	  }
+	});
 
       if (pizzaPreferences.isEmpty()) {
-        return "<center><b>Waiting for invitiation RSVP from friends.</b></center>";
+	// Link the word friends to the Community Viewer servlet showing the membership
+	// in the community. Remember that this membership will be updated as people show up.
+	// FIXME: URLEncode.encode(agentID, "UTF-8") --- to be safe, should encode these arbitrary strings...
+        return "<center><b>Waiting for invitiation RSVPs from <a href=\"/$" + agentID + "/communityViewer?community=" + Constants.COMMUNITY + "\">friends</a>....</b></center>";
       } else {
         // Our subscription is a Collection, but we only expect one
         // PizzaPreferences object -- so we just look at the first.
@@ -274,12 +329,16 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
         buf.append("Preference");
         buf.append("</th>");
         buf.append("</tr>");
+	// Add one row per friend
         for (Iterator iter = new TreeSet(prefs.getFriends()).iterator(); iter.hasNext();) {
           buf.append("<tr>");
 
           buf.append("<td>");
           String friend = (String) iter.next();
-          buf.append(friend);
+	  
+	  // Link the name of the friend to that Agent's list of servlets
+	  // FIXME: URLEncode.encode(friend, "UTF-8") --- to be safe, should encode these arbitrary strings...
+          buf.append("<a href=\"/$" + friend + "/list\">" + friend + "</a>");
           buf.append("</td>");
 
           buf.append("<td>");
