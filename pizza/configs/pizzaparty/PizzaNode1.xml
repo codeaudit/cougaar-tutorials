@@ -154,8 +154,14 @@
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
         <component
-          name='org.cougaar.pizza.servlet.PizzaServlet'
-          class='org.cougaar.pizza.servlet.PizzaServlet'
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
+        <component
+          name='org.cougaar.pizza.servlet.PizzaPreferenceServlet'
+          class='org.cougaar.pizza.servlet.PizzaPreferenceServlet'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
