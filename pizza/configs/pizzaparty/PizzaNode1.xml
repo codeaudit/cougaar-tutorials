@@ -3,7 +3,7 @@
 <!-- This file is the configuration file for 4 of the agents in the
  Pizza Party application. You must run both this and the other Node
  (PizzaNode2) to run the application. -->
-<!-- To run, use bin/Cougaar[.bat] PizzaNode1.xml PizzaNode1 -->
+<!-- To run, use bin/cougaar[.bat] PizzaNode1.xml PizzaNode1 -->
 
 <!-- This is the non-ServiceDiscovery version of the application. See -->
 <!-- also SDPizzaNode1 and SDPizzaNode2 -->
@@ -26,7 +26,7 @@
       class to run, once the Boostrapper finds the Jar files -->
       <prog_parameter>org.cougaar.core.node.Node</prog_parameter>
 
-      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/Cougaar -->
+      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/cougaar -->
       <!-- Make sure these PizzaNode1 references match: -->
       <vm_parameter>-Dorg.cougaar.node.name=PizzaNode1</vm_parameter>
       <vm_parameter>-Dorg.cougaar.society.file="PizzaNode1.xml"</vm_parameter>
