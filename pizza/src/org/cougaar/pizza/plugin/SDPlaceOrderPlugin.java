@@ -258,7 +258,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
 
   /**
    * Returns a collection of tasks that do not have PlanElements.  Filters the
-   * task subscription by applying the" tasks with the no PlanElement" Predicate.
+   * task subscription by applying the "tasks with no PlanElement" Predicate.
    * The point of this being that only tasks without PlanElements are the
    * subtasks that need to be allocated.
    *
