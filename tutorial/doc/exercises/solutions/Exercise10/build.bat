@@ -31,4 +31,4 @@ set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\build.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\glm.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\planserver.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\servlet.jar
-javac -classpath %LIBPATHS% tutorial\*.java tutorial\assets\*.java  && jar cf %COUGAAR_INSTALL_PATH%\sys\course.jar ./tutorial 
+javac -d bin -classpath %LIBPATHS% tutorial\*.java tutorial\assets\*.java  && jar cf %COUGAAR_INSTALL_PATH%\sys\course.jar -C bin ./tutorial
