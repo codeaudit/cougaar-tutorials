@@ -18,7 +18,7 @@ import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
 /**
  * This ALP PlugIn creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugIn.java,v 1.2 2000-12-18 15:40:58 wwright Exp $
+ * @version $Id: ProgrammerLDMPlugIn.java,v 1.3 2001-01-26 22:37:10 wwright Exp $
  */
 
  // todo:  add code to make this a subclass
@@ -38,23 +38,6 @@ protected void setupSubscriptions() {
 
 }
 
-/**
- * todo: Create and populate a Language property group
- */
-private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
-}
-
-/**
- * todo: Create and populate a Skills property group
- */
-private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
-}
-
-/**
- * todo: Create and populate an ItemIdentification property group
- */
-private ItemIdentificationPG makeAItemIdentificationPG(String name) {
-}
 
 /**
  * No subscriptions, so this method does nothing

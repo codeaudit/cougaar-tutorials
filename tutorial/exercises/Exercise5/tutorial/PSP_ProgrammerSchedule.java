@@ -31,7 +31,7 @@ import java.util.*;
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.2 2000-12-18 15:41:00 wwright Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.3 2001-01-26 22:37:10 wwright Exp $
  */
 
  // todo:  add code to make this a subclass implementing the needed interfaces
@@ -103,26 +103,19 @@ public class PSP_ProgrammerSchedule
 
 
   /**
-   * Print an HTML table of this programmer's schedule to the PrintStream
+   * Print an HTML dump of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintStream out) {
       // dump classnames and count to output stream
 
-      // todo: print programmer's name in bold (in HTML) and a line break
+      // todo: print programmer's name and a line break
 
 
-
-
-      // todo: Start an HTML table
-      // todo: create header row with columns for Task, Verb, and Month
-
-
-
+      // get the schedule from the ProgrammerAsset (set s to the schedule)
       Schedule s = pa.getSchedule();
-      // todo: get the schedule from the ProgrammerAsset (set s to the schedule)
 
 
-
+      // Sort the keys (months) for printing
       TreeSet ts = new TreeSet(s.keySet());
       Iterator iter = ts.iterator();
 
@@ -131,24 +124,19 @@ public class PSP_ProgrammerSchedule
         Object key = iter.next();
         Object o = s.get(key);
 
-        out.print("<tr><td>"+i+++"<td>");
+        out.print(" "+i+++" ");
         if (o instanceof Task) {
           Task task = (Task)o;
 
           // todo:  print the verb and the item to be coded
 
 
-
-
-
-
         } else {
           out.print(o);
         }
         // the key is the month
-        out.println("<td>"+key+"</tr>");
+        out.println("<br>");
       }
-      out.println("</table>");
       out.flush();
   }
 

@@ -24,7 +24,7 @@ import tutorial.assets.*;
  * This ALP PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.2 2000-12-18 15:40:59 wwright Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2001-01-26 22:37:10 wwright Exp $
  **/
  // todo:  add code to make this a subclass
 public class DevelopmentAllocatorPlugIn
@@ -94,6 +94,7 @@ public class DevelopmentAllocatorPlugIn
 
     // select an available programmer at random
     // todo:  get a vector containing the programmers
+    Vector programmers = // get all of the programmers from the subscription
 
 
     boolean allocated = false;
