@@ -46,9 +46,9 @@ behaviors necessary to post and solve the Computer problem.
 The computer society consists of a single node with a single cluster, Computer.
 The cluster creates computer assets and prints them out. It consists of two
 plugins:
-	ComputerLDMPlugIn : Creates computer Assets
-	ComputerAssetListerPlugIn : Prints new Assets out to stdout
-	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
+	ComputerLDMPlugin : Creates computer Assets
+	ComputerAssetListerPlugin : Prints new Assets out to stdout
+	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
                 browser
 
 These agents also load the plan server plugin which will allow you to 

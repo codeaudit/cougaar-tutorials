@@ -4,27 +4,27 @@ This tutorial implements a binary search algorithm in the COUGAAR infrastructure
 The tutorial presents two different node/cluster models for the solution. 
 
 In the first, a single cluster, BinarySimple runs which contains the following
-PlugIns:
-	BinaryIteratorPlugIn - Iterates on preferences to converge to solution
+Plugins:
+	BinaryIteratorPlugin - Iterates on preferences to converge to solution
 	BinaryResponderPlugin - Has solution value and responds to iterative
 		'guesses'
-	UIPlugIn - Standard COUGAAR PlugIn to view log plan
+	UIPlugin - Standard COUGAAR Plugin to view log plan
 
 In the second, we demonstrate what is involved in changing such a configuration
 to a multi-cluster society. This second society contains two clsuters, 
-Binary and BinaryResponder with the following PlugIns:
+Binary and BinaryResponder with the following Plugins:
 Binary:
-	BinaryIteratorPlugIn - Iterates on preferences to converge to solution
-	BinaryDispatcherPlugIn - Sends 'MANAGE' tasks to BinaryResponder
+	BinaryIteratorPlugin - Iterates on preferences to converge to solution
+	BinaryDispatcherPlugin - Sends 'MANAGE' tasks to BinaryResponder
 		support cluster
 BinaryResponder:
 	BinaryResponderPlugin - Has solution value and responds to iterative
 		'guesses'
-	TutorialHookupPlugIn - An example PlugIn that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
                 support relations
 
 both:
-	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
+	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
                 browser
 
 Before running the society, set the environment variable COUGAAR_INSTALL_PATH

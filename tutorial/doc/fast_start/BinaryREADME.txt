@@ -37,26 +37,26 @@ This tutorial implements a binary search algorithm in the COUGAAR infrastructure
 
 The tutorial presents two different node/cluster models for the solution. 
 In the first, a single cluster, BinarySimple runs which contains the following
-PlugIns:
+Plugins:
 
-	BinaryIteratorPlugIn - Iterates on preferences to converge to solution
+	BinaryIteratorPlugin - Iterates on preferences to converge to solution
 	BinaryResponderPlugin - Has solution value and responds to iterative 'guesses'
-	UIPlugIn - Standard COUGAAR PlugIn to view log plan
+	UIPlugin - Standard COUGAAR Plugin to view log plan
 
 In the second, we demonstrate what is involved in changing such a configuration
 to a multi-cluster society. This second society contains two clsuters, 
-Binary and BinaryResponder with the following PlugIns:
+Binary and BinaryResponder with the following Plugins:
 
 Binary:
-	BinaryIteratorPlugIn - Iterates on preferences to converge to solution
-	BinaryDispatcherPlugIn - Sends 'MANAGE' tasks to BinaryResponder
+	BinaryIteratorPlugin - Iterates on preferences to converge to solution
+	BinaryDispatcherPlugin - Sends 'MANAGE' tasks to BinaryResponder
 		support cluster
 BinaryResponder:
 	BinaryResponderPlugin - Has solution value and responds to iterative 'guesses'
-	TutorialHookupPlugIn - An example PlugIn that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
                 support relations
 both:
-	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web browser
+	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web browser
 
 What to look for?
 
@@ -80,7 +80,7 @@ and the second will read BinaryResponder.ini for its configuration.
 
 Binary.ini has in it a few of the plugs in from BinarySimple.ini, with the rest being put in 
 BinaryResponder.ini.  You will notice that both .ini files have a PlanServer plugIn.  There 
-is also another plugIn called TutorialHookupPlugIn in both .ini files.  This plugIn allows 
+is also another plugIn called TutorialHookupPlugin in both .ini files.  This plugIn allows 
 the two nodes to establish a role relation in order to be able to talk.  
 
 Check out the source code to see how this works.

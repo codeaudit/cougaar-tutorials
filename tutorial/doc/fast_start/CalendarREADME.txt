@@ -56,20 +56,20 @@ calendar 'datebook' and the need to replan tasks.
 
 The clusters contain the following plugins:
 CalendarRequester:
-	CalendarRequesterPlugIn : Create requests based on UI response
-	CalendarAllocatorPlugIn : Allocate new request tasks to Manager cluster
+	CalendarRequesterPlugin : Create requests based on UI response
+	CalendarAllocatorPlugin : Allocate new request tasks to Manager cluster
 
 CalendarManager:
-	CalendarManagerPlugIn : Attempts to schedule all request tasks
-	CalendarAssessorPlugIn : Notices inconsistences in schedule 
+	CalendarManagerPlugin : Attempts to schedule all request tasks
+	CalendarAssessorPlugin : Notices inconsistences in schedule 
 		and allocation structure and forces replanning
-	CalendarPerturbingPlugIn : Grabs vacation from some scheduled time
+	CalendarPerturbingPlugin : Grabs vacation from some scheduled time
 		based on UI response
-	TutorialHookupPlugIn - An example PlugIn that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
                 support relations
 
 both:
-	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
+	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
                 browser
  
 

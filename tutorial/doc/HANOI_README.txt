@@ -14,15 +14,15 @@ higher one. There is a classic recursive solution to this problem given by
 			Move(Pole3, Pole2, NUM_DISKS-1);
 
 This society consists of a single cluster, Hanoi, containing the following
-PlugIns:
+Plugins:
 
-	HanoiInitPlugIn - Takes an argument of the numbers of disks, and
+	HanoiInitPlugin - Takes an argument of the numbers of disks, and
 		creates an initial task to move the disks
-	HanoiPlugIn - Implements the above algorithm by expansion 
+	HanoiPlugin - Implements the above algorithm by expansion 
 		and allocation
-	HanoiMoverPlugIn - Manages the actual disk moves (when the 
+	HanoiMoverPlugin - Manages the actual disk moves (when the 
 		algorithm is down to NUM_DISKS = 1);
-	PlanServerPlugIn - Standard COUGAAR PlugIn to view log plan using a web 
+	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
                 browser
 
 The society is configured with a PlanServerPlugin to 
