@@ -28,7 +28,9 @@ fi
 
 # compile the code
 #if not exist bin mkdir bin
-LIBPATHS="$COUGAAR_INSTALL_PATH/lib/core.jar"
+LIBPATHS="$COUGAAR_INSTALL_PATH/lib/bootstrap.jar"
+LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/core.jar"
+LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/util.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/build.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/glm.jar"
 LIBPATHS="$LIBPATHS:$COUGAAR_INSTALL_PATH/sys/servlet.jar"

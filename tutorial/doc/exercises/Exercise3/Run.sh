@@ -28,14 +28,14 @@ if [ "$1" = "" ]; then
   exit;
 fi
 
-LIBPATHS=$COUGAAR_INSTALL_PATH/lib/core.jar
+LIBPATHS=$COUGAAR_INSTALL_PATH/lib/bootstrap.jar
 
 # pass in "NodeName" to run a specific named Node
 
 MYPROPERTIES="-Dorg.cougaar.system.path=$COUGAAR_INSTALL_PATH/sys -Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH -Dorg.cougaar.core.servlet.enable=true -Dorg.cougaar.lib.web.scanRange=100 -Dorg.cougaar.lib.web.http.port=8800 -Dorg.cougaar.lib.web.https.port=-1 -Dorg.cougaar.lib.web.https.clientAuth=true"
 
 MYMEMORY=""
-MYCLASSES=org.cougaar.core.node.Node
+MYCLASSES="org.cougaar.bootstrap.Bootstrapper org.cougaar.core.node.Node"
 MYARGUMENTS="-c -n $1"
 
 echo java $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS $MYCLASSES $MYARGUMENTS $2 $3
