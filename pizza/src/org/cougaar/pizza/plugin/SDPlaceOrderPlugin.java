@@ -129,10 +129,11 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
         Entity failedProvider = processFailedSubtasks(exp);
         // Request a new provider from Service Discovery, excluding the one that failed.
         publishFindProvidersTask(failedProvider);
+	logger.shout("Initial Expansion FAILed. Redo Service Discovery.");
       } else {
         // Expansion isSuccess is true and is completed
         if (exp.getReportedResult().getConfidenceRating() == 1.0) {
-          logger.shout(printPartyOrderResults());
+	  logger.shout("SUCCESS ORDER Task planned: 2 Meat and 2 Veggie Pizzas from Dominos. Ready for the party!");
         }
       }
     }
@@ -258,15 +259,6 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
       excludedEntity = (Entity) notPP.getIndirectObject();
     }
     return excludedEntity;
-  }
-
-  /**
-   * Overrides the super method and prints out a successful pizza order for the party.
-   * @return the party results message
-   */
-  protected String printPartyOrderResults() {
-    return "SUCCESS ORDER Task planned: 2 Meat and 2 Veggie Pizzas from Dominos." +
-        " Ready for the party!";
   }
 
   /**

@@ -153,9 +153,10 @@ public class PlaceOrderPlugin extends ComponentPlugin {
         logger.debug(" Change received on the expansion " + printExpansionResults(exp));
       }
       // If the Expansion was not successful print party order results
-      if (exp.getReportedResult().isSuccess() == false
-          && exp.getReportedResult().getConfidenceRating() == 1.0) {
-        logger.shout(printPartyOrderResults());
+      if (exp.getReportedResult().getConfidenceRating() == 1.0) {
+	// FIXME: Print what we actually did, not all constants
+	// 
+	logger.shout("Pizza Order Task FAILed: Joe's couldn't handle Order for for 2 Veggie and 2 Meat pizzas.");
       }
     }
   }
@@ -419,11 +420,6 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   protected String printAllocationResults(PlanElement pe) {
     return "task UID: " + pe.getTask().getUID() + " estimated: " +
         pe.getEstimatedResult() + " reported: " + pe.getReportedResult();
-  }
-
-  protected String printPartyOrderResults() {
-    return "Pizza ORDER task failed: Joe's Local Pizza Shack can't make veggie pizzas! " +
-        "We need to find another pizza provider.";
   }
 
   /**
