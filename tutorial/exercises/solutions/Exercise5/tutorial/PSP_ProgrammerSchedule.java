@@ -31,7 +31,7 @@ class GetProgrammersPredicate implements UnaryPredicate {
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.2 2000-12-18 15:41:09 wwright Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.3 2001-03-15 20:22:01 wwright Exp $
  */
 public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {
@@ -97,7 +97,6 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
    * Print an HTML table of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintStream out) {
-      // dump classnames and count to output stream
       out.println("<b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
       out.println("<table border=1>");
       Schedule s = pa.getSchedule();

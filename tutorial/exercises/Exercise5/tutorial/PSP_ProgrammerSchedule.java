@@ -26,12 +26,12 @@ import java.util.*;
 
 
 
-   
+
 /**
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.3 2001-01-26 22:37:10 wwright Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.4 2001-03-15 20:22:01 wwright Exp $
  */
 
  // todo:  add code to make this a subclass implementing the needed interfaces
@@ -106,8 +106,6 @@ public class PSP_ProgrammerSchedule
    * Print an HTML dump of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintStream out) {
-      // dump classnames and count to output stream
-
       // todo: print programmer's name and a line break
 
 
