@@ -38,15 +38,21 @@ public class PizzaPreferenceHelper {
 
   /**
    * Using self entity from blackboard, get its entity pg, and see if it
-   * includes a role "carnivore"
+   * includes a role "carnivore". Note that an Entity is _either_ a
+   * Carnivore, _or_ a Vegitarian.
    *
    * @return "meat" if carnivore, "veg" if herbivore
    */
-  public String getPizzaPreference(LoggingService log, Entity entity) {
+  public static final String getPizzaPreference(LoggingService log, Entity entity) {
+    if (entity == null)
+      return "";
+    
     boolean likeMeat = entity.getEntityPG().getRoles().contains(Constants.Roles.CARNIVORE);
-    log.info("roles for entity " + entity + " are " +
-             entity.getEntityPG().getRoles());
-
+    
+    if (log != null && log.isInfoEnabled())
+      log.info("Roles for " + entity + " are " +
+	       entity.getEntityPG().getRoles());
+    
     if (likeMeat) {
       return Constants.MEAT_PIZZA;
     } else {
