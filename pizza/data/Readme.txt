@@ -18,7 +18,7 @@ servicegroundings/:
 		WSDL file for Joes' first provided service. Generated.
 	B-JoesLocalPizzaShack.wsdl
 		WSDL file for Joes' second provided service. Generated.
-	PizzaProviderGrounding.wsdl
+	PizzaProviderCougaarGrounding.wsdl
 		Describes how to talk to a pizza rovider. Generated.
 	cougaar.wsdl
 		Describes how to talk to a Cougaar agent
