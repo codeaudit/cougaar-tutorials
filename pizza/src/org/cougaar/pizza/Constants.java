@@ -8,4 +8,6 @@ public class Constants {
   private Constants() {}
 
   public static final String ORDER = "ORDER";
+  public static final String FIND_PROVIDERS = "FindProviders";
+  public static final String PIZZA_PROVIDER = "PizzaProvider";
 }
