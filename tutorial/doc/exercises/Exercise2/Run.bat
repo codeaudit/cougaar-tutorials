@@ -23,7 +23,7 @@ REM "</copyright>"
 if "%COUGAAR_INSTALL_PATH%"=="" goto AIP_ERROR
 if "%1"=="" goto ARG_ERROR
 
-set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
+set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\bootstrap.jar
 
 REM pass in "NodeName" to run a specific named Node
 

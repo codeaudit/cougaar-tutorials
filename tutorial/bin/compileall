@@ -22,7 +22,9 @@
 
 
 # library 
-LIBPATHS=$COUGAAR_INSTALL_PATH/lib/core.jar
+LIBPATHS=$COUGAAR_INSTALL_PATH/lib/bootstrap.jar
+LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/util.jar
+LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/core.jar
 LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/build.jar
 
 # java files location
