@@ -22,10 +22,15 @@ package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
+import org.cougaar.core.service.LoggingService;
+import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.util.PGCreator;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * This COUGAAR Plugin creates and publishes the Pizza Provider Kitchen Asset object
@@ -33,11 +38,23 @@ import org.cougaar.pizza.util.PGCreator;
  */
 public class KitchenPrototypePlugin extends ComponentPlugin {
 
+  //The logging service acts as a central logger for each component
+  private LoggingService logger;
+
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
 
   // The prototypeRegistryService acts as a provider of prototype rehistration services
   private PrototypeRegistryService prototypeRegistryService = null;
+
+  /**
+   * Used by the binding utility through reflection to get my LoggingService
+   */
+  public LoggingService getLoggingService(Object requestor) {
+    LoggingService ls = (LoggingService)
+        getServiceBroker().getService(requestor, LoggingService.class, null);
+    return LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
+  }
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -76,7 +93,17 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   private boolean createMeat = true;
 
   /**
-   * Used for initialization to populate the Blackboard with ProgrammerAsset objects
+   * Used to initialize the plugin with the plugin parameters
+   */
+  public void load() {
+    super.load();
+    logger = getLoggingService(this);
+    // The readParameters method will initialize the createVeggie and createMeat booleans
+    readKitchenParameters();
+  }
+
+  /**
+   * Used for initialization to populate the Blackboard with Kitchen prototype and Asset objects
    */
   protected void setupSubscriptions() {
 
@@ -116,6 +143,53 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
    * No subscriptions, so this method does nothing
    */
   protected void execute () {}
+
+  /**
+   * Reads the plugin parameters.
+   */
+  private void readKitchenParameters() {
+    Collection params = getParameters();
+    if (params.isEmpty()) {
+      if (logger.isInfoEnabled()) {
+        logger.info("No parameters. Assuming that this kitchen provides both meat and veggie pizzas");
+      }
+      return;
+    }
+    //Walk through the plugin params and find the one we are interested in.
+    int index;
+    for (Iterator i = params.iterator(); i.hasNext();) {
+      String s = (String) i.next();
+      if ((index = s.indexOf('=')) != -1) {
+        String paramName = new String(s.substring(0, index));
+        if (paramName.trim().equals("PIZZA_TYPES_PROVIDED")) {
+          setKitchenParameters(new String(s.substring(index + 1, s.length())));
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Set the createVeggie and createMeat plugin variables according to the plugin param that was read in.
+   */
+  private void setKitchenParameters(String paramValue) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Found PIZZA_TYPES_PROVIDED Plugin param of: " + paramValue.trim());
+    }
+    if (paramValue.trim().equals("all")) {
+      createVeggie = true;
+      createMeat = true;
+    } else if (paramValue.trim().equals("veggie_only")) {
+      createVeggie = true;
+      createMeat = false;
+    } else if (paramValue.trim().equals("meat_only")) {
+      createVeggie = false;
+      createMeat = true;
+    } else if (paramValue.trim().equals("none")) {
+      createVeggie = false;
+      createMeat = false;
+    }
+  }
 
 }
 
