@@ -46,13 +46,10 @@ import java.util.Collections;
  * application are initialized correctly. PizzaDomain does not include any
  * domain specific LogicProviders.
  **/
-
 public class PizzaDomain extends DomainAdapter {
 
   public static final String PIZZA_NAME = "pizza";
 
-  private MessageAddress self;
-  private AgentIdentificationService agentIdService;
   private DomainService domainService;
   private LDMService ldmService;
 
@@ -62,15 +59,6 @@ public class PizzaDomain extends DomainAdapter {
 
   public PizzaDomain() {
     super();
-  }
-
-  public void setAgentIdentificationService(AgentIdentificationService ais) {
-    this.agentIdService = ais;
-    if (ais == null) {
-      // Revocation
-    } else {
-      this.self = ais.getMessageAddress();
-    }
   }
 
   public void setDomainService(DomainService domainService) {
@@ -102,11 +90,6 @@ public class PizzaDomain extends DomainAdapter {
       sb.releaseService(
           this, DomainService.class, domainService);
       domainService = null;
-    }
-    if (agentIdService != null) {
-      sb.releaseService(
-          this, AgentIdentificationService.class, agentIdService);
-      agentIdService = null;
     }
     super.unload();
   }
