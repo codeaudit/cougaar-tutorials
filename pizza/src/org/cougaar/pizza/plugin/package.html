@@ -1,0 +1,94 @@
+<body>
+The plugins for the pizza party application.
+<p>
+The Pizza and KitchenPrototypePlugins give Alice, Joes, and Dominoes
+access to Asset Prototypes. The KitchenPrototypePlugin also creates
+the single Kitchen Asset, with the correct PGs indicating whether that
+Pizza Provider serves meat and/or veggie pizzas.
+<p>
+The InvitePlugin is used at Alice to send an invitation to all her
+friends on her buddy list, "FriendsOfMark" -- a Community. Her invitation is an
+RSVPRelay that asks "Meat or Veggie". 
+Each member of the community receives the Relay, and responds using
+the RSVPPlugin. They then use the PizzaPreferenceHelper to look at the
+local self Entity, looking for the 
+Carnivore or Vegetarian Roles, to decide what kind of pizza they
+eat. They then set that Response on the Relay, which the
+infrastructure forwards back to Alice. 
+At Alice, the InvitePlugin then collects all the RSVPs, and when it
+has all the responses, publishes a PizzaPreferences object summarizing
+what pizza she wants to order. 
+<p>
+At this point, you might use the /pizza servlet to see who responded
+and what kinds of pizza Alice needs to order. 
+<p>
+There are then 2 options. In the non ServiceDiscovery version, the
+PlaceOrderPlugin at Alice acts next. In the ServiceDiscovery version,
+it is the SDPlaceOrderPlugin, which is a simple extension of the
+PlaceOrderPlugin. 
+The PlaceOrderPlugin sees the PizzaPreferences on its Subscription,
+and prepares to order the pizza. First it looks to see if it has a
+Relationship on the self Entity to any PizzaProviders. In the SD
+version it does not, and must now do ServiceDiscovery. In the non-SD
+version, it does. So it then creates an Order Task, ordering Pizza. It
+then expands that - one for meat pizza (with an appropriate quantity
+depending on RSVPs) and one for veggie. It Allocates those child tasks
+to the pizza provider it found on its self Entity (Joes).
+<p>
+In the SD version, the SDPlaceOrderPlugin kicks off ServiceDiscovery by
+publishing a FindProviders task, with an IndirectObject indicating it
+wants a PizzaProvider. 
+The SDClientPlugin subscribes to those Tasks, and then publishes
+an MMQueryRequest, including an MMRoleQuery that specifies it wants a
+PizzaProvider, and includes the Scoring function
+(org.cougaar.pizza.plugin.util.RoleScorer) to use in weighing
+different possible providers. 
+<p>
+The MatchmakerPlugin picks up the MMQueryRequest, and issues an
+asynchronous query to the Yellow Pages, asking it to walk up the
+hierarchy of Yellow Pages Communities as necessary, to find providers
+matching the query (so it finds Cambridge first, and then MA, as
+necessary). On getting a callback with a provider, it publisheChanges
+the MMQueryRequest. 
+<p>
+The SDClientPlugin picks up the answer to its request, and sends a
+ServiceContractRelay to the named provider Agent, asking for a
+Relationship. The SDProviderPlugin in our example immediately says yes
+(a more complex plugin might for example check capacity). The
+infrastructure then establishes the needed Relationship.
+<p>
+Once the SDClientPlugin sees that it has a Contract for the Role it
+was looking for, it marks the FindProviders Task with a confident
+Success Disposition.  The SDPlaceOrderPlugin sees the change to the
+Disposition, and uses that to grab the new PizzaProvider. Then it
+continues just like the PlaceOrderPlugin, issuing Order Tasks that it
+allocates to the provider.
+<p>
+OK, so now, in both SD and non-SD versions, the PlaceOrderPlugin has
+allocated Pizza Order tasks to the Pizza Provider. In both cases, this
+should be Joes. The infrastructure copies the Order tasks to Joes
+Blackboard (because they were Allocated to the Joes Entity). 
+<p>
+At Joes, the ProcessOrderPlugin sees the new Order Tasks. It matches
+the PGs on the Task's Indirect Object Pizza Asset indicating the kind of pizza needed, with
+teh PGs on its local KitchenAsset, and responds with Success or Fail,
+depending on whether it makes the kind of pizza needed. Joes does not
+make Veggie pizza, so will Fail that particular Task.
+<p>
+The PlaceOrderPlugin propagates that result up to its root Order
+Task, and logs the results. In the non-SD world, this is the end of
+the line. Alice only knows about Joes, so can't make her Vegetarian
+guests happy. :-(
+<p>
+In the SD version of the application, the SDPlaceOrderPlugin sees the
+failure on the order, and decides to find a new provider. It publishes
+a new FindProviders task, specifying that the previous provider (Joes)
+should be excluded - since Joes cant satisfy the Order. From there, it
+continues as before. The SD Plugins look for the next provider that
+meets the (stricter) criteria. They walk up from the Cambridge YP
+Community and find Dominos in the MA community. The
+SDPlaceOrderPlugin issues all new Orders to Dominos, which can meet
+Alices needs.
+<p>
+The party is on!
+</body>
