@@ -1,4 +1,4 @@
-<!-- Autobuild-generated ANT v1.5 script for building the Cougaar module "glm". -->
+<!-- Autobuild-generated ANT v1.5 script for building the Cougaar module "pizza". -->
 
 <!--                                                 -->
 <!-- THIS IS A MACHINE GENERATED FILE - DO NOT EDIT! -->
@@ -7,7 +7,7 @@
 <!-- The source for this file is in build/data/moduleTemplate.xml -->
 
 <!-- autobuild might execute this with something like:
-  ant -DTARGETBASE=/tmp/target -DMODSOURCE=/tmp/cougaar/latest/src/glm 
+  ant -DTARGETBASE=/tmp/target -DMODSOURCE=/tmp/cougaar/latest/src/pizza 
       -DTMP=/tmp/tmpdir                                           -->
 
 <!-- Instructions for individual users:
@@ -30,24 +30,24 @@
      Individuals may choose to edit or override in particular the 'Tool options' below
      (compiler, toggle deprecation warnings, etc). 
 
-     For target options, from the "glm" directory or a
+     For target options, from the "pizza" directory or a
      sub-directory, do:
           ant -projecthelp
      Or more generally, do:
-          ant -b $COUGAAR_INSTALL_PATH/glm/build.xml -projecthelp
+          ant -b $COUGAAR_INSTALL_PATH/pizza/build.xml -projecthelp
 
      Target default is 'compile', to compile the module, leaving class files in
-     glm/tmp/classes, which should then be your setting for
+     pizza/tmp/classes, which should then be your setting for
      COUGAAR_DEV_PATH.
 
      Other typical targets:
      'clean' - remove old module jar files (from TARGETBASE/lib ie
      usually COUGAAR_INSTALL_PATH/lib), plus class files
 
-     'dist-module' - generate a new jar file TARGETBASE/lib/glm-date.jar
-         (ie typically COUGAAR_INSTALL_PATH/lib/glm-date.jar)     
+     'dist-module' - generate a new jar file TARGETBASE/lib/pizza-date.jar
+         (ie typically COUGAAR_INSTALL_PATH/lib/pizza-date.jar)     
 
-     'install' - Install module jar in TARGETBASE/lib/glm.jar and
+     'install' - Install module jar in TARGETBASE/lib/pizza.jar and
      any jars in lib to TARGETBASE/sys.  This is probably most
      directly useful for rapid development when you need to actually
      run the system.
@@ -58,7 +58,7 @@
 <!-- ================================================================   -->
 <project name="pizza" default="compile">
     <property name="module" value="pizza"/>
-    <property name="moduleUp" value="Pizza"/>
+    <property name="moduleUp" value="pizza"/>
 
     <!-- ====== Basic Directories, and user property over-rides  ====== -->
     <!-- MODSOURCE is where the sources for the module are -->
@@ -169,7 +169,7 @@
     
     <!-- jarfiles required by this module, relative to various other paths -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/bootstrap.jar,${target.lib}/util.jar,${target.sys}/xercesImpl.jar,${target.sys}/xml-apis.jar,${target.sys}/servlet.jar"/>
+    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.lib}/servicediscovery.jar,${target.lib}/yp.jar,${target.sys}/xercesImpl.jar,${target.sys}/servlet.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="compile.abs.jarlist" value=""/>
 
@@ -178,7 +178,7 @@
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/bootstrap.jar,${target.lib}/util.jar,${target.sys}/xercesImpl.jar,${target.sys}/xml-apis.jar,${target.sys}/servlet.jar"/>
+    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.lib}/servicediscovery.jar,${target.lib}/yp.jar,${target.sys}/xercesImpl.jar,${target.sys}/servlet.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="run.abs.jarlist" value=""/>
     
