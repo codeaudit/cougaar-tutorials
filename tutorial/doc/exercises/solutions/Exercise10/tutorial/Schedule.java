@@ -31,7 +31,7 @@ import java.util.Enumeration;
  * Mapping is key=Ingeter(month) value=assignment where assignment is either
  * a string like "Vacation" or a Task object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Schedule.java,v 1.2 2001-08-22 20:30:48 mthome Exp $
+ * @version $Id: Schedule.java,v 1.3 2002-01-15 20:20:55 cbrundic Exp $
  */
 public class Schedule extends Hashtable implements Serializable {
 

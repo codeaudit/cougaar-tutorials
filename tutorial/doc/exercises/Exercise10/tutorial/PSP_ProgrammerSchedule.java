@@ -46,7 +46,7 @@ class GetProgrammersPredicate implements UnaryPredicate {
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java,v 1.3 2001-12-27 23:52:55 bdepass Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java,v 1.4 2002-01-15 20:18:14 cbrundic Exp $
  */
 public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {
@@ -138,6 +138,23 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
       }
       out.println("</table>");
       out.flush();
+
+      // Debugging routine.  Prints programmer's role schedule.
+      // dumpRoleSchedule(pa);
+  }
+
+  private void dumpRoleSchedule(ProgrammerAsset pa) {
+    RoleSchedule rs = pa.getRoleSchedule();
+    Enumeration en = rs.getRoleScheduleElements();
+    while (en.hasMoreElements()) {
+      Allocation allo = (Allocation)en.nextElement();
+      Task t = allo.getTask();
+      System.out.println("Task: "+t.getVerb()+" "+t.getDirectObject().getItemIdentificationPG().getItemIdentification());
+      System.out.print("Alloc: ["+allo.getEstimatedResult().getValue(AspectType.START_TIME));
+      System.out.println(","+allo.getEstimatedResult().getValue(AspectType.END_TIME)+"]");
+      System.out.println("Constraint Violated?:"+t.getWorkflow().constraintViolation());
+
+    }
   }
 
   /**

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,8 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
@@ -33,10 +35,27 @@ import tutorial.assets.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2001-12-27 23:53:13 bdepass Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.4 2002-01-15 20:22:17 cbrundic Exp $
  **/
-public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class DevelopmentAllocatorPlugIn extends ComponentPlugin
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   private IncrementalSubscription allMyTasks;   // Tasks that I'm interested in
   private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
   private IncrementalSubscription allMyAllocations;  // Allocations that I made
@@ -89,11 +108,11 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
    **/
   public void setupSubscriptions() {
     allProgrammers =
-      (IncrementalSubscription)subscribe(allProgrammersPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
     allMyTasks =
-      (IncrementalSubscription)subscribe(taskPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
     allMyAllocations =
-      (IncrementalSubscription)subscribe(allocPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allocPredicate);
   }
 
   /**
@@ -113,7 +132,7 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
     Enumeration task_enum = allMyTasks.elements();
     while (task_enum.hasMoreElements()) {
       Task task = (Task)task_enum.nextElement();
-      if ((startMonth(task) >= 0) && (task.getPlanElement() == null))
+      if (task.getPlanElement() == null)
         allocateTask(task, startMonth(task));
     }
 
@@ -126,7 +145,7 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
 
       Task task = alloc.getTask();
       releaseWork(task); // remove the obligation from this asset
-      publishRemove(alloc);
+      getBlackboardService().publishRemove(alloc);
       allocateTask(task, startMonth(task));
     }
 
@@ -195,13 +214,13 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
       // Check the programmer's schedule
       int earliest = findEarliest(sched, after, duration);
 
-      end = earliest + duration;
+      end = earliest + duration - 1;
 
       // Add the task to the programmer's schedule
-      for (int i=earliest; i<end; i++) {
+      for (int i=earliest; i<=end; i++) {
         sched.setWork(i, task);
       }
-      publishChange(asset);
+      getBlackboardService().publishChange(asset);
 
       AllocationResult estAR = null;
 
@@ -218,15 +237,16 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
 
       int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME, AspectType.DURATION};
       double []results = {earliest, end, duration};
-      estAR =  theLDMF.newAllocationResult(1.0, // rating
+      estAR =  getDomainService().getFactory().newAllocationResult(1.0, // rating
                   onTime, // success or not
                   aspect_types,
                   results);
 
       Allocation allocation =
-        theLDMF.createAllocation(task.getPlan(), task, asset, estAR, Role.ASSIGNED);
+        getDomainService().getFactory().createAllocation(task.getPlan(), task,
+                                  asset, estAR, Role.ASSIGNED);
 
-      publishAdd(allocation);
+      getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
     return end;

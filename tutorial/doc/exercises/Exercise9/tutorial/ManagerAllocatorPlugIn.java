@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,10 +20,11 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.glm.ldm.asset.Organization;
@@ -78,9 +79,26 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-12-27 23:53:03 bdepass Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2002-01-15 20:20:20 cbrundic Exp $
  **/
-public class ManagerAllocatorPlugIn extends SimplePlugIn {
+public class ManagerAllocatorPlugIn extends ComponentPlugin {
+
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   private IncrementalSubscription tasks;         // "CODE" tasks
   private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
@@ -90,9 +108,9 @@ public class ManagerAllocatorPlugIn extends SimplePlugIn {
    * subscribe to tasks and programming organizations
    */
 protected void setupSubscriptions() {
-  tasks = (IncrementalSubscription)subscribe(new myTaskPredicate());
-  programmers = (IncrementalSubscription)subscribe(new myProgrammersPredicate());
-  allocations = (IncrementalSubscription)subscribe(new myAllocationPredicate());
+  tasks = (IncrementalSubscription)getBlackboardService().subscribe(new myTaskPredicate());
+  programmers = (IncrementalSubscription)getBlackboardService().subscribe(new myProgrammersPredicate());
+  allocations = (IncrementalSubscription)getBlackboardService().subscribe(new myAllocationPredicate());
 }
 
 
@@ -105,12 +123,12 @@ protected void execute () {
   Enumeration task_enum = tasks.elements();
   while (task_enum.hasMoreElements()) {
     Task t = (Task)task_enum.nextElement();
-    if (t.getPlanElement() != null) // already allocated
+    if (t.getPlanElement() != null)
       continue;
     Asset organization = (Asset)programmers.first();
     if (organization != null)  // if no organization yet, give up for now
       allocateTo(organization, t);
-    }
+  }
 
   // Process changed allocations
   AllocationResult est, rep;
@@ -128,7 +146,6 @@ protected void execute () {
     if (rep!=null)
       System.out.println("MANAGER ALLOCATOR: Reported Allocation Result success? "+rep.isSuccess());
   }
-
 }
 
 /**
@@ -138,63 +155,12 @@ private void allocateTo(Asset asset, Task task) {
 
 	  AllocationResult estAR = null;
 
-	  // Create an estimate that reports that we did just what we
-	  // were asked to do
-	  int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME};
-	  double []results = {getStartTime(task), getEndTime(task)};
-	  estAR =  theLDMF.newAllocationResult(1.0, // rating
-					      true, // success,
-					      aspect_types,
-					      results);
-
 	  Allocation allocation =
-	    theLDMF.createAllocation(task.getPlan(), task, asset,
-				     estAR, Role.ASSIGNED);
+      getDomainService().getFactory().createAllocation(task.getPlan(), task,
+				     asset, estAR, Role.ASSIGNED);
 
     System.out.println("Allocating to programmer: "+asset.getItemIdentificationPG().getItemIdentification());
-	  publishAdd(allocation);
+	  getBlackboardService().publishAdd(allocation);
 
 }
-  /**
-   * Get the END_TIME preference for the task
-   */
-  private double getEndTime(Task t) {
-    double end = 0.0;
-    Preference pref = getPreference(t, AspectType.END_TIME);
-    if (pref != null)
-      end = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return end;
-  }
-
-  /**
-   * Get the START_TIME preference for the task
-   */
-  private double getStartTime(Task t) {
-    double start = 0.0;
-    Preference pref = getPreference(t, AspectType.START_TIME);
-    if (pref != null)
-      start = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return start;
-  }
-
-  /**
-   * Return the preference for the given aspect
-   * @param task for which to return given preference
-   * @paran int aspect type
-   * @return Preference (or null) from task for given aspect
-   **/
-  private Preference getPreference(Task task, int aspect_type)
-  {
-    Preference aspect_pref = null;
-    for(Enumeration e = task.getPreferences(); e.hasMoreElements();)
-    {
-      Preference pref = (Preference)e.nextElement();
-      if (pref.getAspectType() == aspect_type) {
-        aspect_pref = pref;
-        break;
-      }
-    }
-    return aspect_pref;
-  }
-
 }

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,13 +20,14 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
 import tutorial.assets.*;
+import org.cougaar.core.service.*;
 
 /**
  * todo: Create a predicate class that matches all ProgrammerAssets
@@ -40,13 +41,30 @@ import tutorial.assets.*;
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-12-27 23:52:56 bdepass Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2002-01-15 20:19:06 cbrundic Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 public class ManagerAllocatorPlugIn  {
 
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
   private IncrementalSubscription tasks;         // "CODE" tasks
   private IncrementalSubscription programmers;   // Programmers
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   /**
    * Subscribe to tasks and programming assets
@@ -86,8 +104,6 @@ protected void execute () {
   // hint:  remember Enumeration functions: hasMoreElements(), nextElement()
 
   }
-
-}
 
 /**
  * This is a convenience function that should allocate the task to the asset

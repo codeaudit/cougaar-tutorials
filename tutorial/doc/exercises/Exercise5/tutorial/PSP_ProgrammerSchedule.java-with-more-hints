@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -23,6 +23,10 @@ package tutorial;
 import tutorial.assets.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.agent.*;
+import org.cougaar.core.domain.*;
+import org.cougaar.core.blackboard.*;
+import org.cougaar.core.mts.Message;
+import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.lib.planserver.*;
 import java.io.*;
@@ -39,18 +43,25 @@ import java.util.*;
   // more hints:    }
   // more hints:  }
 
+
+
+
+
+
 /**
  * This PSP responds with HTML tables showing the schedule maintained by
  * each programmer asset.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ProgrammerSchedule.java-with-more-hints,v 1.3 2001-12-27 23:52:59 bdepass Exp $
+ * @version $Id: PSP_ProgrammerSchedule.java-with-more-hints,v 1.4 2002-01-15 20:19:33 cbrundic Exp $
  */
+
  // todo:  add code to make this a subclass implementing the needed interfaces
  // hint:  parent class should be PSP_BaseAdapter
  // hint:  implement the following interfaces: PlanServiceProvider, UISubscriber
  // more hints: use java keywords 'extends' and 'implements'
  // more hints: public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
-public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
+
+public class PSP_ProgrammerSchedule
 {
   /** A zero-argument constructor is required for dynamically loaded PSPs,
    *         required by Class.newInstance()
@@ -98,8 +109,11 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
       // todo: query the PLAN for ProgrammerAssets
       // hint: see PlanServiceContext.getServerPlugInSupport()
       // hint: note ServerPluginSupport.queryForSubscriber()
+      // hint: note ServerPluginSupport.queryForSubscriber()
       // more hints:  ServerPluginSupport sps = psc.getServerPlugInSupport();
       // more hints:  Collection programmers = sps.queryForSubscriber(new GetProgrammersPredicate());
+
+
 
 
       // todo: use dumpProgrammerSchedule to send each ProgrammerAsset
@@ -111,6 +125,8 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
       // more hints:    dumpProgrammerSchedule(pa, out);
       // more hints:  }
 
+
+
     } catch (Exception ex) {
       out.println(ex.getMessage());
       ex.printStackTrace(out);
@@ -121,25 +137,21 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
 
 
   /**
-   * Print an HTML table of this programmer's schedule to the PrintStream
+   * Print an HTML dump of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintStream out) {
-      // todo: print programmer's name in bold (in HTML)
-      // hint:  see Asset.getItemIdentificationPG (see getItemIdentification())
+      // todo: print programmer's name and a line break
+      // hint:  see Asset.getItemIdentificationPG
+      // hint:  see ItemIdentificatioinPG.getItemIdentification()
       // more hints:  out.println("<b>Programmer: "
       // more hints:      +pa.getItemIdentificationPG().getItemIdentification()
       // more hints:      +"<b><br>");
 
-      // todo: Start an HTML table
-      // todo: create header row with columns for Task, Verb, and Month
-      // more hints:  out.println("<table border=1>");
-      // more hints:  out.println("<tr><td>Task<td>Verb<td>Month</tr>");
+      // get the schedule from the ProgrammerAsset (set s to the schedule)
+      Schedule s = pa.getSchedule();
 
-      Schedule s;
-      // todo: get the schedule from the ProgrammerAsset (set s to the schedule)
-      // hint: see ProgrammerAsset.getSchedule
-      // more hints:  s = pa.getSchedule();
 
+      // Sort the keys (months) for printing
       TreeSet ts = new TreeSet(s.keySet());
       Iterator iter = ts.iterator();
 
@@ -148,7 +160,7 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
         Object key = iter.next();
         Object o = s.get(key);
 
-        out.print("<tr><td>"+i+++"<td>");
+        out.print(" "+i+++" ");
         if (o instanceof Task) {
           Task task = (Task)o;
 
@@ -159,13 +171,13 @@ public class PSP_ProgrammerSchedule extends PSP_BaseAdapter implements PlanServi
           // hint:  see IdentificationPG.getIdentification()
           // more hints:  out.print(task.getVerb());
           // more hints:  out.print(" " + task.getDirectObject().getItemIdentificationPG().getItemIdentification());
+
         } else {
           out.print(o);
         }
         // the key is the month
-        out.println("<td>"+key+"</tr>");
+        out.println("<br>");
       }
-      out.println("</table>");
       out.flush();
   }
 

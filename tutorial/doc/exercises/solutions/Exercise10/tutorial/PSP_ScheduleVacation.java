@@ -40,7 +40,7 @@ import java.text.SimpleDateFormat;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: PSP_ScheduleVacation.java,v 1.3 2001-12-27 23:53:05 bdepass Exp $
+ * @version $Id: PSP_ScheduleVacation.java,v 1.4 2002-01-15 20:20:55 cbrundic Exp $
  */
 public class PSP_ScheduleVacation extends PSP_BaseAdapter implements PlanServiceProvider, UISubscriber
 {

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,17 +20,39 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.service.*;
+import org.cougaar.core.domain.RootFactory;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
+import tutorial.assets.*;
 
 /**
  * This COUGAAR PlugIn creates and publishes "CODE" tasks
  */
-public class ManagerPlugIn extends SimplePlugIn {
+public class ManagerPlugIn extends ComponentPlugin {
+
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   // Two assets to use as direct objects for the CODE tasks
   private Asset what_to_code, what_else_to_code;
@@ -39,37 +61,40 @@ public class ManagerPlugIn extends SimplePlugIn {
    * Using setupSubscriptions to create the initial CODE tasks
    */
 protected void setupSubscriptions() {
+  // Get the RootFactory from the DomainService
+  RootFactory factory = getDomainService().getFactory();
+
   // Create a task to code the next killer app
-  what_to_code = theLDMF.createPrototype("AbstractAsset", "The Next Killer App");
-  NewItemIdentificationPG iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+  what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
+  NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   iipg.setItemIdentification("e-somthing");
   what_to_code.setItemIdentificationPG(iipg);
-  publishAdd(what_to_code);
-  publishAdd(makeTask(what_to_code));
+  getBlackboardService().publishAdd(what_to_code);
+  getBlackboardService().publishAdd(makeTask(what_to_code));
 
   // Create a task to code something java
-  what_else_to_code = theLDMF.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+  what_else_to_code = factory.createInstance(what_to_code);
+  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   iipg.setItemIdentification("something java");
   what_else_to_code.setItemIdentificationPG(iipg);
-  publishAdd(what_else_to_code);
-  publishAdd(makeTask(what_else_to_code));
+  getBlackboardService().publishAdd(what_else_to_code);
+  getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
   // Create a task to code something java
-  what_else_to_code = theLDMF.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+  what_else_to_code = factory.createInstance(what_to_code);
+  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   iipg.setItemIdentification("something big java");
   what_else_to_code.setItemIdentificationPG(iipg);
-  publishAdd(what_else_to_code);
-  publishAdd(makeTask(what_else_to_code));
+  getBlackboardService().publishAdd(what_else_to_code);
+  getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
   // Create a task to code something java
-  what_else_to_code = theLDMF.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
+  what_else_to_code = factory.createInstance(what_to_code);
+  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
   iipg.setItemIdentification("distributed intelligent java agent");
   what_else_to_code.setItemIdentificationPG(iipg);
-  publishAdd(what_else_to_code);
-  publishAdd(makeTask(what_else_to_code));
+  getBlackboardService().publishAdd(what_else_to_code);
+  getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
 
 }
@@ -86,13 +111,15 @@ protected void execute () {
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    NewTask new_task = theLDMF.newTask();
+    RootFactory factory = getDomainService().getFactory();
+
+    NewTask new_task = factory.newTask();
 
     // Set the verb as given
     new_task.setVerb(new Verb("CODE"));
 
     // Set the reality plan for the task
-    new_task.setPlan(theLDMF.getRealityPlan());
+    new_task.setPlan(factory.getRealityPlan());
 
     new_task.setDirectObject(what);
 
@@ -100,7 +127,7 @@ protected Task makeTask(Asset what) {
     // Prepositions can add information to how the task should be accomplished
     Vector prepositions = new Vector();
 
-    NewPrepositionalPhrase npp = theLDMF.newPrepositionalPhrase();
+    NewPrepositionalPhrase npp = factory.newPrepositionalPhrase();
     npp.setPreposition("USING_LANGUAGE");
     npp.setIndirectObject("C++");
     prepositions.add(npp);
@@ -115,22 +142,22 @@ protected Task makeTask(Asset what) {
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.START_TIME, start_month));
     Preference pref =
-      theLDMF.newPreference(AspectType.START_TIME, scorefcn);
+      factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
-    double end_month = 12;  // give them one year to do it
+    double end_month = 36;  // give them three years to do it
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, end_month));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     double duration = 6;  // it will take them 6 months effort
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    pref = factory.newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
-    new_task.setPreferences(preferences.elements());          
+    new_task.setPreferences(preferences.elements());
 
     return new_task;
 }

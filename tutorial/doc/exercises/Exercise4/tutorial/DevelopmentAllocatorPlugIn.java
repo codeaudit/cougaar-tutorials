@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,7 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
@@ -35,10 +36,9 @@ import tutorial.assets.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2001-12-27 23:52:57 bdepass Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.4 2002-01-15 20:19:19 cbrundic Exp $
  **/
- // todo:  add code to make this a subclass
-public class DevelopmentAllocatorPlugIn
+public class DevelopmentAllocatorPlugIn extends ComponentPlugin
 {
   // todo:  add instance variables to hold subscriptions
 
@@ -105,7 +105,7 @@ public class DevelopmentAllocatorPlugIn
 
     // select an available programmer at random
     // todo:  get a vector containing the programmers
-    Vector programmers = // get all of the programmers from the subscription
+    Vector programmers = null;// get all of the programmers from the subscription
 
 
     boolean allocated = false;
@@ -125,13 +125,13 @@ public class DevelopmentAllocatorPlugIn
       int duration = 3;   // let's say it takes three months
       int earliest = findEarliest(sched, after, duration);
 
-      end = earliest + duration;
+      end = earliest + duration -1;
 
       // Add the task to the programmer's schedule
-      for (int i=earliest; i<end; i++) {
+      for (int i=earliest; i<=end; i++) {
         sched.setWork(i, task);
       }
-      publishChange(asset);
+      getBlackboardService().publishChange(asset);
 
       AllocationResult estAR = null;
 

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -23,17 +23,17 @@ package tutorial;
 /**
  * This COUGAAR PlugIn publishes a Job object.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerPlugIn.java,v 1.2 2001-08-22 20:30:47 mthome Exp $
+ * @version $Id: ManagerPlugIn.java,v 1.3 2002-01-15 20:20:42 cbrundic Exp $
  **/
 import org.cougaar.core.plugin.*;
-public class ManagerPlugIn extends SimplePlugIn {
+public class ManagerPlugIn extends ComponentPlugin {
 
 /**
  * setupSubscriptions is called when the PlugIn is loaded.  We use
  * it here to create and publish a Job object.
  */
 protected void setupSubscriptions() {
-  publishAdd( new Job("Work"));
+  getBlackboardService().publishAdd(new Job("Work"));
   System.out.println("ManagerPlugIn::setupSubscriptions");
 }
 
@@ -41,4 +41,4 @@ protected void setupSubscriptions() {
  * This plugin has no subscriptions so execute does nothing
  */
 protected void execute () {}
-} 
+}

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,8 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
@@ -37,10 +39,27 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugIn.java,v 1.3 2001-12-27 23:53:04 bdepass Exp $
+ * @version $Id: DevelopmentAssessorPlugIn.java,v 1.4 2002-01-15 20:20:55 cbrundic Exp $
  **/
-public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class DevelopmentAssessorPlugIn extends ComponentPlugin
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // The set of programmer assets
   private IncrementalSubscription allProgrammers;
 
@@ -58,7 +77,7 @@ public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlu
    **/
   public void setupSubscriptions() {
     allProgrammers =
-      (IncrementalSubscription)subscribe(allProgrammersPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
   }
 
   /**
@@ -95,7 +114,7 @@ public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlu
         // look through the months in this role schedule element.  Make sure
         // all of the months are scheduled for the allocated task.
         for (int scheduled_month = scheduled_start_month;
-                 scheduled_month < scheduled_end_month;
+                 scheduled_month <= scheduled_end_month;
                  scheduled_month++) {
           if (asset.getSchedule().getWork(scheduled_month) != t) {
 
@@ -111,7 +130,7 @@ public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlu
             double []results = {(double)scheduled_start_month, (double)scheduled_end_month,
                                 alloc.getEstimatedResult().getValue(AspectType.DURATION)};
             AllocationResult failed_result =
-              theLDMF.newAllocationResult(1.0, // rating,
+              getDomainService().getFactory().newAllocationResult(1.0, // rating,
                  false,
                  aspects,
                  results);
@@ -121,7 +140,7 @@ public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlu
             // so we require a cast to make coder acknowledge
             // that it is being done
             ((PlanElementForAssessor)alloc).setReceivedResult(failed_result);
-            publishChange(alloc);
+            getBlackboardService().publishChange(alloc);
           }
         }
       }

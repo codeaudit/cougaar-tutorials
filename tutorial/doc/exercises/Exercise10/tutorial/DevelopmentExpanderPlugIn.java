@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,8 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.util.UnaryPredicate;
@@ -35,10 +37,27 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.3 2001-12-27 23:52:55 bdepass Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.4 2002-01-15 20:18:13 cbrundic Exp $
  **/
-public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class DevelopmentExpanderPlugIn extends ComponentPlugin
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
 
@@ -92,9 +111,9 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    **/
   public void setupSubscriptions() {
     allCodeTasks =
-      (IncrementalSubscription)subscribe(allCodeTasksPredicate);
-    allMyExpansions = (IncrementalSubscription)subscribe(expansionPredicate);
-    allSubTasks =(IncrementalSubscription)subscribe(allSubTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
+    allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
+    allSubTasks =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
@@ -111,16 +130,16 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
       // Create expansion and workflow to represent the expansion
       // of this task
-      NewWorkflow new_wf = theLDMF.newWorkflow();
+      NewWorkflow new_wf = domainService.getFactory().newWorkflow();
       new_wf.setParentTask(task);
 
       plan(new_wf);
 
       AllocationResult estAR = null;
       Expansion new_exp =
-        theLDMF.createExpansion(task.getPlan(), task, new_wf, estAR);
-      publishAdd(new_wf);
-      publishAdd(new_exp);
+        domainService.getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
+      getBlackboardService().publishAdd(new_wf);
+      getBlackboardService().publishAdd(new_exp);
     }
 
     // Now look through all changed expansions and update the allocation result
@@ -142,7 +161,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
-    NewTask new_task = theLDMF.newTask();
+    NewTask new_task = domainService.getFactory().newTask();
 
     new_task.setParentTask(parent_task);
     new_task.setWorkflow(wf);
@@ -166,17 +185,17 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.START_TIME, start));
     Preference pref =
-      theLDMF.newPreference(AspectType.START_TIME, scorefcn);
+      domainService.getFactory().newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -188,12 +207,12 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    Preference pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    Preference pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -211,7 +230,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
       {
         ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue());
 //System.out.println("START_TIME on "+c.getConstrainedTask().getVerb()+" set to "+getStartTime(c.getConstrainedTask()));
-        publishAdd(c.getConstrainedTask());
+        getBlackboardService().publishAdd(c.getConstrainedTask());
       }
     }
 
@@ -235,46 +254,47 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
     // rescind all the old tasks (if any)
     if (new_wf.getTasks().hasMoreElements()) {
-      Enumeration subtasks = sortTasks(new_wf.getTasks());
+      Enumeration subtasks = new_wf.getTasks();
       while (subtasks.hasMoreElements()) {
         Task t = (Task) subtasks.nextElement();
-        publishRemove(t);
-        new_wf.removeTask(t);
-        if (getEndTime(t) > latest_end)
-          latest_end = getEndTime(t);
+        getBlackboardService().publishRemove(t);
       }
     }
 
     int start_month    = getStartTime(task);
     int deadline_month = latest_end;
 
+    Vector tasks = new Vector();  // Vector in which to hold new subtasks
+
     // assign one month for design
     int this_task_duration = 1;
     NewTask t1 = makeTask("DESIGN", task, new_wf);
     setPreferences(t1, start_month, this_task_duration, deadline_month);
-    publishAdd(t1);      // Add the task to the PLAN
-    new_wf.addTask(t1);  // Add the task to the Workflow
+    getBlackboardService().publishAdd(t1);      // Add the task to the PLAN
+    tasks.addElement(t1);  // Add the task to the vector of subtasks
 
     // assign three months for development
     this_task_duration = 3;
     NewTask t2 = makeTask("DEVELOP", task, new_wf);
     setPreferences(t2, this_task_duration, deadline_month);
-    //publishAdd(t2);      // Don't add the task to the PLAN yet
-    new_wf.addTask(t2);  // Add the task to the Workflow
+    // publishAdd(t2);      // Don't add the task to the PLAN yet
+    tasks.addElement(t2); // Add the task to the vector of subtasks
 
     // testing takes two month
     this_task_duration = 2;
     NewTask t3 = makeTask("TEST", task, new_wf);
     setPreferences(t3, this_task_duration, deadline_month);
 
-    //publishAdd(t3);      // Don't add the task to the PLAN yet
-    new_wf.addTask(t3);  // Add the task to the Workflow
+    // publishAdd(t3);      // Don't add the task to the PLAN yet
+    tasks.addElement(t3); // Add the task to the vector of subtasks
+
+    new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow
 
     // Add constraints onto the workflow that t1 < t2 < t3
     Vector constraints = new Vector();
 
     // End(t1) must be before Start(t2)
-    NewConstraint c1 = theLDMF.newConstraint();
+    NewConstraint c1 = domainService.getFactory().newConstraint();
     c1.setConstrainingTask(t1);
     c1.setConstrainingAspect(AspectType.END_TIME);
     c1.setConstrainedTask(t2);
@@ -283,7 +303,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
     constraints.addElement(c1);
 
     // End(t2) must be before Start(t3)
-    NewConstraint c2 = theLDMF.newConstraint();
+    NewConstraint c2 = domainService.getFactory().newConstraint();
     c2.setConstrainingTask(t2);
     c2.setConstrainingAspect(AspectType.END_TIME);
     c2.setConstrainedTask(t3);

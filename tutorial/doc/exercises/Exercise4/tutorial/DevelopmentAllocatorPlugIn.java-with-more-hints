@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,7 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
@@ -35,28 +36,32 @@ import tutorial.assets.*;
  * This COUGAAR PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java-more-hints,v 1.3 2001-12-27 23:52:57 bdepass Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java-with-more-hints,v 1.1 2002-01-15 20:19:19 cbrundic Exp $
  **/
- // todo:  add code to make this a subclass
- // hint:  parent class should be org.cougaar.core.plugin.SimplePlugIn
- // more hints: use java keyword 'extends'
- // more hints: public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
-public class DevelopmentAllocatorPlugIn
+public class DevelopmentAllocatorPlugIn extends ComponentPlugin
 {
   // todo:  add instance variables to hold subscriptions
   // hint:  use the IncrementalSubscription class
   // more hints:  private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
   // more hints:  private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
 
+
+
+
   /**
    * todo: Predicate matching all ProgrammerAssets
    */
-  // hint:  see UnaryPredicate interface
+   // hint:  see UnaryPredicate interface
   // more hints:  private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
   // more hints:    public boolean execute(Object o) {
   // more hints:      return o instanceof ProgrammerAsset;
   // more hints:    }
   // more hints:  };
+
+
+
+
+
 
   /**
    * todo: Predicate that matches all CODE tasks
@@ -75,17 +80,23 @@ public class DevelopmentAllocatorPlugIn
   // more hints:  };
 
 
+
+
+
+
   /**
    * todo:  Establish subscription for tasks and assets
    *        Store subscriptions in the instance variables above
    **/
   public void setupSubscriptions() {
-  // hint:  see PlugInAdapter.subscribe(UnaryPredicate)
-  // hint:  cast to IncrementalSubscription
-  // more hints:  allProgrammers =
-  // more hints:     (IncrementalSubscription)subscribe(allProgrammersPredicate);
-  // more hints:   allCodeTasks =
-  // more hints:     (IncrementalSubscription)subscribe(codeTaskPredicate);
+
+    // hint:  see BlackboardService.subscribe(UnaryPredicate)
+    // hint:  cast to IncrementalSubscription
+    // more hints: allProgrammers =
+    // more hints:  (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
+    // more hints: allCodeTasks =
+    // more hints:  (IncrementalSubscription)getBlackboardService().subscribe(codeTaskPredicate);
+
   }
 
   /**
@@ -97,13 +108,13 @@ public class DevelopmentAllocatorPlugIn
     // Plan any new software development tasks
     // todo:  Allocate new tasks using the allocateTask fn later in this file
     // hint:  see IncrementalSubscription.elements()
-    // process unallocated tasks
     // more hints:       Enumeration task_enum = allCodeTasks.elements();
     // more hints:       while (task_enum.hasMoreElements()) {
     // more hints:         Task task = (Task)task_enum.nextElement();
     // more hints:         if (task.getPlanElement() == null)
     // more hints:           allocateTask(task, startMonth(task));
-    }
+
+
   }
 
   /**
@@ -124,6 +135,9 @@ public class DevelopmentAllocatorPlugIn
     // todo:  get a vector containing the programmers
     // hint:  see IncrementalSubscription.getCollection()
     // more hints:  Vector programmers = new Vector(allProgrammers.getCollection());
+    Vector programmers = null;// get all of the programmers from the subscription
+
+
     boolean allocated = false;
     while ((!allocated) && (programmers.size() > 0)) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
@@ -138,16 +152,16 @@ public class DevelopmentAllocatorPlugIn
       Schedule sched = asset.getSchedule();
 
       // Check the programmer's schedule
-      int duration = 3;    // let's say it takes three months
+      int duration = 3;   // let's say it takes three months
       int earliest = findEarliest(sched, after, duration);
 
-      end = earliest + duration;
+      end = earliest + duration - 1;
 
       // Add the task to the programmer's schedule
-      for (int i=earliest; i<end; i++) {
+      for (int i=earliest; i<=end; i++) {
         sched.setWork(i, task);
       }
-      publishChange(asset);
+      getBlackboardService().publishChange(asset);
 
       AllocationResult estAR = null;
 
@@ -159,13 +173,15 @@ public class DevelopmentAllocatorPlugIn
       System.out.println(tmpstr);
 
       // todo: Create an allocation and put it on the LogPlan
-      // hint: see LDMFactory.createAllocation(...)
+      // hint: see RootFactory.createAllocation(...)
       // more hints: Allocation allocation =
-      // more hints:   theLDMF.createAllocation(task.getPlan(), task,
-      // more hints:                             asset, estAR, Role.ASSIGNED);
+      // more hints:  getDomainService().getFactory().createAllocation(task.getPlan(), task,
+      // more hints:                            asset, estAR, Role.ASSIGNED);
 
-      // hint: see SimplePlugIn.publishAdd
-      // more hints: publishAdd(allocation);
+
+      // hint: see BlackboardService.publishAdd()
+      // more hints: getBlackboardService().publishAdd(allocation);
+
       allocated = true;
     }
     return end;

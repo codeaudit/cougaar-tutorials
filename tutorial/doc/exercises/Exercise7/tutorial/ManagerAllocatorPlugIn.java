@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,7 +20,8 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
@@ -79,9 +80,27 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-12-27 23:53:01 bdepass Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2002-01-15 20:19:54 cbrundic Exp $
  **/
-public class ManagerAllocatorPlugIn extends SimplePlugIn {
+public class ManagerAllocatorPlugIn extends ComponentPlugin {
+
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
 
   private IncrementalSubscription tasks;         // "CODE" tasks
   private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
@@ -95,8 +114,8 @@ public class ManagerAllocatorPlugIn extends SimplePlugIn {
    * subscribe to tasks, allocations, and programming organizations
    */
 protected void setupSubscriptions() {
-  tasks = (IncrementalSubscription)subscribe(new myTaskPredicate());
-  programmers = (IncrementalSubscription)subscribe(new myProgrammersPredicate());
+  tasks = (IncrementalSubscription)getBlackboardService().subscribe(new myTaskPredicate());
+  programmers = (IncrementalSubscription)getBlackboardService().subscribe(new myProgrammersPredicate());
 
   // todo:  subscribe to allocations
 
@@ -124,7 +143,7 @@ protected void execute () {
 
   // Process changed allocations
   AllocationResult est, rep;
-  Enumeration allo_enum;
+  Enumeration allo_enum = null;
 
   // todo: get allocations which have changed
 
@@ -160,17 +179,17 @@ private void allocateTo(Asset asset, Task task) {
 	  // were asked to do
 	  int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME};
 	  double []results = {getStartTime(task), getEndTime(task)};
-	  estAR =  theLDMF.newAllocationResult(1.0, // rating
+    estAR = getDomainService().getFactory().newAllocationResult(1.0, //rating
 					      true, // success,
 					      aspect_types,
 					      results);
 
 	  Allocation allocation =
-	    theLDMF.createAllocation(task.getPlan(), task, asset,
-				     estAR, Role.ASSIGNED);
+      getDomainService().getFactory().createAllocation(task.getPlan(), task,
+				     asset, estAR, Role.ASSIGNED);
 
     System.out.println("Allocating to programmer: "+asset.getItemIdentificationPG().getItemIdentification());
-	  publishAdd(allocation);
+	  getBlackboardService().publishAdd(allocation);
 
 }
   /**

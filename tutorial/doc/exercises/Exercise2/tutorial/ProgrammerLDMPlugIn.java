@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -25,15 +25,21 @@ import tutorial.assets.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.core.service.*;
+import org.cougaar.core.domain.RootFactory;
 
 /**
  * This COUGAAR PlugIn creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugIn.java,v 1.3 2001-12-27 23:52:56 bdepass Exp $
+ * @version $Id: ProgrammerLDMPlugIn.java,v 1.4 2002-01-15 20:18:50 cbrundic Exp $
  */
 
  // todo:  add code to make this a subclass
 public class ProgrammerLDMPlugIn {
+
+  // todo:  Add attributes and methods for access to the DomainService and the
+  //        PrototypeRegistryService
+
   /**
    * Used for initialization to populate the PLAN with ProgrammerAsset objects
    */

@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,8 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.util.UnaryPredicate;
@@ -35,10 +37,27 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java-with-more-hints,v 1.3 2001-12-27 23:53:02 bdepass Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java-with-more-hints,v 1.4 2002-01-15 20:20:06 cbrundic Exp $
  **/
-public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class DevelopmentExpanderPlugIn extends ComponentPlugin
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
 
@@ -79,12 +98,12 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    */
   private UnaryPredicate expansionPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
-// hints: use Expansion.getTask() to get the parent task
-// more hints:       if (o instanceof Expansion)
-// more hints:       {
-// more hints:         Expansion exp = (Expansion)o;
-// more hints:         return (exp.getTask().getVerb().equals(Verb.getVerb("CODE")));
-// more hints:       }
+      // hints: use Expansion.getTask() to get the parent task
+      // more hints:       if (o instanceof Expansion)
+      // more hints:       {
+      // more hints:         Expansion exp = (Expansion)o;
+      // more hints:         return (exp.getTask().getVerb().equals(Verb.getVerb("CODE")));
+      // more hints:       }
       return false;
     }
   };
@@ -94,9 +113,9 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    **/
   public void setupSubscriptions() {
     allCodeTasks =
-      (IncrementalSubscription)subscribe(allCodeTasksPredicate);
-    allMyExpansions = (IncrementalSubscription)subscribe(expansionPredicate);
-    allSubTasks =(IncrementalSubscription)subscribe(allSubTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
+    allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
+    allSubTasks =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
@@ -109,20 +128,27 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
     // and expand
     for(Enumeration e = allCodeTasks.getAddedList();e.hasMoreElements();)
     {
-// more hints:       Task task = (Task) e.nextElement();
-
       // todo: Create expansion and workflow to represent the expansion
       // of this task.  Publish the expansion, workflow and subtasks.
-// more hints:       NewWorkflow new_wf = theLDMF.newWorkflow();
-// more hints:       new_wf.setParentTask(task);
+      // hints: RootFactory.newWorkflow()
+      // hints: RootFacotry.createExpansion()
 
-// more hints:       plan(new_wf);
+      // more hints: Task task = (Task) e.nextElement();
+      // more hints: NewWorkflow new_wf = domainService.getFactory().newWorkflow();
+      // more hints: new_wf.setParentTask(task);
 
-// more hints:       AllocationResult estAR = null;
-// more hints:       Expansion new_exp =
-// more hints:         theLDMF.createExpansion(task.getPlan(), task, new_wf, estAR);
-// more hints:       publishAdd(new_wf);
-// more hints:       publishAdd(new_exp);
+      // more hints: plan(new_wf);
+
+      // more hints: AllocationResult estAR = null;
+      // more hints: Expansion new_exp =
+      // more hints:   domainService.getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
+      // more hints: getBlackboardService().publishAdd(new_wf);
+      // more hints: getBlackboardService().publishAdd(new_exp);
+
+
+
+
+
     }
 
     // Now look through all changed expansions and update the allocation result
@@ -146,8 +172,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
-    Task task = new_wf.getParentTask();
-    NewTask new_task = theLDMF.newTask();
+    NewTask new_task = domainService.getFactory().newTask();
 
     new_task.setParentTask(parent_task);
     new_task.setWorkflow(wf);
@@ -174,17 +199,17 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.START_TIME, start));
     Preference pref =
-      theLDMF.newPreference(AspectType.START_TIME, scorefcn);
+      domainService.getFactory().newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -199,12 +224,12 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    Preference pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    Preference pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -215,84 +240,93 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    */
   private void checkForReplan(Expansion exp) {
   // todo: get the next pending constraint and update the constrained task's preferences
-// hints: use Workflow.getNextPendingConstraint  to get the next constraint to work on
-// hints: use SettableConstraintEvent.setValue and Constraint.computeValidConstrainedValue
-// hints:   to update the preferences on the constrain-ed task
-// hints: Don't forget to publishAdd the constrained task
-// more hints:    Workflow wf = exp.getWorkflow();
-// more hints:    Constraint c = wf.getNextPendingConstraint();
-// more hints:    if (c != null) {
-// more hints:      ConstraintEvent ced = c.getConstrainedEventObject();
-// more hints:      if (ced instanceof SettableConstraintEvent)
-// more hints:      {
-// more hints:        ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue());
+  // hints: use Workflow.getNextPendingConstraint  to get the next constraint to work on
+  // hints: use SettableConstraintEvent.setValue and Constraint.computeValidConstrainedValue
+  // hints:   to update the preferences on the constrain-ed task
+  // hints: Don't forget to publishAdd the constrained task
 
-//System.out.println("START_TIME on "+c.getConstrainedTask().getVerb()+" set to "+getStartTime(c.getConstrainedTask()));
-// more hints:        publishAdd(c.getConstrainedTask());
-// more hints:      }
-    }
-
+  // more hints: Workflow wf = exp.getWorkflow();
+  // more hints:   Constraint c = wf.getNextPendingConstraint();
+  // more hints:   if (c != null) {
+  // more hints:     ConstraintEvent ced = c.getConstrainedEventObject();
+  // more hints:     if (ced instanceof SettableConstraintEvent)
+  // more hints:     {
+  // more hints:       ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue());
+  // more hints:       getBlackboardService().publishAdd(c.getConstrainedTask());
+  // more hints:    }
+  // more hints:   }
   }
 
   /**
    * This VERY primitive scheduler just keeps moving the whole workflow later until it can be scheduled
    */
   private void plan(NewWorkflow new_wf) {
+    Task task = new_wf.getParentTask();
     int latest_end = getEndTime(task);
 
     int start_month    = getStartTime(task);
     int deadline_month = latest_end;
 
+		Vector tasks = new Vector(); // Vector in which to hold subtasks
+
     // todo : use makeTask and setPreferences convenience functions to create a "DESIGN" task
     // assign one month for design
     int this_task_duration = 1;
-// hints: The first task should have a START_TIME preference.  Use the setPreferneces (below) that takes 4 arguments
-// hints: Don't forget to publish the new subtask and add it to the Workflow
-// more hints:    NewTask t1 = makeTask("DESIGN", task, new_wf);
-// more hints:    setPreferences(t1, start_month, this_task_duration, deadline_month);
-// more hints:    publishAdd(t1);      // Add the task to the PLAN
-// more hints:    new_wf.addTask(t1);  // Add the task to the Workflow
+    // hints: The first task should have a START_TIME preference.  Use the setPreferneces (below) that takes 4 arguments
+    // hints: Don't forget to publish the new subtask and add it to the Workflow
+    // more hints: NewTask t1 = makeTask("DESIGN", task, new_wf);
+    // more hints: setPreferences(t1, start_month, this_task_duration, deadline_month);
+    // more hints: getBlackboardService().publishAdd(t1);      // Add the task to the PLAN
+		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
 
     // assign three months for development
     this_task_duration = 3;
-// hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
-// hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
-// more hints:    NewTask t2 = makeTask("DEVELOP", task, new_wf);
-// more hints:    setPreferences(t2, this_task_duration, deadline_month);
-// more hints:    new_wf.addTask(t2);  // Add the task to the Workflow
+    // hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
+    // hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
+    // more hints: NewTask t2 = makeTask("DEVELOP", task, new_wf);
+    // more hints: setPreferences(t2, this_task_duration, deadline_month);
+    // //getBlackboardService().publishAdd(t2);      // Don't add the task to the PLAN yet
+		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
 
     // testing takes two months
     this_task_duration = 2;
-// hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
-// hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
-// more hints:    NewTask t3 = makeTask("TEST", task, new_wf);
-// more hints:    setPreferences(t3, this_task_duration, deadline_month);
+    // hints: The 2nd and 3rd tasks should not have a START_TIME preference yet.  Use the setPreferneces (below) that takes 3 arguments
+    // hints: don't publish the 2nd and 3rd tasks yet. (see checkForReplan(above))
+    // more hints: NewTask t3 = makeTask("TEST", task, new_wf);
+    // more hints: setPreferences(t3, this_task_duration, deadline_month);
+    // //getBlackboardService().publishAdd(t2);      // Don't add the task to the PLAN yet
+		// more hints: tasks.addElement(t1); // Add task to vector of subtasks
 
-// more hints:    new_wf.addTask(t3);  // Add the task to the Workflow
+		// more hints: new_wf.setTasks(tasks.elements());
 
-    // Add constraints onto the workflow that t1 < t2 < t3
-// more hints:    Vector constraints = new Vector();
+    // todo: Add constraints onto the workflow that t1 < t2 < t3
+    // hints: see RootFactory().newConstraint();
+    // hints: see NewConstraint.setConstrainingTask()
+    // hints: see NewConstraint.setConstrainingAspect()
+    // hints: see NewConstraint.setConstrainedTask()
+    // hints: see NewConstraint.setConstrainedAspect()
+    // hints: see NewConstraint.setConstraintOrder()
 
     // End(t1) must be before Start(t2)
-// more hints:    NewConstraint c1 = theLDMF.newConstraint();
-// more hints:    c1.setConstrainingTask(t1);
-// more hints:    c1.setConstrainingAspect(AspectType.END_TIME);
-// more hints:    c1.setConstrainedTask(t2);
-// more hints:    c1.setConstrainedAspect(AspectType.START_TIME);
-// more hints:    c1.setConstraintOrder(Constraint.BEFORE);
-// more hints:    constraints.addElement(c1);
+    // more hints: NewConstraint c1 = domainService.getFactory().newConstraint();
+    // more hints: c1.setConstrainingTask(t1);
+    // more hints: c1.setConstrainingAspect(AspectType.END_TIME);
+    // more hints: c1.setConstrainedTask(t2);
+    // more hints: c1.setConstrainedAspect(AspectType.START_TIME);
+    // more hints: c1.setConstraintOrder(Constraint.BEFORE);
+    // more hints: constraints.addElement(c1);
 
     // End(t2) must be before Start(t3)
-// more hints:    NewConstraint c2 = theLDMF.newConstraint();
-// more hints:    c2.setConstrainingTask(t2);
-// more hints:    c2.setConstrainingAspect(AspectType.END_TIME);
-// more hints:    c2.setConstrainedTask(t3);
-// more hints:    c2.setConstrainedAspect(AspectType.START_TIME);
-// more hints:    c2.setConstraintOrder(Constraint.BEFORE);
-// more hints:    constraints.addElement(c2);
+    // more hints: NewConstraint c2 = domainService.getFactory().newConstraint();
+    // more hints: c2.setConstrainingTask(t2);
+    // more hints: c2.setConstrainingAspect(AspectType.END_TIME);
+    // more hints: c2.setConstrainedTask(t3);
+    // more hints: c2.setConstrainedAspect(AspectType.START_TIME);
+    // more hints: c2.setConstraintOrder(Constraint.BEFORE);
+    // more hints: constraints.addElement(c2);
 
     // set the constraints on the workflow
-// more hints:    new_wf.setConstraints(constraints.elements());
+    // more hints: new_wf.setConstraints(constraints.elements());
   }
 
   /**

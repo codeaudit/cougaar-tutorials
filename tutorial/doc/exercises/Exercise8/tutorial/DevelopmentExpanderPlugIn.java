@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -21,6 +21,8 @@
 package tutorial;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.plugin.util.PlugInHelper;
 import org.cougaar.util.UnaryPredicate;
@@ -35,10 +37,27 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.3 2001-12-27 23:53:02 bdepass Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.4 2002-01-15 20:20:06 cbrundic Exp $
  **/
-public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class DevelopmentExpanderPlugIn extends ComponentPlugin
 {
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
 
@@ -90,9 +109,9 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    **/
   public void setupSubscriptions() {
     allCodeTasks =
-      (IncrementalSubscription)subscribe(allCodeTasksPredicate);
-    allMyExpansions = (IncrementalSubscription)subscribe(expansionPredicate);
-    allSubTasks =(IncrementalSubscription)subscribe(allSubTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
+    allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
+    allSubTasks =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
@@ -135,7 +154,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    * @return A new sub-task member of the workflow
    */
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
-    NewTask new_task = theLDMF.newTask();
+    NewTask new_task = domainService.getFactory().newTask();
 
     new_task.setParentTask(parent_task);
     new_task.setWorkflow(wf);
@@ -162,17 +181,17 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.START_TIME, start));
     Preference pref =
-      theLDMF.newPreference(AspectType.START_TIME, scorefcn);
+      domainService.getFactory().newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -187,12 +206,12 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
     ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.DURATION, duration));
-    Preference pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
+    Preference pref = domainService.getFactory().newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, deadline));
-    pref = theLDMF.newPreference(AspectType.END_TIME, scorefcn);
+    pref = domainService.getFactory().newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
     new_task.setPreferences(preferences.elements());
@@ -203,7 +222,6 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
    */
   private void checkForReplan(Expansion exp) {
   // todo: get the next pending constraint and update the constrained task's preferences
-    }
 
   }
 
@@ -216,6 +234,8 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
 
     int start_month    = getStartTime(task);
     int deadline_month = latest_end;
+
+    Vector tasks = new Vector();  // Vector in which to hold subtasks
 
     // todo : use makeTask and setPreferences convenience functions to create a "DESIGN" task
     // assign one month for design

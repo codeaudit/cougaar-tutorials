@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,7 +20,7 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.Enumeration;
 import org.cougaar.util.UnaryPredicate;
@@ -37,9 +37,9 @@ class myPredicate implements UnaryPredicate{
 /**
  * This COUGAAR PlugIn subscribes to Job objects and prints them out.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: WorkerPlugIn.java,v 1.3 2001-12-27 23:53:04 bdepass Exp $
+ * @version $Id: WorkerPlugIn.java,v 1.4 2002-01-15 20:20:42 cbrundic Exp $
  **/
-public class WorkerPlugIn extends SimplePlugIn {
+public class WorkerPlugIn extends ComponentPlugin {
   // holds my subscription for Job objects (matching predicate above)
   private IncrementalSubscription jobs;
 
@@ -48,7 +48,7 @@ public class WorkerPlugIn extends SimplePlugIn {
    * Job objects
    */
 protected void setupSubscriptions() {
-  jobs = (IncrementalSubscription)subscribe(new myPredicate());
+  jobs = (IncrementalSubscription)getBlackboardService().subscribe(new myPredicate());
   System.out.println("WorkerPlugIn");
 }
 

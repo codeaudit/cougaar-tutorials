@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2001 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,20 +20,39 @@
  */
 package tutorial;
 
-import org.cougaar.core.plugin.SimplePlugIn;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.service.*;
+import org.cougaar.core.domain.RootFactory;
 
 /**
  * This COUGAAR PlugIn creates and publishes "CODE" tasks
  */
  // todo:  add code to make this a subclass
- // hint:  parent class should be SimplePlugIn
+ // hint:  parent class should be ComponentPlugin
  // more hints: use java keyword 'extends'
 public class ManagerPlugIn {
+
+  // The domainService acts as a provider of domain factory services
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   // Two assets to use as direct objects for the CODE tasks
   private Asset what_to_code, what_else_to_code;
@@ -43,34 +62,36 @@ public class ManagerPlugIn {
    */
 protected void setupSubscriptions() {
   // todo: Create a task to code "the next killer app"
-  // todo: Part 1: create the asset store it in instance variable 'what_to_code'
-  // hint: see createPrototype()
-  // hint: see createPropertyGroup()
+  // todo: Part 1: create the AbstractAsset representing the project.
+  //       Store it in instance variable 'what_to_code'
+  // hint: see RootFactory.createPrototype()
+  // hint: see RootFactory.createPropertyGroup()
   // hint: see tutorial.assets.NewItemIdentificationPG class
   // hint: add a reference to the new NewItemIdentificationPG object to 'what_to_code'
-  // more hints:  what_to_code = theLDMF.createPrototype("AbstractAsset", "The Next Killer App");
-  // more hints:  NewItemIdentificationPG iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
-  // more hints:  iipg.setItemIdentification("e-somthing");
-  // more hints:  what_to_code.setItemIdentificationPG(iipg);
+  // more hints: RootFactory factory = getDomainService().getFactory();
+  // more hints: what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
+  // more hints: NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+  // more hints: iipg.setItemIdentification("e-somthing");
+  // more hints: what_to_code.setItemIdentificationPG(iipg);
 
   // todo: Part 2: put the 'what_to_code' asset on the LogPlan
-  // hint: see publishAdd()
-  // more hints:  publishAdd(what_to_code);
+  // hint: see BlackboardService.publishAdd()
+  // more hints: getBlackboardService().publishAdd(what_to_code);
 
   // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset
-  //       (use the makeTask function which is later in this file)
-  // hint: see publishAdd()
-  // more hints:  publishAdd(makeTask(what_to_code));
+  //       (complete and use the makeTask function which is later in this file)
+  // hint: see BlackboardService.publishAdd()
+  // more hints: getBlackboardService().publishAdd(makeTask(what_to_code));
 
   // todo: Create an task to code "something java"
   //       (store it in instance variable 'what_else_to_code')
   // hint: see above code to create the task for "the next killer app"
-  // more hints:  what_else_to_code = theLDMF.createInstance(what_to_code);
-  // more hints:  iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
-  // more hints:  iipg.setItemIdentification("something java");
-  // more hints:  what_else_to_code.setItemIdentificationPG(iipg);
-  // more hints:  publishAdd(what_else_to_code);
-  // more hints:  publishAdd(makeTask(what_else_to_code));
+  // more hints: what_else_to_code = factory.createInstance(what_to_code);
+  // more hints: iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+  // more hints: iipg.setItemIdentification("something java");
+  // more hints: what_else_to_code.setItemIdentificationPG(iipg);
+  // more hints: getBlackboardService().publishAdd(what_else_to_code);
+  // more hints: getBlackboardService().publishAdd(makeTask(what_else_to_code));
 }
 
 
@@ -81,22 +102,23 @@ protected void execute () {
 }
 
 /**
- * Create a CODE task.
+ * This is a convenience funciont that should create a CODE task.
  * @param what the direct object of the task
  */
 protected Task makeTask(Asset what) {
-    NewTask new_task;
+    NewTask new_task = null;
 
     // todo: create the task with the verb "CODE"
-    // hint: see newTask()
+    // new_task =
+    // hint: see RootFactory.newTask()
     // hint: see NewTask.setVerb()
-    // hint: see getRealityPlan()
+    // hint: see RootFactory.getRealityPlan()
     // hint: see NewTask.setPlan()
     // hint: see NewTask.setDirectObject()
-    // more hints:  new_task = theLDMF.newTask();
-    // more hints:  new_task.setVerb(new Verb("CODE"));
-    // more hints:  new_task.setPlan(theLDMF.getRealityPlan());
-    // more hints:  new_task.setDirectObject(what);
+    // more hints: NewTask new_task = getDomainService().getFactory().newTask();
+    // more hints: new_task.setVerb(new Verb("CODE"));
+    // more hints: new_task.setPlan(getDomainService().getFactory().getRealityPlan());
+    // more hints: new_task.setDirectObject(what);
 
     return new_task;
 }
