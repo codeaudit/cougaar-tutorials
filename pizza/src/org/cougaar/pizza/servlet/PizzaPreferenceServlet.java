@@ -275,7 +275,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 	  head = "<center><b><a href=\"/$" + agentID + "/tasks?mode=3&uid=" + exp.getTask().getUID() + "\">Order</a> ";
 	  if (orderSent) {
 	    if (orderOK)
-	      head += "Placed <font color=green>Succesfully</font> - Party is on!</b></center><p/>";
+	      head += "Placed <font color=green>Successfully</font> - Party is on!</b></center><p/>";
 	    else
 	      head += "<font color=red>Failed</font> - guests will not be happy!</b></center><p/>";
 	  } else {
