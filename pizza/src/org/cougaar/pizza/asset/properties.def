@@ -23,16 +23,14 @@
 
 package=org.cougaar.pizza.asset
 
+;The pizza property group factory should extend the planning PGFactory
+;so that we can use things like ItemIdentificationPG on our assets
 factoryExtends=org.cougaar.planning.ldm.asset.PropertyGroupFactory
 
-slots = VeggieProperty, MeatProperty
-
+;Specify the PropertyGroups that should be created for our assets.
+;Note that this file provides direction to the code generators that create
+; the PG interfaces, class files and factory.
 [VeggiePG]
-doc=Veggie only.
-slots=boolean veggieOnly
-veggieOnly.doc=True if the pizza should only have veggies
 
 [MeatPG]
-doc=Meat or meat and veggie.
-slots=boolean meatOK
-onlyMeat.doc=True if the pizza can have meat on it
+
