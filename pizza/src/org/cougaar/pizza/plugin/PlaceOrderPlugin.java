@@ -138,9 +138,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
    */
   protected void execute() {
     // The PizzaPreferences object contains the party invitation responses,
-    // and indicates we should start
+    // and indicates we should start.
+    // Get any just added PizzaPreferences object.
     PizzaPreferences pizzaPrefs = getPizzaPreferences();
     if ( pizzaPrefs != null) {
+      // We get in here only when a PizzaPreferences object has just been added. So
+      // in our application, this should happen exactly once.
+
       // Create the parent order task.
       Task orderTask = createOrderTask();
       // Create a subtask for each pizza preference.
@@ -207,9 +211,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   }
 
   /**
-   * Returns a PizzaPreferences object from the PizzaPreferences Subscription.  Checks the
+   * Returns any added PizzaPreferences object from the PizzaPreferences Subscription.  Checks the
    * added collection on the subscription and returns the first element in the
-   * collection.  Will return null if the added collection is empty.
+   * collection.  Will return null if the added collection is empty. 
+   *<p>
+   * Note that since we only check the Added list, this method will only return an object
+   * once in our application. This keeps the plugin from publishing
+   * the Order Tasks each time the plugin runs.
    *
    * @return first PizzaPrefereneces object from the subscription
    */
@@ -456,7 +464,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
    * @return a pizza provider Entity
    */
   protected Entity getProvider() {
-    Entity provider = null;
+    Entity provider = null; // return null if no PizzaProvider relationships found
     // Get the RelationshipSchedule for this agent
     RelationshipSchedule relSched = getSelfEntity().getRelationshipSchedule();
     // Find all relationships matching the role of pizza provider

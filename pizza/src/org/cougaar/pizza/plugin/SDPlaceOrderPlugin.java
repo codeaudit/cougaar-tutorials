@@ -48,12 +48,12 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * The SDPlaceOrderPlugin extends the {@link PlaceOrderPlugin}.  This plugin uses Service Discovery
- * to find pizza providers dynamically. Once the plugin receives the PizzaPreferences
- * object, it publishes a FindProviders task with a Role of PizzaProvider. This task
- * will be handled by Service Discovery.  The plugin then creates and expands the order
- * task as done in the super class.  However, unlike the super class, this plugin waits
- * until Servivce Discovery has finished finding a pizza provider and has added a
+ * The SDPlaceOrderPlugin extends the {@link PlaceOrderPlugin} to use Service Discovery
+ * to find pizza providers dynamically. Once the plugin receives the {@link PizzaPreferences}
+ * object, it publishes a {@link Constants.Verbs.FINDPROVIDERS} task with a Role of {@link Constants.Roles.PIZZAPROVIDER}. This task
+ * will be handled by Service Discovery.  The plugin then creates and expands the {@link Constants.Verbs.ORDER}
+ * Task as done in the super class.  However, unlike the super class, this plugin waits
+ * until Service Discovery has finished finding a pizza provider and has added a
  * Disposition on the FindProviders task before it can allocate the pizza subtasks.
  * <p>
  * ServiceDiscovery will find a provider, creating a PizzaProvider relationship. Then 
@@ -62,7 +62,7 @@ import java.util.Vector;
  * If the Expansion on the order task fails, i.e., the provider could not complete the
  * pizza order, then the  plugin will remove the Allocations on the subtasks of the Expansion and
  * request a new provider from Service Discovery.  To exclude the provider that
- * previously failed, the plugin adds a prepositional phrase of "NOT" with the name of the
+ * previously failed, the plugin adds a prepositional phrase of {@link Constants.Prepositions.NOT} with the name of the
  * provider as the indirect object on the FindProviders task.  Once a new provider is
  * found the tasks will be reallocated -- hopefully more succesfully!
  */
@@ -100,9 +100,14 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * is disposed, we'll try again...
    */
   protected void execute() {
-    // The PizzaPreferences object contains the party invitation responses.
+    // The PizzaPreferences object contains the party invitation responses,
+    // and indicates we should start.
+    // Get any just added PizzaPreferences object.
     PizzaPreferences pizzaPrefs = getPizzaPreferences();
     if ( pizzaPrefs != null) {
+      // We get in here only when a PizzaPreferences object has just been added. So
+      // in our application, this should happen exactly once.
+
       // Use service discovery to find a provider, null means do not exclude any providers
       publishFindProvidersTask(null);
       // Create the parent order task.
@@ -118,12 +123,12 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     if (disposition != null) {
       /**
        * Overrides super method.  Uses the Disposition to get to the FindProviders task to
-       * check for excluded providers.  An exluded provider is one that was previously
+       * check for excluded providers.  An excluded provider is one that was previously
        * unable to complete an order task.
        */
       Entity pizzaProvider = getProvider(disposition);
       if (pizzaProvider != null) {
-        // Allocate all pizza subtasks to a single pizza provider.
+        // Allocate all pizza subtasks to this single pizza provider.
         allocateSubtasks(getUnallocatedSubtasks(), pizzaProvider);
       }
     }
@@ -150,7 +155,11 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
 	   * found.
 	   */
 	  Entity failedProvider = processFailedSubtasks(exp);
+
 	  // Request a new provider from Service Discovery, excluding the one that failed.
+	  // We do so by publishing a new FindProviders task. When ServiceDiscovery
+	  // Disposes that Task, this plugin will run again, and re-allocate
+	  // the Order Tasks....
 	  publishFindProvidersTask(failedProvider);
 	  logger.shout("Initial Expansion FAILed. Redo Service Discovery.");
 	}
@@ -178,7 +187,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     NewTask newTask = makeTask(Constants.Verbs.FIND_PROVIDERS, getSelfEntity());
     Vector prepPhrases = new Vector();
 
-    // Indicate we want a PizzaProvider
+    // Indicate we want an Agent to act AS a PizzaProvider
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
     pp.setPreposition(org.cougaar.planning.Constants.Preposition.AS);
     pp.setIndirectObject(Constants.Roles.PIZZAPROVIDER);
@@ -202,6 +211,9 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * FindProviders task of the Disposition.  Get all relationships that match the Role
    * of PizzaProvider from the RelationshipSchedule. Return the first provider found that
    * is not the excluded provider.  Returns null if a provider is not found.
+   *<p>
+   * Note that only one failed provider can be avoided with this implementation.
+   *
    * @param disposition whose previous Provider to avoid
    * @return a pizza provider Entity to try
    */
@@ -230,7 +242,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
   }
 
   /**
-   * Return the succesfull Disposition of the FindProviders task, if it is there.
+   * Return the succesful Disposition of the FindProviders task, if it is there.
    * @return the FindProviders Disposition, null if it is not sucessful and confident
    */
   private Disposition getDisposedFindProvider() {
@@ -259,7 +271,11 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
    * Processes the subtasks of the failed Expansion and returns the provider that failed.
    * If any of the subtasks in the expansion are failed by the provider, the subtask
    * Allocations are publishRemoved so that they can be reallocated to a new provider.
-   * Returns the provider that failed (so we can avoid it in future)
+   * Returns the provider that failed (so we can avoid it in future).
+   *<p>
+   * Note that the assumption is that there is only one failed provider. All the
+   * Allocations will be removed, but only the last failed provider is returned,
+   * to be excluded.
    *
    * @param exp order task expansion that contains our pizza orders.
    * @return PizzaProvider that failed to satisfy our order
