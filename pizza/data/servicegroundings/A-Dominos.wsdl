@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  name="A_Dominos-Service"
+  targetNamespace="file://../../../pizza/data/servicegroundings/A-Dominos.wsdl"
+  xmlns:provider="file:///my/Fake/CougaarInstallPath/pizza/data/servicegroundings/TransportProviderCougaarGrounding.wsdl"
+  xmlns:cougaar="file:///my/Fake/CougaarInstallPath/pizza/data/servicegroundings/cougaar.wsdl" >
+
+<service name="A_Dominos">
+  <port binding="provider:TransportProviderCougaarBinding" name="CougaarAgentCommunicationsPort">
+    <cougaar:address agentName="Dominos"/>
+  </port>
+</service>
+
+</definitions>

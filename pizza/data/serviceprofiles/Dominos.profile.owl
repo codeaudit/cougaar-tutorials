@@ -22,7 +22,7 @@
 
   <owl:Ontology rdf:about="">
     <owl:versionInfo>
-      $Id: Dominos.profile.owl,v 1.1 2004-10-18 19:55:07 ngivler Exp $
+      $Id: Dominos.profile.owl,v 1.2 2004-11-04 17:39:50 ngivler Exp $
     </owl:versionInfo>
     <rdfs:comment>
       OWL service profile for Dominos
@@ -37,6 +37,7 @@
 
   <service:Service rdf:ID="A_Dominos">
     <service:presents rdf:resource="#A_Dominos_Profile"/>
+    <service:supports rdf:resource="#A_Dominos_Grounding"/>
   </service:Service>
 
   <cougaar:ServiceProfile rdf:ID="A_Dominos_Profile">
@@ -60,4 +61,18 @@
 
   </cougaar:ServiceProfile>
 
+
+  <cougaar:WsdlGrounding rdf:ID="A_Dominos_Grounding">
+    <cougaar:wsdlDocument>file:///my/Fake/CougaarInstallPath/pizza/data/servicegroundings/A-Dominos.wsdl</cougaar:wsdlDocument>
+    <cougaar:bindingType>COUGAAR</cougaar:bindingType>
+    <service:isSupportedBy rdf:resource="#A_Dominos"/> 
+  </cougaar:WsdlGrounding>
+
 </rdf:RDF>
+
+
+
+
+
+
+
