@@ -40,29 +40,19 @@ import org.cougaar.util.UnaryPredicate;
  */
 public class PizzaPreferenceHelper {
   /**
-   * Find self entity on blackboard, get its entity pg, and see if it includes a role "carnivore"
+   * Using self entity from blackboard, get its entity pg, and see if it includes a role "carnivore"
    *
-   * @return true if carnivore
+   * @return "meat" if carnivore, "veg" if herbivore
    */
-  protected boolean iLikeMeat (LoggingService log, BlackboardService blackboard) {
-    boolean likeMeat = false;
+  public String getPizzaPreference (LoggingService log, Entity entity) {
+    boolean likeMeat = entity.getEntityPG ().getRoles().contains (Role.getRole(Constants.CARNIVORE));
+    log.info ("roles for entity " + entity + " are " + entity.getEntityPG().getRoles());
 
-    Collection entities = blackboard.query (new UnaryPredicate() {
-	public boolean execute(Object o) {
-	  return (o instanceof Entity);
-	}
-      }
-				  );
-
-    if (!entities.isEmpty()) {
-      Entity entity = (Entity) entities.iterator().next();
-      likeMeat = entity.getEntityPG ().getRoles().contains (Role.getRole(Constants.CARNIVORE));
-      log.info ("roles for entity " + entity + " are " + entity.getEntityPG().getRoles());
+    if (likeMeat) {
+      return Constants.INVITATION_REPLY_MEAT;
     }
     else {
-      log.warn ("no entities on blackboard?");
+      return Constants.INVITATION_REPLY_VEG;
     }
-
-    return likeMeat;
   }
 }

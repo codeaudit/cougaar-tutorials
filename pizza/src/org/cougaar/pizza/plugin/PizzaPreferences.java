@@ -41,11 +41,15 @@ import java.util.Set;
  */
 
 public class PizzaPreferences implements UniqueObject {
-  protected UID uid;
-  protected Map friendToPizza = new HashMap();
+  private UID uid;
+  private Map friendToPizza = new HashMap();
   private LoggingService log;
-  protected int numMeat = 0;
-  protected int numVeg = 0;
+  private int numMeat = 0;
+  private int numVeg = 0;
+
+  public PizzaPreferences (UID uid) {
+    this.uid = uid;
+  }
 
   // for UniqueObject interface
   public UID getUID() {

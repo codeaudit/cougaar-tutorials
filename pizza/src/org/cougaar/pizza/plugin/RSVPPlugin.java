@@ -35,9 +35,11 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.relay.RSVPRelayTarget;
 import org.cougaar.pizza.relay.RSVPReply;
+import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.util.UnaryPredicate;
 
-import java.util.Enumeration;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Simple reply to the invitation.
@@ -49,7 +51,7 @@ public class RSVPPlugin extends ComponentPlugin {
 
   private LoggingService log;
 
-  private IncrementalSubscription sub;
+  private IncrementalSubscription relaySubscription;
 
   /**
    * Set up the services we need - logging service
@@ -63,10 +65,10 @@ public class RSVPPlugin extends ComponentPlugin {
         sb.getService(this, LoggingService.class, null);
 
     // prefix all logging calls with our agent name
-    log = LoggingServiceWithPrefix.add(log, agentId + ": ");
+    log = LoggingServiceWithPrefix.add(log, getAgentIdentifier() + ": ");
 
     if (log.isDebugEnabled()) {
-      log.debug("loaded");
+      log.debug("plugin loaded, services found");
     }
   }
 
@@ -80,39 +82,44 @@ public class RSVPPlugin extends ComponentPlugin {
     }
 
     // create relay subscription
-    sub =
+    // Note that blackboard is inherited from the BlackboardClientComponent base class
+    // (ComponentPlugin extends BlackboardClientComponent.)
+    relaySubscription =
         (IncrementalSubscription) blackboard.subscribe(new InvitePred());
   }
 
   protected void execute() {
-    log.info("execute");
-
-    if (!sub.hasChanged()) {
-      // usually never happens, since the only reason to execute
-      // is a subscription change
-      return;
+    if (log.isInfoEnabled()) {
+      log.info("execute");
     }
 
     // observe added relays
-    for (Enumeration en = sub.getAddedList(); en.hasMoreElements();) {
-      RSVPRelayTarget relay = (RSVPRelayTarget) en.nextElement();
+    for (Iterator iter = relaySubscription.getAddedCollection().iterator(); iter.hasNext();) {
+      RSVPRelayTarget relay = (RSVPRelayTarget) iter.next();
 
-      log.info(" - observe added " + relay);
+      if (log.isInfoEnabled()) {
+	log.info(" - observe added " + relay);
+      }
 
       // check for expected invitation relay
       if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
+	// get the self entity
+	Entity entity = getSelfEntity();
+
         // determine if I like meat or veggie pizza using the
         // PizzaPreferenceHelper, which looks at the Entity object's role
         PizzaPreferenceHelper prefHelper = new PizzaPreferenceHelper();
-        String preference = (prefHelper.iLikeMeat(log, blackboard)) ?
-            "meat" : "veg";
+
+	String preference = prefHelper.getPizzaPreference(log, entity);
 
         // send back reply
-        RSVPReply reply = new RSVPReply(agentId.toString(), preference);
+        RSVPReply reply = 
+	  new RSVPReply(getAgentIdentifier().toString(), preference);
+        relay.setResponse(reply);
 
-        ((RSVPRelayTarget) relay).setResponse(reply);
-
-        log.info(" - Reply : " + relay);
+	if (log.isInfoEnabled()) {
+	  log.info(" - Reply : " + relay);
+	}
 
         blackboard.publishChange(relay);
       } else {
@@ -122,25 +129,50 @@ public class RSVPPlugin extends ComponentPlugin {
 
     if (log.isDebugEnabled()) {
       // removed relays
-      for (Enumeration en = sub.getRemovedList(); en.hasMoreElements();) {
-        Object sr = en.nextElement();
+      for (Iterator iter = relaySubscription.getRemovedCollection().iterator(); 
+	   iter.hasNext();) {
+        Object sr = iter.next();
         log.debug(" - observe removed " + sr);
       }
     }
   }
 
   /**
-   * My subscription predicate, which matches SimpleRelays
+   * Does a blackboard query to get the self entity.
+   *
+   * Looks for entities that have the same item id as my agent id.
+   */
+  protected Entity getSelfEntity () {
+    // get the self entity
+    Collection entities = blackboard.query (new UnaryPredicate() {
+	public boolean execute(Object o) {
+	  if (o instanceof Entity) {
+	    Entity entity = (Entity) o;
+	    String entityItemId = 
+	      entity.getItemIdentificationPG().getItemIdentification();
+	    return (entityItemId.equals(getAgentIdentifier().toString()));
+	  }
+	  else {
+	    return false;
+	  }
+	}
+      });
+
+    // there should be only one self entity
+    if (!entities.isEmpty()) {
+      return (Entity) entities.iterator().next();
+    }
+    else {
+      return null;
+    }
+  }
+
+  /**
+   * My subscription predicate, which matches RSVPRelayTargets
    */
   private class InvitePred implements UnaryPredicate {
     public boolean execute(Object o) {
-      if (o instanceof RSVPRelayTarget) {
-        return true;
-      } else if (o instanceof Relay) {
-        log.info("\nIgnoring : " + o +
-                 "\nclass    : " + o.getClass());
-      }
-      return false;
+      return (o instanceof RSVPRelayTarget); 
     }
   }
 }
