@@ -199,6 +199,11 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       boolean subSucc = sub.getPlanElement().getReportedResult().isSuccess();
       logger.shout("     " + store + " could" + (subSucc ? "" : " NOT") + " handle " + v + " for " + qty + " " + piztype);
     } // loop over sub-tasks
+
+    if (succ)
+      logger.shout("The Party is on!");
+    else
+      logger.shout("Can't get the pizza I need! The party guests will not be happy....");
   }
 
   /**
