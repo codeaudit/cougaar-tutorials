@@ -18,8 +18,8 @@
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
         <component
-          name="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
+          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
           priority="COMPONENT"
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>

@@ -18,8 +18,8 @@
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
         <component
-          name="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
+          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
           priority="COMPONENT"
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
@@ -93,8 +93,8 @@
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
         <component
-          name="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
-          class="org.cougaar.mlm.plugin.organization.OrgRTDataPlugin"
+          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
           priority="COMPONENT"
           insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
         </component>
@@ -152,6 +152,9 @@
           <argument>
                   OrganizationPG:Roles:Collection&lt;Role&gt;:SoftwareDevelopment
           </argument>
+          <argument>
+            Relationship:MessageAddress=Management,ItemIdentification=Management,TypeIdentification=UTC/RTOrg,Role=SoftwareDevelopment,StartTime=01/01/2000 12:00 am,EndTime=
+          </argument>               
         </component>
       </agent>
     </node>
