@@ -130,8 +130,8 @@ public class RSVPRelaySource
 
   public String toString () { 
     return "RSVPRelaySource : " + 
-      "\nquery       : " + getContent() + 
-      "\ntarget      : " + target +
-      "\npreferences : " + pizzaPreferences;
+      " query=" + getContent() + 
+      " target=" + target +
+      " preferences=" + pizzaPreferences;
   }
 }
