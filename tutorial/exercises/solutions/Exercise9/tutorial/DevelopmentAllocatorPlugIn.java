@@ -13,9 +13,7 @@ import org.cougaar.core.cluster.IncrementalSubscription;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
+import java.util.*;
 
 import tutorial.assets.*;
 
@@ -24,7 +22,7 @@ import tutorial.assets.*;
  * This ALP PlugIn subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.2 2000-12-18 15:41:13 wwright Exp $
+ * @version $Id: DevelopmentAllocatorPlugIn.java,v 1.3 2000-12-28 16:10:41 wwright Exp $
  **/
 public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
@@ -120,7 +118,11 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
       publishRemove(alloc);
       allocateTask(task, startMonth(task));
     }
+
+    // dump alloc results for debugging:
+    // dumpAllocResults();
   }
+
 
 
   /**
@@ -240,6 +242,31 @@ public class DevelopmentAllocatorPlugIn extends org.cougaar.core.plugin.SimplePl
     }
     return month;
   }
+    private void dumpRoleSchedule(Asset pa) {
+    RoleSchedule rs = pa.getRoleSchedule();
+    Enumeration en = rs.getRoleScheduleElements();
+    while (en.hasMoreElements()) {
+      Allocation allo = (Allocation)en.nextElement();
+      Task t = allo.getTask();
+      System.out.println("Task: "+t.getVerb()+" "+t.getDirectObject().getItemIdentificationPG().getItemIdentification());
+      System.out.print("Alloc: ["+allo.getEstimatedResult().getValue(AspectType.START_TIME));
+      System.out.println(","+allo.getEstimatedResult().getValue(AspectType.END_TIME)+"]");
+
+    }
+  }
+
+  private void dumpAllocResults(){
+    System.out.println("----------------------------------------------------");
+    Iterator iter = allProgrammers.getCollection().iterator();
+    while (iter.hasNext()) {
+      ProgrammerAsset as = (ProgrammerAsset)iter.next();
+      System.out.print("-----------------------");
+      System.out.print(as.getItemIdentificationPG().getItemIdentification());
+      System.out.println("-----------------------");
+      dumpRoleSchedule(as);
+    }
+  }
+
 
 }
 
