@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.1 2003-04-16 22:26:02 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2003-04-18 17:36:11 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -160,7 +160,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   }
 
   /**
-   * This VERY primitive scheduler just keeps moving the whole workflow later until it can be scheduled
+   * Create three new subtasks to add to the workflow
    */
   private void plan(NewWorkflow new_wf) {
     Task task = new_wf.getParentTask();
