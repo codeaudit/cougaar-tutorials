@@ -21,7 +21,7 @@
 # Script to generate asset classes
 
 LIBPATHS=$COUGAAR_INSTALL_PATH/lib/core.jar
-LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/build.jar
+LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/clib/build.jar
 
 # Regenerate and recompile all property/asset files
 cd tutorial/assets

@@ -21,7 +21,7 @@ REM "</copyright>"
 rem Script to generate asset classes
 
 set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
-set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\build.jar
+set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\clib\build.jar
 
 rem Regenerate and recompile all property/asset files
 cd tutorial\assets
