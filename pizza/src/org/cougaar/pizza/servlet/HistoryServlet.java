@@ -536,7 +536,9 @@ public class HistoryServlet extends ComponentPlugin {
             event,
             now,
             // Alternative to empty comment would be getAddedPEComment(planElement)
-            "&nbsp;")); 
+            "&nbsp;",
+	    planElementsSubscription.getChangeReports(planElement),
+            encodeHTML(planElement.toString()))); 
       }
     }
   }
@@ -579,7 +581,9 @@ public class HistoryServlet extends ComponentPlugin {
             relay.getUID().toString(),
             "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT),
             now,
-            "Relay removed from blackboard."));
+            "Relay removed from blackboard.",
+            relaysSubscription.getChangeReports(relay),
+            encodeHTML(relay.toString())));
       }
     }
   }
@@ -1669,9 +1673,9 @@ public class HistoryServlet extends ComponentPlugin {
 
     // Goes in the Comment column - basic
     // human readable description of the Event
-    public String meaning;
+    public String meaning = "&nbsp;";
     public Set changeReports = null; // Any ChangeReports
-    public String toStringResult = ""; // Full toString of the Event
+    public String toStringResult = "&nbsp;"; // Full toString of the Event
     public int type; // Add, Change, or Remove
 
     public EventInfo(int type, int num, String uid, String event, long timeStamp, String meaning) {
