@@ -33,8 +33,8 @@ import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.util.*;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.asset.Entity;
+import org.cougaar.planning.ldm.asset.EntityPG;
 
 import java.util.*;
 
@@ -48,7 +48,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private IncrementalSubscription inviteSub;
   private IncrementalSubscription taskSub;
   private IncrementalSubscription allocationSub;
-  private Organization selfOrg = null;
+  private Entity selfOrg = null;
 
   public void load() {
     super.load();
@@ -83,7 +83,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
   protected void execute() {
     if (! selfOrgSub.getAddedCollection().isEmpty()) {
-      selfOrg = (Organization) selfOrgSub.getAddedList().nextElement();
+      selfOrg = (Entity) selfOrgSub.getAddedList().nextElement();
     } else {
       //cannot do anything until our self org is set
       return;
@@ -168,8 +168,8 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
   private static UnaryPredicate selfOrgPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if (o instanceof Organization) {
-        return ((Organization) o).isSelf();
+      if (o instanceof Entity) {
+        return ((Entity) o).isSelf();
       }
       return false;
     }
