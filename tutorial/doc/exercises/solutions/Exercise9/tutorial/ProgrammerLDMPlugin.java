@@ -32,7 +32,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.5 2003-01-23 19:44:33 mthome Exp $
+ * @version $Id: ProgrammerLDMPlugin.java,v 1.6 2003-04-16 22:54:04 dmontana Exp $
  */
 public class ProgrammerLDMPlugin extends ComponentPlugin {
 

@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2003-04-11 20:51:15 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.7 2003-04-16 22:54:03 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -60,7 +60,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
   private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
   private IncrementalSubscription allExpansions;  // All expansions
-  private IncrementalSubscription myAllocations;  // All expansions
 
   /**
    * Predicate matching all ProgrammerAssets
@@ -90,22 +89,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   };
 
   /**
-   * Predicate that matches all of allocations that I made
-   */
-  private UnaryPredicate allocPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Allocation)
-      {
-        Allocation allo = (Allocation)o;
-        Task task = allo.getTask();
-        if (task != null)
-          return taskPredicate.execute(task);
-      }
-      return false;
-    }
-  };
-
-  /**
    * Predicate that matches all of expansions
    */
   private UnaryPredicate expansionPredicate = new UnaryPredicate() {
@@ -124,8 +107,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
     allExpansions =
       (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-    myAllocations =
-      (IncrementalSubscription)getBlackboardService().subscribe(allocPredicate);
   }
 
   /**

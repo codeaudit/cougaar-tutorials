@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.9 2003-04-11 20:02:43 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.10 2003-04-16 22:54:04 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
