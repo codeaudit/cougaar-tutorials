@@ -138,7 +138,7 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
           <argument>
-            WAIT_FOR_RSVP_DURATION:45000
+            WAIT_FOR_RSVP_DURATION:60000
           </argument>
         </component>
 	<component
@@ -156,6 +156,18 @@
         <component
           name='org.cougaar.pizza.plugin.SDClientPlugin'
           class='org.cougaar.pizza.plugin.SDClientPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
+        <component
+          name='org.cougaar.pizza.servlet.HistoryServlet'
+          class='org.cougaar.pizza.servlet.HistoryServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
+        <component
+          name='org.cougaar.pizza.servlet.PizzaPreferenceServlet'
+          class='org.cougaar.pizza.servlet.PizzaPreferenceServlet'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
