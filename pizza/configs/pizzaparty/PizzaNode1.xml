@@ -38,7 +38,7 @@
       <!-- Explicitly make Node1 the WP Server -->
       <vm_parameter>-Dorg.cougaar.name.server=PizzaNode1@localhost:8888</vm_parameter>
       <component class="org.cougaar.core.wp.server.Server" 
-         insertionpoint="Node.AgentManager.Agent.WPServer"
+         insertionpoint="Node.AgentManager.Agent.WPServer">
       </component>   
       <!-- Helper servlet to change Logging levels for the Node -->
       <component
