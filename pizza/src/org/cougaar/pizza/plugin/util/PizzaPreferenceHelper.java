@@ -24,7 +24,7 @@
  * </copyright>
  */
 
-package org.cougaar.pizza.plugin;
+package org.cougaar.pizza.plugin.util;
 
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;

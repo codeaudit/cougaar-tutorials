@@ -24,7 +24,7 @@
  * </copyright>
  */
 
-package org.cougaar.pizza.util;
+package org.cougaar.pizza.plugin.util;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,14 +40,14 @@ import org.cougaar.util.log.Logging;
 
 /**
  * ServiceDiscovery Service scoring function using Role name and an
- * exclusion list.
+ * exclusion list.<br>
  * Uses 2 criteria -  
  *   service role must match scorer role
  *   service provider name must not match one of the names on the blacklist.
- *
+ *<p>
  * All passing descriptions get a score of 1, all failing descriptions get
  * a score of -1.
- * 
+ * <p>
  * SDClientPlugin creates the RoleScorer and attaches it to the MMQueryRequest.
  * MatchmakerPlugin uses the RoleScorer to evaluate service descriptions
  * returned from the yellow pages. All passing service descriptions are added
@@ -55,10 +55,11 @@ import org.cougaar.util.log.Logging;
  * 
  */
 public class RoleScorer implements ServiceInfoScorer {
+  // Note this is how a non-component can get a Logger
   private static Logger logger = Logging.getLogger(RoleScorer.class);
-  Role myRole;
+  Role myRole; // The role we want
   String myAgentName = null;
-  Collection myBlacklist;
+  Collection myBlacklist; // providers to exclude -- for example, those we've already tried
 
   public RoleScorer(Role role, Collection blacklist) {
     myRole = role;
@@ -74,26 +75,28 @@ public class RoleScorer implements ServiceInfoScorer {
   
 
   /**
-   * @return the Collexction of excluded provider names
+   * @return the Collection of excluded provider names (Strings)
    **/
   public Collection getBlacklist() {
     return myBlacklist;
   }
 
   /**
-   * Will be called by Matchmaker for each ServiceInfo. Returned score will
+   * Will be called by MatchmakerPlugin for each ServiceInfo. Returned score will
    * be added to the ScoredServiceDescription associated with the Service.
    * 
    * @return int representing score. Client responsible for 
    * understanding the precise value. Current usage assumes lowest value >= 0
-   * is the best. Values less than 0 are not suitable.
+   * is the best. Values less than 0 indicate the provider is not suitable.
    * 
    */
   public int scoreServiceInfo(ServiceInfo serviceInfo) {
+    // If the blacklist scoring says the provider is no good, its no good
     if (getBlacklistScore(serviceInfo) < 0) {
       return -1;
     }
 
+    // Otherwise, we just use the role score
     int roleScore = getRoleScore(serviceInfo);
 
     if (logger.isDebugEnabled()) {
@@ -103,10 +106,11 @@ public class RoleScorer implements ServiceInfoScorer {
     return roleScore;
   }
 
-  // Score the role portion
+  // Score the role portion -- lowest non-negative score is best
   private int getRoleScore(ServiceInfo serviceInfo) {
     String serviceRole = null;
 
+    // Find the correct service classification code
     for (Iterator iterator = serviceInfo.getServiceClassifications().iterator();
 	 iterator.hasNext();) {
       ServiceClassification classification =
@@ -125,7 +129,8 @@ public class RoleScorer implements ServiceInfoScorer {
 		    serviceInfo.getProviderName());
       }
       return -1;
-    } if (!serviceRole.equals(myRole.toString())) {
+    } else if (!serviceRole.equals(myRole.toString())) {
+      // If this is not the role we're looking for, score it down
       if (logger.isInfoEnabled()) {
 	logger.info(myAgentName + ": Ignoring service with Role of : " +
 		    serviceRole + 
@@ -133,12 +138,14 @@ public class RoleScorer implements ServiceInfoScorer {
       }
       return -1;
     } else {
+      // This is the role we're looking for!
       return 0;
     }
   }
 
-  // Score the service provider relative to the blacklist
+  // Score the service provider relative to the blacklist - if it's blacklisted, it gets -1
   private int getBlacklistScore(ServiceInfo serviceInfo) {
+    // Look for the serviceInfo's ProviderName on the blacklist
     for (Iterator iterator = myBlacklist.iterator();
 	 iterator.hasNext();) {
       String blacklistedProvider = (String) iterator.next();
@@ -154,6 +161,7 @@ public class RoleScorer implements ServiceInfoScorer {
       }
     }
 
+    // Didn't find it on the Blacklist -- its good
     return 0;
   }
 

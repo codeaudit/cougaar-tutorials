@@ -35,6 +35,7 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.relay.RSVPRelayTarget;
 import org.cougaar.pizza.relay.RSVPReply;
+import org.cougaar.pizza.plugin.util.PizzaPreferenceHelper;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.util.UnaryPredicate;
 

@@ -28,7 +28,7 @@ import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
-import org.cougaar.pizza.util.RoleScorer;
+import org.cougaar.pizza.plugin.util.RoleScorer;
 import org.cougaar.planning.ldm.PlanningDomain;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Entity;

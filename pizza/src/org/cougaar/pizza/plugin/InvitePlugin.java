@@ -41,6 +41,7 @@ import org.cougaar.core.util.UID;
 import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.relay.RSVPRelaySource;
+import org.cougaar.pizza.plugin.util.PizzaPreferenceHelper;
 import org.cougaar.planning.ldm.asset.Entity;
 
 import org.cougaar.util.Arguments;
