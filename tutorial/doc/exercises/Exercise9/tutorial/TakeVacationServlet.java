@@ -42,11 +42,11 @@ import org.cougaar.core.service.*;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.1 2002-01-30 20:29:20 krotherm Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.2 2002-04-05 19:32:33 mbarger Exp $
  */
 
-// todo:  make this servlet a subclass of a servlet that can write to the blackboard
-public class TakeVacationServlet 
+public class TakeVacationServlet extends BaseServletComponent 
+implements BlackboardClient 
 {
 
   private BlackboardService blackboard;
@@ -56,8 +56,11 @@ public class TakeVacationServlet
   }
 
   protected Servlet createServlet() {
-      // todo:  get the blackboard service
-
+      // get the blackboard service
+      blackboard = (BlackboardService) serviceBroker.getService(
+            this, 
+            BlackboardService.class,
+            null);
       if (blackboard == null) {
         throw new RuntimeException(
             "Unable to obtain blackboard service");
@@ -65,8 +68,9 @@ public class TakeVacationServlet
 
 
     // We could inline "MyServlet" here as an anonymous
-    // inner-class . Instead, we move it to a simple inner-class, 
-    // which makesthe code a little easier to read.
+    // inner-class (like HelloBaseServletComponent does). Instead, 
+    // we'll move it to a simple inner-class, which will make the 
+    // code a little easier to read.
     return new MyServlet();
   }
 
@@ -136,9 +140,8 @@ public class TakeVacationServlet
 	  Collection col;
 	  try {
 	      ProgrammerAsset pa;
-
-	      // todo: query the blackboard for a collection of ProgrammerAssets
-
+	      blackboard.openTransaction();
+	      col = blackboard.query(pred);
 	      for (Iterator it=col.iterator(); it.hasNext(); ) {
 		  pa=(ProgrammerAsset)it.next();
 		  if (makeVacation(pa, out)) {
@@ -149,11 +152,11 @@ public class TakeVacationServlet
 
 		  }
 	      }
+	  } finally {
+	      blackboard.closeTransaction(false);
+	      out.println("<BR>Done.</body></html>");
+	      out.flush();
 	  }
-
-	  // todo: clean up
-
-
 	  
       }
 
