@@ -185,10 +185,7 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
     } else if (paramValue.trim().equals("meat_only")) {
       createVeggie = false;
       createMeat = true;
-    } else if (paramValue.trim().equals("none")) {
-      createVeggie = false;
-      createMeat = false;
-    }
+    } 
   }
 
 }
