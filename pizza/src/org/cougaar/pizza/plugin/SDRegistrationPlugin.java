@@ -54,7 +54,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   private static int WARNING_SUPPRESSION_INTERVAL = 5;
   private long warningCutoffTime = 0;
   private static final String REGISTRATION_GRACE_PERIOD_PROPERTY = 
-                "org.cougaar.pizza.plugin.RegistrationGracePeriod";
+    "org.cougaar.pizza.plugin.RegistrationGracePeriod";
 
   protected static final String OWL_IDENTIFIER = ".profile.owl";
 
@@ -87,7 +87,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     if (ypInfo != null) {
       // Remove all community change notifications
       if (log.isInfoEnabled()) {
-	log.info(getAgentIdentifier() + " removing community change listeners.");
+	log.info("removing community change listeners.");
       }
       
       
@@ -95,35 +95,28 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     }
   }
 
-  public void unload() {
-    if (registrationService != null) {
-      getBindingSite().getServiceBroker().releaseService(this,
-                                                         RegistrationService.class,
-                                                         registrationService);
-      registrationService = null;
-    }
-
-    if ((log != null) && (log != LoggingService.NULL)) {
-      getBindingSite().getServiceBroker().releaseService(this, LoggingService.class, log);
-      log = null;
-    }
-    super.unload();
-  }
-
+  /**
+   * This plugin has no subscriptions. It will execute exactly once, since the 
+   * infrastructure calls the execute() method once at plugin startup.
+   */
   protected void setupSubscriptions() {
   }
 
   protected void execute () {
+    // Does this agent have a service profile
     if (isProvider()) {
+      // If we haven't already gotten the YP info
       if (ypInfo == null) {
+	// get the yp info
 	initYPInfo();
-	handleYP();
+	// Find our YP community
+	findYPCommunity();
       }
 
       if (ypInfo.readyToRegister()) {
 	if (log.isDebugEnabled()) {
 	  log.debug("Registering: " + getAgentIdentifier() + " with " +
-		    ypInfo.getCommunity());
+		    ypInfo.getCommunity().getName());
 	}
 	initialRegister();
       }
@@ -134,13 +127,12 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     if (isProvider()) {
       if (!ypInfo.readyToRegister()) {
 	if (log.isDebugEnabled()) {
-	  log.debug(getAgentIdentifier() + "Exiting initialRegister early - " +
+	  log.debug("Exiting initialRegister early - " +
 		    " ypInfo not ready - " + 
-		    " community " + ypInfo.getCommunity() +
+		    " community " + ypInfo.getCommunity().getName() +
 		    " isRegistered " + ypInfo.getIsRegistered() +
-		    " pendingRegistration " + ypInfo.getPendingRegistration() +
-		    " isDeleted " + ypInfo.getIsDeleted());
-	}
+		    " pendingRegistration " + ypInfo.getPendingRegistration());
+	    }
 	return;
       }
 
@@ -164,62 +156,59 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 
 	RegistrationService.Callback cb =
 	  new RegistrationService.Callback() {
-	  public void invoke(Object o) {
-	    boolean success = ((Boolean) o).booleanValue();
-	    if (log.isInfoEnabled()) {
-	      log.info(pd.getProviderName()+ " initialRegister success = " + 
-		       success + " with " + ypInfo.getCommunity().getName());
-	    }
-	    
-            ypInfo.setIsRegistered(true);
-            ypInfo.setPendingRegistration(false);
-	    ypInfo.clearCommunity();
-
-
-	    retryAlarm = null;
-
-	    org.cougaar.core.service.BlackboardService bbs = 
-	      getBlackboardService();
-	    if (bbs != null) { 
-	      bbs.signalClientActivity();
-	    }
-	  }
-          public void handle(Exception e) {
-            ypInfo.setPendingRegistration(false); // okay to try again
-            ypInfo.setIsRegistered(false);
-
-	    retryErrorLog("Problem adding ProviderDescription to " + 
-			  ypInfo.getCommunity().getName() + 
-			  ", try again later: " +
-			  getAgentIdentifier(), e);
-          }
-        };
+	      
+	      /** 
+	       * YP Calls when the registration call completes. Note that the
+	       * Object argument is only useful for debugging.
+	       */ 
+	      public void invoke(Object o) {
+		if (log.isInfoEnabled()) {
+		  boolean success = ((Boolean) o).booleanValue();
+		  log.info(pd.getProviderName()+ " initialRegister success = " + 
+			   success + " with " + ypInfo.getCommunity().getName());
+		}
+		
+		ypInfo.setIsRegistered(true);
+		ypInfo.setPendingRegistration(false);
+		ypInfo.clearCommunity();
+		
+		retryAlarm = null;
+		
+		getBlackboardService().signalClientActivity();
+	      } // end of invoke()
+	      
+	      /**
+	       * YP Calls when there was an error trying to register the provider.
+	       */
+	      public void handle(Exception e) {
+		ypInfo.setPendingRegistration(false); // okay to try again
+		ypInfo.setIsRegistered(false);
+		
+		retryErrorLog("Problem adding ProviderDescription to " + 
+			      ypInfo.getCommunity().getName() + 
+			      ", try again later: " +
+			      getAgentIdentifier(), e);
+	      }
+	    }; // end of Callback definition
 	
 	// actually submit the request.
         registrationService.addProviderDescription(ypInfo.getCommunity(),
 						   pd,
 						   cb);
       } catch (RuntimeException e) {
-	  ypInfo.setIsRegistered(false);	
-          ypInfo.setPendingRegistration(false); // okay to try again
+	ypInfo.setIsRegistered(false);	
+	ypInfo.setPendingRegistration(false); // okay to try again
 	  
-	  retryErrorLog("Problem adding ProviderDescription to " + 
-			ypInfo.getCommunity().getName() + 
-			", try again later: " +
-			getAgentIdentifier(), e);
+	retryErrorLog("Problem adding ProviderDescription to " + 
+		      ypInfo.getCommunity().getName() + 
+		      ", try again later: " +
+		      getAgentIdentifier(), e);
       }
     }
   }
 
-  private boolean registrationComplete() {
-    if (!isProvider()) {
-      return true;
-    } else {
-      return ypInfo.getIsRegistered();
-    }
-  }
-
-  private void handleYP() {
+  //
+  private void findYPCommunity() {
     Community ypCommunity = 
       communityService.getCommunity(getYPCommunityName(ypInfo.getAgentName()),
 				    new YPCommunityResponseListener(ypInfo));
@@ -228,29 +217,30 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       ypInfo.setCommunity(ypCommunity);
       if (log.isDebugEnabled()) {
 	log.debug("Registering: " + getAgentIdentifier() + " with " +
-		  ypInfo.getCommunity());
+		  ypInfo.getCommunity().getName());
       }
       initialRegister();
     } else if (log.isDebugEnabled()) {
-      log.debug(getAgentIdentifier() + " waiting on community info " +
+      log.debug("waiting on community info " +
 		getYPCommunityName(ypInfo.getAgentName()));
     }
   }
 
+  /** Create the YPInfo object for this instance */
   private void initYPInfo() {
     Collection params = getParameters();
     
     if (params.isEmpty()) {
       IllegalArgumentException iae = new IllegalArgumentException();
-      log.error(getAgentIdentifier() + 
-		"SDRegistrationPlugin: no YP agent parameter" +
+      log.error("SDRegistrationPlugin: no YP agent parameter" +
 		" - unable to register.", iae);
     } else {
       ypInfo = new YPInfo((String) params.iterator().next(),
-			    null, false, false, false);
+			  null, false, false);
     }
 
-    System.out.println(getAgentIdentifier() + ": ypInfo = " + ypInfo);
+    if (log.isDebugEnabled())
+      log.debug(": ypInfo = " + ypInfo);
   }
 
   private String getYPCommunityName(String ypAgentName) {
@@ -260,24 +250,11 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   }
  
   
-  /** ProviderDescription is big - release resources if we don't need it
-   * anymore.
-   */
-  private  void clearPD() {
-    if ((provD != null) && 
-	(log.isDebugEnabled())) {
-      log.debug(getAgentIdentifier() + ": clearPD()");
-    }
-    
-    
-    provD = null;
-  }
-
   /** @return null if unable to parse the provider description */
-  private  ProviderDescription getPD() {
+  private ProviderDescription getPD() {
     if (provD == null) {
       if (log.isDebugEnabled()) {
-	log.debug(getAgentIdentifier() + ": getPD() parsing OWL.");
+	log.debug(": getPD() parsing OWL.");
       }
       
       ProviderDescription pd = new ProviderDescriptionImpl();
@@ -290,15 +267,13 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 	
 	if (ok && (pd.getProviderName() != null)) {
 	  if (log.isDebugEnabled()) {
-	    log.debug(getAgentIdentifier() + 
-		      ": getPD() successfully parsed OWL.");
+	    log.debug(": getPD() successfully parsed OWL.");
 	  }
 	  
 	  provD = pd;
 	} else {
 	  if (log.isDebugEnabled()) {
-	    log.debug(getAgentIdentifier() + 
-		      ": getPD() unable to parse OWL." +
+	    log.debug(": getPD() unable to parse OWL." +
 		      " ok = " + ok);
 	  }
 	}
@@ -306,13 +281,11 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 	// Jena can do a concurrent mod exception. See bug 3052
 	// Leave provD uninitialized
 	if (log.isDebugEnabled()) {
-	  log.debug(getAgentIdentifier() + 
-		    ": getPD() ConcurrentModificationException - " +
+	  log.debug(": getPD() ConcurrentModificationException - " +
 		    cme);
 	}
       } catch (java.net.MalformedURLException mue) {
-	log.error(getAgentIdentifier() +
-		  ": getPD() unable to construct a URL from " + 
+	log.error(": getPD() unable to construct a URL from " + 
 		  Constants.getDataPath() + File.separator + 
 		  "serviceprofiles", mue);
       }
@@ -331,10 +304,6 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   }
   
   
-  private void resetWarningCutoffTime() {
-    warningCutoffTime = -1;
-  }
-
   private void retryErrorLog(String message) {
     retryErrorLog(message, null);
   }
@@ -351,35 +320,36 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     
     if(System.currentTimeMillis() > getWarningCutOffTime()) {
       if (e == null)
-	log.error(getAgentIdentifier() + message);
+	log.error(message);
       else
-	log.error(getAgentIdentifier() + message, e);
+	log.error(message, e);
     } else if (log.isDebugEnabled()) {
       if (e == null)
-	log.debug(getAgentIdentifier() + message);
+	log.debug(message);
       else
-	log.debug(getAgentIdentifier() + message, e);
+	log.debug(message, e);
     }
   }
 
-  // Is this Agent a service provider?
+  /** This agent is a provider if there is a provider file for it */
   private boolean isProvider() {
     return getProviderFile().exists();
   }
   
-  // Get the OWL service provider file
+  /** Get the OWL service provider file named after this agent, if any */
   private File getProviderFile() {
     String owlFileName = getAgentIdentifier().toString() + OWL_IDENTIFIER;
     return new File(getServiceProfileURL().getFile() +
 		    owlFileName);
   }
 
+  /** Get the URL for the service profile directory */
   private URL getServiceProfileURL() {
     try {
       return new URL(Configuration.getInstallURL(), 
 		     "pizza/data/serviceprofiles/");
     } catch (java.net.MalformedURLException mue) {
-      log.error("Exception constructing service profile URL: " , mue);
+      log.error("Exception constructing service profile URL" , mue);
       return null;
     }
   }
@@ -418,17 +388,14 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     private Community myYPCommunity;
     private YPCommunityChangeListener myCommunityListener;
     private boolean myIsRegistered;
-    private boolean myIsDeleted;
     private boolean myPendingRegistration;
     
     public YPInfo(String ypAgentName, Community ypCommunity, 
-		  boolean isRegistered, boolean pendingRegistration, 
-		  boolean isDeleted) {
+		  boolean isRegistered, boolean pendingRegistration) {
       myYPAgentName = ypAgentName;
       myYPCommunity = ypCommunity;
       myIsRegistered = isRegistered;
       myPendingRegistration = pendingRegistration;
-      myIsDeleted = isDeleted;
     }
 
     public String getAgentName(){
@@ -453,7 +420,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       } else {
 	if (myYPCommunity == null) {
 	  if (log.isDebugEnabled()) {
-	    log.debug(getAgentIdentifier() + " adding listener for " + 
+	    log.debug("adding listener for " + 
 		      ypCommunity);
 	  }
 	  myYPCommunity = ypCommunity;
@@ -470,7 +437,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 
     public void clearCommunity() {
       if (log.isDebugEnabled()) {
-	log.debug(getAgentIdentifier() + " removing listener for " + myYPCommunity);
+	log.debug("removing listener for " + myYPCommunity);
       }
       myYPCommunity = null;
       if (myCommunityListener != null) {
@@ -486,8 +453,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       if ((myIsRegistered) && (!isRegistered) &&
 	  (log.isDebugEnabled())) {
 	RuntimeException re  = new RuntimeException();
-	log.debug(getAgentIdentifier() + 
-		  " setIsRegistered() going from true to false.", re);
+	log.debug("setIsRegistered() going from true to false.", re);
       }
       myIsRegistered = isRegistered;
     }
@@ -500,24 +466,15 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       myPendingRegistration = pendingRegistration;
     }
 
-    public boolean getIsDeleted() {
-      return myIsDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted){ 
-      myIsDeleted = isDeleted;
-    }
-
     public boolean readyToRegister() {
       return ((getCommunity() != null) &&
 	      (!getIsRegistered()) &&
-	      (!getPendingRegistration()) &&
-              (!getIsDeleted()));
+	      (!getPendingRegistration()));
     }
   }
 
   private class YPCommunityResponseListener 
-  implements CommunityResponseListener {
+    implements CommunityResponseListener {
     private YPInfo ypInfo;
 
     public YPCommunityResponseListener(YPInfo info) {
@@ -525,25 +482,20 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     }
 
     public void getResponse(CommunityResponse resp){
-      System.out.println(getAgentIdentifier() + ": got community info for " +
-			 (Community) resp.getContent());
       if (log.isDebugEnabled()) {
-	log.debug(getAgentIdentifier() + " got Community info for " +
+	log.debug("got Community info for " +
 		  (Community) resp.getContent());
       }
 
       Community ypCommunity = (Community) resp.getContent();
-
+      
       ypInfo.setCommunity(ypCommunity);
-      {
-        org.cougaar.core.service.BlackboardService bbs = getBlackboardService();
-        if (bbs != null) bbs.signalClientActivity();
-      }
+      getBlackboardService().signalClientActivity();
     }
   }
 
   private class YPCommunityChangeListener 
-  implements CommunityChangeListener {
+    implements CommunityChangeListener {
     private YPInfo ypInfo;
     String communityName;
 
@@ -559,21 +511,19 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       // notifications with null communities.
       if (ypCommunity == null) {
 	if (log.isDebugEnabled()) {
-	  log.debug(getAgentIdentifier() + 
-		    " received Community change info for a null community");
+	  log.debug("received Community change info for a null community");
 	}
 	return;
       }
 
       if (log.isDebugEnabled()) {
-	log.debug(getAgentIdentifier() + " got Community change info for " +
+	log.debug("got Community change info for " +
 		  ypCommunity);
       }
 
       if (ypCommunity == null) {
 	if (log.isDebugEnabled()) {
-	  log.debug(getAgentIdentifier() + 
-		    " received Community change info for a null community");
+	  log.debug("received Community change info for a null community");
 	}
 	return;
       }
@@ -583,22 +533,20 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 
 	if (ypInfo.readyToRegister()) {
 	  if (log.isDebugEnabled()) {
-	    log.debug(getAgentIdentifier() + " signalClientActivity for " + 
-		      ypCommunity);
+	    log.debug("signalClientActivity for " + ypCommunity);
 	  }
 	  
 	  if (getBlackboardService() == null) {
-	    log.warn(getAgentIdentifier() + " ignoring change notification " +
-		     " - getBlackboardService() returned null");
+	    if (log.isWarnEnabled())
+	      log.warn("ignoring change notification " +
+		       " - getBlackboardService() returned null");
 	    ypInfo.clearCommunity();
 	  } else {
-            org.cougaar.core.service.BlackboardService bbs = getBlackboardService();
-            if (bbs != null) bbs.signalClientActivity();
+            getBlackboardService().signalClientActivity();
 	  }
 	}
       } else if (log.isDebugEnabled()) {
-	log.debug(getAgentIdentifier() + 
-		  " ignoring CommunityChangeEvent  for " + 
+	log.debug("ignoring CommunityChangeEvent  for " + 
 		  ypCommunity.getName() + 
 		  " - listening for - " + getCommunityName());
       }
