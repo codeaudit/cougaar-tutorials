@@ -115,9 +115,9 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
     // hint: see ProgrammerAsset.getRoleSchedule()
     // hint: see RoleSchedule.getRoleScheduleElements()
 // more hints:    RoleSchedule sched = asset.getRoleSchedule();
-// more hints:    Enumeration enum = sched.getRoleScheduleElements();
-// more hints:    while (enum.hasMoreElements()) {
-// more hints:      Allocation alloc = (Allocation) enum.nextElement();
+// more hints:    Enumeration en = sched.getRoleScheduleElements();
+// more hints:    while (en.hasMoreElements()) {
+// more hints:      Allocation alloc = (Allocation) en.nextElement();
 // more hints:      if (! alloc.getTask().getVerb().equals (Verb.get ("VACATION")))
 // more hints:	blackboard.publishRemove (alloc);
 // more hints:    }    

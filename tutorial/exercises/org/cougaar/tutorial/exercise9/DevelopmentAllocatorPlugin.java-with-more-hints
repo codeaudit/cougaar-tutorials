@@ -164,9 +164,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     //       with a constraint whose constrained task is the one of interest;
     //       if so, return the constraining task
     // hint: use Enumerations allExpansions.elements() and exp.getWorkflow().getTaskConstraints (task)
-// more hints:    Enumeration enum = allExpansions.elements();
-// more hints:    while (enum.hasMoreElements()) {
-// more hints:      Expansion exp = (Expansion) enum.nextElement();
+// more hints:    Enumeration en = allExpansions.elements();
+// more hints:    while (en.hasMoreElements()) {
+// more hints:      Expansion exp = (Expansion) en.nextElement();
 // more hints:      Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
 // more hints:      while (enum2.hasMoreElements()) {
 // more hints:        Constraint c = (Constraint) enum2.nextElement();
