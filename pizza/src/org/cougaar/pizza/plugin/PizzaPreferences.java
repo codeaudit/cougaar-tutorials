@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.cougaar.util.log.Logger;
+import org.cougaar.util.log.Logging;
+
 /**
  * Stores mapping from friend to their pizza preference
  * <p/>
@@ -43,7 +46,9 @@ import java.util.Set;
 public class PizzaPreferences implements UniqueObject {
   private UID uid;
   private Map friendToPizza = new HashMap();
-  private LoggingService log;
+
+  private static Logger log = Logging.getLogger(PizzaPreferences.class);
+
   private int numMeat = 0;
   private int numVeg = 0;
 
