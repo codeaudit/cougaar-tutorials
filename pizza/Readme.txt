@@ -1,0 +1,1 @@
+See doc/Readme.[html/txt] for details on the Pizza Party sample application.
