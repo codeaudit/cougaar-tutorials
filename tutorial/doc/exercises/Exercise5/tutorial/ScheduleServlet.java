@@ -110,8 +110,15 @@ public class ScheduleServlet
         if (o instanceof Allocation) {
           Allocation alloc = (Allocation) o;
           SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
-          // todo: print the months, verb and items to be coded, all
-          //       formatted in a table
+          out.print ("<tr><td>");
+          // todo: print start month
+          out.print ("-");
+          // todo: print end month
+          out.print ("</td><td>");
+          // todo: print verb
+          out.print (" ");
+          // todo: print name of CODE task
+          out.print ("</td></tr>");
         }
       }
       out.println("</table>");
