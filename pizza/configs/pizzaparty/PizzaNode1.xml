@@ -146,6 +146,12 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	</component>
+        <component
+          name='org.cougaar.pizza.servlet.PizzaServlet'
+          class='org.cougaar.pizza.servlet.PizzaServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+	</component>
       </agent>
       <!-- Bob is a guest -->
       <agent name="Bob">
