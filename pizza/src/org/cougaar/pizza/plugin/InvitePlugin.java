@@ -143,7 +143,25 @@ public class InvitePlugin extends ServiceUserPlugin {
   }
 
   /**
-   * Look argument to plugin like : "WAIT_FOR_RSVP_DURATION:45000"
+   * Looks for argument to plugin like : "WAIT_FOR_RSVP_DURATION:60000"
+   *
+   * <pre> 
+   *
+   * For example :
+   *
+   * <component
+   *      name='org.cougaar.pizza.plugin.InvitePlugin'
+   *       class='org.cougaar.pizza.plugin.InvitePlugin'
+   *       priority='COMPONENT'
+   *       insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+   *       <argument>
+   *         WAIT_FOR_RSVP_DURATION:60000
+   *       </argument>
+   * </component>
+   *
+   * </pre> 
+   *
+   * @return millis to wait
    */
   protected long getWaitParameter () {
     // get wait parameter
@@ -228,7 +246,7 @@ public class InvitePlugin extends ServiceUserPlugin {
   }
 
   /**
-   * My subscription predicate, which matches SimpleRelays
+   * My subscription predicate, which matches RSVPRelaySource objects
    */ 
   private class MyPred implements UnaryPredicate {
     public boolean execute(Object o) {
@@ -236,8 +254,8 @@ public class InvitePlugin extends ServiceUserPlugin {
 	return true;
       }
       else if (o instanceof Relay) {
-	log.debug ("\nignored : " + o +
-		   "\nclass   : " + o.getClass());
+	log.info ("\nignored : " + o +
+		  "\nclass   : " + o.getClass());
       }
       return false;
     }

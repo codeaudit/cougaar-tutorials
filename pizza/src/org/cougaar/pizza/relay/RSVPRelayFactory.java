@@ -37,8 +37,10 @@ import org.cougaar.pizza.Constants;
 
 /**
  * A {@link org.cougaar.core.relay.Relay.TargetFactory} for
- * RSVP {@link Relay}s.
+ * RSVPRelayTarget {@link RSVPRelayTarget}s.
  * <p>
+ * This factory is required in order to produce the correct Relay.Target 
+ * when the relay has been received by the target agent.
  */
 public class RSVPRelayFactory
   implements Relay.TargetFactory, NotPersistable, Serializable

@@ -34,8 +34,17 @@ import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.SimpleUniqueObject;
 
 /**
- * A target-side relay {@link Relay}.
+ * A target-side relay {@link Relay}.  It has a slot for the query and the response.
  * <p>
+ * The target relay has just a source, and no target address, so the 
+ * the relay won't be propagated at the target agent.
+ *
+ * An alternative would be to have the relay implement both source and target
+ * interfaces, but this would lead to endless pinging in this case where
+ * the target address is an ABA broadcast to all members of the community.
+ * 
+ * In contrast, @see org.cougaar.core.relay.SimpleRelayImpl which implements both
+ * source and target.
  */
 public class RSVPRelayTarget
   extends SimpleUniqueObject
@@ -44,17 +53,10 @@ public class RSVPRelayTarget
   transient MessageAddress sourceAddress;
   transient Object response;
   transient Object query; 
-  static int numMade = 0;
-  int num = 0;
-  static Object lock = new Object();
 
   public RSVPRelayTarget(MessageAddress source, Object query) {
     this.sourceAddress = source;
     this.query = query;
-    synchronized (lock) {
-      numMade++;
-      num = numMade;
-    }
   }
 
   /** 
@@ -104,9 +106,9 @@ public class RSVPRelayTarget
   public String toString () { 
     return 
       "RSVPRelayTarget : " + 
-      "\nsource   : " + getSource() + 
-      "\nquery    : " + getQuery() + 
-      "\nresponse : " + getResponse();
+      " source=" + getSource() + 
+      " query=" + getQuery() + 
+      " response=" + getResponse();
   }
 }
 

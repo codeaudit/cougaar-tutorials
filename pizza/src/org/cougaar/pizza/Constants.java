@@ -20,7 +20,6 @@ public class Constants {
   public static final String VEGETARIAN = "Vegetarian";
   public static final String PIZZA = "Pizza";
 
-
   public interface Preposition {
     String NOT         =  "Not";
   }
@@ -66,7 +65,6 @@ public class Constants {
     public final static String ORGANIZATION_TYPES = "OrganizationTypes";
     public final static String ORGANIZATION_TYPES_UUID = "uuid:c71f3d00-fb35-11d6-8c6a-b8a03c50a862";
   }
-
 }
 
 

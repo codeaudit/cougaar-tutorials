@@ -57,6 +57,9 @@ public class RSVPPlugin extends ComponentPlugin {
 
   private IncrementalSubscription sub;
 
+  /**
+   * Set up the services we need - logging service
+   */
   public void load() {
     super.load();
 
@@ -73,6 +76,9 @@ public class RSVPPlugin extends ComponentPlugin {
     }
   }
 
+  /**
+   * We have one subscription, to the relays (the invitation) we expect to get.
+   */
   protected void setupSubscriptions() {
     if (log.isDebugEnabled()) {
       log.debug("setupSubscriptions");
@@ -97,11 +103,14 @@ public class RSVPPlugin extends ComponentPlugin {
 
       log.info (" - observe added "+relay);
 
+      // check for expected invitation relay
       if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
-        // send back reply
+	// determine if I like meat or veggie pizza using the 
+	// PizzaPreferenceHelper, which looks at the Entity object's role
 	PizzaPreferenceHelper prefHelper = new PizzaPreferenceHelper();
 	String preference = (prefHelper.iLikeMeat(log, blackboard)) ? "meat" : "veg";
 
+        // send back reply
 	RSVPReply reply = new RSVPReply (agentId.toString(), preference); 
 
 	((RSVPRelayTarget) relay).setResponse(reply);

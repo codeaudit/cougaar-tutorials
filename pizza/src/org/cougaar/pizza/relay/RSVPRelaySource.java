@@ -94,6 +94,10 @@ public class RSVPRelaySource
    * This ensures that the target agent gets a target relay.  The
    * target relay has just a source, and no target address, so the 
    * the relay won't be propagated at the target.
+   *
+   * An alternative would be to have the relay implement both source and target
+   * interfaces, but this would lead to endless pinging in this case where
+   * the target address is an ABA broadcast to all members of the community.
    * 
    * @return target factory that makes a target that has no target address
    */
@@ -104,11 +108,11 @@ public class RSVPRelaySource
   /**
    * Relay.Source implementation 
    *
-   * Record responses from remote agents as they come in.
+   * Record responses from remote agents as they come in on the pizza preferences object.
    *
    * Note that we assume the response will be a RSVPReply.
    *
-   * Synchronized because - why???
+   * If info is on, tells how many long we had to wait until all responses came back.
    *
    * @return Relay.RESPONSE_CHANGE - since every time we get a response, we want to examine it
    */
