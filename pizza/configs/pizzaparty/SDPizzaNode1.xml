@@ -3,7 +3,7 @@
 <!-- This file is the configuration file for 4 of the agents in the
  Pizza Party application. You must run both this and the other Node
  (SDPizzaNode2) to run the application. -->
-<!-- To run, use bin/XSLNode.bat SDPizzaNode1.xml SDPizzaNode1 -->
+<!-- To run, use bin/Cougaar[.bat] SDPizzaNode1.xml SDPizzaNode1 -->
 
 <!-- This is the ServiceDiscovery version of the application. See -->
 <!-- also PizzaNode1 and PizzaNode2 -->
@@ -26,7 +26,7 @@
       class to run, once the Boostrapper finds the Jar files -->
       <prog_parameter>org.cougaar.core.node.Node</prog_parameter>
 
-      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/XSLNode -->
+      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/Cougaar -->
       <!-- Make sure these SDPizzaNode1 references match: -->
       <vm_parameter>-Dorg.cougaar.node.name=SDPizzaNode1</vm_parameter>
       <vm_parameter>-Dorg.cougaar.society.file="SDPizzaNode1.xml"</vm_parameter>
@@ -103,7 +103,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Alice</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Alice</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Alice</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Person</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Alice</argument>
 	  <!-- Specify whether we prefer meat or vegetarian -->
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Vegetarian</argument>
@@ -231,7 +231,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Bob</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Bob</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Bob</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Person</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Bob</argument>
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Carnivore</argument>
         </component>
@@ -282,7 +282,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Cambridge</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Cambridge</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Cambridge</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Place</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Cambridge</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
@@ -346,7 +346,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Dominos</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Dominos</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Dominos</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Store</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Dominos</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
