@@ -1,10 +1,11 @@
 @echo OFF
-REM $id$
 
 if "%ALP_INSTALL_PATH%"=="" goto AIP_ERROR
 if "%1"=="" goto ARG_ERROR
 
 set LIBPATHS=%ALP_INSTALL_PATH%\lib\core.jar
+set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\glm.jar
+set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\planserver.jar
 set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\xml4j_2_0_11.jar
 set LIBPATHS=.;%LIBPATHS%
 
@@ -25,7 +26,7 @@ echo Please set ALP_INSTALL_PATH
 goto QUIT
 
 :ARG_ERROR
-echo Run requires an argument  eg: Run BinaryNode or BinarySimpleNode
+echo Run requires an argument  eg: Run ExerciseOneNode
 goto QUIT
 
 :QUIT

@@ -4,14 +4,14 @@ if "%ALP_INSTALL_PATH%"=="" goto AIP_ERROR
 if "%1"=="" goto ARG_ERROR
 
 set LIBPATHS=%ALP_INSTALL_PATH%\lib\core.jar
-set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\alpine.jar
+set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\glm.jar
+set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\planserver.jar
 set LIBPATHS=%LIBPATHS%;%ALP_INSTALL_PATH%\lib\xml4j_2_0_11.jar
 set LIBPATHS=.;%LIBPATHS%
 
-
 REM pass in "NodeName" to run a specific named Node
 
-set MYPROPERTIES= 
+set MYPROPERTIES=
 set MYMEMORY=
 set MYCLASSES=org.cougaar.core.society.Node
 set MYARGUMENTS= -c -n "%1"

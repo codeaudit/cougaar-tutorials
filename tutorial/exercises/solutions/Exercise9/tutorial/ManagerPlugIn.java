@@ -39,7 +39,7 @@ protected void setupSubscriptions() {
   publishAdd(what_to_code);
   publishAdd(makeTask(what_to_code));
 
-/*
+
   // Create a task to code something java
   what_else_to_code = theLDMF.createInstance(what_to_code);
   iipg = (NewItemIdentificationPG)theLDMF.createPropertyGroup("ItemIdentificationPG");
@@ -63,7 +63,7 @@ protected void setupSubscriptions() {
   what_else_to_code.setItemIdentificationPG(iipg);
   publishAdd(what_else_to_code);
   publishAdd(makeTask(what_else_to_code));
-*/
+
 
 
 }
@@ -124,7 +124,7 @@ protected Task makeTask(Asset what) {
     pref = theLDMF.newPreference(AspectType.DURATION, scorefcn);
     preferences.add(pref);
 
-    new_task.setPreferences(preferences.elements());          
+    new_task.setPreferences(preferences.elements());
 
     return new_task;
 }

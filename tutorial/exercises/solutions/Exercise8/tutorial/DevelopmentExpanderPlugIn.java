@@ -24,7 +24,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugIn.java,v 1.2 2000-12-18 15:41:12 wwright Exp $
+ * @version $Id: DevelopmentExpanderPlugIn.java,v 1.3 2000-12-28 16:57:03 wwright Exp $
  **/
 public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
@@ -199,7 +199,7 @@ public class DevelopmentExpanderPlugIn extends org.cougaar.core.plugin.SimplePlu
       if (ced instanceof SettableConstraintEvent)
       {
         ((SettableConstraintEvent)ced).setValue(c.computeValidConstrainedValue(),
-	                                        Constraint.COMINCIDENT, 0.0);
+	                                        Constraint.COINCIDENT, 0.0);
 //System.out.println("START_TIME on "+c.getConstrainedTask().getVerb()+" set to "+getStartTime(c.getConstrainedTask()));
         publishAdd(c.getConstrainedTask());
       }
