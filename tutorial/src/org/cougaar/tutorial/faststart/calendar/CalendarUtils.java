@@ -7,14 +7,14 @@ package org.cougaar.tutorial.faststart.calendar;
 **/
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 
 /**
  * Set of static methods and constants for supporting
  * Calendar society
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarUtils.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: CalendarUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  **/
 public class CalendarUtils {
 

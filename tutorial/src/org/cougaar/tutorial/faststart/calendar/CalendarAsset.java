@@ -15,9 +15,9 @@ import java.util.*;
  * NOTE : An Asset doesn't need to be generated automatically by AssetWriter
  * 
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAsset.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: CalendarAsset.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  */
-public class CalendarAsset extends org.cougaar.domain.planning.ldm.asset.Asset
+public class CalendarAsset extends org.cougaar.planning.ldm.asset.Asset
 {
   public CalendarAsset() {
     my_datebook = new Hashtable();

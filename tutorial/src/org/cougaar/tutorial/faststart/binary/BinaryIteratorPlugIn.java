@@ -8,8 +8,8 @@ package org.cougaar.tutorial.faststart.binary;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -19,7 +19,7 @@ import org.cougaar.util.UnaryPredicate;
  * The response will succeed if the solution value is within the given bounds, 
  * and fail if not.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryIteratorPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: BinaryIteratorPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  */
 public class BinaryIteratorPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {

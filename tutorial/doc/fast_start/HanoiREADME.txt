@@ -39,7 +39,7 @@ behaviors necessary to post and solve the Towers of Hanoi problem.  Lets look mo
 closely at the Hanoi.ini file...
 
 ------------------------Hanoi.ini--------------------------------------------------
-class = org.cougaar.core.cluster.ClusterImpl
+class = org.cougaar.core.agent.ClusterImpl
 ** this is the template for the agent to be created
 
 uic = Hanoi

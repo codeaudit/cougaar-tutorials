@@ -20,18 +20,22 @@
  */
 package org.cougaar.tutorial.faststart;
 
-import org.cougaar.domain.planning.ldm.*;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.core.cluster.*;
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.core.domain.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.core.agent.*;
+import org.cougaar.core.domain.*;
+import org.cougaar.core.blackboard.*;
+import org.cougaar.core.mts.Message;
+import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.planning.ldm.plan.*;
 
 /**
  * An COUGAAR Asset class that represents a cluster.  Allocation to
  * one of these assets triggers the inter-cluster communication.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Organization.java,v 1.4 2001-08-22 20:30:52 mthome Exp $
+ * @version $Id: Organization.java,v 1.5 2001-12-27 23:53:14 bdepass Exp $
  */
-public class Organization extends org.cougaar.domain.planning.ldm.asset.Asset {
+public class Organization extends org.cougaar.planning.ldm.asset.Asset {
 
   /**
    * Constants that represent the relationships between clusters.

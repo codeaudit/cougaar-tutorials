@@ -21,11 +21,11 @@
 package tutorial;
 
 import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import tutorial.assets.*;
 
 /**
@@ -40,7 +40,7 @@ import tutorial.assets.*;
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2001-08-22 20:30:42 mthome Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-12-27 23:52:56 bdepass Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 public class ManagerAllocatorPlugIn  {

@@ -7,9 +7,9 @@ package org.cougaar.tutorial.faststart.calendar;
  */
 
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
@@ -18,7 +18,7 @@ import java.util.*;
  * Plugin to manage the calendar assets for schedule requests, giving
  * an answer of when the scheduling was for, or that it was unfulfilled
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarManagerPlugIn.java,v 1.2 2001-01-30 21:10:25 wwright Exp $
+ * @version $Id: CalendarManagerPlugIn.java,v 1.3 2001-12-27 23:53:14 bdepass Exp $
  **/
 public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

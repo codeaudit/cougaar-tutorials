@@ -21,13 +21,13 @@
 package tutorial;
 
 import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.asset.Organization;
-import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
@@ -79,7 +79,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2001-08-22 20:30:45 mthome Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-12-27 23:53:01 bdepass Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 

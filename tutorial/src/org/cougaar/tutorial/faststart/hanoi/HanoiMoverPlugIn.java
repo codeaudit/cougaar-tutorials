@@ -6,9 +6,9 @@ package org.cougaar.tutorial.faststart.hanoi;
   * This software to be used in accordance with the COUGAAR license agreement.
 **/
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
@@ -31,7 +31,7 @@ import java.util.Vector;
  *        satisfaction of preferences [Level4]
  * else error
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiMoverPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: HanoiMoverPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  **/
 public class HanoiMoverPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

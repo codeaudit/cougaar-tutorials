@@ -7,14 +7,14 @@ package org.cougaar.tutorial.faststart.calendar;
  */
 
 import java.awt.event.*;
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 
 /**
  * Simple UI plugin to create a task requesting a free day in the 
  * calendar
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarRequesterPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: CalendarRequesterPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  */
 public class CalendarRequesterPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {

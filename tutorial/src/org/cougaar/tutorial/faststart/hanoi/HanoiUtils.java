@@ -7,15 +7,15 @@ package org.cougaar.tutorial.faststart.hanoi;
  */
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.*;
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.core.domain.*;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 
 
 /**
  * Series of static methods supporting Towers of Hanoi tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiUtils.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: HanoiUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  **/
 public class HanoiUtils 
 {

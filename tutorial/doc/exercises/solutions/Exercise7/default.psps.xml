@@ -55,111 +55,111 @@ Additional PSPs loaded by PSP Launcher
 
   <!-- ALPINE PSPs -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_LogPlanProvider</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_LogPlanProvider</Classname>
     <PSPName>alpine/demo/DEBUG.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_UIDataProvider</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_UIDataProvider</Classname>
     <PSPName>alpine/demo/UIDATA.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.producers.policy.PSP_PolicyEditor</Classname>
+    <Classname>org.cougaar.mlm.ui.producers.policy.PSP_PolicyEditor</Classname>
     <PSPName>alpine/demo/POLICY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.alert.PSP_Alert</Classname>
+    <Classname>org.cougaar.mlm.ui.alert.PSP_Alert</Classname>
     <PSPName>alpine/demo/ALERT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.alert.PSP_ModifyAlert</Classname>
+    <Classname>org.cougaar.mlm.ui.alert.PSP_ModifyAlert</Classname>
     <PSPName>alpine/demo/MODIFYALERT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_TaskTraversal</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_TaskTraversal</Classname>
     <PSPName>alpine/demo/TASKTRAVERSAL.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_TransportTaskTrace</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.transportation.PSP_TransportTaskTrace</Classname>
     <PSPName>alpine/demo/QUERYTRANSPORT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_TransportTAA</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.transportation.PSP_TransportTAA</Classname>
     <PSPName>alpine/demo/ORG_ITINERARY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_ModifyOrgActivity</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_ModifyOrgActivity</Classname>
     <PSPName>alpine/demo/MODIFY_ORG_ACTIVITY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_TransportLinksNodes</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.transportation.PSP_TransportLinksNodes</Classname>
     <PSPName>alpine/demo/QUERYTRANSPORT_NETWORK.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_OplanView</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_OplanView</Classname>
     <PSPName>alpine/demo/OPLAN.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_OplanEdit</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_OplanEdit</Classname>
     <PSPName>alpine/demo/OPLAN_EDIT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Closure</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_Closure</Classname>
     <PSPName>alpine/demo/CLOSURE_PLAN.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_OplanPropagationView</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_OplanPropagationView</Classname>
     <PSPName>alpine/demo/OPLAN_PROP.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_ClusterRelationships</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_ClusterRelationships</Classname>
     <PSPName>alpine/demo/CLUSTERS_R.PSP</PSPName>
   </element>
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.alert.PSP_HTMLAlerts</Classname>
+    <Classname>org.cougaar.mlm.ui.alert.PSP_HTMLAlerts</Classname>
     <PSPName>alpine/demo/HTMLALERT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Map</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_Map</Classname>
     <PSPName>alpine/demo/MAP.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Inventory</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_Inventory</Classname>
     <PSPName>alpine/demo/INVENTORY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_Inventory</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_Inventory</Classname>
     <PSPName>alpine/demo/INVENTORY.PSP</PSPName>
   </element>
 -->
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.report.PSP_Report</Classname>
+    <Classname>org.cougaar.mlm.ui.report.PSP_Report</Classname>
     <PSPName>alpine/demo/REPORT.PSP</PSPName>
   </element>
 -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_EquipmentTransport</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_EquipmentTransport</Classname>
     <PSPName>alpine/demo/EQUIPMENTTRANSPORT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_Stoplight</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_Stoplight</Classname>
     <PSPName>alpine/demo/STOPLIGHT.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_Readiness</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.xmlservice.PSP_Readiness</Classname>
     <PSPName>alpine/demo/READINESS.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_Itinerary</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.transportation.PSP_Itinerary</Classname>
     <PSPName>alpine/demo/ITINERARY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.transportation.PSP_Carrier_Itinerary</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.transportation.PSP_Carrier_Itinerary</Classname>
     <PSPName>alpine/demo/CARRIER_ITINERARY.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_UIAssets</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_UIAssets</Classname>
     <PSPName>alpine/demo/UIASSETS.PSP</PSPName>
   </element>
 <!--
@@ -169,20 +169,20 @@ Additional PSPs loaded by PSP Launcher
   </element>
 -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.perturbation.asset.PSP_AssetPerturbation</Classname>
+    <Classname>org.cougaar.mlm.ui.perturbation.asset.PSP_AssetPerturbation</Classname>
     <PSPName>alpine/demo/ASSET_PERTURBATION.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_InputTaskAssetVolume</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_InputTaskAssetVolume</Classname>
     <PSPName>alpine/demo/TRANSPORT_VOLUME.PSP</PSPName>
   </element>
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_FailedAllocation</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_FailedAllocation</Classname>
     <PSPName>alpine/demo/FAILEDALLOCATION.PSP</PSPName>
   </element>
   <element type="org.cougaar.lib.planserver.NamedPSP">
-    <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Maintenance</Classname>
+    <Classname>org.cougaar.mlm.ui.psp.plan.PSP_Maintenance</Classname>
     <PSPName>alpine/demo/MAINTENANCE.PSP</PSPName>
   </element>
 -->

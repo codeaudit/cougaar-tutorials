@@ -7,8 +7,8 @@ package org.cougaar.tutorial.faststart;
  */
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * Utility class for writing all tutorial plugin classes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialUtils.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: TutorialUtils.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  **/
 public class TutorialUtils {
 

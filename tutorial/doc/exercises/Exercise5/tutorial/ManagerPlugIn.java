@@ -21,9 +21,9 @@
 package tutorial;
 
 import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
 
 /**
  * This COUGAAR PlugIn creates and publishes "CODE" tasks

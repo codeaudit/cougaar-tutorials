@@ -6,8 +6,8 @@ package org.cougaar.tutorial.faststart.computer;
  * This software to be used in accordance with the COUGAAR license agreement.
  */
 
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.tutorial.faststart.computer.assets.ComputerAsset;
@@ -17,7 +17,7 @@ import org.cougaar.tutorial.faststart.computer.assets.ComputerAsset;
  * Package of static utility methods and constants in support
  * of the Computer tutorial lesson.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerUtils.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: ComputerUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  **/
 public class ComputerUtils {
 

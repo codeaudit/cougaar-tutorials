@@ -43,7 +43,7 @@ LIBPATHS=$COUGAAR_INSTALL_PATH/lib/tutorial.jar:$LIBPATHS
 
 MYPROPERTIES=
 MYMEMORY=
-MYCLASSES=org.cougaar.core.society.Node
+MYCLASSES=org.cougaar.core.node.Node
 MYARGUMENTS=" -c -n $1"
 
 # @ECHO ON

@@ -6,9 +6,9 @@ package org.cougaar.tutorial.faststart.computer;
  * This software to be used in accordance with the COUGAAR license agreement.
  */
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.computer.assets.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
@@ -17,7 +17,7 @@ import java.util.Vector;
 /**
  * Simple Plugin to list new instances of ComputerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerAssetListerPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: ComputerAssetListerPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  */
 public class ComputerAssetListerPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {

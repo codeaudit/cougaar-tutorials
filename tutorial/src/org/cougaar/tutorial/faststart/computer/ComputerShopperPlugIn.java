@@ -8,8 +8,8 @@ package org.cougaar.tutorial.faststart.computer;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -18,7 +18,7 @@ import org.cougaar.util.UnaryPredicate;
  * and as soon as possible' with different scoring functions and weights.
  * Operates in both estimate and ordering modes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerShopperPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: ComputerShopperPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  */
 public class ComputerShopperPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {

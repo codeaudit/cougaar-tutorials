@@ -21,13 +21,13 @@
 package tutorial;
 
 import org.cougaar.core.plugin.SimplePlugIn;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import java.util.*;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.glm.ldm.asset.Organization;
-import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**

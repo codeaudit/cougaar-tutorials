@@ -6,14 +6,14 @@ package org.cougaar.tutorial.faststart.binary;
   * This software to be used in accordance with the COUGAAR license agreement.
 **/
 
-import org.cougaar.domain.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.*;
 import java.util.*;
 
 /**
  * Class containing static methods and constants useful in constructing 
  * the Binary search tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryUtils.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: BinaryUtils.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  **/
 public class BinaryUtils {
 

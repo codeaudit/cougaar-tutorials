@@ -6,9 +6,9 @@ package org.cougaar.tutorial.faststart.calendar;
  * This software to be used in accordance with the COUGAAR license agreement.
  */
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
@@ -21,7 +21,7 @@ import java.util.*;
  * It has a list of allocations in its RoleSchedule, and 
  * it has a list of appointments.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAssessorPlugIn.java,v 1.2 2001-01-30 21:10:25 wwright Exp $
+ * @version $Id: CalendarAssessorPlugIn.java,v 1.3 2001-12-27 23:53:14 bdepass Exp $
  **/
 public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
 {

@@ -21,15 +21,15 @@
 package org.cougaar.tutorial.faststart;
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.planning.ldm.asset.*;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.core.agent.ClusterIdentifier;
 
 /**
  * Plugin to facilitate simple hooking up of clusters 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugIn.java,v 1.3 2001-08-22 20:30:52 mthome Exp $
+ * @version $Id: TutorialHookupPlugIn.java,v 1.4 2001-12-27 23:53:14 bdepass Exp $
  */
 public class TutorialHookupPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

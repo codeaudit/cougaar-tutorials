@@ -22,14 +22,14 @@ package tutorial;
 
 import org.cougaar.core.plugin.*;
 import tutorial.assets.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.domain.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.domain.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 
 /**
  * This COUGAAR PlugIn creates and publishes ProgrammerAsset objects.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugIn.java,v 1.2 2001-08-22 20:30:44 mthome Exp $
+ * @version $Id: ProgrammerLDMPlugIn.java,v 1.3 2001-12-27 23:52:59 bdepass Exp $
  */
 public class ProgrammerLDMPlugIn extends SimplePlugIn {
   /**

@@ -7,14 +7,14 @@ package org.cougaar.tutorial.faststart.hanoi;
 **/
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.tutorial.faststart.*;
 
 /**
  * Plugin to initialize the Hanoi processing by creating
  * an initial task based on number of disks read from command line
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiInitPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: HanoiInitPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
  **/
 public class HanoiInitPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

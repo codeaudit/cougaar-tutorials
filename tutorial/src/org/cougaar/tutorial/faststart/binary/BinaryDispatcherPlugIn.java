@@ -7,10 +7,10 @@ package org.cougaar.tutorial.faststart.binary;
  */
 
 import java.util.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.core.cluster.ClusterIdentifier;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.agent.ClusterIdentifier;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 
@@ -20,7 +20,7 @@ import org.cougaar.util.UnaryPredicate;
  * results are copied to estimated, while the BinaryIterator waits for this
  * copy to take place before proceeding.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryDispatcherPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: BinaryDispatcherPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  */
 public class BinaryDispatcherPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

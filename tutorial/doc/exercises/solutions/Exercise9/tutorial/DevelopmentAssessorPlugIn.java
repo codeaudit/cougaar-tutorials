@@ -20,9 +20,9 @@
  */
 package tutorial;
 
-import org.cougaar.core.cluster.IncrementalSubscription;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -37,7 +37,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugIn.java,v 1.2 2001-08-22 20:30:51 mthome Exp $
+ * @version $Id: DevelopmentAssessorPlugIn.java,v 1.3 2001-12-27 23:53:13 bdepass Exp $
  **/
 public class DevelopmentAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {

@@ -8,9 +8,9 @@ package org.cougaar.tutorial.faststart.binary;
 
 import java.util.*;
 import org.cougaar.tutorial.faststart.*;
-import org.cougaar.domain.planning.ldm.plan.*;
-import org.cougaar.domain.planning.ldm.asset.Asset;
-import org.cougaar.core.cluster.IncrementalSubscription;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -18,7 +18,7 @@ import org.cougaar.util.UnaryPredicate;
  * determines if the preferences (numeric bounds on the guess) contain
  * the number, returning success/failure accordingly
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryResponderPlugIn.java,v 1.1 2000-12-15 20:19:04 mthome Exp $
+ * @version $Id: BinaryResponderPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
  */
 public class BinaryResponderPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 {
