@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<society name='Exercise-1'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:noNamespaceSchemaLocation='http://www.cougaar.org/2003/society.xsd'>
+<host name="">
+  <node name="">
+    <agent name="" class="">
+      <component
+        name=""
+        class=""
+        priority="COMPONENT"
+        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+      </component>
+      <component
+        name=""
+        class=""
+        priority="COMPONENT"
+        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+      </component>
+    </agent>
+  </node>
+</host>
+</society>
