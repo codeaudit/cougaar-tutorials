@@ -51,7 +51,9 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**
- * Shows collected RSVPs from invited guests at "/pizza".
+ * The main UI for the application: shows collected RSVPs from invited guests 
+ * at "/pizza", and the progress on ordering the pizza. 
+ * 
  * Load into the Agent doing the inviting (has the {@link PizzaPreferences} object).
  * In our case, that is Alice.
  */
@@ -60,6 +62,9 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
   protected LoggingService logger;
   protected String agentID;
 
+  /**
+   * Load services needed by this servlet: BlackboardQueryService, AgentIDService.
+   */
   public void load() {
     super.load();
 
@@ -78,9 +83,11 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       agentIDService = null;
     }
   }
-
-  // Whenever you have a load() method, you should have an unload
-  public void unload() {
+  
+  /**
+   * Whenever you have a load() method, you should have an unload, to release services.
+   */
+   public void unload() {
     if (blackboardQueryService != null) {
       serviceBroker.releaseService(this, BlackboardQueryService.class, blackboardQueryService);
       blackboardQueryService = null;
@@ -89,7 +96,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
   }
 
   /**
-   * This servlet listens at "/pizza"
+   * This servlet listens at "/pizza".
    */
   protected String getPath() {
     return "/pizza";
@@ -177,7 +184,12 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       // FIXME: Add support for FORMAT_XML and FORMAT_DATA
     }
 
+    /**
+     * Get HTML to represent the Orders that have been placed.
+     * @return HTML for output
+     */
     protected String getHtmlForOrders() {
+      // Get the Expansion of the root Task of verb Order
       Collection pizzaOrders = blackboardQueryService.query(new UnaryPredicate() {
         public boolean execute(Object o) {
           if (o instanceof Expansion) {
@@ -193,32 +205,43 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       } else {
         Iterator iter = pizzaOrders.iterator();
         StringBuffer buf = new StringBuffer();
+
+	// Loop over the Expansions (expect only one)
         while(iter.hasNext()) {
           Expansion exp = (Expansion)iter.next();
 
-          // Completely done, look for Confidence == 1.
+          // We are completely done when Confidence == 1.
 
           buf.append("<center>");
           buf.append("<table border=\"1\"><tr><td><b>Quantity</b></td><td><b>Type</b></td><td><b>Ordered From</b></td></tr>");
           Enumeration enum = exp.getWorkflow().getTasks();
+	  // Loop over the sub-tasks
           while(enum.hasMoreElements()) {
             buf.append("<tr>");
             Task t = (Task)enum.nextElement();
             buf.append("<td>");
+	    // Number of pizzas ordered
             double qty = t.getPreferredValue(AspectType.QUANTITY);
             buf.append(String.valueOf(qty));
             buf.append("</td>");
             buf.append("<td>");
+	    // Kind of pizza ordered
             buf.append(t.getDirectObject().getItemIdentificationPG().getItemIdentification());
             buf.append("</td>");
             buf.append("<td>");
-            buf.append(((Allocation)t.getPlanElement()).getAsset().getItemIdentificationPG().getItemIdentification());
+	    // Store ordered from
+	    if (t.getPlanElement() != null)
+	      buf.append(((Allocation)t.getPlanElement()).getAsset().getItemIdentificationPG().getItemIdentification());
+	    else
+	      buf.append("[Order not allocated yet.]");
             buf.append("</td>");
             buf.append("</tr>");
           }
           buf.append("</table>");
           buf.append("</center>");   // + getTypeAndItemInfo(.) + "<center><br>");
           // no plan element or have an allocation  -- have a pref. and a parent task.
+
+	  // FIXME: Show the EstimatedResult (success/fail) if any
         }
         return "<center><b>Order Placed</b></center>" + buf.toString();
       }
