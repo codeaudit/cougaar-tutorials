@@ -34,10 +34,11 @@ import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.PizzaAsset;
-import org.cougaar.pizza.util.PGCreator;
+import org.cougaar.pizza.asset.PropertyGroupFactory;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.Entity;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.Filters;
@@ -337,14 +338,18 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance(Constants.PIZZA);
 
     if (pizzaType.equals(VEGGIE)) {
-      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, VEGGIE_PIZZA));
+      pizzaAsset.addOtherPropertyGroup(PropertyGroupFactory.newVeggiePG());
+      NewItemIdentificationPG itemIDPG = PropertyGroupFactory.newItemIdentificationPG();
+      itemIDPG.setItemIdentification(VEGGIE_PIZZA);
+      pizzaAsset.setItemIdentificationPG(itemIDPG);
     }
 
     // Create a Meat Pizza Asset based on the existing pizza prototype
     if (pizzaType.equals("Meat")) {
-      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAMeatPG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, MEAT_PIZZA));
+      pizzaAsset.addOtherPropertyGroup(PropertyGroupFactory.newMeatPG());
+      NewItemIdentificationPG itemIDPG = PropertyGroupFactory.newItemIdentificationPG();
+      itemIDPG.setItemIdentification(MEAT_PIZZA);
+      pizzaAsset.setItemIdentificationPG(itemIDPG);
     }
     return pizzaAsset;
   }

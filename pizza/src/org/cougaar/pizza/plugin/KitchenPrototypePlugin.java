@@ -24,6 +24,8 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PropertyGroupFactory;
@@ -117,7 +119,9 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
     if (createMeat) {
       kitchen_asset.addOtherPropertyGroup(PropertyGroupFactory.newMeatPG());
     }
-    kitchen_asset.setItemIdentificationPG(PropertyGroupFactory.newItemIdentificationPG());
+    NewItemIdentificationPG itemIDPG = PropertyGroupFactory.newItemIdentificationPG();
+    itemIDPG.setItemIdentification("Pizza Kitchen");
+    kitchen_asset.setItemIdentificationPG(itemIDPG);
     getBlackboardService().publishAdd(kitchen_asset);
   }
 
