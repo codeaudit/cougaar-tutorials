@@ -38,7 +38,10 @@ import org.cougaar.servicediscovery.description.ServiceInfoScorer;
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 
-/* Uses 2 criteria -  
+/**
+ * ServiceDiscovery Service scoring function using Role name and an
+ * exclusion list.
+ * Uses 2 criteria -  
  *   service role must match scorer role
  *   service provider name must not match one of the names on the blacklist.
  *
@@ -62,11 +65,17 @@ public class RoleScorer implements ServiceInfoScorer {
     myBlacklist = blacklist;
   }
 
+  /**
+   * @return the Role required for this request
+   **/
   public Role getRole() {
     return myRole;
   }
   
 
+  /**
+   * @return the Collexction of excluded provider names
+   **/
   public Collection getBlacklist() {
     return myBlacklist;
   }
@@ -94,6 +103,7 @@ public class RoleScorer implements ServiceInfoScorer {
     return roleScore;
   }
 
+  // Score the role portion
   private int getRoleScore(ServiceInfo serviceInfo) {
     String serviceRole = null;
 
@@ -127,6 +137,7 @@ public class RoleScorer implements ServiceInfoScorer {
     }
   }
 
+  // Score the service provider relative to the blacklist
   private int getBlacklistScore(ServiceInfo serviceInfo) {
     for (Iterator iterator = myBlacklist.iterator();
 	 iterator.hasNext();) {
@@ -157,7 +168,7 @@ public class RoleScorer implements ServiceInfoScorer {
   }
 
   public String toString() {
-    return "Role: " + myRole;
+    return "<RoleScorer Role: " + myRole + ", Blacklist: " + myBlacklist + ">";
   }
 
 }
