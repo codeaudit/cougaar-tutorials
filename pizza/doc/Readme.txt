@@ -68,3 +68,14 @@ To see all the servlets associated with the party planner, Alice, navigate to:
 http://localhost:8800/$Alice/list
 
 6. LEARN MORE
+Read more about the story and flow (flow.html) of the
+pizza party applcation; What is supposedly going on? What are the
+components involved?
+
+These components may be re-used in your application, or modified
+slightly for your purposes. Here (extending.html) we
+discuss how you might use this code for your own purposes.
+
+Finally, this example includes some interesting design
+decisions (see design.html). You may read about these to learn more
+about some advanced Cougaar development topics.
