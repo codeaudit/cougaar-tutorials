@@ -71,6 +71,7 @@ public class ScheduleServlet extends HttpServlet
 
 		PrintWriter out = response.getWriter();
                 // todo: set up arraylist to failed Allocations
+                // hint: ArrayList failedAllocs
 
 		try
 		{
@@ -81,6 +82,7 @@ public class ScheduleServlet extends HttpServlet
 		  while (iter.hasNext()) {
 		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
                     // todo: pass in arraylist as argument to be filled
+                    // hint: , failedAllocs
 		    dumpProgrammerSchedule(pa, out);
 		  }
 		}
@@ -93,6 +95,8 @@ public class ScheduleServlet extends HttpServlet
 		}
 
           // todo: print out another table of the failed allocations
+          // hint: see below for how to print out allocations in a table
+          // hint: don't try to access dates because don't exist
 	}
 
 
@@ -115,6 +119,7 @@ public class ScheduleServlet extends HttpServlet
           // todo: test whether allocation is failed
           // todo: if not, print out row in table
           // todo: if so, add to failed allocation list
+          // hint: use alloc.getEstimatedResult().isSuccess())
           out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
                      "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
                      "</td><td>" + alloc.getTask().getVerb() + " " +

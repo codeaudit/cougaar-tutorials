@@ -71,6 +71,7 @@ public class ScheduleServlet extends HttpServlet
 
 		PrintWriter out = response.getWriter();
                 // todo: set up arraylist to failed Allocations
+                // hint: ArrayList failedAllocs
 
 		try
 		{
@@ -81,6 +82,8 @@ public class ScheduleServlet extends HttpServlet
 		  while (iter.hasNext()) {
 		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
                     // todo: pass in arraylist as argument to be filled
+                    // hint: , failedAllocs
+                    // more hints: dumpProgrammerSchedule(pa, out, failedAllocs);
 		    dumpProgrammerSchedule(pa, out);
 		  }
 		}
@@ -93,6 +96,19 @@ public class ScheduleServlet extends HttpServlet
 		}
 
           // todo: print out another table of the failed allocations
+          // hint: see below for how to print out allocations in a table
+          // hint: don't try to access dates because don't exist
+          // more hints: out.println ("<br><b>Failed Allocations</b><br>");
+          // more hints: out.println("<table border=1>");
+          // more hints: for (int i = 0; i < failedAllocs.size(); i++) {
+          // more hints:   Allocation alloc = (Allocation) failedAllocs.get(i);
+          // more hints:   out.println ("<tr><td>" + alloc.getTask().getVerb() + " " +
+          // more hints:            alloc.getTask().getDirectObject().
+          // more hints:              getItemIdentificationPG().getItemIdentification() +
+          // more hints:            "</td></tr>");
+          // more hints: }
+          // more hints: out.println("</table>");
+          // more hints: out.flush();
 	}
 
 
@@ -115,6 +131,19 @@ public class ScheduleServlet extends HttpServlet
           // todo: test whether allocation is failed
           // todo: if not, print out row in table
           // todo: if so, add to failed allocation list
+          // hint: use alloc.getEstimatedResult().isSuccess())
+          // more hints: String startStr = sdf.format (alloc.getStartDate());
+          // more hints: String endStr = sdf.format (new Date (alloc.getEndTime() - 1));
+          // more hints: String monthStr = startStr.equals (endStr) ? startStr :
+          // more hints:                   (startStr + "-" + endStr);
+          // more hints: if (alloc.getEstimatedResult().isSuccess())
+          // more hints:   out.print ("<tr><td>" + monthStr + "</td><td>" +
+          // more hints:     alloc.getTask().getVerb() + " " +
+          // more hints:     alloc.getTask().getDirectObject().
+          // more hints:       getItemIdentificationPG().getItemIdentification() +
+          // more hints:     "</td></tr>");
+          // more hints: else
+          // more hints:   failedAllocs.add (alloc);
           out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
                      "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
                      "</td><td>" + alloc.getTask().getVerb() + " " +

@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.6 2003-01-23 19:44:23 mthome Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.7 2003-04-10 16:00:57 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -174,7 +174,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   /**
    * This convenience function is complete as-is
    */
-  private void setPreferences(NewTask new_task,int start, int duration, int deadline) {
+  private void setPreferences(NewTask new_task, long start, int duration, long deadline) {
     // Establish preferences for task
     Vector preferences = new Vector();
 
@@ -201,7 +201,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   /**
    * This convenience function is complete as-is
    */
-  private void setPreferences(NewTask new_task, int duration, int deadline) {
+  private void setPreferences(NewTask new_task, int duration, long deadline) {
     // Establish preferences for task (just duration and deadline, not start)
     Vector preferences = new Vector();
 
@@ -231,10 +231,10 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
    */
   private void plan(NewWorkflow new_wf) {
     Task task = new_wf.getParentTask();
-    int latest_end = getEndTime(task);
+    long latest_end = getEndTime(task);
 
-    int start_month    = getStartTime(task);
-    int deadline_month = latest_end;
+    long start_month    = getStartTime(task);
+    long deadline_month = latest_end;
 
     Vector tasks = new Vector();  // Vector in which to hold subtasks
 
@@ -260,23 +260,23 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   /**
    * Get the END_TIME preference for the task
    */
-  private int getEndTime(Task t) {
+  private long getEndTime(Task t) {
     double end = 0.0;
     Preference pref = getPreference(t, AspectType.END_TIME);
     if (pref != null)
       end = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return (int)end;
+    return (long) end;
   }
 
   /**
    * Get the START_TIME preference for the task
    */
-  private int getStartTime(Task t) {
+  private long getStartTime(Task t) {
     double start = 0.0;
     Preference pref = getPreference(t, AspectType.START_TIME);
     if (pref != null)
       start = pref.getScoringFunction().getBest().getAspectValue().getValue();
-    return (int)start;
+    return (long) start;
   }
   /**
    * Get the DURATION preference for the task

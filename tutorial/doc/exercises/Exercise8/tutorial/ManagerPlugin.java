@@ -96,6 +96,14 @@ protected void setupSubscriptions() {
   getBlackboardService().publishAdd(what_else_to_code);
   getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
+  // Create a task to code something java
+  what_else_to_code = factory.createInstance(what_to_code);
+  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+  iipg.setItemIdentification("straw that broke the camel's back");
+  what_else_to_code.setItemIdentificationPG(iipg);
+  getBlackboardService().publishAdd(what_else_to_code);
+  getBlackboardService().publishAdd(makeTask(what_else_to_code));
+
 
 }
 

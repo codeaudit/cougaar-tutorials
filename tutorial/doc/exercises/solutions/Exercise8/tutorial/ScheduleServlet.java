@@ -70,6 +70,7 @@ public class ScheduleServlet extends HttpServlet
 	{
 
 		PrintWriter out = response.getWriter();
+                ArrayList failedAllocs = new ArrayList();
 
 		try
 		{
@@ -79,7 +80,7 @@ public class ScheduleServlet extends HttpServlet
 		  Iterator iter = programmers.iterator();
 		  while (iter.hasNext()) {
 		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
+		    dumpProgrammerSchedule(pa, out, failedAllocs);
 		  }
 		}
 		catch (Exception ex)
@@ -89,16 +90,27 @@ public class ScheduleServlet extends HttpServlet
 			System.out.println(ex);
 			out.flush();
 		}
-
+          out.println ("<br><b>Failed Allocations</b><br>");
+          out.println("<table border=1>");
+          for (int i = 0; i < failedAllocs.size(); i++) {
+            Allocation alloc = (Allocation) failedAllocs.get(i);
+            out.println ("<tr><td>" + alloc.getTask().getVerb() + " " +
+                     alloc.getTask().getDirectObject().
+                       getItemIdentificationPG().getItemIdentification() +
+                     "</td></tr>");
+          }
+          out.println("</table>");
+          out.flush();
 	}
 
 
   /**
    * Print an HTML table of this programmer's schedule to the PrintStream
    */
-  private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
+  private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out,
+                                      ArrayList failedAllocs) {
       // dump classnames and count to output stream
-      out.println("<b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
+      out.println("<br><b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
       out.println("<table border=1>");
       RoleSchedule s = pa.getRoleSchedule();
       Enumeration iter = s.getAllScheduleElements();
@@ -109,12 +121,18 @@ public class ScheduleServlet extends HttpServlet
         if (o instanceof Allocation) {
           Allocation alloc = (Allocation) o;
           SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
-          out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
-                     "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
-                     "</td><td>" + alloc.getTask().getVerb() + " " +
-                     alloc.getTask().getDirectObject().
-                       getItemIdentificationPG().getItemIdentification() +
-                     "</td></tr>");
+          String startStr = sdf.format (alloc.getStartDate());
+          String endStr = sdf.format (new Date (alloc.getEndTime() - 1));
+          String monthStr = startStr.equals (endStr) ? startStr :
+                            (startStr + "-" + endStr);
+          if (alloc.getEstimatedResult().isSuccess())
+            out.print ("<tr><td>" + monthStr + "</td><td>" +
+              alloc.getTask().getVerb() + " " +
+              alloc.getTask().getDirectObject().
+                getItemIdentificationPG().getItemIdentification() +
+              "</td></tr>");
+          else
+            failedAllocs.add (alloc);
         }
       }
       out.println("</table>");
