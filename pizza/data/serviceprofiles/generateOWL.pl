@@ -1,3 +1,6 @@
+#!/usr/bin/perl
+# -*- Perl -*-
+
 ################################################################
 # Script to generate the profile.owl files, one per provider
 # agent. Expects to use a owl template file of specific format.
@@ -57,7 +60,7 @@ sub error_out {
     exit(1);
 } # error_out
 
-// Add a description for each role 
+# Add a description for each role 
 sub setup_descriptions{
     %serviceDescriptions = (
     "PizzaProvider" => "Make and deliver pizzas. ",
