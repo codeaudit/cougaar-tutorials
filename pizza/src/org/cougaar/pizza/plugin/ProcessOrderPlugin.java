@@ -32,7 +32,6 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PizzaAsset;
-import org.cougaar.pizza.asset.PizzaPartyAsset;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.plugin.util.PluginHelper;
@@ -142,7 +141,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
    */
   private boolean checkWithKitchen(Task newTask) {
     boolean canMakePizza = true;
-    PizzaPartyAsset directObject = (PizzaAsset) newTask.getDirectObject();
+    PizzaAsset directObject = (PizzaAsset) newTask.getDirectObject();
     // Compare PGs on the pizza to PGs on the kitchen
     // check the veggie pg
     boolean vegPG = directObject.hasVeggiePG();
