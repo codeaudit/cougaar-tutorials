@@ -41,7 +41,6 @@ import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.plugin.util.PluginHelper;
 
-import javax.servlet.Filter;
 import java.util.*;
 
 /**
@@ -53,6 +52,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   private IncrementalSubscription selfSub;
   private IncrementalSubscription pizzaPrefSub;
   private IncrementalSubscription findProvidersDispositionSub;
+   private IncrementalSubscription allocationSub;
   private IncrementalSubscription expansionSub;
   private Subscription taskSub;
   private Entity self;
@@ -74,6 +74,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     findProvidersDispositionSub = (IncrementalSubscription) blackboard.subscribe(findProvidersDispositionPred);
     expansionSub = (IncrementalSubscription) blackboard.subscribe(expansionPred);
     taskSub = blackboard.subscribe(taskPred);
+    allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
     getServices();
   }
 
@@ -100,6 +101,8 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
   }
 
   protected void execute() {
+
+    //TODO: this is wrong, need to change
     if (self == null) {
       if ( selfSub.getAddedCollection().isEmpty()) {
         //cannot do anything until our self org is set
@@ -126,6 +129,13 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
         if (! tasks.isEmpty()) {
           allocateTasks(getUnallocatedTasks());
         }
+      }
+    }
+
+    if ( ! allocationSub.getChangedCollection().isEmpty()) {
+      for (Iterator i = allocationSub.iterator(); i.hasNext();) {
+        PlanElement pe = (PlanElement) i.next();
+        PluginHelper.updatePlanElement(pe);
       }
     }
   }
@@ -293,6 +303,16 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     public boolean execute(Object o) {
       if (o instanceof Task) {
         Task task = (Task) o;
+        return (task.getVerb().equals(Constants.ORDER));
+      }
+      return false;
+    }
+  };
+
+   private static UnaryPredicate allocationPred = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof Allocation) {
+        Task task = ((Allocation) o).getTask();
         return (task.getVerb().equals(Constants.ORDER));
       }
       return false;
