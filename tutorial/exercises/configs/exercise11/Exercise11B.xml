@@ -1,0 +1,115 @@
+<?xml version='1.0'?>
+<society name='Exercise-11B'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:noNamespaceSchemaLocation='http://www.cougaar.org/2003/society.xsd'>
+  <host name="localhost">
+    <node name="Exercise11B">
+      <agent name="Development" class="org.cougaar.core.agent.SimpleAgent">
+        <component
+          name="org.cougaar.tutorial.exercise11.ProgrammerLDMPlugin"
+          class="org.cougaar.tutorial.exercise11.ProgrammerLDMPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        <component
+          name="org.cougaar.tutorial.exercise11.DevelopmentAllocatorPlugin"
+          class="org.cougaar.tutorial.exercise11.DevelopmentAllocatorPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        <component
+          name="org.cougaar.tutorial.exercise11.DevelopmentExpanderPlugin"
+          class="org.cougaar.tutorial.exercise11.DevelopmentExpanderPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        
+        <component
+          name="org.cougaar.tutorial.exercise11.DevelopmentAssessorPlugin"
+          class="org.cougaar.tutorial.exercise11.DevelopmentAssessorPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        <component
+          name="org.cougaar.tutorial.exercise11.TakeVacationServlet"
+          class="org.cougaar.tutorial.exercise11.TakeVacationServlet"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        
+        <component
+          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        <component
+          name="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          class="org.cougaar.mlm.plugin.organization.OrgReportPlugin"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        </component>
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.couggar.planning.servlet.CompletionServlet, /completion)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.CompletionServlet</argument>
+          <argument>/completion</argument>
+        </component>
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.couggar.tutorial.exercise11.ScheduleServlet, /showSchedule)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.tutorial.exercise11.ScheduleServlet</argument>
+          <argument>/showSchedule</argument>
+        </component>
+        <component
+          name='org.cougaar.mlm.plugin.organization.OrgDataParamPlugin()'
+          class='org.cougaar.mlm.plugin.organization.OrgDataParamPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+          <argument>
+                  Prototype:Organization
+          </argument>
+          <argument>
+            ClusterPG:MessageAddress:MessageAddress:Development
+          </argument>
+          <argument>
+                  ItemIdentificationPG:ItemIdentification:String:Development
+          </argument>
+          <argument>
+                  ItemIdentificationPG:Nomenclature:String:Development
+          </argument>
+          <argument>
+                  ItemIdentificationPG:AlternateItemIdentification:String:Bob's Department
+          </argument>
+          <argument>
+                  TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg
+          </argument>
+          <argument>
+                  TypeIdentificationPG:Nomenclature:String:Software Development
+          </argument>
+          <argument>
+                  TypeIdentificationPG:AlternateTypeIdentification:String:Bob's Department
+          </argument>
+          <argument>
+                  OrganizationPG:Roles:Collection&lt;Role&gt;:SoftwareDevelopment
+          </argument>
+          <argument>
+            Relationship:MessageAddress=Management,ItemIdentification=Management,TypeIdentification=UTC/RTOrg,Role=SoftwareDevelopment,StartTime=01/01/2000 12:00 am,EndTime=
+          </argument>
+        </component>
+      </agent>
+    </node>
+  </host>
+</society>
