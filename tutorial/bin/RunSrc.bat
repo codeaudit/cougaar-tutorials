@@ -57,7 +57,7 @@ IF "%EX%"=="11A" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\e
 IF "%EX%"=="11a" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
 IF "%EX%"=="11B" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
 IF "%EX%"=="11b" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
-SET NODE="Exercise%EX%Node.ini"
+SET NODE="Exercise%EX%Node"
 GOTO L_6
 
 :L_6
