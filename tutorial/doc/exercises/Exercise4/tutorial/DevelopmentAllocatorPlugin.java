@@ -40,7 +40,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.8 2003-04-08 22:58:33 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.9 2003-04-17 12:59:50 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -62,41 +62,38 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     return domainService;
   }
 
-  private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
-  private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
+  // todo:  add instance variables to hold subscriptions
+
+
+
+
 
   /**
-   * Predicate matching all ProgrammerAssets
+   * todo: Predicate matching all ProgrammerAssets
    */
-  private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof ProgrammerAsset;
-    }
-  };
+
+
+
+
+
+
 
   /**
-   * Predicate that matches all Test tasks
+   * todo: Predicate that matches all CODE tasks
    */
-  private UnaryPredicate codeTaskPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task)
-      {
-        Task task = (Task)o;
-        return task.getVerb().equals(Verb.getVerb("CODE"));
-      }
-      return false;
-    }
-  };
+
+
+
+
 
 
   /**
-   * Establish subscription for tasks and assets
+   * todo:  Establish subscription for tasks and assets
+   *        Store subscriptions in the instance variables above
    **/
   public void setupSubscriptions() {
-    allProgrammers =
-      (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
-    allCodeTasks =
-      (IncrementalSubscription)getBlackboardService().subscribe(codeTaskPredicate);
+
+
   }
 
   /**
@@ -105,13 +102,10 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentAllocatorPlugin::execute");
 
-    // process unallocated tasks
-    Enumeration task_enum = allCodeTasks.elements();
-    while (task_enum.hasMoreElements()) {
-      Task task = (Task)task_enum.nextElement();
-      if (task.getPlanElement() == null)
-        allocateTask(task);
-    }
+    // Plan any new software development tasks
+    // todo:  Allocate new tasks using the allocateTask fn later in this file
+
+
   }
 
   /**
@@ -120,7 +114,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    */
   private void allocateTask(Task task) {
     // select an available programmer at random
-    Vector programmers = new Vector(allProgrammers.getCollection());
+    // todo:  get a vector containing the programmers
+    Vector programmers = null;// get all of the programmers from the subscription
     boolean allocated = false;
     while ((!allocated) && (programmers.size() > 0)) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
@@ -137,12 +132,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       AllocationResult estAR =
         new AllocationResult (1.0, true, findInterval (asset));
 
-      Allocation allocation =
-        ((PlanningFactory)getDomainService().getFactory("planning")).
-          createAllocation(task.getPlan(), task,
-                                  asset, estAR, Role.ASSIGNED);
+      // todo: Create an allocation and put it on the Blackboard
 
-      getBlackboardService().publishAdd(allocation);
+
       allocated = true;
     }
   }
@@ -160,6 +152,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       // startDate should be right after last task assigned
       startDate = new Date (sched.getEndTime());
     else {
+
       // startDate should be first day of next month
       GregorianCalendar cal = new GregorianCalendar();
       cal.add (GregorianCalendar.MONTH, 1);
