@@ -37,6 +37,8 @@ import java.util.Set;
 import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 
+import org.cougaar.pizza.Constants;
+
 /**
  * Stores mapping from friend to their pizza preference
  * <p/>
@@ -68,9 +70,9 @@ public class PizzaPreferences implements UniqueObject {
   public void addFriendToPizza(String friend, String preference) {
     friendToPizza.put(friend, preference);
 
-    if (preference.toLowerCase().equals("meat"))
+    if (preference.toLowerCase().equals(Constants.MEAT_PIZZA))
       numMeat++;
-    else if (preference.toLowerCase().equals("veg"))
+    else if (preference.toLowerCase().equals(Constants.VEGGIE_PIZZA))
       numVeg++;
     else
       log.warn("unknown preference " + preference + " for " + friend);
