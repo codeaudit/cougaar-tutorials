@@ -29,6 +29,7 @@ import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.PizzaAsset;
@@ -40,6 +41,7 @@ import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.plugin.util.PluginHelper;
 
+import javax.servlet.Filter;
 import java.util.*;
 
 /**
@@ -52,9 +54,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private IncrementalSubscription pizzaPrefSub;
   private IncrementalSubscription findProvidersDispositionSub;
   private IncrementalSubscription expansionSub;
+  private Subscription taskSub;
   private Entity self;
   private PlanningFactory planningFactory;
-  private List tasksToAllocate = new ArrayList();
 
   private static final String AS = "AS";
   private static final String VEGGIE = "Veggie";
@@ -64,19 +66,24 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
   public void load() {
     super.load();
-    LoggingService ls = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
-    logger = LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
-    planningFactory = getPlanningFactory();
   }
 
   protected void setupSubscriptions() {
-    logger.error(" setupSubscriptions called");
-    domainService = getDomainService();
     selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
     pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
     findProvidersDispositionSub = (IncrementalSubscription) blackboard.subscribe(findProvidersDispositionPred);
     expansionSub = (IncrementalSubscription) blackboard.subscribe(expansionPred);
+    taskSub = blackboard.subscribe(taskPred);
+    getServices();
   }
+
+  private void getServices () {
+    domainService = getDomainService();
+    LoggingService ls = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
+    logger = LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
+    planningFactory = (PlanningFactory) domainService.getFactory("planning");
+  }
+
 
   /**
    * Used by the binding utility through reflection to set my DomainService
@@ -106,50 +113,44 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       PizzaPreferences pizzaPrefs = (PizzaPreferences) iterator.next();
       logger.error(" found pizzaPrefs "  + pizzaPrefSub);
       // For now we assume only one, but we should enhance to accommodate many
-      publishFindProvidersTask();
-      createOrderTaskAndExpand(pizzaPrefs);
-      allocateTasks();
+      Task orderTask = makeOrderTask();
+      Collection subtasks = expandTask(pizzaPrefs, orderTask);
+      allocateTasks(subtasks);
     }
 
     if (selfSub.getChangedList().hasMoreElements()) {
       logger.error(" self entity changed,  trying to allocate ");
-      allocateTasks();
+      Collection tasks = getUnallocatedTasks();
+      if (! tasks.isEmpty()) {
+        allocateTasks(tasks);
+      }
     }
-//    for (Iterator iterator = findProvidersDispositionSub.getAddedCollection().iterator(); iterator.hasNext();) {
-//      Disposition disposition = (Disposition) iterator.next();
-//      if (disposition.isSuccess() && disposition.getEstimatedResult().getConfidenceRating() == 1.0) {
-//        allocateTasks();
-//      }
-//    }
   }
 
-  private void allocateTasks() {
+  private void allocateTasks(Collection tasks) {
     Collection providers = getProviderOrgAssets();
     Entity provider = null;
     for (Iterator iterator = providers.iterator(); iterator.hasNext();) {
       provider = (Entity) iterator.next();
     }
     if (provider != null) {
-      for (Iterator i = tasksToAllocate.iterator(); i.hasNext();) {
+      for (Iterator i = tasks.iterator(); i.hasNext();) {
         Task newTask = (Task) i.next();
         AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
         Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
                                                             Role.getRole(Constants.PIZZA_PROVIDER));
         blackboard.publishAdd(alloc);
         logger.error(" allocating task " + newTask);
-        //tasksToAllocate.remove(newTask);
       }
-      tasksToAllocate.clear();
     }
   }
 
-  private void createOrderTaskAndExpand(PizzaPreferences pizzaPrefs) {
-    Task parentTask = makeOrderTask();
+  private Collection expandTask(PizzaPreferences pizzaPrefs, Task parentTask) {
+    ArrayList tasksToAllocate = new ArrayList();
     NewTask meatPizzaTask = makePizzaTask(MEAT);
     meatPizzaTask.setParentTask(parentTask);
     NewTask veggiePizzaTask = makePizzaTask(VEGGIE);
     veggiePizzaTask.setParentTask(parentTask);
-    blackboard.publishAdd(parentTask);
 
     NewWorkflow wf = planningFactory.newWorkflow();
     wf.setParentTask(parentTask);
@@ -166,18 +167,10 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     blackboard.publishAdd(veggiePizzaTask);
     tasksToAllocate.add(meatPizzaTask);
     tasksToAllocate.add(veggiePizzaTask);
-  }
-
-  private PlanningFactory getPlanningFactory() {
-    PlanningFactory factory = null;
-    if (domainService != null) {
-      factory = (PlanningFactory) domainService.getFactory("planning");
-    }
-    return factory;
+    return tasksToAllocate;
   }
 
   private void publishFindProvidersTask() {
-    PlanningFactory planningFactory = getPlanningFactory();
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.FIND_PROVIDERS));
     newTask.setPlan(planningFactory.getRealityPlan());
@@ -189,7 +182,6 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     blackboard.publishAdd(newTask);
   }
 
-  // TODO:  placeholder for now, may need to change significantly
   private NewTask makePizzaTask(String pizzaType) {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
@@ -198,12 +190,12 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return newTask;
   }
 
-// TODO:  placeholder for now, may need to change significantly
   private Task makeOrderTask() {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
     newTask.setPlan(planningFactory.getRealityPlan());
     newTask.setDirectObject(planningFactory.createInstance(Constants.PIZZA));
+    blackboard.publishAdd(newTask);
     return newTask;
   }
 
@@ -236,6 +228,10 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return providers;
   }
 
+  private Collection getUnallocatedTasks() {
+    return Filters.filter((Collection) taskSub, undisposedTasks);
+  }
+
   private static UnaryPredicate selfPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Entity) {
@@ -257,7 +253,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   /**
    * A predicate that matches dispositions of "FindProviders" tasks
    */
-  private static UnaryPredicate findProvidersDispositionPred = new UnaryPredicate (){
+  private static UnaryPredicate findProvidersDispositionPred = new UnaryPredicate () {
     public boolean execute(Object o) {
       if (o instanceof Disposition) {
         Task task = ((Disposition) o).getTask();
@@ -267,14 +263,34 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
-   /**
+  private static UnaryPredicate undisposedTasks = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof Task)  {
+        Task task = (Task) o;
+        return (task.getPlanElement() == null);
+      }
+      return false;
+    }
+  };
+
+  /**
    * A predicate that matches expansions of "ORDER" tasks
    */
-  private static UnaryPredicate expansionPred = new UnaryPredicate (){
+  private static UnaryPredicate expansionPred = new UnaryPredicate () {
     public boolean execute(Object o) {
       if (o instanceof Expansion) {
         Task task = ( (Expansion) o).getTask();
         return task.getVerb().equals(Verb.get(Constants.ORDER));
+      }
+      return false;
+    }
+  };
+
+  private static UnaryPredicate taskPred = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof Task) {
+        Task task = (Task) o;
+        return (task.getVerb().equals(Constants.ORDER));
       }
       return false;
     }
