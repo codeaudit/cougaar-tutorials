@@ -25,80 +25,77 @@
  */
 package org.cougaar.pizza.plugin;
 
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.service.DomainService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PizzaAsset;
 import org.cougaar.pizza.asset.PizzaPartyAsset;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.util.UnaryPredicate;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 /**
- *
+ * This plugin processes pizza orders at the pizza provider agents.
  */
 public class ProcessOrderPlugin extends ComponentPlugin {
   private LoggingService logger;
   private DomainService domainService;
-  private IncrementalSubscription tasksSub;
-  private IncrementalSubscription kitchenAssetSub;
+  private IncrementalSubscription tasksSubscription;
+  private IncrementalSubscription kitchenAssetSubscription;
   private PlanningFactory pFactory = null;
   private KitchenAsset kitchen = null;
 
   /**
-   * Used by the binding utility through reflection to set my DomainService
+   * Set up our services and our factory.
    */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
+  public void load() {
+    super.load();
+
+    logger = (LoggingService)
+        getServiceBroker().getService(this, LoggingService.class, null);
+    domainService = (DomainService)
+        getServiceBroker().getService(this, DomainService.class, null);
+    pFactory = (PlanningFactory) domainService.getFactory("planning");
   }
 
   /**
-   * Used by the binding utility through reflection to get my DomainService
+   * Create the subscriptions to my tasks and kitchen assets
    */
-  public DomainService getDomainService() {
-    return domainService;
-  }
-
-  public void load() {
-    super.load();
-    logger = getLoggingService(this);
-  }
-
   protected void setupSubscriptions() {
-    tasksSub = (IncrementalSubscription) blackboard.subscribe(OrderTasksPred);
-    kitchenAssetSub = (IncrementalSubscription) blackboard.subscribe(KitchenAssetPred);
-    getPlanningFactory();
+    tasksSubscription = (IncrementalSubscription)
+        getBlackboardService().subscribe(OrderTasksPred);
+    kitchenAssetSubscription = (IncrementalSubscription)
+        getBlackboardService().subscribe(KitchenAssetPred);
   }
 
-  private LoggingService getLoggingService(Object requestor) {
-    return (LoggingService) getServiceBroker().getService(requestor, LoggingService.class, null);
-  }
-
+  /**
+   * Process the subscriptions
+   */
   protected void execute() {
     // Make sure we have a kitchen asset before we allocate our tasks.
-    // We only expect 1 kitchen asset so we'll exit if we don't have one and set it when we do.
+    // We only expect 1 kitchen asset so we'll exit if we don't have
+    // one and set it when we do.
     if (kitchen == null) {
-      if (!kitchenAssetSub.isEmpty()) {
-        kitchen = (KitchenAsset) kitchenAssetSub.first();
-        // allocate all of the tasks on our subscription so far in case we missed
-        // some on the added list while our kitchen asset was null
-        allocateOrderTasks(tasksSub.getCollection());
+      if (!kitchenAssetSubscription.isEmpty()) {
+        kitchen = (KitchenAsset) kitchenAssetSubscription.first();
+        // allocate all of the tasks on our subscription so far in case we
+        // missed some on the added list while our kitchen asset was null
+        allocateOrderTasks(tasksSubscription.getCollection());
       }
-      //if the kitchen asset is still not there return out of the execute cycle
-      if (kitchen == null) {
-        return;
-      }
+      //if the kitchen asset is still not there return out of the
+      // execute cycle
+      if (kitchen == null) { return; }
     } else {
       //if we have our kitchen asset process our tasks
       //Right now assume we only get new tasks and no changes
-      Collection newOrderTasks = tasksSub.getAddedCollection();
+      Collection newOrderTasks = tasksSubscription.getAddedCollection();
       // Try to allocate the new Order tasks
       allocateOrderTasks(newOrderTasks);
     }
@@ -106,6 +103,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
 
   /**
    * Allocate the new order tasks to the pizza kitchen asset
+   * @param newOrderTasks The tasks that are ordering pizzas from our
+   * kitchen.
    */
   private void allocateOrderTasks(Collection newOrderTasks) {
     for (Iterator i = newOrderTasks.iterator(); i.hasNext();) {
@@ -115,24 +114,31 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       boolean kitchenCanMake = checkWithKitchen(newTask);
       AllocationResult ar;
       if (kitchenCanMake) {
-        ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
+        ar = PluginHelper.createEstimatedAllocationResult(newTask,
+                                                          pFactory, 1.0,
+                                                          kitchenCanMake);
       } else {
-        // if we can't make the pizza provide a failed allocation result with a quantity of zero.
-        AspectValue qtyAspectValue = AspectValue.newAspectValue(AspectType.QUANTITY, 0);
+        // if we can't make the pizza provide a failed allocation result
+        // with a quantity of zero.
+        AspectValue qtyAspectValue =
+            AspectValue.newAspectValue(AspectType.QUANTITY, 0);
         AspectValue[] aspectValueArray = {qtyAspectValue};
-        ar = pFactory.newAllocationResult(1.0, kitchenCanMake, aspectValueArray);
+        ar = pFactory.newAllocationResult(1.0, kitchenCanMake,
+                                          aspectValueArray);
       }
-      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask,kitchen,
-                                                   ar, Constants.Role.PIZZAPROVIDER);
-      blackboard.publishAdd(alloc);
+      Allocation alloc =
+          pFactory.createAllocation(newTask.getPlan(), newTask, kitchen,
+                                    ar, Constants.Role.PIZZAPROVIDER);
+      getBlackboardService().publishAdd(alloc);
     }
   }
 
   /**
-   * Check with our kitchen asset to see if it can make the requested type of pizza
+   * Check with our kitchen asset to see if it can make the requested
+   * type of pizza
    * @param newTask The order task.
-   * @return boolean If we can make the pizza - determines if the AllocationResult is
-   *         successful or not.
+   * @return boolean If we can make the pizza - determines if the
+   * AllocationResult is successful or not.
    */
   private boolean checkWithKitchen(Task newTask) {
     boolean canMakePizza = true;
@@ -163,17 +169,6 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       }
     }
     return canMakePizza;
-  }
-
-  /**
-   * Get the planning factory if we already have it, if not set it.
-   * @return PlanningFactory The factory that creates planning objects.
-   */
-  private PlanningFactory getPlanningFactory() {
-    if (domainService != null && pFactory == null) {
-      pFactory = (PlanningFactory) domainService.getFactory("planning");
-    }
-    return pFactory;
   }
 
   /**
