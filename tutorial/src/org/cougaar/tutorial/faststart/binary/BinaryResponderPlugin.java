@@ -21,7 +21,7 @@ import org.cougaar.core.service.DomainService;
  * determines if the preferences (numeric bounds on the guess) contain
  * the number, returning success/failure accordingly
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryResponderPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
+ * @version $Id: BinaryResponderPlugin.java,v 1.3 2003-01-22 23:09:10 mbarger Exp $
  */
 public class BinaryResponderPlugin extends ComponentPlugin
 {
@@ -143,14 +143,14 @@ public class BinaryResponderPlugin extends ComponentPlugin
 		       low_bound + " " + high_bound + " => " + success);
 
     // Create allocation result with this success value and return it
-    int []aspect_types = {BinaryUtils.BINARY_BOUNDS_ASPECT};
     // Report the high-low gap so we can tell what request our response is against
-    double []results = {high_bound-low_bound}; 
+    AspectValue avs[] = new AspectValue[1];
+    avs[0] = AspectValue.newAspectValue(BinaryUtils.BINARY_BOUNDS_ASPECT, high_bound-low_bound);
+
     AllocationResult allocation_result = ldmf
 	.newAllocationResult(1.0, // rating
 				 success, // are we in bounds?
-				 aspect_types,
-				 results);
+				 avs);
 
     return allocation_result;
   }

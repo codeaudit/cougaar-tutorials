@@ -22,7 +22,7 @@ import org.cougaar.core.service.DomainService;
  * The response will succeed if the solution value is within the given bounds, 
  * and fail if not.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryIteratorPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
+ * @version $Id: BinaryIteratorPlugin.java,v 1.3 2003-01-22 23:09:10 mbarger Exp $
  */
 public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugin 
 {
@@ -141,14 +141,15 @@ public class BinaryIteratorPlugin extends org.cougaar.core.plugin.ComponentPlugi
           else {
             // We picked the wrong side of the space [lower] last time, so we know
             // we're in the other half [ upper]. Break that in half and try again.
-            // Original bounds were low_bounds, and low_bounds + 2*(high_bounds-low_bounds)
+            // Original bounds were low_bounds, and low_bounds + 2*(high_bounds-low_bounds) + 1
             // So we break space between current high bounds and original high bounds
             // System.out.println("Iterating on unsuccessful previous guess");
-            double orig_high_bounds = low_bounds + 2.0*(high_bounds-low_bounds);
+            double orig_high_bounds = low_bounds + 2.0*(high_bounds-low_bounds) + 1;
             BinaryUtils.UpdatePreferences
-		(task, high_bounds, 
-		 high_bounds + (orig_high_bounds - high_bounds)/2.0,
+		(task, high_bounds + 1, 
+		 high_bounds + 1 + (orig_high_bounds - high_bounds)/2.0,
 		 ldmf);
+            //System.out.println("Trying new guess after bad one: " + high_bounds + " " + orig_high_bounds);
             getBlackboardService().publishChange(task);
           }
         }

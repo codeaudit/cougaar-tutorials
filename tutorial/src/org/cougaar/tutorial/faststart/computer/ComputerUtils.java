@@ -17,7 +17,7 @@ import org.cougaar.tutorial.faststart.computer.assets.ComputerAsset;
  * Package of static utility methods and constants in support
  * of the Computer tutorial lesson.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerUtils.java,v 1.3 2002-10-17 19:48:59 mthome Exp $
+ * @version $Id: ComputerUtils.java,v 1.4 2003-01-22 23:09:10 mbarger Exp $
  **/
 public class ComputerUtils {
 
@@ -177,10 +177,6 @@ public class ComputerUtils {
   ComputerAsset asset,
   ClusterObjectFactory theLDMF)
   {
-    // Set up aspect types
-    int []types = {
-      PRICE_ASPECT, SHIP_ASPECT, CPU_ASPECT, RAM_ASPECT    };
-
     // Set aspect-by-aspect results (0.0 if no asset provided)
     double price = 0.0;
     double ship = 0.0;
@@ -192,13 +188,18 @@ public class ComputerUtils {
       cpu = asset.getCPUPG().getClockSpeed();
       ram = asset.getMemoryPG().getRAM();
     }
-    double []results = {
-      price, ship, cpu, ram    };
+
+    // Set up aspect values
+    AspectValue avs[] = new AspectValue[4];
+    avs[0] = AspectValue.newAspectValue(PRICE_ASPECT, price);
+    avs[1] = AspectValue.newAspectValue(SHIP_ASPECT, ship);
+    avs[2] = AspectValue.newAspectValue(CPU_ASPECT, cpu);
+    avs[3] = AspectValue.newAspectValue(RAM_ASPECT, ram);
 
     AllocationResult allocation_result =
     theLDMF.newAllocationResult(1.0, // rating,
     success, // successful or failed allocation
-      types, results);
+      avs);
     return allocation_result;
   }
 

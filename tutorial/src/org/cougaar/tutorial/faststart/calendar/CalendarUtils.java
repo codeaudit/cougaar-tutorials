@@ -14,7 +14,7 @@ import org.cougaar.tutorial.faststart.*;
  * Set of static methods and constants for supporting
  * Calendar society
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarUtils.java,v 1.3 2002-10-17 19:48:59 mthome Exp $
+ * @version $Id: CalendarUtils.java,v 1.4 2003-01-22 23:09:10 mbarger Exp $
  **/
 public class CalendarUtils {
 
@@ -58,13 +58,12 @@ public class CalendarUtils {
    boolean success,
    ClusterObjectFactory theCOF)
   {
-    int []aspects = {AspectType.START_TIME};
-    double []results = {(double)scheduled_day};
+    AspectValue avs[] = new AspectValue[1];
+    avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, (double)scheduled_day);
     AllocationResult allocation_result = 
       theCOF.newAllocationResult(1.0, // rating,
 				 success, 
-				 aspects, 
-				 results);
+				 avs); 
     return allocation_result;
   }
 

@@ -20,7 +20,7 @@ import org.cougaar.core.plugin.ComponentPlugin;
  * Plugin that occassionally declares vacation days in a schedule, 
  * wreaking havoc and forcing replanning
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarPerturbingPlugin.java,v 1.1 2002-02-12 19:30:38 jwinston Exp $
+ * @version $Id: CalendarPerturbingPlugin.java,v 1.2 2003-01-22 23:09:10 mbarger Exp $
  */
 public class CalendarPerturbingPlugin extends ComponentPlugin
 {
@@ -76,7 +76,7 @@ public class CalendarPerturbingPlugin extends ComponentPlugin
       getBlackboardService().openTransaction();
       theCalendar.setAssignment(scheduled_day.intValue(), VACATION_TEXT);
       getBlackboardService().publishChange(theCalendar);
-      getBlackboardService().closeTransaction(false);
+      getBlackboardService().closeTransactionDontReset();
     }
   }
 

@@ -17,7 +17,7 @@ import org.cougaar.core.service.DomainService;
  * Simple UI plugin to create a task requesting a free day in the 
  * calendar
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarRequesterPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
+ * @version $Id: CalendarRequesterPlugin.java,v 1.3 2003-01-22 23:09:10 mbarger Exp $
  */
 public class CalendarRequesterPlugin extends ComponentPlugin
 {
@@ -59,7 +59,7 @@ public class CalendarRequesterPlugin extends ComponentPlugin
     getBlackboardService().openTransaction();
     Task task = CalendarUtils.createTask(ldmf);
     getBlackboardService().publishAdd(task);
-    getBlackboardService().closeTransaction(false);
+    getBlackboardService().closeTransactionDontReset();
   }
 
   // No execution for this plugin

@@ -33,7 +33,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.4 2002-11-19 17:33:03 twright Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.5 2003-01-22 23:09:10 mbarger Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -156,10 +156,11 @@ public class TutorialHookupPlugin extends ComponentPlugin
       ldmf.newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
                                 TutorialUtils.createDate(2010, 1, 1));
 
-    int [] aspects = {AspectType.START_TIME, AspectType.END_TIME};
-    double [] results = {schedule.getStartTime(), schedule.getEndTime()};
+    AspectValue avs[] = new AspectValue[2];
+    avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, schedule.getStartTime());
+    avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, schedule.getEndTime());
     AllocationResult est_ar = ldmf
-	.newAllocationResult(1.0, true, aspects, results);
+	.newAllocationResult(1.0, true, avs);
 
 
     AssetTransfer asset_transfer =

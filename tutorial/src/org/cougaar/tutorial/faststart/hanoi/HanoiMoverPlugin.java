@@ -36,7 +36,7 @@ import org.cougaar.core.service.*;
  *        satisfaction of preferences [Level4]
  * else error
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiMoverPlugin.java,v 1.2 2002-11-19 17:33:04 twright Exp $
+ * @version $Id: HanoiMoverPlugin.java,v 1.3 2003-01-22 23:09:11 mbarger Exp $
  **/
 public class HanoiMoverPlugin extends ComponentPlugin
 {
@@ -123,13 +123,13 @@ public class HanoiMoverPlugin extends ComponentPlugin
 	  // Create an estimate that reports that we did just what we
 	  // were asked to do
 	  // [Level4]
-	  int []aspect_types = {AspectType.START_TIME, AspectType.END_TIME};
-	  double []results = {start_time, end_time};
+          AspectValue avs[] = new AspectValue[2];
+          avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, start_time);
+          avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, end_time);
 	  estAR =  ldmf
 	      .newAllocationResult(1.0, // rating
 					      true, // success, 
-					      aspect_types, 
-					      results);
+					      avs);
 	  // End [Level4]
 
 	  Allocation allocation = ldmf

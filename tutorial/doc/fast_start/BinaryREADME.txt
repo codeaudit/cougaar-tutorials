@@ -35,8 +35,8 @@ How is it constructed?
 
 This tutorial implements a binary search algorithm in the COUGAAR infrastructure.
 
-The tutorial presents two different node/cluster models for the solution. 
-In the first, a single cluster, BinarySimple runs which contains the following
+The tutorial presents two different node/agent models for the solution. 
+In the first, a single agent, BinarySimple runs which contains the following
 Plugins:
 
 	BinaryIteratorPlugin - Iterates on preferences to converge to solution
@@ -44,19 +44,20 @@ Plugins:
 	UIPlugin - Standard COUGAAR Plugin to view log plan
 
 In the second, we demonstrate what is involved in changing such a configuration
-to a multi-cluster society. This second society contains two clsuters, 
+to a multi-agent society. This second society contains two clsuters, 
 Binary and BinaryResponder with the following Plugins:
 
 Binary:
 	BinaryIteratorPlugin - Iterates on preferences to converge to solution
 	BinaryDispatcherPlugin - Sends 'MANAGE' tasks to BinaryResponder
-		support cluster
+		support agent
 BinaryResponder:
 	BinaryResponderPlugin - Has solution value and responds to iterative 'guesses'
-	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-agent 
                 support relations
 both:
-	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web browser
+        SimpleServletComponent - Standard COUGAAR Component that here loads the
+                PlanViewServlet to allow viewing the Blackboard
 
 What to look for?
 
@@ -79,14 +80,14 @@ So it will start two agents.  The first will read Binary.ini for its configurati
 and the second will read BinaryResponder.ini for its configuration.
 
 Binary.ini has in it a few of the plugs in from BinarySimple.ini, with the rest being put in 
-BinaryResponder.ini.  You will notice that both .ini files have a PlanServer plugIn.  There 
+BinaryResponder.ini.  You will notice that both .ini files have a SimpleServletComponent.  There 
 is also another plugIn called TutorialHookupPlugin in both .ini files.  This plugIn allows 
 the two nodes to establish a role relation in order to be able to talk.  
 
 Check out the source code to see how this works.
 
 Be sure to check out the planserver web inteface to the resulting plan:
-	http://localhost:5555/alpine/demo/TASKS.PSP
+	http://localhost:8800/$Binary/tasks
 You should be able to see how each agent is holding some of the information.  In this case 
 a plan is a poor representation, but you get the idea.
 

@@ -13,7 +13,7 @@ higher one. There is a classic recursive solution to this problem given by
 			Move(Pole1, Pole1, 1);
 			Move(Pole3, Pole2, NUM_DISKS-1);
 
-This society consists of a single cluster, Hanoi, containing the following
+This society consists of a single agent, Hanoi, containing the following
 Plugins:
 
 	HanoiInitPlugin - Takes an argument of the numbers of disks, and
@@ -22,11 +22,8 @@ Plugins:
 		and allocation
 	HanoiMoverPlugin - Manages the actual disk moves (when the 
 		algorithm is down to NUM_DISKS = 1);
-	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
-                browser
-
-The society is configured with a PlanServerPlugin to 
-allow for interactive viewing of the generated log plan.
+        SimpleServletComponent - Standard COUGAAR Component that here loads the
+                PlanViewServlet to allow viewing the Blackboard
 
 Before running the society, set the environment variable COUGAAR_INSTALL_PATH
 to the directory where the COUGAAR release was unpacked.  The COUGAAR_INSTALL_PATH
@@ -37,10 +34,9 @@ The batch file will start the HanoiNode.  There will be some debug output
 showing the movement of the disks.
 
 To view the task expansion and allocations open this URL in a web browser: 
-  http://localhost:5555/alpine/demo/TASKS.PSP
+  http://localhost:8800/$Hanoi/tasks
 The web page allows viewing and navigating through the tasks that were 
 generated in the plan.  The task named Hanoi/1 is the root of the task tree.
-[NOTE: The TASKS.PSP will be provided in a later release]
 
 To quit the demonstration, type Control-C in the Hanoi node window.
 
@@ -54,12 +50,12 @@ within ALP.
 	Level 5 - Add time-wise constraints on workflows to enforce
 				time-ordering of subtasks
 
-This demo also includes a plan service provider (PSP) that shows the planned 
-activity of the mover asset.  PSP_HanoiResults.java is an example of how a PSP
+This demo also includes a servlet that shows the planned 
+activity of the mover asset.  HanoiResultsServlet.java is an example of how a servlet
 can respond to user requests by querying the log plan and writing HTML to the 
 client.  To view the plan for the mover asset, open this URL in a web browser:
-  http://localhost:5555/alpine/demo/HANOI.PSP
-The mapping between the PSP class and the URL is established in hanoi.psps.xml
-in this directory.
-[NOTE: The HANOI.PSP will be provided in a later release]
+  http://localhost:8800/$Hanoi/HANOI
+The mapping between the servlet class and the URL is established in hanoi.ini
+in the configs directory
+[NOTE: The HanoiResultsServlet will be included in a later release]
 

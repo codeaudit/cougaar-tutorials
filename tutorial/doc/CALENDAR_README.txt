@@ -3,17 +3,17 @@ COUGAAR Tutorial Problem - Calendar Scheduler
 This tutorial contains a simple calendar scheduler problem intended
 to show COUGAAR approaches towards execution monitoring and dynamic replanning.
 
-The tutorial society consists of two clusters in a single node, 
+The tutorial society consists of two agents in a single node, 
 CalendarRequester and CalendarManager, which request scheduling of events 
 and manage the scheduling of events respectively. When running, the society 
 pops up two GUI buttons to allow for creating new tasks, as well as 
 creating vacations, which in turn force the requester to replan his scheduled
 task.
 
-The clusters contain the following plugins:
+The agents contain the following plugins:
 CalendarRequester:
 	CalendarRequesterPlugin : Create requests based on UI response
-	CalendarAllocatorPlugin : Allocate new request tasks to Manager cluster
+	CalendarAllocatorPlugin : Allocate new request tasks to Manager agent
 
 CalendarManager:
 	CalendarManagerPlugin : Attempts to schedule all request tasks
@@ -21,12 +21,12 @@ CalendarManager:
 		and allocation structure and forces replanning
 	CalendarPerturbingPlugin : Grabs vacation from some scheduled time
 		based on UI response
-	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-agent 
                 support relations
 
 both:
-	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
-                browser
+        SimpleServletComponent - Standard COUGAAR Component that here loads the
+                PlanViewServlet to allow viewing the Blackboard
 
 
 Before running the society, set the environment variable COUGAAR_INSTALL_PATH

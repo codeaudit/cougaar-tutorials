@@ -42,7 +42,7 @@ How is it constructed?
 This tutorial contains a simple calendar scheduler problem intended
 to show Cougaar approaches towards execution monitoring and dynamic replanning.
 
-The tutorial society consists of two clusters in a single node, 
+The tutorial society consists of two agents in a single node, 
 CalendarRequester and CalendarManager, which request scheduling of events 
 and manage the scheduling of events respectively. When running, the society 
 pops up two GUI buttons to allow for creating new tasks, as well as 
@@ -54,10 +54,10 @@ calendar 'datebook' and the need to replan tasks.
 
 
 
-The clusters contain the following plugins:
+The agents contain the following plugins:
 CalendarRequester:
 	CalendarRequesterPlugin : Create requests based on UI response
-	CalendarAllocatorPlugin : Allocate new request tasks to Manager cluster
+	CalendarAllocatorPlugin : Allocate new request tasks to Manager agent
 
 CalendarManager:
 	CalendarManagerPlugin : Attempts to schedule all request tasks
@@ -65,12 +65,12 @@ CalendarManager:
 		and allocation structure and forces replanning
 	CalendarPerturbingPlugin : Grabs vacation from some scheduled time
 		based on UI response
-	TutorialHookupPlugin - An example Plugin that establishes inter-cluster 
+	TutorialHookupPlugin - An example Plugin that establishes inter-agent 
                 support relations
 
 both:
-	PlanServerPlugin - Standard COUGAAR Plugin to view log plan using a web 
-                browser
+        SimpleServletComponent - Standard COUGAAR Component that here loads the
+                PlanViewServlet to allow viewing the Blackboard
  
 
 Check out the source code to see how this works.
@@ -78,7 +78,7 @@ Check out the source code to see how this works.
 These agents also load the plan server plugin which will allow you to 
 drill into the live plan for the agent through your web browser.
 Be sure to check out the planserver web inteface to the resulting plan:
-	http://localhost:5555/alpine/demo/TASKS.PSP
+	http://localhost:8800/$CalendarManager/tasks
 Hit Search...drill around.  View the detailed log plan elements as XML.
 You can look at Assets, Tasks, PlanElements and UniqueObjects.
 Be sure to click on the tasks and see them expanded in the frame on the left.
