@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2003-04-09 14:30:59 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.7 2003-04-17 14:03:31 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -70,14 +70,13 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   };
 
   /**
-   * Predicate that matches all Test tasks
+   * Predicate that matches all CODE tasks
    */
   private UnaryPredicate codeTaskPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task)
       {
         Task task = (Task)o;
-        System.out.println ("task verb = " + task.getVerb());
         return task.getVerb().equals(Verb.getVerb("CODE"));
       }
       return false;

@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-09 14:30:58 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-17 14:03:30 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -114,8 +114,11 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    * Find an available ProgrammerAsset for this task.  Task must be scheduled
    * after the month "after"
    */
-  private int allocateTask(Task task) {
+  private void allocateTask(Task task) {
     // todo:  get start_time, end_time and duration from preferences
+    long earliest = 0L; // todo: fill in
+    int duration = 0; // todo: fill in
+    long latest = 0L; // todo: fill in
 
     // select an available programmer at random
     Vector programmers = new Vector(allProgrammers.getCollection());
@@ -146,7 +149,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
-    return end;
   }
 
   /**

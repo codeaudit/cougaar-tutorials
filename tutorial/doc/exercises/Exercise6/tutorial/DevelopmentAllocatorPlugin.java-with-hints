@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.4 2003-04-09 14:30:58 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.5 2003-04-17 14:03:31 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -114,19 +114,16 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    * Find an available ProgrammerAsset for this task.  Task must be scheduled
    * after the month "after"
    */
-  private int allocateTask(Task task) {
+  private void allocateTask(Task task) {
     // todo:  get start_time, end_time and duration from preferences
+    long earliest = 0L; // todo: fill in
+    int duration = 0; // todo: fill in
+    long latest = 0L; // todo: fill in
     // hint:  see Task.getPreference
     // hint:  see AspectType constants
     // hint:  see Preference.getScoringFunction
     // hint:  see ScoringFunction.getBest
     // hint:  see AspectScorePoint.getValue
-    // more hints: Preference ePref = task.getPreference(AspectType.START_TIME);
-    // more hints: Preference dPref = task.getPreference(AspectType.DURATION);
-    // more hints: Preference lPref = task.getPreference(AspectType.END_TIME);
-    // more hints: long earliest = (long) ePref.getScoringFunction().getBest().getValue();
-    // more hints: int duration = (int) dPref.getScoringFunction().getBest().getValue();
-    // more hints: long latest = (long) lPref.getScoringFunction().getBest().getValue();
 
 
     // select an available programmer at random
@@ -158,7 +155,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
-    return end;
   }
 
   /**

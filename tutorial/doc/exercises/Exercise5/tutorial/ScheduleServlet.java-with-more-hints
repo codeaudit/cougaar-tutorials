@@ -119,7 +119,7 @@ public class ScheduleServlet
       // todo: print programmer's name and a line break
       // hint:  see Asset.getItemIdentificationPG
       // hint:  see ItemIdentificatioinPG.getItemIdentification()
-      // more hints:  out.println("<b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
+      // more hints:  out.println("<br><b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
       out.println("<table border=1>");
       RoleSchedule s = pa.getRoleSchedule();
       Enumeration iter = s.getAllScheduleElements();

@@ -98,7 +98,7 @@ public class ScheduleServlet extends HttpServlet
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
       // dump classnames and count to output stream
-      out.println("<b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
+      out.println("<br><b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
       out.println("<table border=1>");
       RoleSchedule s = pa.getRoleSchedule();
       Enumeration iter = s.getAllScheduleElements();
