@@ -39,6 +39,7 @@ import org.cougaar.core.blackboard.BlackboardClient;
 import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.core.service.BlackboardService;
 import org.cougaar.core.service.ServletService;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.plan.*;
 
