@@ -65,9 +65,17 @@
       <!-- Disable default load of WP server -->
       <vm_parameter>-Dorg.cougaar.core.load.wp.server=false</vm_parameter>
       <!-- Explicitly make Node1 the WP Server -->
+      <!-- Address says how to register with WP. Could use HTTP -->
+      <!-- bootstrap with address of @http://localhost:8800, to avoid RMI -->
       <vm_parameter>-Dorg.cougaar.name.server=PizzaNode1@localhost:8888</vm_parameter>
 
       <!-- Now load components into the Node or NodeAgent -->
+
+      <!-- By default, messaging uses RMI. HTTP, SOAP, etc are
+      options. -->
+      <!-- For example, to use HTTP, load:
+      <!-- component class="org.cougaar.mts.http.HTTPLinkProtocol"
+      insertionpoint="Node.AgentManager.Agent.MessageTransport.Component" -->
 
       <!-- Helper servlet to change Logging levels for the Node -->
       <component
