@@ -38,7 +38,6 @@
       <vm_parameter>-Dorg.cougaar.class.path=</vm_parameter>
       <!-- Where to look for config files, in order -->
       <vm_parameter>-Dorg.cougaar.config.path="$COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty\;$COUGAAR_INSTALL_PATH/configs/common\;" </vm_parameter>
-      <vm_parameter>-Dorg.cougaar.core.agent.startTime="08/10/2005 00:05:00"</vm_parameter>
       <vm_parameter>-Dorg.cougaar.core.node.InitializationComponent=XML</vm_parameter>
 
       <!-- Specify the Cougaar installation directory -->
@@ -57,7 +56,6 @@
       <vm_parameter>-Dorg.cougaar.core.logging.config.filename="loggingConfig.conf"</vm_parameter>
       <!-- The workspace is where Agents write output -->
       <vm_parameter>-Dorg.cougaar.workspace=$COUGAAR_INSTALL_PATH/workspace</vm_parameter>
-      <vm_parameter>-Duser.timezone=GMT</vm_parameter>
       <!-- Use our JDK over-rides for persistence -->
       <vm_parameter>-Xbootclasspath/p:"$COUGAAR_INSTALL_PATH/lib/javaiopatch.jar"</vm_parameter>
 
