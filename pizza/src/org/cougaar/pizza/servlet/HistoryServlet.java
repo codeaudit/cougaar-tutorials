@@ -335,7 +335,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
 
     // Print the current set of Events...
-    if (logger.isInfoEnabled()) {
+    if (logger.isDebugEnabled()) {
       StringBuffer buf = new StringBuffer();
       synchronized (events) {
 	for (Iterator iter = events.iterator (); iter.hasNext(); ) {
@@ -343,7 +343,7 @@ public class HistoryServlet extends ComponentPlugin {
 	}
       }
 
-      logger.info ("buf\n" + buf);
+      logger.debug("Current events: \n" + buf);
     }
   }
 
@@ -838,7 +838,9 @@ public class HistoryServlet extends ComponentPlugin {
       // Special case community relays
       if (sourceRelay.getContent() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
-	Community community = (Community)response.getCommunity();
+	Community community = null;
+	if (response != null)
+	  community = (Community)response.getCommunity();
 	if (buf.length() != 0)
 	  buf.append ("<br/>");
 	buf.append(getCommunityText("Relay Source sending Description: ", community));
@@ -868,8 +870,11 @@ public class HistoryServlet extends ComponentPlugin {
       //    buf.append("instanceof " + getClassName(targetRelay.getResponse()) + " ");
       if (targetRelay.getResponse() instanceof CommunityResponse) {
 	CommunityResponse response = (CommunityResponse) targetRelay.getResponse();
-	Community community = (Community)response.getContent();
-	buf.append("Entity " + targetRelay.getSource() + " registers with Community " + community.getName());
+	Community community = null;
+	if (response != null)
+	  community = (Community)response.getContent();
+	
+	buf.append("Entity " + targetRelay.getSource() + " registers with Community " + (community != null ? community.getName() : "[null]"));
       }
       else {
 	// Other than community relays, no good general way to print
@@ -936,7 +941,9 @@ public class HistoryServlet extends ComponentPlugin {
       
       if (sourceRelay.getContent() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
-	Community community = (Community)response.getCommunity();
+	Community community = null;
+	if (response != null)
+	  community = (Community)response.getCommunity();
 	buf.append(getCommunityText("Relay Source received Response: ", community));
       }
     }
@@ -946,12 +953,16 @@ public class HistoryServlet extends ComponentPlugin {
       //  buf.append("instanceof " + getClassName(targetRelay.getResponse()) + " ");
       if (targetRelay.getResponse() instanceof CommunityResponse) {
 	CommunityResponse response = (CommunityResponse) targetRelay.getResponse();
-	Community community = (Community)response.getContent();
+	Community community = null;
+	if (response != null)
+	  community = (Community)response.getContent();
 	buf.append(getCommunityText("Relay Target sent Response: ", community));
       }
       else if (targetRelay.getResponse() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) targetRelay.getResponse();
-	Community community = (Community)response.getCommunity();
+	Community community = null;
+	if (response != null)
+	  community = (Community)response.getCommunity();
 	buf.append(getCommunityText("Relay Target sent Response: ", community));
       }
       else {
@@ -968,6 +979,9 @@ public class HistoryServlet extends ComponentPlugin {
 
   /** Describe this Community by name, entities */
   protected String getCommunityText(String prefix, Community community) {
+    if (community == null)
+      return "[empty response]";
+
     StringBuffer buf = new StringBuffer();
     buf.append (prefix);
     buf.append(" Community <b>" + community.getName() + "</b> with members : "); 
@@ -1488,7 +1502,7 @@ public class HistoryServlet extends ComponentPlugin {
 	  }
 
 	  // Add the next Event
-	  buf.append(event.toString(colorRowGrey, showChangeReport, showDetails));
+	  buf.append(event.toHTML(colorRowGrey, showChangeReport, showDetails));
 	  buf.append("\n");
 	}
       }
@@ -1667,11 +1681,22 @@ public class HistoryServlet extends ComponentPlugin {
     }
 
     public String toString () {
-      return toString (true, false, false);
+      StringBuffer buf = new StringBuffer();
+      buf.append("<EventInfo " + num + " at ");
+      buf.append(format.format(new Date(timeStamp)));
+      String typeS =  " Added ";
+      if (type == CHANGED)
+	typeS = " Changed ";
+      else if (type == REMOVED)
+	typeS = " Removed ";
+      buf.append(typeS);
+      buf.append(meaning);
+      buf.append(">");
+      return buf.toString();
     }
 
     /** Odd boolean used to alternate colors for rows */
-    public String toString (boolean odd, boolean showChangeReport, boolean showDetails) {
+    public String toHTML (boolean odd, boolean showChangeReport, boolean showDetails) {
       String color = odd ? "#FFFFFF" : "#c0c0c0";
       StringBuffer buf = new StringBuffer();
       buf.append("<tr BGCOLOR=" + color + ">");
