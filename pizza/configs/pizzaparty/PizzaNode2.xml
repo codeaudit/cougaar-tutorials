@@ -3,7 +3,7 @@
 <!-- This file is the configuration file for 4 of the agents in the
  Pizza Party application. You must run both this and the other Node
  (PizzaNode1) to run the application. -->
-<!-- To run, use bin/XSLNode.bat PizzaNode2.xml PizzaNode2 -->
+<!-- To run, use bin/Cougaar[.bat] PizzaNode2.xml PizzaNode2 -->
 
 <!-- This is the non-ServiceDiscovery version of the application. See -->
 <!-- also SDPizzaNode1 and SDPizzaNode2 -->
@@ -26,7 +26,7 @@
       class to run, once the Boostrapper finds the Jar files -->
       <prog_parameter>org.cougaar.core.node.Node</prog_parameter>
 
-      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/XSLNode -->
+      <!-- vm_parameters, for use by $COUGAAR_INSTALL_PATH/bin/Cougaar -->
       <!-- Make sure these PizzaNode2 references match: -->
       <vm_parameter>-Dorg.cougaar.node.name=PizzaNode2</vm_parameter>
       <vm_parameter>-Dorg.cougaar.society.file="PizzaNode2.xml"</vm_parameter>
@@ -96,7 +96,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Tony</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Tony</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Tony</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Person</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Tony</argument>
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Carnivore</argument>
         </component>
@@ -147,7 +147,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:Mark</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:Mark</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:Mark</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Person</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:Mark</argument>
           <argument>EntityPG:Roles:Collection&lt;Role&gt;:Vegetarian</argument>
         </component>
@@ -198,7 +198,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:MA</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:MA</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:MA</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Place</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:MA</argument>
         </component>
 	<!-- Community members need the CommunityPlugin -->
@@ -255,11 +255,11 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:JoesLocalPizzaShack</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:JoesLocalPizzaShack</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:UTC/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Store</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
 	  <!-- For non-SD, we add a Relationships of PizzaProvider with
           Alice -->
-	  <argument>Relationship:MessageAddress=Alice,ItemIdentification=Alice,TypeIdentification=UTC/RTOrg,Role=PizzaProvider,StartTime=01/01/2000 12:00 am,EndTime=</argument>
+	  <argument>Relationship:MessageAddress=Alice,ItemIdentification=Alice,TypeIdentification=Person,Role=PizzaProvider,StartTime=01/01/2000 12:00 am,EndTime=</argument>
         </component>
 	<!-- For non-SD, we add AssetReportPlugin to report to Alice -->
 	<!-- This way, Alice will start up with a relationship with
