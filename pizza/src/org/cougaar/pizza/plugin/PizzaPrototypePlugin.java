@@ -35,7 +35,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype rehistration services
+  // The prototypeRegistryService acts as a provider of prototype registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
   /**
@@ -67,22 +67,22 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Used for initialization to register the PizzaAsset prototype
+   * Initialize our plugin. Since we don't have any subscriptions, create the Pizza prototype right away.
    */
   protected void setupSubscriptions() {
+    createPizzaPrototype();
+  }
 
+  private void createPizzaPrototype() {
     // Get the PlanningFactory
     PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
-
-    // Register our new PropertyFactory so we can refer to properties by name
+    // Register our new PropertyGroupFactory
     factory.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
 
-    // Create the prototypes that will be used to create the programmer assets
     PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype
-      (org.cougaar.pizza.asset.PizzaAsset.class, Constants.PIZZA);
-    // Cache the prototype in the LDM : note this is not treated
-    // as an asset that is available in subscriptions, but can
-    // be used to build 'real' assets when asked for by prototype name
+      (PizzaAsset.class, Constants.PIZZA);
+    // Cache the prototype in the LDM so that other plugins can create Pizza instances
+    // using this prototype.
     getPrototypeRegistryService().cachePrototype(Constants.PIZZA, new_prototype);
   }
 
