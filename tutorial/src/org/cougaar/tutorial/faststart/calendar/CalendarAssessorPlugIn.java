@@ -12,7 +12,9 @@ import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
+import org.cougaar.core.service.*;
 
+import org.cougaar.core.plugin.ComponentPlugin;
 
 /**
  * Plugin to Assess the calendar asset for inconsistencies and
@@ -21,10 +23,28 @@ import java.util.*;
  * It has a list of allocations in its RoleSchedule, and 
  * it has a list of appointments.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAssessorPlugIn.java,v 1.3 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: CalendarAssessorPlugIn.java,v 1.4 2002-02-01 15:43:36 krotherm Exp $
  **/
-public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
+public class CalendarAssessorPlugIn extends ComponentPlugin
 {
+
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
+
   // Establish subscription for all changes to calendar assets
   private IncrementalSubscription allCalendarAssets;
   private UnaryPredicate allCalendarAssetsPredicate = new UnaryPredicate() {
@@ -42,7 +62,8 @@ public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Subscribe to changes to Calendar asset
     allCalendarAssets = 
-      (IncrementalSubscription)subscribe(allCalendarAssetsPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allCalendarAssetsPredicate);
   }
 
   /**
@@ -84,7 +105,7 @@ public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
             asset.getAssignment(scheduled_day));
           AllocationResult failed_result = 
             CalendarUtils.createAllocationResult
-            (scheduled_day, false, theLDMF);
+            (scheduled_day, false, getDomainService().getFactory());
 
           // Set reported result on allocation
           // Note : This is an operation intended only for assessors
@@ -92,7 +113,7 @@ public class CalendarAssessorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
           // that it is being done
           ((PlanElementForAssessor)alloc).setReceivedResult(failed_result);
           //	    System.out.println("Publishing alloc");
-          publishChange(alloc);
+          getBlackboardService().publishChange(alloc);
         }
       }
     }

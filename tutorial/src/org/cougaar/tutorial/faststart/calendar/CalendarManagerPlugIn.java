@@ -14,14 +14,24 @@ import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.service.DomainService;
 /**
  * Plugin to manage the calendar assets for schedule requests, giving
  * an answer of when the scheduling was for, or that it was unfulfilled
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarManagerPlugIn.java,v 1.3 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: CalendarManagerPlugIn.java,v 1.4 2002-02-01 15:43:36 krotherm Exp $
  **/
-public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class CalendarManagerPlugIn extends ComponentPlugin
 {
+    private DomainService domainService=null;
+    public void setDomainService(DomainService value) {
+	domainService = value;
+    }
+    public DomainService getDomainService() {
+	return domainService;
+    }
 
   // Establish subscription for all schedule tasks (NEW and CHANGED)
   private IncrementalSubscription allScheduleTasks;
@@ -55,13 +65,13 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
   {
     //    System.out.println("CalendarManagerPlugIn::setupSubscriptions");
     allScheduleTasks =
-      (IncrementalSubscription)subscribe(allScheduleTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allScheduleTasksPredicate);
     allScheduleAllocations =
-      (IncrementalSubscription)subscribe(allScheduleAllocationsPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allScheduleAllocationsPredicate);
 
     // Publish the CalendarAsset  to logplan so others can see it
-    theCalendar = (CalendarAsset)theLDMF.createAsset(org.cougaar.tutorial.faststart.calendar.CalendarAsset.class);
-    publishAdd(theCalendar);
+    theCalendar = (CalendarAsset)getDomainService().getFactory().createAsset(org.cougaar.tutorial.faststart.calendar.CalendarAsset.class);
+    getBlackboardService().publishAdd(theCalendar);
   }
 
 
@@ -92,7 +102,7 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
         //	  System.out.println("Deleting PE : " + plan_element);
 
         // This should also set the PE of the task to null
-        publishRemove(plan_element);
+        getBlackboardService().publishRemove(plan_element);
       }
 
       // Now that we know there is no plan element, we can schedule it
@@ -109,7 +119,7 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
       rescheduleTask(alloc);
 
       alloc.setEstimatedResult(alloc.getReportedResult());
-      publishChange(alloc);
+      getBlackboardService().publishChange(alloc);
     }
   }
 
@@ -127,15 +137,15 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
     if (success) {
       // Create allocation Result for success/failure
       AllocationResult allocation_result =
-        CalendarUtils.createAllocationResult(new_day, success, theLDMF);
+        CalendarUtils.createAllocationResult(new_day, success, getDomainService().getFactory());
 
       // Modify the allocation with result indicating success
       ((PlanElementForAssessor)alloc).setReceivedResult(allocation_result);
-      publishChange(alloc);
+      getBlackboardService().publishChange(alloc);
 
       // we've successfully allocated, register change to calendar as well
       theCalendar.setAssignment(new_day, alloc);
-      publishChange(theCalendar);
+      getBlackboardService().publishChange(theCalendar);
     }
     return success;
 
@@ -183,19 +193,21 @@ public class CalendarManagerPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Create allocation Result for success/failure
     AllocationResult allocation_result =
-      CalendarUtils.createAllocationResult(scheduled_day, success, theLDMF);
+      CalendarUtils.createAllocationResult(scheduled_day, success, 
+					   getDomainService().getFactory());
 
     // Create an allocation with result indicating success/failure
     Allocation allocation =
-      theLDMF.createAllocation(task.getPlan(), task, theCalendar,
-    allocation_result,
-    Role.AVAILABLE);
-    publishAdd(allocation);
+      getDomainService().getFactory()
+	.createAllocation(task.getPlan(), task, theCalendar,
+			  allocation_result,
+			  Role.AVAILABLE);
+    getBlackboardService().publishAdd(allocation);
 
     // If we've successfully allocated, register change to calendar as well
     if (success) {
       theCalendar.setAssignment(scheduled_day, allocation);
-      publishChange(theCalendar);
+      getBlackboardService().publishChange(theCalendar);
     }
   }
 

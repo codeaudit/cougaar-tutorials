@@ -12,14 +12,24 @@ import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 import java.util.*;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 
 /**
  * Class to allocate 'Schedule' tasks to the supporting organization
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAllocatorPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: CalendarAllocatorPlugIn.java,v 1.3 2002-02-01 15:43:36 krotherm Exp $
  **/
-public class CalendarAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class CalendarAllocatorPlugIn extends ComponentPlugin
 {
+
+    private DomainService domainService;
+    public void setDomainService(DomainService value) {
+	domainService=value;
+    }
+    public DomainService getDomainService() {
+	return domainService;
+    }
 
   // Subscribe to organizations that provide the 'ScheduleManager' role
   private IncrementalSubscription allSupportAssets;
@@ -54,11 +64,14 @@ public class CalendarAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugI
     // System.out.println("CalendarAllocatorPlugIn::setupSubscriptions");
 
     allScheduleTasks = 
-      (IncrementalSubscription)subscribe(allScheduleTasksPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allScheduleTasksPredicate);
     allScheduleAllocations = 
-      (IncrementalSubscription)subscribe(allScheduleAllocationsPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allScheduleAllocationsPredicate);
     allSupportAssets = 
-      (IncrementalSubscription)subscribe(allSupportAssetsPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allSupportAssetsPredicate);
   }
 
 
@@ -88,13 +101,13 @@ public class CalendarAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugI
         Task task = (Task)e.nextElement();
 
         if (task.getPlanElement() == null) {
-          Allocation allocation =
-            theLDMF.createAllocation(task.getPlan(), task,
-          mySupportOrganization, null,
-          Role.AVAILABLE);
+          Allocation allocation = getDomainService().getFactory()
+	      .createAllocation(task.getPlan(), task,
+				mySupportOrganization, null,
+				Role.AVAILABLE);
           //	  System.out.println("Allocating task " + task + " to  " +
           //			     mySupportOrganization);
-          publishAdd(allocation);
+          getBlackboardService().publishAdd(allocation);
         }
       }
     }
@@ -119,8 +132,9 @@ public class CalendarAllocatorPlugIn extends org.cougaar.core.plugin.SimplePlugI
             // task must be rescheduled, all days were unavailable
             Task task = alloc.getTask();
             System.out.println("All dates taken.  Attempting to reschedule task");
-            CalendarUtils.modifyPreferences(task, theLDMF);
-            publishChange(task);  // Change to preferences will propagate
+            CalendarUtils.modifyPreferences(task, getDomainService()
+					    .getFactory());
+            getBlackboardService().publishChange(task);  // Change to preferences will propagate
           }
         }
       }

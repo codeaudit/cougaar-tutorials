@@ -10,14 +10,23 @@ import java.awt.event.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.tutorial.faststart.*;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 /**
  * Simple UI plugin to create a task requesting a free day in the 
  * calendar
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarRequesterPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: CalendarRequesterPlugIn.java,v 1.3 2002-02-01 15:43:37 krotherm Exp $
  */
-public class CalendarRequesterPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
+public class CalendarRequesterPlugIn extends ComponentPlugin
 {
+    private DomainService domainService;
+    public void setDomainService(DomainService value) {
+	domainService=value;
+    }
+    public DomainService getDomainService() { 
+	return domainService; 
+    }
 
   /**
    * Initialize plugin : no subscriptions, but pop up the command UI
@@ -40,10 +49,10 @@ public class CalendarRequesterPlugIn extends org.cougaar.core.plugin.SimplePlugI
   private void generateTask() 
   {
     // System.out.println("Executing new Calendar Request...");
-    openTransaction();
-    Task task = CalendarUtils.createTask(theLDMF);
-    publishAdd(task);
-    closeTransaction(false);
+    getBlackboardService().openTransaction();
+    Task task = CalendarUtils.createTask(getDomainService().getFactory());
+    getBlackboardService().publishAdd(task);
+    getBlackboardService().closeTransaction(false);
   }
 
   // No execution for this plugin

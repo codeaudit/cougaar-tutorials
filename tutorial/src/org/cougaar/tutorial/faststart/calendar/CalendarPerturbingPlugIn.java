@@ -14,13 +14,15 @@ import java.awt.event.*;
 import org.cougaar.tutorial.faststart.*;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.core.plugin.ComponentPlugin;
+
 /**
  * Plugin that occassionally declares vacation days in a schedule, 
  * wreaking havoc and forcing replanning
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarPerturbingPlugIn.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: CalendarPerturbingPlugIn.java,v 1.3 2002-02-01 15:43:36 krotherm Exp $
  */
-public class CalendarPerturbingPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class CalendarPerturbingPlugIn extends ComponentPlugin
 {
   // Establish subscription for all changes to calendar assets
   private IncrementalSubscription allCalendarAssets;
@@ -35,7 +37,8 @@ public class CalendarPerturbingPlugIn extends org.cougaar.core.plugin.SimplePlug
     //    System.out.println("CalendarPerturbingPlugIn::setupSubscriptions");
 
     allCalendarAssets = 
-      (IncrementalSubscription)subscribe(allCalendarAssetsPredicate);
+      (IncrementalSubscription)getBlackboardService()
+	.subscribe(allCalendarAssetsPredicate);
 
     // Set up UI button that will grab a vacation day when pressed
     ActionListener listener = new ActionListener() {
@@ -70,10 +73,10 @@ public class CalendarPerturbingPlugIn extends org.cougaar.core.plugin.SimplePlug
       // Set the assignment to be null : the day is spoken for, but
       // not with an allocation, but with the String "VACATION" instead
       System.out.println("Grabbing vacation on day " + scheduled_day);
-      openTransaction();
+      getBlackboardService().openTransaction();
       theCalendar.setAssignment(scheduled_day.intValue(), VACATION_TEXT);
-      publishChange(theCalendar);
-      closeTransaction(false);
+      getBlackboardService().publishChange(theCalendar);
+      getBlackboardService().closeTransaction(false);
     }
   }
 
