@@ -27,6 +27,7 @@ package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
+import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
@@ -50,62 +51,53 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Plugin for ordering pizzas -- more documentation later
+ * This Plugin manages ordering pizzas at customer agents.  
  */
 public class PlaceOrderPlugin extends ComponentPlugin {
-  private LoggingService logger;
-  private DomainService domainService;
-  private IncrementalSubscription selfSub;
-  private IncrementalSubscription pizzaPrefSub;
-  private IncrementalSubscription allocationSub;
-  private Subscription taskSub;
-  private Entity self;
-  private PlanningFactory planningFactory;
-
   private static final String VEGGIE = "Veggie";
   private static final String MEAT = "Meat";
   private static final String VEGGIE_PIZZA = "Veggie Pizza";
   private static final String MEAT_PIZZA = "Meat Pizza";
 
-  protected void setupSubscriptions() {
-    selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
-    pizzaPrefSub =
-        (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
-    taskSub = blackboard.subscribe(taskPred);
-    allocationSub =
-        (IncrementalSubscription) blackboard.subscribe(allocationPred);
-    getServices();
-  }
+  private LoggingService logger;
+  private DomainService domainService;
+  private PlanningFactory planningFactory;
 
-  private void getServices() {
-    domainService = getDomainService();
-    LoggingService ls = (LoggingService) getServiceBroker().getService(
-        this, LoggingService.class, null);
-    logger =
-        LoggingServiceWithPrefix.add(ls, getAgentIdentifier() + ": ");
-    planningFactory =
-        (PlanningFactory) domainService.getFactory("planning");
-  }
+  private IncrementalSubscription selfSub;
+  private IncrementalSubscription pizzaPrefSub;
+  private IncrementalSubscription allocationSub;
+  private Subscription taskSub;
 
-
+  private Entity self;
   /**
-   * Used by the binding utility through reflection to set my
-   * DomainService
+   * Used by the binding utility through introspection to set my DomainService
+   * Services that are required for plugin usage should be set through reflection instead of explicitly
+   * getting each service from your ServiceBroker in the load method. The setter methods are called after
+   * the component is constructed but before the state methods such as initialize, load, setupSubscriptions, etc.
+   * If the service is not available at that time the component will be unloaded.
    */
   public void setDomainService(DomainService aDomainService) {
     domainService = aDomainService;
   }
 
-  /**
-   * Used by the binding utility through reflection to get my
-   * DomainService
-   */
-  public DomainService getDomainService() {
-    return domainService;
+  public void load() {
+    super.load();
+    ServiceBroker sb = getServiceBroker();
+    logger = (LoggingService) sb.getService(this, LoggingService.class, null);
+    // prefix all logging calls with our agent name
+    logger = LoggingServiceWithPrefix.add(logger, agentId + ": ");
+    planningFactory = (PlanningFactory) domainService.getFactory("planning");
+
+  }
+
+  protected void setupSubscriptions() {
+    selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
+    pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
+    taskSub = blackboard.subscribe(taskPred);
+    allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
   }
 
   protected void execute() {
-    //TODO: fix this
     if (self == null) {
       if (selfSub.getAddedCollection().isEmpty()) {
         //cannot do anything until our self org is set
@@ -115,15 +107,14 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       }
     }
 
-    for (Iterator i = pizzaPrefSub.getAddedCollection().iterator();
-         i.hasNext();) {
+    for (Iterator i = pizzaPrefSub.getAddedCollection().iterator(); i.hasNext();) {
       PizzaPreferences pizzaPrefs = (PizzaPreferences) i.next();
       if (logger.isDebugEnabled()) {
         logger.debug(" found pizzaPrefs " + pizzaPrefSub);
       }
       // For now we assume only one, but we should enhance to accommodate many
-      Task orderTask = makeOrderTask();
-      Collection subtasks = expandTask(pizzaPrefs, orderTask);
+      Task orderTask = makeOrderTaskAndPublish();
+      Collection subtasks = makeExpansionAndPublish(pizzaPrefs, orderTask);
       allocateTasks(subtasks);
     }
 
@@ -147,24 +138,22 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   }
 
+  /**
+   * This method allocates order pizza tasks to pizza providers.
+   * @param tasks
+   */
   private void allocateTasks(Collection tasks) {
-    Collection providers = getProviderOrgAssets();
+    Collection providers = getProviders();
     Entity provider = null;
     for (Iterator iterator = providers.iterator(); iterator.hasNext();) {
       provider = (Entity) iterator.next();
     }
     if (provider != null) {
-      for (Iterator i = tasks.iterator(); i.hasNext();) {
-        Task newTask = (Task) i.next();
-        AllocationResult ar =
-            PluginHelper.createEstimatedAllocationResult(newTask,
-                                                         planningFactory,
-                                                         0.25,
-                                                         true);
-        Allocation alloc =
-            planningFactory.createAllocation(newTask.getPlan(), newTask,
-                                             (Asset) provider, ar,
-                                             Constants.Role.PIZZAPROVIDER);
+      for (Iterator iter = tasks.iterator(); iter.hasNext();) {
+        Task newTask = (Task) iter.next();
+        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 0.25, true);
+        Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider,
+                                                            ar, Constants.Role.PIZZAPROVIDER);
         blackboard.publishAdd(alloc);
         if (logger.isDebugEnabled()) {
           logger.debug(" allocating task " + newTask);
@@ -173,9 +162,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   }
 
-  private Collection expandTask(PizzaPreferences pizzaPrefs,
-                                Task parentTask) {
-    ArrayList tasksToAllocate = new ArrayList();
+  /**
+   * This method expands order pizza tasks into two substasks:  meat and veggie.
+   * @param pizzaPrefs
+   * @param parentTask
+   * @return
+   */
+  private Collection makeExpansionAndPublish(PizzaPreferences pizzaPrefs, Task parentTask) {
     NewTask meatPizzaTask = makePizzaTask(MEAT);
     Preference meatPref = makeQuantityPreference(pizzaPrefs.getNumMeat());
     meatPizzaTask.setPreference(meatPref);
@@ -193,29 +186,38 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     wf.addTask(veggiePizzaTask);
     meatPizzaTask.setWorkflow(wf);
     veggiePizzaTask.setWorkflow(wf);
-    Expansion expansion = planningFactory.createExpansion(
-        parentTask.getPlan(), parentTask, wf, null);
+    Expansion expansion = planningFactory.createExpansion(parentTask.getPlan(), parentTask, wf, null);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(" publishing expansion and subtasks ");
-    }
     blackboard.publishAdd(expansion);
     blackboard.publishAdd(meatPizzaTask);
     blackboard.publishAdd(veggiePizzaTask);
+    if (logger.isDebugEnabled()) {
+      logger.debug(" publishing expansion and subtasks ");
+    }
+
+    ArrayList tasksToAllocate = new ArrayList();
     tasksToAllocate.add(meatPizzaTask);
     tasksToAllocate.add(veggiePizzaTask);
     return tasksToAllocate;
   }
 
+  /**
+   * This method makes a quantity preference.  This quantity represents the number of people requesting a specific type
+   * pizza.
+   * @param num
+   * @return
+   */
   private Preference makeQuantityPreference(int num) {
-    //logger.debug(" what is the quantity " + num);
-    ScoringFunction sf = ScoringFunction.createStrictlyAtValue(
-        AspectValue.newAspectValue(AspectType.QUANTITY, num));
-    Preference pref = planningFactory.newPreference(AspectType.QUANTITY,
-                                                    sf);
+    ScoringFunction sf = ScoringFunction.createStrictlyAtValue(AspectValue.newAspectValue(AspectType.QUANTITY, num));
+    Preference pref = planningFactory.newPreference(AspectType.QUANTITY, sf);
     return pref;
   }
 
+  /**
+   * This method creates a task for a specific type of pizza.
+   * @param pizzaType a String representing the type of pizza.
+   * @return NewTask
+   */
   private NewTask makePizzaTask(String pizzaType) {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
@@ -224,59 +226,68 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     return newTask;
   }
 
-  private Task makeOrderTask() {
+  /**
+   * This method creates an "Order" pizza task and publishes it to the blackboard.
+   * @return NewTask
+   */
+  private NewTask makeOrderTaskAndPublish() {
     NewTask newTask = planningFactory.newTask();
     newTask.setVerb(Verb.get(Constants.ORDER));
     newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(
-        planningFactory.createInstance(Constants.PIZZA));
+    newTask.setDirectObject(planningFactory.createInstance(Constants.PIZZA));
     blackboard.publishAdd(newTask);
     return newTask;
   }
 
+  /**
+   * This method makes the pizza asset.
+   * @param pizzaType a String representing the type of pizza.
+   * @return a PizzaAsset.
+   */
   private PizzaAsset makePizzaAsset(String pizzaType) {
     // Create a Veggie Pizza Asset based on the existing pizza prototype
-    PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance(
-        Constants.PIZZA);
+    PizzaAsset pizzaAsset = (PizzaAsset) planningFactory.createInstance(Constants.PIZZA);
 
     if (pizzaType.equals(VEGGIE)) {
-      pizzaAsset.addOtherPropertyGroup(
-          PGCreator.makeAVeggiePG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(
-          PGCreator.makeAItemIdentificationPG(planningFactory,
-                                              VEGGIE_PIZZA));
+      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(planningFactory, true));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, VEGGIE_PIZZA));
     }
 
     // Create a Meat Pizza Asset based on the existing pizza prototype
     if (pizzaType.equals("Meat")) {
-      pizzaAsset.addOtherPropertyGroup(
-          PGCreator.makeAMeatPG(planningFactory, true));
-      pizzaAsset.setItemIdentificationPG(
-          PGCreator.makeAItemIdentificationPG(planningFactory, MEAT_PIZZA));
+      pizzaAsset.addOtherPropertyGroup(PGCreator.makeAMeatPG(planningFactory, true));
+      pizzaAsset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(planningFactory, MEAT_PIZZA));
     }
     return pizzaAsset;
   }
 
-  public Collection getProviderOrgAssets() {
-    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE,
-                                          TimeSpan.MAX_VALUE);
+  /**
+   * This method finds pizza providers.
+   * @return a Collection of pizza providers.
+   */
+  public Collection getProviders() {
+    TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = self.getRelationshipSchedule();
-    Collection relationships =
-        relSched.getMatchingRelationships(Constants.Role.PIZZAPROVIDER,
-                                          timeSpan);
+    Collection relationships = relSched.getMatchingRelationships(Constants.Role.PIZZAPROVIDER, timeSpan);
     List providers = new ArrayList();
-    for (Iterator iterator = relationships.iterator();
-         iterator.hasNext();) {
+    for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
       providers.add(relSched.getOther(r));
     }
     return providers;
   }
 
+  /**
+   * This method uses a filter to extract all unallocated tasks from the task subscription.
+   * @return a Collection of tasks that have not been allocated.
+   */
   private Collection getUnallocatedTasks() {
     return Filters.filter((Collection) taskSub, undisposedTasks);
   }
 
+  /**
+   *  This predicate matches the Entity object of the local agent
+   */
   private static UnaryPredicate selfPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Entity) {
@@ -287,7 +298,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   };
 
   /**
-   * A predicate that matches PizzaPreferences objects
+   * This predicate matches PizzaPreferences objects.
    */
   private static UnaryPredicate pizzaPrefPred = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -295,6 +306,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
+  /**
+   * This predicate matches tasks that have not been disposed.
+   */
   private static UnaryPredicate undisposedTasks = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
@@ -305,6 +319,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
+  /**
+   * This predicate matches "Order" tasks.
+   */
   private static UnaryPredicate taskPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
@@ -315,6 +332,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
+  /**
+   * This predicate matches Allocations on "Order" tasks.
+   */
   private static UnaryPredicate allocationPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Allocation) {
