@@ -46,6 +46,12 @@ import org.cougaar.pizza.servlet.HistoryServletFriendly;
  * Local accumulation of replies to invite, marking who has replied and the kinds
  * of pizza they want. Automatically updated by the {@link RSVPRelaySource}. Published
  * by the InvitePlugin so that the PlaceOrderPlugin knows to start.
+ *<p>
+ * This class works as an example of publishing a custom object on 
+ * the Blackboard. Note that it implements UniqueObject 
+ * (which extends Serializable) for easy identification and retrieval
+ * on the Blackboard, and so it can be sent in messages.
+*
  * @see org.cougaar.pizza.plugin.InvitePlugin
  * @see org.cougaar.pizza.plugin.PlaceOrderPlugin
  */
