@@ -20,15 +20,20 @@
  */
 package org.cougaar.tutorial.exercise3;
 
+import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import java.util.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.tutorial.assets.*;
-import org.cougaar.core.service.*;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
+
+import org.cougaar.tutorial.assets.*;
 
 /**
  * todo: Create a predicate class that matches all ProgrammerAssets
@@ -41,8 +46,6 @@ import org.cougaar.planning.ldm.PlanningFactory;
 /**
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to ProgrammerAssets
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.1 2003-12-15 16:07:01 twright Exp $
  **/
 // todo:  Make ManagerAllocatorPlugin a subclass
 public class ManagerAllocatorPlugin  {
@@ -70,13 +73,13 @@ public class ManagerAllocatorPlugin  {
   /**
    * Subscribe to tasks and programming assets
    */
-protected void setupSubscriptions() {
-  // todo:  subscribe to CODE tasks
-  // tasks =
+  protected void setupSubscriptions() {
+    // todo:  subscribe to CODE tasks
+    // tasks =
 
-  // todo:  subscribe to ProgrammerAssets
-  // programmers =
-}
+    // todo:  subscribe to ProgrammerAssets
+    // programmers =
+  }
 
 
   /**
@@ -85,38 +88,38 @@ protected void setupSubscriptions() {
    */
 
   /*
-  Pseudo Code for one possible approach to the following execute() function:
-  for each unallocated task
+    Pseudo Code for one possible approach to the following execute() function:
+    for each unallocated task
     pull an available programmer off of the programmers list
     if no programmer is available,
-      do nothing.  I will execute() again when a new programmer is published
+    do nothing.  I will execute() again when a new programmer is published
     else
-      allocate the task to the programmer
+    allocate the task to the programmer
   */
 
-protected void execute () {
+  protected void execute () {
 
-  // process new tasks
-  // todo Part 1: get unallocated tasks and allocate them to programmers
-  //              Note the allocateTo function later in this file
-  // hint:  see IncrementalSubscription.elements()
-  // hint:  see IncrementalSubscription.first()
-  // hint:  see Task.getPlanElement()
-  // hint:  remember Enumeration functions: hasMoreElements(), nextElement()
+    // process new tasks
+    // todo Part 1: get unallocated tasks and allocate them to programmers
+    //              Note the allocateTo function later in this file
+    // hint:  see IncrementalSubscription.elements()
+    // hint:  see IncrementalSubscription.first()
+    // hint:  see Task.getPlanElement()
+    // hint:  remember Enumeration functions: hasMoreElements(), nextElement()
 
   }
 
-/**
- * This is a convenience function that should allocate the task to the asset
- */
-private void allocateTo(Asset asset, Task task) {
+  /**
+   * This is a convenience function that should allocate the task to the asset
+   */
+  private void allocateTo(Asset asset, Task task) {
 
-	  AllocationResult estAR = null;
+    AllocationResult estAR = null;
 
     // todo:  Allocate the task to the asset (Note: estAR can remain null)
 
     // todo:  Put the allocation on the Blackboard
 
-}
+  }
 
 }

@@ -20,16 +20,17 @@
  */
 package org.cougaar.tutorial.exercise8;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
-import org.cougaar.planning.ldm.PlanningFactory;
 
+import org.cougaar.util.UnaryPredicate;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.plugin.util.PluginHelper;
 
 /**
  * This COUGAAR Plugin expands tasks of verb "CODE"
@@ -37,8 +38,6 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DESIGN
  * DEVELOP
  * TEST
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -64,15 +63,15 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 
   // This predicate matches all tasks with verb "CODE"
   private UnaryPredicate allCodeTasksPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      boolean ret = false;
-      if (o instanceof Task) {
-        Task t = (Task)o;
-        ret = t.getVerb().equals("CODE");
+      public boolean execute(Object o) {
+	boolean ret = false;
+	if (o instanceof Task) {
+	  Task t = (Task)o;
+	  ret = t.getVerb().equals("CODE");
+	}
+	return ret;
       }
-      return ret;
-    }
-  };
+    };
 
   /**
    * Establish subscription for CODE tasks
@@ -91,14 +90,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     // Now look through all new 'CODE' tasks
     // and expand
     for(Enumeration e = allCodeTasks.getAddedList();e.hasMoreElements();)
-    {
-      Task task = (Task) e.nextElement();
+      {
+	Task task = (Task) e.nextElement();
 
-      // Create expansion and workflow to represent the expansion
-      // of this task
-// todo: create a new workflow, call plan to fill it out, and
-// todo: create and publish a new expansion
-    }
+	// Create expansion and workflow to represent the expansion
+	// of this task
+	// todo: create a new workflow, call plan to fill it out, and
+	// todo: create and publish a new expansion
+      }
   }
 
   /**
@@ -111,7 +110,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   private NewTask makeTask(String verb, Task parent_task, Workflow wf) {
     NewTask new_task = ((PlanningFactory)domainService.getFactory("planning")).newTask();
 
-// todo: fill in all the fields of new_task, include the parent task field
+    // todo: fill in all the fields of new_task, include the parent task field
 
     return new_task;
   }
@@ -173,7 +172,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     getBlackboardService().publishAdd(t3);  
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
-// todo: add the new tasks to the old task's workflow
+    // todo: add the new tasks to the old task's workflow
   }
 
   /**
@@ -217,13 +216,13 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   {
     Preference aspect_pref = null;
     for(Enumeration e = task.getPreferences(); e.hasMoreElements();)
-    {
-      Preference pref = (Preference)e.nextElement();
-      if (pref.getAspectType() == aspect_type) {
-        aspect_pref = pref;
-        break;
+      {
+	Preference pref = (Preference)e.nextElement();
+	if (pref.getAspectType() == aspect_type) {
+	  aspect_pref = pref;
+	  break;
+	}
       }
-    }
     return aspect_pref;
   }
 }

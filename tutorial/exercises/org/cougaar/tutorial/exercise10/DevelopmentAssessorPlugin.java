@@ -20,25 +20,25 @@
  */
 package org.cougaar.tutorial.exercise10;
 
+import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.util.UnaryPredicate;
-import java.util.*;
+import org.cougaar.core.service.DomainService;
+
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 
 import org.cougaar.tutorial.assets.*;
-
 
 /**
  * This COUGAAR Plugin monitors ProgrammerAssets for conflicts between their
  * internal schedule and the tasks allocated to them.  When a conflict is
  * detected, the task allocation results are updated to reflect the conflict.
  *
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.1 2003-12-15 16:07:01 twright Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -66,12 +66,12 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
    * This predicate matches all vacation allocations
    */
   private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return (o instanceof Allocation) &&
-             (((Allocation) o).getTask().getVerb().equals
-               (Verb.getVerb ("VACATION")));
-    }
-  };
+      public boolean execute(Object o) {
+	return (o instanceof Allocation) &&
+	  (((Allocation) o).getTask().getVerb().equals
+	   (Verb.getVerb ("VACATION")));
+      }
+    };
 
   /**
    * Establish subscription for assets
@@ -88,8 +88,8 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentAssessorPlugin::execute");
 
-// todo: loop through vacationAllocs and call validateSchedule with
-// todo: associated programmer
+    // todo: loop through vacationAllocs and call validateSchedule with
+    // todo: associated programmer
   }
 
   /**
@@ -98,11 +98,11 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
    * It is easiest just to redo everything
    */
   private void validateSchedule(ProgrammerAsset asset) {
-      System.out.println ("Validating schedule of " +
-        asset.getItemIdentificationPG().getItemIdentification());
+    System.out.println ("Validating schedule of " +
+			asset.getItemIdentificationPG().getItemIdentification());
 
-      // if not a vacation, then remove it
-// todo: loop over asset's role schedule and remove from blackboard
-// todo: all allocations that aren't a vacation
+    // if not a vacation, then remove it
+    // todo: loop over asset's role schedule and remove from blackboard
+    // todo: all allocations that aren't a vacation
   }
 }

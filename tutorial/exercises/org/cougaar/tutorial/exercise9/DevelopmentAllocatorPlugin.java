@@ -20,23 +20,22 @@
  */
 package org.cougaar.tutorial.exercise9;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
 import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 
 import org.cougaar.tutorial.assets.*;
-
 
 /**
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -65,30 +64,30 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    * Predicate matching all ProgrammerAssets
    */
   private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof ProgrammerAsset;
-    }
-  };
+      public boolean execute(Object o) {
+	return o instanceof ProgrammerAsset;
+      }
+    };
 
   /**
    * Predicate that matches all of the tasks I'm interested in
    */
   private UnaryPredicate taskPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task)
-      {
-        Task task = (Task)o;
-        Verb tVerb = task.getVerb();
-        if (   Verb.getVerb("DESIGN").equals(tVerb) ||
-               Verb.getVerb("DEVELOP").equals(tVerb) ||
-               Verb.getVerb("TEST").equals(tVerb))
-          return true;
+      public boolean execute(Object o) {
+	if (o instanceof Task)
+	  {
+	    Task task = (Task)o;
+	    Verb tVerb = task.getVerb();
+	    if (   Verb.getVerb("DESIGN").equals(tVerb) ||
+		   Verb.getVerb("DEVELOP").equals(tVerb) ||
+		   Verb.getVerb("TEST").equals(tVerb))
+	      return true;
+	  }
+	return false;
       }
-      return false;
-    }
-  };
+    };
 
-// todo: create Predicate that matches all of expansions
+  // todo: create Predicate that matches all of expansions
 
   /**
    * Establish subscription for tasks and assets
@@ -98,7 +97,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
-// todo: subscribe to expansions
+    // todo: subscribe to expansions
   }
 
   /**
@@ -119,7 +118,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
           anyLeft = true;
           Task t = findConstraining (task);
           allocateTask (task, (t == null) ? 0L :
-                   ((Allocation) t.getPlanElement()).getEndTime());
+			((Allocation) t.getPlanElement()).getEndTime());
           break;
         }
       }
@@ -140,9 +139,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    *  find the task, if any, that this task must follow
    */
   private Task findConstraining (Task task) {
-// todo: loop through all the expansions to find one (if any)
-//       with a constraint whose constrained task is the one of interest;
-//       if so, return the constraining task
+    // todo: loop through all the expansions to find one (if any)
+    //       with a constraint whose constrained task is the one of interest;
+    //       if so, return the constraining task
     return null;
   }
 
@@ -173,7 +172,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
           ((! asset.getRoleSchedule().isEmpty()) &&
            (asset.getRoleSchedule().getEndTime() >= earliest))) {
         long newTime = asset.getRoleSchedule().isEmpty() ? earliest :
-                       asset.getRoleSchedule().getEndTime();
+	  asset.getRoleSchedule().getEndTime();
         if ((bestAsset == null) || (newTime < bestTime)) {
           bestAsset = asset;
           bestTime = newTime;
@@ -182,8 +181,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     }
 
     System.out.println("\nAllocating the following task to "
-        +bestAsset.getTypeIdentificationPG().getTypeIdentification()+": "
-        +bestAsset.getItemIdentificationPG().getItemIdentification());
+		       +bestAsset.getTypeIdentificationPG().getTypeIdentification()+": "
+		       +bestAsset.getItemIdentificationPG().getItemIdentification());
     System.out.println("Task: "+task);
 
     // find the times and make the allocation result that
@@ -198,8 +197,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     AllocationResult estAR = new AllocationResult (1.0, success, inter);
     Allocation allocation =
       ((PlanningFactory)getDomainService().getFactory("planning")).
-        createAllocation (task.getPlan(), task,
-                          bestAsset, estAR, Role.ASSIGNED);
+      createAllocation (task.getPlan(), task,
+			bestAsset, estAR, Role.ASSIGNED);
 
     getBlackboardService().publishAdd(allocation);
   }
@@ -217,7 +216,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     // figure out time interal, inserting at earliest possible time
     RoleSchedule sched = asset.getRoleSchedule();
     long start = sched.isEmpty() ? earliest :
-                 Math.max (earliest, sched.getEndTime());
+      Math.max (earliest, sched.getEndTime());
     GregorianCalendar cal = new GregorianCalendar();
     cal.setTime (new Date (start));
     cal.add (GregorianCalendar.MONTH, durationMonths);

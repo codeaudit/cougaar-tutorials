@@ -22,8 +22,6 @@ package org.cougaar.tutorial.exercise1;
 
 /**
  * This class can be published to the Blackboard and subscribed to by Plugins
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: Job.java,v 1.1 2003-12-15 16:07:02 twright Exp $
  **/
 public class Job implements java.io.Serializable {
 

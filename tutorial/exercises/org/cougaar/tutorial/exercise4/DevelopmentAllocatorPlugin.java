@@ -20,27 +20,22 @@
  */
 package org.cougaar.tutorial.exercise4;
 
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
+import java.util.*;
+
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.service.*;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.Date;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 
 import org.cougaar.tutorial.assets.*;
-
 
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2003-12-15 16:07:01 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -123,8 +118,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       programmers.remove(asset);
 
       System.out.println("\nAllocating the following task to "
-          +asset.getTypeIdentificationPG().getTypeIdentification()+": "
-          +asset.getItemIdentificationPG().getItemIdentification());
+			 +asset.getTypeIdentificationPG().getTypeIdentification()+": "
+			 +asset.getItemIdentificationPG().getItemIdentification());
       System.out.println("Task: "+task);
 
       // find the times and make the allocation result that

@@ -20,16 +20,19 @@
  */
 package org.cougaar.tutorial.exercise10;
 
+import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import java.util.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.service.*;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.OrganizationPG;
+
 import org.cougaar.tutorial.assets.*;
 
 /**

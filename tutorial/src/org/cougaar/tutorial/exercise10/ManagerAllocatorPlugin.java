@@ -20,21 +20,20 @@
  */
 package org.cougaar.tutorial.exercise10;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.DomainService;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationPG;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.AllocationResult;
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.Task;
-import org.cougaar.planning.ldm.plan.Verb;
+import java.util.Enumeration;
+
 import org.cougaar.util.UnaryPredicate;
 
-import java.util.Enumeration;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
+
+import org.cougaar.tutorial.assets.*;
 
 /**
  * A predicate that matches all "CODE" tasks
@@ -83,8 +82,6 @@ class myProgrammersPredicate implements UnaryPredicate{
 /**
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 
@@ -112,60 +109,60 @@ public class ManagerAllocatorPlugin extends ComponentPlugin {
   /**
    * subscribe to tasks and programming organizations
    */
-protected void setupSubscriptions() {
-  tasks = (IncrementalSubscription)getBlackboardService().subscribe(new myTaskPredicate());
-  programmers = (IncrementalSubscription)getBlackboardService().subscribe(new myProgrammersPredicate());
-  allocations = (IncrementalSubscription)getBlackboardService().subscribe(new myAllocationPredicate());
-}
+  protected void setupSubscriptions() {
+    tasks = (IncrementalSubscription)getBlackboardService().subscribe(new myTaskPredicate());
+    programmers = (IncrementalSubscription)getBlackboardService().subscribe(new myProgrammersPredicate());
+    allocations = (IncrementalSubscription)getBlackboardService().subscribe(new myAllocationPredicate());
+  }
 
 
   /**
    * Top level plugin execute loop.  Allocate CODE tasks to organizations
    */
-protected void execute () {
+  protected void execute () {
 
-  // process unallocated tasks
-  Enumeration task_enum = tasks.elements();
-  while (task_enum.hasMoreElements()) {
-    Task t = (Task)task_enum.nextElement();
-    if (t.getPlanElement() != null)
-      continue;
-    Asset organization = (Asset)programmers.first();
-    if (organization != null)  // if no organization yet, give up for now
-      allocateTo(organization, t);
+    // process unallocated tasks
+    Enumeration task_enum = tasks.elements();
+    while (task_enum.hasMoreElements()) {
+      Task t = (Task)task_enum.nextElement();
+      if (t.getPlanElement() != null)
+	continue;
+      Asset organization = (Asset)programmers.first();
+      if (organization != null)  // if no organization yet, give up for now
+	allocateTo(organization, t);
+    }
+
+    // Process changed allocations
+    AllocationResult est, rep;
+    Enumeration allo_enum = allocations.getChangedList();
+    while (allo_enum.hasMoreElements()) {
+      Allocation alloc = (Allocation)allo_enum.nextElement() ;
+      est=null; rep=null;
+      System.out.println("MANAGER ALLOCATOR: Allocation changed: "+alloc);
+      est = alloc.getEstimatedResult();
+      rep = alloc.getReportedResult();
+      System.out.println("MANAGER ALLOCATOR: Estimated Allocation Result: "+est);
+      if (est!=null)
+	System.out.println("MANAGER ALLOCATOR: Estimated Allocation Result success? "+est.isSuccess());
+      System.out.println("MANAGER ALLOCATOR: Reported Allocation Result: "+rep);
+      if (rep!=null)
+	System.out.println("MANAGER ALLOCATOR: Reported Allocation Result success? "+rep.isSuccess());
+    }
   }
 
-  // Process changed allocations
-  AllocationResult est, rep;
-  Enumeration allo_enum = allocations.getChangedList();
-  while (allo_enum.hasMoreElements()) {
-    Allocation alloc = (Allocation)allo_enum.nextElement() ;
-    est=null; rep=null;
-    System.out.println("MANAGER ALLOCATOR: Allocation changed: "+alloc);
-    est = alloc.getEstimatedResult();
-    rep = alloc.getReportedResult();
-    System.out.println("MANAGER ALLOCATOR: Estimated Allocation Result: "+est);
-    if (est!=null)
-      System.out.println("MANAGER ALLOCATOR: Estimated Allocation Result success? "+est.isSuccess());
-    System.out.println("MANAGER ALLOCATOR: Reported Allocation Result: "+rep);
-    if (rep!=null)
-      System.out.println("MANAGER ALLOCATOR: Reported Allocation Result success? "+rep.isSuccess());
-  }
-}
+  /**
+   * Allocate the task to the asset
+   */
+  private void allocateTo(Asset asset, Task task) {
 
-/**
- * Allocate the task to the asset
- */
-private void allocateTo(Asset asset, Task task) {
+    AllocationResult estAR = null;
 
-	  AllocationResult estAR = null;
-
-	  Allocation allocation =
+    Allocation allocation =
       ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
-				     asset, estAR, Role.ASSIGNED);
+										    asset, estAR, Role.ASSIGNED);
 
     System.out.println("Allocating to programmer: "+asset.getItemIdentificationPG().getItemIdentification());
-	  getBlackboardService().publishAdd(allocation);
+    getBlackboardService().publishAdd(allocation);
 
-}
+  }
 }

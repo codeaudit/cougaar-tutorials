@@ -20,25 +20,24 @@
  */
 package org.cougaar.tutorial.exercise10;
 
+import java.util.Enumeration;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
+
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
 import org.cougaar.planning.ldm.plan.Verb;
+
 import org.cougaar.tutorial.assets.ProgrammerAsset;
-import org.cougaar.util.UnaryPredicate;
-
-import java.util.Enumeration;
-
 
 /**
  * This COUGAAR Plugin monitors ProgrammerAssets for conflicts between their
  * internal schedule and the tasks allocated to them.  When a conflict is
  * detected, the task allocation results are updated to reflect the conflict.
- *
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -66,12 +65,12 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
    * This predicate matches all vacation allocations
    */
   private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return (o instanceof Allocation) &&
-             (((Allocation) o).getTask().getVerb().equals
-               (Verb.getVerb ("VACATION")));
-    }
-  };
+      public boolean execute(Object o) {
+	return (o instanceof Allocation) &&
+	  (((Allocation) o).getTask().getVerb().equals
+	   (Verb.getVerb ("VACATION")));
+      }
+    };
 
   /**
    * Establish subscription for assets
@@ -89,11 +88,11 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
     System.out.println("DevelopmentAssessorPlugin::execute");
 
     for(Enumeration e = vacationAllocs.getAddedList(); e.hasMoreElements();)
-    {
-      Allocation alloc = (Allocation) e.nextElement();
-      ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
-      validateSchedule(pa);
-    }
+      {
+	Allocation alloc = (Allocation) e.nextElement();
+	ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
+	validateSchedule(pa);
+      }
   }
 
   /**
@@ -102,16 +101,16 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
    * It is easiest just to redo everything
    */
   private void validateSchedule(ProgrammerAsset asset) {
-      System.out.println ("Validating schedule of " +
-        asset.getItemIdentificationPG().getItemIdentification());
+    System.out.println ("Validating schedule of " +
+			asset.getItemIdentificationPG().getItemIdentification());
 
-      // if not a vacation, then remove it
-      RoleSchedule sched = asset.getRoleSchedule();
-      Enumeration enum = sched.getRoleScheduleElements();
-      while (enum.hasMoreElements()) {
-        Allocation alloc = (Allocation) enum.nextElement();
-        if (! alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION")))
-          blackboard.publishRemove (alloc);
-      }
+    // if not a vacation, then remove it
+    RoleSchedule sched = asset.getRoleSchedule();
+    Enumeration enum = sched.getRoleScheduleElements();
+    while (enum.hasMoreElements()) {
+      Allocation alloc = (Allocation) enum.nextElement();
+      if (! alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION")))
+	blackboard.publishRemove (alloc);
+    }
   }
 }

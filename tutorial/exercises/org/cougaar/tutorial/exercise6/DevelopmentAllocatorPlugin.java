@@ -20,23 +20,22 @@
  */
 package org.cougaar.tutorial.exercise6;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
 import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 
 import org.cougaar.tutorial.assets.*;
-
 
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.1 2003-12-15 16:07:02 twright Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -64,24 +63,24 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    * Predicate matching all ProgrammerAssets
    */
   private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof ProgrammerAsset;
-    }
-  };
+      public boolean execute(Object o) {
+	return o instanceof ProgrammerAsset;
+      }
+    };
 
   /**
    * Predicate that matches all CODE tasks
    */
   private UnaryPredicate codeTaskPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task)
-      {
-        Task task = (Task)o;
-        return task.getVerb().equals(Verb.getVerb("CODE"));
+      public boolean execute(Object o) {
+	if (o instanceof Task)
+	  {
+	    Task task = (Task)o;
+	    return task.getVerb().equals(Verb.getVerb("CODE"));
+	  }
+	return false;
       }
-      return false;
-    }
-  };
+    };
 
 
   /**
@@ -129,8 +128,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       programmers.remove(asset);
 
       System.out.println("\nAllocating the following task to "
-          +asset.getTypeIdentificationPG().getTypeIdentification()+": "
-          +asset.getItemIdentificationPG().getItemIdentification());
+			 +asset.getTypeIdentificationPG().getTypeIdentification()+": "
+			 +asset.getItemIdentificationPG().getItemIdentification());
       System.out.println("Task: "+task);
 
       // find the times and make the allocation result that
@@ -143,8 +142,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
 
       Allocation allocation =
         ((PlanningFactory)getDomainService().getFactory("planning")).
-          createAllocation(task.getPlan(), task,
-                                  asset, estAR, Role.ASSIGNED);
+	createAllocation(task.getPlan(), task,
+			 asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);
       allocated = true;
@@ -164,7 +163,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     // figure out time interal, inserting at earliest possible time
     RoleSchedule sched = asset.getRoleSchedule();
     long start = sched.isEmpty() ? earliest :
-                 Math.max (earliest, sched.getEndTime());
+      Math.max (earliest, sched.getEndTime());
     GregorianCalendar cal = new GregorianCalendar();
     cal.setTime (new Date (start));
     cal.add (GregorianCalendar.MONTH, durationMonths);

@@ -20,19 +20,25 @@
  */
 package org.cougaar.tutorial.exercise3;
 
+import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import java.util.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.service.*;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.glm.ldm.asset.OrganizationPG;
+
+import org.cougaar.tutorial.assets.*;
 
 /**
  * This COUGAAR Plugin creates and publishes "CODE" tasks
  */
- // todo:  add code to make this a subclass
+// todo:  add code to make this a subclass
 public class ManagerPlugin {
 
   // The domainService acts as a provider of domain factory services
@@ -58,32 +64,32 @@ public class ManagerPlugin {
   /**
    * todo: Use setupSubscriptions to create the initial CODE tasks
    */
-protected void setupSubscriptions() {
-  // todo: Create a task to code "the next killer app"
-  // todo: Part 1: create the AbstractAsset representing the project.
-  //       Store it in instance variable 'what_to_code'
+  protected void setupSubscriptions() {
+    // todo: Create a task to code "the next killer app"
+    // todo: Part 1: create the AbstractAsset representing the project.
+    //       Store it in instance variable 'what_to_code'
 
-  // todo: Part 2: put the 'what_to_code' asset on the Blackboard
+    // todo: Part 2: put the 'what_to_code' asset on the Blackboard
 
-  // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset
-  //       (complete and use the makeTask function which is later in this file)
+    // todo: Part 3: create and publish a task to CODE the 'what_to_code' asset
+    //       (complete and use the makeTask function which is later in this file)
 
-  // todo: Create an task to code "something java"
-  //       (store it in instance variable 'what_else_to_code')
-}
+    // todo: Create an task to code "something java"
+    //       (store it in instance variable 'what_else_to_code')
+  }
 
 
-/**
- * This Plugin has no subscriptions so this method does nothing
- */
-protected void execute () {
-}
+  /**
+   * This Plugin has no subscriptions so this method does nothing
+   */
+  protected void execute () {
+  }
 
-/**
- * This is a convenience funciont that should create a CODE task.
- * @param what the direct object of the task
- */
-protected Task makeTask(Asset what) {
+  /**
+   * This is a convenience funciont that should create a CODE task.
+   * @param what the direct object of the task
+   */
+  protected Task makeTask(Asset what) {
     NewTask new_task = null;
 
     // todo: create the task with the verb "CODE"
@@ -92,6 +98,6 @@ protected Task makeTask(Asset what) {
 
 
     return new_task;
-}
+  }
 
 }

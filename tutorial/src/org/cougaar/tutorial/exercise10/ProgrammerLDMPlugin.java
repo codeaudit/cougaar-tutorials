@@ -23,19 +23,15 @@ package org.cougaar.tutorial.exercise10;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
-import org.cougaar.tutorial.assets.LanguagePG;
-import org.cougaar.tutorial.assets.NewLanguagePG;
-import org.cougaar.tutorial.assets.NewSkillsPG;
-import org.cougaar.tutorial.assets.ProgrammerAsset;
-import org.cougaar.tutorial.assets.SkillsPG;
+
+import org.cougaar.tutorial.assets.*;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  */
 public class ProgrammerLDMPlugin extends ComponentPlugin {
 
@@ -76,7 +72,7 @@ public class ProgrammerLDMPlugin extends ComponentPlugin {
   /**
    * Used for initialization to populate the Blackboard with ProgrammerAsset objects
    */
-protected void setupSubscriptions() {
+  protected void setupSubscriptions() {
 
     // Get the PlanningFactory
     PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
@@ -106,44 +102,44 @@ protected void setupSubscriptions() {
     another_asset.setItemIdentificationPG(makeAItemIdentificationPG("Linus Torvalds"));
     getBlackboardService().publishAdd(another_asset);
 
-}
+  }
 
-/**
- * Create and populate a Language property group
- */
-private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
-  NewLanguagePG new_language_pg = (NewLanguagePG)
-              ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
-  new_language_pg.setKnowsJava(knowsJava);
-  new_language_pg.setKnowsJavaScript(knowsJavaScript);
-  return new_language_pg;
-}
+  /**
+   * Create and populate a Language property group
+   */
+  private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
+    NewLanguagePG new_language_pg = (NewLanguagePG)
+      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
+    new_language_pg.setKnowsJava(knowsJava);
+    new_language_pg.setKnowsJavaScript(knowsJavaScript);
+    return new_language_pg;
+  }
 
-/**
- * Create and populate a Skills property group
- */
-private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
-  NewSkillsPG new_skills_pg = (NewSkillsPG)
-          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
-  new_skills_pg.setYearsExperience(yearsExperience);
-  new_skills_pg.setSLOCPerDay(productivity);
-  return new_skills_pg;
-}
+  /**
+   * Create and populate a Skills property group
+   */
+  private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
+    NewSkillsPG new_skills_pg = (NewSkillsPG)
+      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
+    new_skills_pg.setYearsExperience(yearsExperience);
+    new_skills_pg.setSLOCPerDay(productivity);
+    return new_skills_pg;
+  }
 
-/**
- * Create and populate an ItemIdentification property group
- */
-private ItemIdentificationPG makeAItemIdentificationPG(String name) {
-  NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
-          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
-  new_item_id_pg.setItemIdentification(name);
-  return new_item_id_pg;
-}
+  /**
+   * Create and populate an ItemIdentification property group
+   */
+  private ItemIdentificationPG makeAItemIdentificationPG(String name) {
+    NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
+      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
+    new_item_id_pg.setItemIdentification(name);
+    return new_item_id_pg;
+  }
 
-/**
- * No subscriptions, so this method does nothing
- */
-protected void execute () {}
+  /**
+   * No subscriptions, so this method does nothing
+   */
+  protected void execute () {}
 
 }
 

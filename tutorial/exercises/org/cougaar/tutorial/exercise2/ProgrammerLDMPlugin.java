@@ -20,19 +20,18 @@
  */
 package org.cougaar.tutorial.exercise2;
 
-import org.cougaar.core.plugin.*;
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.service.*;
-import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.service.PrototypeRegistryService;
+
+import org.cougaar.tutorial.assets.*;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ProgrammerLDMPlugin.java,v 1.1 2003-12-15 16:07:01 twright Exp $
  */
 
  // todo:  add code to make this a subclass

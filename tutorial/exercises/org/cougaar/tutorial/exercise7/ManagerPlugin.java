@@ -20,16 +20,19 @@
  */
 package org.cougaar.tutorial.exercise7;
 
+import java.util.*;
+
+import org.cougaar.util.UnaryPredicate;
+
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import java.util.*;
-import org.cougaar.util.UnaryPredicate;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.ldm.asset.*;
-import org.cougaar.core.service.*;
+import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.OrganizationPG;
+
 import org.cougaar.tutorial.assets.*;
 
 /**
@@ -60,65 +63,65 @@ public class ManagerPlugin extends ComponentPlugin {
   /**
    * Using setupSubscriptions to create the initial CODE tasks
    */
-protected void setupSubscriptions() {
-  // Get the PlanningFactory from the DomainService
-  PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
+  protected void setupSubscriptions() {
+    // Get the PlanningFactory from the DomainService
+    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
 
-  // Create a task to code the next killer app
-  what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
-  NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
-  iipg.setItemIdentification("e-somthing");
-  what_to_code.setItemIdentificationPG(iipg);
-  getBlackboardService().publishAdd(what_to_code);
-  getBlackboardService().publishAdd(makeTask(what_to_code));
+    // Create a task to code the next killer app
+    what_to_code = factory.createPrototype("AbstractAsset", "The Next Killer App");
+    NewItemIdentificationPG iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("e-somthing");
+    what_to_code.setItemIdentificationPG(iipg);
+    getBlackboardService().publishAdd(what_to_code);
+    getBlackboardService().publishAdd(makeTask(what_to_code));
 
-  // Create a task to code something java
-  what_else_to_code = factory.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
-  iipg.setItemIdentification("something java");
-  what_else_to_code.setItemIdentificationPG(iipg);
-  getBlackboardService().publishAdd(what_else_to_code);
-  getBlackboardService().publishAdd(makeTask(what_else_to_code));
+    // Create a task to code something java
+    what_else_to_code = factory.createInstance(what_to_code);
+    iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("something java");
+    what_else_to_code.setItemIdentificationPG(iipg);
+    getBlackboardService().publishAdd(what_else_to_code);
+    getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
-  // Create a task to code something java
-  what_else_to_code = factory.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
-  iipg.setItemIdentification("something big java");
-  what_else_to_code.setItemIdentificationPG(iipg);
-  getBlackboardService().publishAdd(what_else_to_code);
-  getBlackboardService().publishAdd(makeTask(what_else_to_code));
+    // Create a task to code something java
+    what_else_to_code = factory.createInstance(what_to_code);
+    iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("something big java");
+    what_else_to_code.setItemIdentificationPG(iipg);
+    getBlackboardService().publishAdd(what_else_to_code);
+    getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
-  // Create a task to code something java
-  what_else_to_code = factory.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
-  iipg.setItemIdentification("distributed intelligent java agent");
-  what_else_to_code.setItemIdentificationPG(iipg);
-  getBlackboardService().publishAdd(what_else_to_code);
-  getBlackboardService().publishAdd(makeTask(what_else_to_code));
+    // Create a task to code something java
+    what_else_to_code = factory.createInstance(what_to_code);
+    iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("distributed intelligent java agent");
+    what_else_to_code.setItemIdentificationPG(iipg);
+    getBlackboardService().publishAdd(what_else_to_code);
+    getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
-  // Create a task to code something java
-  what_else_to_code = factory.createInstance(what_to_code);
-  iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
-  iipg.setItemIdentification("straw that broke the camel's back");
-  what_else_to_code.setItemIdentificationPG(iipg);
-  getBlackboardService().publishAdd(what_else_to_code);
-  getBlackboardService().publishAdd(makeTask(what_else_to_code));
-
-
-}
+    // Create a task to code something java
+    what_else_to_code = factory.createInstance(what_to_code);
+    iipg = (NewItemIdentificationPG)factory.createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("straw that broke the camel's back");
+    what_else_to_code.setItemIdentificationPG(iipg);
+    getBlackboardService().publishAdd(what_else_to_code);
+    getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
 
-/**
- * This Plugin has no subscriptions so this method does nothing
- */
-protected void execute () {
-}
+  }
 
-/**
- * Create a CODE task.
- * @param what the direct object of the task
- */
-protected Task makeTask(Asset what) {
+
+  /**
+   * This Plugin has no subscriptions so this method does nothing
+   */
+  protected void execute () {
+  }
+
+  /**
+   * Create a CODE task.
+   * @param what the direct object of the task
+   */
+  protected Task makeTask(Asset what) {
     PlanningFactory factory = (PlanningFactory) getDomainService().getFactory("planning");
 
     NewTask new_task = factory.newTask();
@@ -154,7 +157,7 @@ protected Task makeTask(Asset what) {
     cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
     ScoringFunction scorefcn = ScoringFunction.createNearOrAbove
       (AspectValue.newAspectValue(AspectType.START_TIME,
-       cal2.getTime().getTime()), 0.0000001);
+				  cal2.getTime().getTime()), 0.0000001);
     Preference pref =
       factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
@@ -162,7 +165,7 @@ protected Task makeTask(Asset what) {
     cal2.add (Calendar.YEAR, 1);
     scorefcn = ScoringFunction.createNearOrBelow
       (AspectValue.newAspectValue(AspectType.END_TIME,
-       cal2.getTime().getTime()), 0.0000001);
+				  cal2.getTime().getTime()), 0.0000001);
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 
@@ -175,6 +178,6 @@ protected Task makeTask(Asset what) {
     new_task.setPreferences(preferences.elements());
 
     return new_task;
-}
+  }
 
 }

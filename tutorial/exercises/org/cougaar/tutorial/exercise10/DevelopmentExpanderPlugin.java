@@ -20,16 +20,16 @@
  */
 package org.cougaar.tutorial.exercise10;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.service.*;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.plugin.util.PluginHelper;
-import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
-import org.cougaar.planning.ldm.PlanningFactory;
 
+import org.cougaar.util.UnaryPredicate;
+
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.*;
 
 /**
  * This COUGAAR Plugin expands tasks of verb "CODE"
@@ -37,8 +37,6 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DESIGN
  * DEVELOP
  * TEST
- * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.1 2003-12-15 16:07:01 twright Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
