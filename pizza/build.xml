@@ -186,7 +186,17 @@
 
     <!-- What are the dependencies of this module at compile time -->
     <path id="compile.classpath">
-      <filelist dir="." files="${compile.jarlist}"/>
+<!--      <filelist dir="." files="${compile.jarlist}"/> -->
+    <fileset dir="${target.lib}">
+      <patternset id="all.jars">
+        <include name="*.jar"/>
+      </patternset>
+    </fileset>
+    <fileset dir="${target.sys}">
+      <patternset id="all.sys.jars">
+        <include name="*.jar"/>
+      </patternset>
+    </fileset>
       <pathelement path="${compile.abs.jarlist}"/>
     </path>
     
