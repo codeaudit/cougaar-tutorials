@@ -55,7 +55,7 @@ import java.util.TreeSet;
 /**
  * The main UI for the application: shows collected RSVPs from invited guests 
  * at "/pizza", and the progress on ordering the pizza. 
- * 
+ * <p>
  * Load into the Agent doing the inviting (has the {@link PizzaPreferences} object).
  * In our case, that is Alice.
  */
