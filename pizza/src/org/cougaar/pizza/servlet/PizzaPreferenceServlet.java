@@ -28,17 +28,10 @@ package org.cougaar.pizza.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
 
 import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -46,39 +39,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cougaar.community.CommunityDescriptor;
-//import org.cougaar.community.CommunityImpl;
-import org.cougaar.core.service.community.Community;
-import org.cougaar.core.service.community.CommunityResponse;
-import org.cougaar.core.relay.Relay;
-import org.cougaar.core.component.ServiceBroker;
-import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.core.service.ServletService;
 import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.core.blackboard.ChangeReport;
-import org.cougaar.core.blackboard.Claimable;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.AspectValue;
-import org.cougaar.planning.ldm.plan.Expansion;
-import org.cougaar.planning.ldm.plan.PlanElement;
-import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.util.log.Logger;
-import org.cougaar.core.util.UID;
-import org.cougaar.planning.servlet.PlanViewServlet;
 
 import org.cougaar.pizza.plugin.PizzaPreferences;
 
 /**
- * Shows RSVP from each invited guest.
+ * Shows collected RSVPs from invited guests.
+ * Runs at /pizza. Load into the agent doing the inviting (has the PizzaPreferences object).
+ * In our case, that is Alice.
  */
 public class PizzaPreferenceServlet extends BaseServletComponent {
   protected BlackboardQueryService blackboardQueryService;
@@ -89,19 +62,36 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
     super.load();
 
     // get services
-    blackboardQueryService= (BlackboardQueryService)
+    blackboardQueryService = (BlackboardQueryService)
       serviceBroker.getService(this, BlackboardQueryService.class, null);
     AgentIdentificationService agentIDService = 
       (AgentIdentificationService) serviceBroker.getService(this, 
 							    AgentIdentificationService.class, 
 							    null);
-    agentID = agentIDService.getMessageAddress().toString();
+    if (agentIDService != null) {
+      agentID = agentIDService.getMessageAddress().toString();
+      
+      // Release the agentIDService right away, since we don't need it any more
+      serviceBroker.releaseService(this, AgentIdentificationService.class, agentIDService);
+      agentIDService = null;
+    }
+  }
+
+  // Whenever you have a load() method, you should have an unload
+  public void unload() {
+    if (blackboardQueryService != null) {
+      serviceBroker.releaseService(this, BlackboardQueryService.class, blackboardQueryService);
+      blackboardQueryService = null;
+    }
+    super.unload();
   }
 
   protected String getPath() {
     return "/pizza";
   }
 
+  // Using an inner class to implement the Servlet interface
+  // provides a useful design pattern
   protected Servlet createServlet() {
     return new PizzaWorker();
   }
@@ -110,6 +100,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
    * Inner-class that's registered as the servlet.
    */
   protected class PizzaWorker extends HttpServlet {
+    // Often we want the servlet to behave identically for Get or Post
     public void doGet(
 		      HttpServletRequest request,
 		      HttpServletResponse response) throws IOException, ServletException {
@@ -124,35 +115,32 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
   }
 
   protected class PizzaFormatter {
-    public static final int FORMAT_DATA = 0;
-    public static final int FORMAT_XML = 1;
+    public static final int FORMAT_DATA = 0; // Not yet supported
+    public static final int FORMAT_XML = 1; // Not yet supported
     public static final int FORMAT_HTML = 2;
 
-    private int format;
+    private int format = FORMAT_HTML;
 
     public PizzaFormatter(
 			  HttpServletRequest request, 
 			  HttpServletResponse response) throws IOException, ServletException
     {
-      format = getFormat (request);
+      getFormat (request);
       execute (response);
     }         
 
-    protected int getFormat (HttpServletRequest request) {
+    // Parse the requested format. A similar pattern could be used to 
+    // handle other parameters.
+    // Note however that only HTML is currently supported.
+    protected void getFormat (HttpServletRequest request) {
       String formatParam = request.getParameter("format");
-      int format;
-      if (formatParam == null) {
-        format = FORMAT_HTML; // default
-      } else if ("data".equals(formatParam)) {
+      if ("data".equals(formatParam)) {
         format = FORMAT_DATA;
       } else if ("xml".equals(formatParam)) {
         format = FORMAT_XML;
-      } else if ("html".equals(formatParam)) {
-        format = FORMAT_HTML;
       } else {
-        format = FORMAT_HTML; // other
+        format = FORMAT_HTML; // default
       }
-      return format;
     }
 
     public void execute(HttpServletResponse response) throws IOException, ServletException {
@@ -189,6 +177,8 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 	return "<center><b>Waiting for invitiation RSVP from friends.</b></center>";
       }
       else {
+	// Our subscription is a Collection, but we only expect one
+	// PizzaPreferences object -- so we just look at the first.
 	PizzaPreferences prefs = (PizzaPreferences) pizzaPreferences.iterator().next();
 	StringBuffer buf = new StringBuffer();
 	buf.append("<table border=1 align=center>");
