@@ -33,7 +33,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.6 2003-01-23 19:44:33 mthome Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.7 2003-02-04 16:16:02 mbarger Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -169,7 +169,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
                                   task, // task (dummy)
                                   the_asset,
                                   schedule,  // schedule(dummy)
-                                  the_receiving_asset, // to_agent
+                                  ldmf.cloneInstance(the_receiving_asset), // to_agent
                                   est_ar, // estimated_result
 				  Role.AVAILABLE    // role
 				  );

@@ -37,7 +37,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to manage the calendar assets for schedule requests, giving
  * an answer of when the scheduling was for, or that it was unfulfilled
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarManagerPlugin.java,v 1.3 2003-01-23 22:12:54 mbarger Exp $
+ * @version $Id: CalendarManagerPlugin.java,v 1.4 2003-02-04 16:16:02 mbarger Exp $
  **/
 public class CalendarManagerPlugin extends ComponentPlugin
 {
@@ -94,6 +94,17 @@ public class CalendarManagerPlugin extends ComponentPlugin
 
     // Publish the CalendarAsset  to logplan so others can see it
     theCalendar = (CalendarAsset)ldmf.createAsset(org.cougaar.tutorial.faststart.calendar.CalendarAsset.class);
+
+    NewTypeIdentificationPG tipg = (NewTypeIdentificationPG)ldmf
+        .createPropertyGroup("TypeIdentificationPG");
+    tipg.setTypeIdentification("Calendar Asset");
+    theCalendar.setTypeIdentificationPG(tipg);
+
+    NewItemIdentificationPG iipg = (NewItemIdentificationPG)ldmf
+        .createPropertyGroup("ItemIdentificationPG");
+    iipg.setItemIdentification("Calendar Asset");
+    theCalendar.setItemIdentificationPG(iipg);
+
     getBlackboardService().publishAdd(theCalendar);
   }
 
