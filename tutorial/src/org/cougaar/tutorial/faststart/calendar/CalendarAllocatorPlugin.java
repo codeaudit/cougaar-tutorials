@@ -34,7 +34,7 @@ import org.cougaar.core.service.DomainService;
 /**
  * Class to allocate 'Schedule' tasks to the supporting organization
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarAllocatorPlugin.java,v 1.3 2003-01-23 22:12:54 mbarger Exp $
+ * @version $Id: CalendarAllocatorPlugin.java,v 1.4 2003-05-23 19:33:22 dmontana Exp $
  **/
 public class CalendarAllocatorPlugin extends ComponentPlugin
 {
@@ -108,8 +108,8 @@ public class CalendarAllocatorPlugin extends ComponentPlugin
 
     // Grab the first support asset as the organization to whom we'll be
     // allocating the schedule tasks
-    Organization mySupportOrganization =
-      (Organization)TutorialUtils.getFirstObject(allSupportAssets.elements());
+    TutorialOrg mySupportOrganization =
+      (TutorialOrg)TutorialUtils.getFirstObject(allSupportAssets.elements());
 
     // System.out.println("mySupprtOrganization = " + mySupportOrganization);
 

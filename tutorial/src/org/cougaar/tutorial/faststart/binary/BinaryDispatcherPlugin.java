@@ -39,7 +39,7 @@ import org.cougaar.core.service.DomainService;
  * results are copied to estimated, while the BinaryIterator waits for this
  * copy to take place before proceeding.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryDispatcherPlugin.java,v 1.4 2003-01-23 22:12:53 mbarger Exp $
+ * @version $Id: BinaryDispatcherPlugin.java,v 1.5 2003-05-23 19:33:22 dmontana Exp $
  */
 public class BinaryDispatcherPlugin extends ComponentPlugin
 {
@@ -110,13 +110,13 @@ public class BinaryDispatcherPlugin extends ComponentPlugin
   public void execute() {
 
     // Get support organization for allocating
-    Organization mySupportOrganization;
+    TutorialOrg mySupportOrganization;
 
     // System.out.println("BinaryDispatcherPlugin::execute...");
 
     // Grab the first support asset as the organization to whom we'll be
     // routing tasks
-    mySupportOrganization = (Organization)
+    mySupportOrganization = (TutorialOrg)
       TutorialUtils.getFirstObject(allSupportAssets.getAddedList());
 
     if ((mySupportOrganization != null) && (allManageTasks == null)) {

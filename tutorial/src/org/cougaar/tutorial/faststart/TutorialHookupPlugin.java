@@ -33,7 +33,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.8 2003-04-08 17:43:27 dmontana Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.9 2003-05-23 19:33:22 dmontana Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -62,8 +62,8 @@ public class TutorialHookupPlugin extends ComponentPlugin
     // Create 'SELF' and put in my log plan
     String my_agent_name = getAgentIdentifier().getAddress();
     Role []my_self_roles = {};
-    Organization my_organization = 
-      createOrganization(my_agent_name, my_self_roles, Organization.SELF_RELATIONSHIP);
+    TutorialOrg my_organization = 
+      createOrganization(my_agent_name, my_self_roles, TutorialOrg.SELF_RELATIONSHIP);
     getBlackboardService().publishAdd(my_organization);
 
     // Go over all agents specified in command line
@@ -74,13 +74,13 @@ public class TutorialHookupPlugin extends ComponentPlugin
       String my_relationship = (String)my_relationships.elementAt(i);
       Role my_related_role = Role.getRole((String)my_related_roles.elementAt(i));
       Role []my_related_roles = {my_related_role};
-      Organization my_related_agent =
+      TutorialOrg my_related_agent =
          createOrganization(my_related_agent_name, my_related_roles,
 			   my_relationship);
       getBlackboardService().publishAdd(my_related_agent);
 
       // And copy self to all specified related agents
-      Organization my_copy =
+      TutorialOrg my_copy =
          createOrganization(my_agent_name, my_related_roles,
 			   convertRelationship(my_relationship));
       copyAssetToCluster(my_copy, my_related_agent);
@@ -90,10 +90,10 @@ public class TutorialHookupPlugin extends ComponentPlugin
   // Flip sense of symmetric relationship
   // for shipping to other agent
   private String convertRelationship(String relationship) {
-    if (relationship.equals(Organization.SUPPLIER_RELATIONSHIP))
-      return Organization.CUSTOMER_RELATIONSHIP;
-    else if (relationship.equals(Organization.CUSTOMER_RELATIONSHIP))
-      return Organization.SUPPLIER_RELATIONSHIP;
+    if (relationship.equals(TutorialOrg.SUPPLIER_RELATIONSHIP))
+      return TutorialOrg.CUSTOMER_RELATIONSHIP;
+    else if (relationship.equals(TutorialOrg.CUSTOMER_RELATIONSHIP))
+      return TutorialOrg.SUPPLIER_RELATIONSHIP;
     else
       return relationship;
   }
@@ -107,10 +107,10 @@ public class TutorialHookupPlugin extends ComponentPlugin
    * Create an organization asset with given name,
    * given sets of roles and relationship (to reference organization)
    */
-  private Organization createOrganization(String name, Role []roles, String relationship)
+  private TutorialOrg createOrganization(String name, Role []roles, String relationship)
   {
-    Organization org = (Organization)ldmf
-	.createAsset(org.cougaar.tutorial.faststart.Organization.class);
+    TutorialOrg org = (TutorialOrg)ldmf
+	.createAsset(org.cougaar.tutorial.faststart.TutorialOrg.class);
     NewClusterPG cpg = (NewClusterPG)ldmf
 	.createPropertyGroup(ClusterPGImpl.class);
     cpg.setMessageAddress(MessageAddress.getMessageAddress(name));

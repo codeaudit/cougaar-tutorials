@@ -32,7 +32,7 @@ import java.awt.*;
 /**
  * Utility class for writing all tutorial plugin classes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialUtils.java,v 1.6 2003-01-23 22:12:53 mbarger Exp $
+ * @version $Id: TutorialUtils.java,v 1.7 2003-05-23 19:33:22 dmontana Exp $
  **/
 public class TutorialUtils {
 
@@ -210,17 +210,17 @@ public class TutorialUtils {
   }
 
   /**
-   * Is given object an Organization that has given role
+   * Is given object an TutorialOrg that has given role
    * among given capable roles?
    * @param Object to test for role
    * @param String role to check for on object
-   * @return boolean indicating whether object is Organization with given role
+   * @return boolean indicating whether object is TutorialOrg with given role
    **/
   public static boolean isSupplierOrganization(Object o, String role)
   {
-    if (o instanceof Organization) {
-      Organization organization = (Organization)o;
-      if (organization.getRelationship().equals(Organization.SUPPLIER_RELATIONSHIP)) {
+    if (o instanceof TutorialOrg) {
+      TutorialOrg organization = (TutorialOrg)o;
+      if (organization.getRelationship().equals(TutorialOrg.SUPPLIER_RELATIONSHIP)) {
         for(int i=0; i<organization.getRoles().length; i++) {
            if (organization.getRoles()[i].getName().equals(role)) {
             return true;
