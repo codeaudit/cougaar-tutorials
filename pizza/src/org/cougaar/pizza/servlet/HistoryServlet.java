@@ -1434,7 +1434,7 @@ public class HistoryServlet extends ComponentPlugin {
         } else {
           detailsLink = detailsLink +
               "showDetails=true" +
-              "\">show object details</a>";
+              "\">Show object details</a>";
         }
 
         // Now print the actual page
@@ -1447,7 +1447,7 @@ public class HistoryServlet extends ComponentPlugin {
 
             "<center>" +
             sortLink +
-            "&nbsp;" +
+            "&nbsp;&nbsp;&nbsp;" +
             detailsLink +
             "</center>" +
             // Here we print the actual table of events
