@@ -142,9 +142,14 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     if (provider != null) {
       for (Iterator i = tasks.iterator(); i.hasNext();) {
         Task newTask = (Task) i.next();
-        AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 0.25, true);
-        Allocation alloc = planningFactory.createAllocation(newTask.getPlan(), newTask, (Asset) provider, ar,
-                                                            Role.getRole(Constants.PIZZA_PROVIDER));
+        AllocationResult ar = 
+	  PluginHelper.createEstimatedAllocationResult(newTask, 
+						       planningFactory, 0.25, 
+						       true);
+        Allocation alloc = 
+	  planningFactory.createAllocation(newTask.getPlan(), newTask, 
+					   (Asset) provider, ar,
+					   Constants.Role.PIZZAPROVIDER);
         blackboard.publishAdd(alloc);
         if (logger.isDebugEnabled()) {
           logger.debug(" allocating task " + newTask);
@@ -229,7 +234,9 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   public Collection getProviderOrgAssets() {
     TimeSpan timeSpan = TimeSpans.getSpan(TimeSpan.MIN_VALUE, TimeSpan.MAX_VALUE);
     RelationshipSchedule relSched = self.getRelationshipSchedule();
-    Collection relationships = relSched.getMatchingRelationships(Role.getRole(Constants.PIZZA_PROVIDER), timeSpan);
+    Collection relationships = 
+      relSched.getMatchingRelationships(Constants.Role.PIZZAPROVIDER, 
+					timeSpan);
     List providers = new ArrayList();
     for (Iterator iterator = relationships.iterator(); iterator.hasNext();) {
       Relationship r = (Relationship) iterator.next();
