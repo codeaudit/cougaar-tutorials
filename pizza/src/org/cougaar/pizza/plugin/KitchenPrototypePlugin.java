@@ -87,6 +87,7 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
     planningFactory = (PlanningFactory)domainService.getFactory("planning");
     // unload the domain service since we only need it to get the planning factory
     getServiceBroker().releaseService(this, DomainService.class, domainService);
+
     // Process the plugin params
     args = new Arguments(getParameter());
     setKitchenParameters();
@@ -131,7 +132,7 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   protected void execute () {}
 
   /**
-   * Set the createVeggie and createMeat plugin variables according to the plugin param that was read in.
+   * Set the createVeggie and createMeat plugin variables according to the plugin parameter
    */
   private void setKitchenParameters() {
     String paramValue = args.getString(PIZZA_TYPE_PARAM);
@@ -148,6 +149,5 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
       }
     }
   }
-
 }
 

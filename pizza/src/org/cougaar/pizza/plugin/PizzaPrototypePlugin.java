@@ -70,6 +70,8 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
     planningFactory = (PlanningFactory)domainService.getFactory("planning");
     // unload the domain service since we only need it to get the planning factory
     getServiceBroker().releaseService(this, DomainService.class, domainService);
+
+    // Create our prototype
     createPizzaPrototype();
   }
 

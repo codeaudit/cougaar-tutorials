@@ -43,17 +43,21 @@ import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.servlet.HistoryServletFriendly;
 
 /**
- * Stores mapping from friend to their pizza preference
- * <p/>
- * Counts meat and veg preferences.
+ * Local accumulation of replies to invite, marking who has replied and the kinds
+ * of pizza they want. Automatically updated by the {@link RSVPRelaySource}. Published
+ * by the InvitePlugin so that the PlaceOrderPlugin knows to start.
+ * @see org.cougaar.pizza.plugin.InvitePlugin
+ * @see org.cougaar.pizza.plugin.PlaceOrderPlugin
  */
-
 public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
   private UID uid;
+  // Map of accumulated results
   private Map friendToPizza = new HashMap();
 
+  // Note this static method of getting a logger within an object.
   private static Logger log = Logging.getLogger(PizzaPreferences.class);
 
+  // Total meat and veg to order
   private int numMeat = 0;
   private int numVeg = 0;
 
@@ -70,7 +74,17 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
     this.uid = uid;
   }
 
+  /**
+   * The given friend has replied, requesting the given pizza, so store
+   * their response.
+   * 
+   * @param friend The agent name responding
+   * @param preference The kind of meat they like (using a pizza Constant)
+   */
   public void addFriendToPizza(String friend, String preference) {
+    if (friend == null || friend.equals(""))
+      return;
+
     friendToPizza.put(friend, preference);
 
     if (preference.equals(Constants.MEAT_PIZZA))
@@ -78,9 +92,14 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
     else if (preference.equals(Constants.VEGGIE_PIZZA))
       numVeg++;
     else
-      log.warn("unknown preference " + preference + " for " + friend);
+      log.warn("Unknown preference " + preference + " for " + friend);
   }
 
+  /**
+   * What kind of pizza does the given friend want?
+   * @param friend to look up
+   * @return kind of pizza they want
+   */
   public String getPreferenceForFriend(String friend) {
     return (String) friendToPizza.get(friend);
   }
@@ -89,26 +108,36 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
     return friendToPizza.keySet();
   }
 
+  /** @return printable list of the friends we have preferences for */
   public String getFriendNames() {
     return friendToPizza.keySet().toString();
   }
 
+  /** @return printable list of just the preferences collected */
   public String getPreferenceValues() {
     return friendToPizza.values().toString();
   }
 
+  /** @return printable list of the friend-to-preference mapping */
   public String getFriendToPreference() {
     return friendToPizza.toString();
   }
 
+  /** @return Number of meat pizzas wanted */
   public int getNumMeat() {
     return numMeat;
   }
 
+  /** @return Number of veggie pizzas wanted */
   public int getNumVeg() {
     return numVeg;
   }
 
+  /**
+   * Print an HTML-friendly description of the object, for use in the HistoryServlet.
+   * @param type Not-used here, is the transaction type
+   * @return HTML text to display this object
+   */
   public String toHTML (int type) {
     StringBuffer buf = new StringBuffer();
     buf.append("<table border=1 align=center>");
@@ -140,6 +169,6 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
   }
 
   public String toString() {
-    return "Party guests pizza preferences : " + friendToPizza;
+    return "Party guests pizza preferences: " + friendToPizza;
   }
 }
