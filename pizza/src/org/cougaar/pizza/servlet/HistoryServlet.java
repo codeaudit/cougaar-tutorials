@@ -49,6 +49,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.cougaar.community.CommunityDescriptor;
+import org.cougaar.community.manager.Request;
+
 import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.Claimable;
 import org.cougaar.core.blackboard.IncrementalSubscription;
@@ -72,6 +74,7 @@ import org.cougaar.multicast.AttributeBasedAddress;
 
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.Entity;
+import org.cougaar.planning.ldm.plan.Aggregation;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.AspectValue;
 import org.cougaar.planning.ldm.plan.AssetTransfer;
@@ -122,7 +125,6 @@ public class HistoryServlet extends ComponentPlugin {
   /** initialize args to the empty instance */
   private Arguments args = Arguments.EMPTY_INSTANCE;
   protected MessageAddress localAgent;
-  protected AgentIdentificationService agentIdService;
 
   protected LoggingService logger;
   protected boolean stopRefresh = false;
@@ -132,7 +134,7 @@ public class HistoryServlet extends ComponentPlugin {
   private IncrementalSubscription planElementsSubscription;
   private IncrementalSubscription assetsSubscription;
   private IncrementalSubscription uniqueObjectsSubscription;
-  protected static SimpleDateFormat format = new SimpleDateFormat ("hh:mm:ss:SSS");
+  protected static SimpleDateFormat format = new SimpleDateFormat ("MM-dd hh:mm:ss:SSS");
   protected String encAgentName;
   protected SortedSet events = new TreeSet();
   boolean showChangeReport = false;
@@ -153,6 +155,10 @@ public class HistoryServlet extends ComponentPlugin {
   public static final int ASSET = 2;
   public static final int UNIQUE_OBJECT = 3;
   public static final int DIRECT_OBJECT = 4;
+
+  public static final int ADDED   = 0;
+  public static final int CHANGED = 1;
+  public static final int REMOVED = 2;
 
   private UnaryPredicate relayPredicate =  new UnaryPredicate() {
       public boolean execute(Object o) {
@@ -207,8 +213,6 @@ public class HistoryServlet extends ComponentPlugin {
     servletService = (ServletService)
       sb.getService(this, ServletService.class, null);
 
-    // prefix all logging calls with our agent name
-    logger = LoggingServiceWithPrefix.add(logger, localAgent+": ");
     encAgentName = encodeAgentName(agentId.getAddress());
 
     // when plugin is added to agent you can set this to a smaller or
@@ -218,8 +222,10 @@ public class HistoryServlet extends ComponentPlugin {
     maxRoleScheduleElements = 
       args.getInt("MAX_ROLE_SCHEDULE_ELEMENTS", INITIAL_MAX_ROLE_SCHEDULE_ELEMENTS);
     maxChildTasks = args.getInt("MAX_CHILD_TASKS", INITIAL_MAX_CHILD_TASKS);
-    logger.info ("max events " + args.getInt("MAX_EVENTS_REMEMBERED", 55));
-    logger.info ("args is " + args);
+    if (logger.isInfoEnabled()) {
+      logger.info ("max events " + args.getInt("MAX_EVENTS_REMEMBERED", 55));
+      logger.info ("args is " + args);
+    }
   }
 
   public String encodeAgentName(String name) {
@@ -310,7 +316,7 @@ public class HistoryServlet extends ComponentPlugin {
    * Executes Plugin functionality.
    */
   public void execute() {
-    long now = System.currentTimeMillis();
+    long now = currentTimeMillis(); // this is scenario time.
 
     try {
       // synchronized prevents servlet from iterating over events
@@ -345,10 +351,12 @@ public class HistoryServlet extends ComponentPlugin {
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	Task task = (Task) iter.next();
 	String event = 
-	  "New task " + getURL(task.getUID (), TASK)+ 
-	  " - " + task.getVerb() + " was published by " + ((Claimable)task).getClaim();
+	  "Task " + getURL(task.getUID (), TASK)+ 
+	  " - " + task.getVerb() + 
+	  "<br/>was published by " + ((Claimable)task).getClaim();
 				   
-	addEvent (new EventInfo (task.getUID().toString(),
+	addEvent (new EventInfo (ADDED, 
+				 task.getUID().toString(),
 				 event,
 				 now,
 				 getAddedTaskComment(task),
@@ -358,21 +366,23 @@ public class HistoryServlet extends ComponentPlugin {
       Collection changed = tasksSubscription.getChangedCollection();
       for (Iterator iter = changed.iterator(); iter.hasNext(); ) {
 	Task task = (Task) iter.next();
-	addEvent (new EventInfo (task.getUID().toString(),
-				   "Task " + getURL(task.getUID(), TASK) + " changed.",
-				   now,
-				   "",
-				   tasksSubscription.getChangeReports(task),
-				   encodeHTML(task.toString())));
+	addEvent (new EventInfo (CHANGED,
+				 task.getUID().toString(),
+				 "Task " + getURL(task.getUID(), TASK),
+				 now,
+				 "",
+				 tasksSubscription.getChangeReports(task),
+				 encodeHTML(task.toString())));
       }
 
       Collection removed = tasksSubscription.getRemovedCollection();
       for (Iterator iter = removed.iterator(); iter.hasNext(); ) {
 	Task task = (Task) iter.next();
-	addEvent (new EventInfo (task.getUID().toString(),
-				   "Task " + getURL(task.getUID(), TASK) + " was removed.",
-				   now,
-				   ""));
+	addEvent (new EventInfo (REMOVED,
+				 task.getUID().toString(),
+				 "Task " + getURL(task.getUID(), TASK),
+				 now,
+				 ""));
       }
     }
   }
@@ -380,6 +390,8 @@ public class HistoryServlet extends ComponentPlugin {
   protected String getAddedTaskComment (Task task) {
     StringBuffer buf = new StringBuffer();
 
+    buf.append(task.getVerb());
+    buf.append(", ");
     if (task.getDirectObject() != null) {
       buf.append (" direct object ");
       buf.append (getTypeAndItemInfo(task.getDirectObject()));
@@ -395,12 +407,13 @@ public class HistoryServlet extends ComponentPlugin {
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	PlanElement planElement = (PlanElement) iter.next();
 	String event = 
-	  "New " + getClassName(planElement) + 
+	  "" + getClassName(planElement) + 
 	  " " + getURL(planElement.getUID (), PLAN_ELEMENT) + 
 	  "<br/>of task " + getURL(planElement.getTask().getUID(), TASK) + 
 	  "<br/>was published by " + planElement.getClaimable().getClaim();
 				   
-	addEvent (new EventInfo (planElement.getUID().toString(),
+	addEvent (new EventInfo (ADDED,
+				 planElement.getUID().toString(),
 				   event,
 				   now,
 				   getAddedComment(planElement),
@@ -412,9 +425,10 @@ public class HistoryServlet extends ComponentPlugin {
 	PlanElement planElement = (PlanElement) iter.next();
 	String event = 
 	  getClassName(planElement) + " " + 
-	  getURL(planElement.getUID(), PLAN_ELEMENT) + " changed.";
+	  getURL(planElement.getUID(), PLAN_ELEMENT);
 
-	addEvent (new EventInfo (planElement.getUID().toString(),
+	addEvent (new EventInfo (CHANGED,
+				 planElement.getUID().toString(),
 				   event,
 				   now,
 				   getChangedComment(planElement),
@@ -427,9 +441,10 @@ public class HistoryServlet extends ComponentPlugin {
 	PlanElement planElement = (PlanElement) iter.next();
 	String event = 
 	  getClassName(planElement) + " " + 
-	  getURL(planElement.getUID(), PLAN_ELEMENT) + " was removed.";
+	  getURL(planElement.getUID(), PLAN_ELEMENT);
 
-	addEvent (new EventInfo (planElement.getUID().toString(),
+	addEvent (new EventInfo (REMOVED,
+				 planElement.getUID().toString(),
 				   event,
 				   now,
 				   ""));
@@ -442,31 +457,34 @@ public class HistoryServlet extends ComponentPlugin {
       Collection added = relaysSubscription.getAddedCollection();
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	Relay relay = (Relay) iter.next();
-	addEvent (new EventInfo (relay.getUID().toString(),
-				   "New relay " + getURL(relay.getUID(), UNIQUE_OBJECT)+ " was published.",
-				   now,
-				   getAddedRelayComment(relay), 
-				   encodeHTML(relay.toString())));
+	addEvent (new EventInfo (ADDED,
+				 relay.getUID().toString(),
+				 "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT),
+				 now,
+				 getAddedRelayComment(relay), 
+				 encodeHTML(relay.toString())));
       }
 
       Collection changed = relaysSubscription.getChangedCollection();
       for (Iterator iter = changed.iterator(); iter.hasNext(); ) {
 	Relay relay = (Relay) iter.next();
-	addEvent (new EventInfo (relay.getUID().toString(),
-				   "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT) + " changed.",
-				   now,
-				   getChangedRelayComment(relay),
-				   relaysSubscription.getChangeReports(relay),
-				   encodeHTML(relay.toString())));
+	addEvent (new EventInfo (CHANGED,
+				 relay.getUID().toString(),
+				 "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT),
+				 now,
+				 getChangedRelayComment(relay),
+				 relaysSubscription.getChangeReports(relay),
+				 encodeHTML(relay.toString())));
       }
 
       Collection removed = relaysSubscription.getRemovedCollection();
       for (Iterator iter = removed.iterator(); iter.hasNext(); ) {
 	Relay relay = (Relay) iter.next();
-	addEvent (new EventInfo (relay.getUID().toString(),
-				   "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT) + " was removed.",
-				   now,
-				   "Response returned, so request removed from blackboard."));
+	addEvent (new EventInfo (REMOVED,
+				 relay.getUID().toString(),
+				 "Relay " + getURL(relay.getUID(), UNIQUE_OBJECT),
+				 now,
+				 "Request removed from blackboard."));
       }
     }
   }
@@ -476,31 +494,33 @@ public class HistoryServlet extends ComponentPlugin {
       Collection added = assetsSubscription.getAddedCollection();
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	Asset asset = (Asset) iter.next();
-	addEvent (new EventInfo (asset.getUID().toString(),
-				   "New asset " + getURL(asset.getUID(), ASSET)+ 
-				   " was published",
-				   now,
-				   getAddedAssetComment(asset),
-				   encodeHTML(asset.toString())));
+	addEvent (new EventInfo (ADDED,
+				 asset.getUID().toString(),
+				 "Asset " + getURL(asset.getUID(), ASSET),
+				 now,
+				 getAddedAssetComment(asset),
+				 encodeHTML(asset.toString())));
       }
 
       Collection changed = assetsSubscription.getChangedCollection();
       for (Iterator iter = changed.iterator(); iter.hasNext(); ) {
 	Asset asset = (Asset) iter.next();
-	addEvent (new EventInfo (asset.getUID().toString(),
-				   "Asset " + getURL(asset.getUID(), ASSET) + " changed.",
-				   now,
-				   getChangedAssetComment(asset),
-				   encodeHTML(asset.toString())));
+	addEvent (new EventInfo (CHANGED,
+				 asset.getUID().toString(),
+				 "Asset " + getURL(asset.getUID(), ASSET),
+				 now,
+				 getChangedAssetComment(asset),
+				 encodeHTML(asset.toString())));
       }
 
       Collection removed = assetsSubscription.getRemovedCollection();
       for (Iterator iter = removed.iterator(); iter.hasNext(); ) {
 	Asset asset = (Asset) iter.next();
-	addEvent (new EventInfo (asset.getUID().toString(),
-				   "Asset " + getURL(asset.getUID(), ASSET) + " was removed.",
-				   now,
-				   ""));
+	addEvent (new EventInfo (REMOVED,
+				 asset.getUID().toString(),
+				 "Asset " + getURL(asset.getUID(), ASSET),
+				 now,
+				 ""));
       }
     }
   }
@@ -577,6 +597,10 @@ public class HistoryServlet extends ComponentPlugin {
 
     buf.append(getRoleSchedule(asset)); 
 
+    if (asset instanceof HistoryServletFriendly) {
+      buf.append (((HistoryServletFriendly)asset).toHTML(CHANGED));
+    }
+
     return buf.toString();
   }
 
@@ -626,9 +650,9 @@ public class HistoryServlet extends ComponentPlugin {
       Collection added = uniqueObjectsSubscription.getAddedCollection();
       for (Iterator iter = added.iterator(); iter.hasNext(); ) {
 	UniqueObject uniqueObject = (UniqueObject) iter.next();
-	addEvent (new EventInfo (uniqueObject.getUID().toString(),
-				 "New uniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT)+ 
-				 " was published",
+	addEvent (new EventInfo (ADDED,
+				 uniqueObject.getUID().toString(),
+				 "UniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT), 
 				 now,
 				 getAddedUniqueObjectComment (uniqueObject),
 				 encodeHTML(uniqueObject.toString())));
@@ -637,7 +661,8 @@ public class HistoryServlet extends ComponentPlugin {
       Collection changed = uniqueObjectsSubscription.getChangedCollection();
       for (Iterator iter = changed.iterator(); iter.hasNext(); ) {
 	UniqueObject uniqueObject = (UniqueObject) iter.next();
-	addEvent (new EventInfo (uniqueObject.getUID().toString(),
+	addEvent (new EventInfo (CHANGED,
+				 uniqueObject.getUID().toString(),
 				   "UniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT) + " changed.",
 				   now,
 				   getChangedUniqueObjectComment(uniqueObject),
@@ -647,7 +672,8 @@ public class HistoryServlet extends ComponentPlugin {
       Collection removed = uniqueObjectsSubscription.getRemovedCollection();
       for (Iterator iter = removed.iterator(); iter.hasNext(); ) {
 	UniqueObject uniqueObject = (UniqueObject) iter.next();
-	addEvent (new EventInfo (uniqueObject.getUID().toString(),
+	addEvent (new EventInfo (REMOVED,
+				 uniqueObject.getUID().toString(),
 				   "UniqueObject " + getURL(uniqueObject.getUID(), UNIQUE_OBJECT) + " was removed.",
 				   now,
 				   getRemovedUniqueObjectComment(uniqueObject)));
@@ -656,7 +682,17 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   protected String getAddedUniqueObjectComment (UniqueObject unique) {
-    return "A " + getClassName(unique) + " object";
+    StringBuffer buf = new StringBuffer();
+
+    buf.append("A ");
+    buf.append(getClassName(unique));
+    buf.append(" object.<br/>");
+
+    if (unique instanceof HistoryServletFriendly) {
+      buf.append (((HistoryServletFriendly)unique).toHTML(ADDED));
+    }
+
+    return buf.toString();
   }
 
   protected String getChangedUniqueObjectComment (UniqueObject unique) {
@@ -684,8 +720,23 @@ public class HistoryServlet extends ComponentPlugin {
       if (sourceRelay.getContent() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
 	Community community = (Community)response.getCommunity();
+	buf.append ("<br/>");
 	buf.append(getCommunityText("Source Relay Response : ", community));
       }
+      else if (sourceRelay.getContent() instanceof Request) {
+	buf.append("<br/>Community Request: ");
+	Request request = (Request) sourceRelay.getContent();
+	buf.append(request.getRequestTypeAsString(request.getRequestType()));
+	buf.append("<br/>Source: ");
+	buf.append(request.getSource());
+	buf.append("<br/>Entity: ");
+	buf.append(request.getEntity());
+      }
+      else {
+	buf.append("<br/>Content : ");
+	buf.append(sourceRelay.getContent());
+      }
+      buf.append("<br/>");
     }
     if (relay instanceof Relay.Target) {
       Relay.Target targetRelay = (Relay.Target)relay;
@@ -705,6 +756,10 @@ public class HistoryServlet extends ComponentPlugin {
 
 	buf.append("Target Relay Source  : " + encodeHTML(targetSource));
       }
+    }
+
+    if (relay instanceof HistoryServletFriendly) {
+      buf.append (((HistoryServletFriendly)relay).toHTML(ADDED));
     }
 
     return buf.toString();
@@ -729,6 +784,9 @@ public class HistoryServlet extends ComponentPlugin {
 	  buf.append (aba.getAttributeType());
 	  buf.append (" value=");
 	  buf.append (aba.getAttributeValue());
+	}
+	else {
+	  buf.append (address);
 	}
 	// buf.append (encodeHTML(address.toString()));
 	buf.append (
@@ -771,6 +829,10 @@ public class HistoryServlet extends ComponentPlugin {
       else {
 	buf.append("Target Relay Response : " + encodeHTML(targetRelay.getResponse().toString()));
       }
+    }
+
+    if (relay instanceof HistoryServletFriendly) {
+      buf.append (((HistoryServletFriendly)relay).toHTML(CHANGED));
     }
 
     return buf.toString();
@@ -925,16 +987,18 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   protected String getAddedComment (PlanElement planElement) {
+    StringBuffer buf = new StringBuffer();
+
     if (planElement instanceof Allocation) {
       Allocation allocation = (Allocation) planElement;
 
-      if (allocation.getAsset() == null)
-	return "";
-      else {
-	StringBuffer buf = new StringBuffer();
-	buf.append ("Do ");
+      if (allocation.getAsset() != null) {
+	buf.append ("Satisfy ");
 	buf.append (allocation.getTask().getVerb());
-	buf.append (" with ");
+	buf.append (" task with ");
+	if (allocation.getAsset() instanceof Entity) {
+	  buf.append (" <i>remote agent</i> ");
+	}
 	buf.append (getTypeAndItemInfo(allocation.getAsset()));
 	buf.append ("<br/>");
 	buf.append (getRoleSchedule(allocation.getAsset()));
@@ -947,13 +1011,11 @@ public class HistoryServlet extends ComponentPlugin {
 	  buf.append (prefix + "<br/>");
 	  buf.append (getAspectValues2 (values));
 	}
-
-	return buf.toString();
       }
     }
     else if (planElement instanceof Expansion) {
       Expansion expansion = (Expansion) planElement;
-      StringBuffer buf = new StringBuffer();
+
       buf.append ("<table>");
       buf.append ("<tr><td>");
       buf.append ("Child tasks are :" );
@@ -984,16 +1046,28 @@ public class HistoryServlet extends ComponentPlugin {
       }
 
       buf.append ("</table>");
-      return buf.toString();
     }
     else if (planElement instanceof AssetTransfer) {
       AssetTransfer transfer = (AssetTransfer) planElement;
-      return "Transfer of <b>"+getTypeAndItemInfo(transfer.getAsset())+
-	"</b> from <b>"+transfer.getAssignor()+
-	"</b> to <b>"+getTypeAndItemInfo(transfer.getAssignee()) + "</b>";
+      buf.append("Transfer of <b>");
+      buf.append(getTypeAndItemInfo(transfer.getAsset()));
+      buf.append("</b> from <b>");
+      buf.append(transfer.getAssignor());
+      buf.append("</b> to <b>");
+      buf.append(getTypeAndItemInfo(transfer.getAssignee()));
+      buf.append("</b>");
+    }
+    else if (planElement instanceof Aggregation) {
+      buf.append("Aggregation of ");
+      buf.append(((Aggregation)planElement).getComposition().getParentTasks().size());
+      buf.append(" parent tasks.");
     }
 
-    return "";
+    if (planElement.getAnnotation() != null) {
+      buf.append("<br>Annotation: " + planElement.getAnnotation());
+    }
+
+    return buf.toString();
   }
 
   protected String getTypeAndItemInfo (Asset asset) {
@@ -1036,7 +1110,10 @@ public class HistoryServlet extends ComponentPlugin {
       if (sortByUID) {
 	// switch back to sorting by time, then uid
 	sortByUID = false;
-	setEvents(new TreeSet(events));
+
+	SortedSet set = new TreeSet();
+	set.addAll (events);
+	setEvents(set);
       }
 
       if (logger.isInfoEnabled()) {
@@ -1095,10 +1172,16 @@ public class HistoryServlet extends ComponentPlugin {
 
       if (sortByUID != oldValue) {
 	if (sortByUID) {
+	  if (logger.isInfoEnabled()) {
+	    logger.info ("sorting by uid, then time.");
+	  }
 	  sortByUIDThenTime ();
 	}
 	else {
-	  setEvents(new TreeSet(events));
+	  SortedSet set = new TreeSet();
+	  set.addAll (events);
+	  //logger.warn ("events before " + events.size() + " vs now "+ set.size());
+	  setEvents(set);
 	}
       }
       
@@ -1119,12 +1202,12 @@ public class HistoryServlet extends ComponentPlugin {
 	if (sortByUID) {
 	  sortLink = sortLink + 
 	    "sortByUID=false" +
-	    "\">sort by time</a>";
+	    "\">Sort by time</a>";
 	}
 	else {
 	  sortLink = sortLink + 
 	    "sortByUID=true" +
-	    "\">sort by uid</a>";
+	    "\">Sort by uid</a>";
 	}
 
 	String detailsLink = 
@@ -1149,7 +1232,7 @@ public class HistoryServlet extends ComponentPlugin {
             "History Servlet for " + agentId.getAddress()+
 	    "</title></head>"+
 	    "<body>" +
-	    "<p><center><h1>State History</h1></center>"+
+	    "<p><center><h1>Blackboard History</h1></center>"+
 	    "<p>" +
 
 	    "<center>" +
@@ -1175,8 +1258,19 @@ public class HistoryServlet extends ComponentPlugin {
       if (didDropOldEntries) {
 	buf.append("<center>Note : Too many changes have occurred; only newest ");
 	buf.append(maxEvents);
-	buf.append(" are shown.</center>");
+	buf.append(" are shown.</center><br/>");
       }
+
+      // tell user what the gray-white highlighting means
+      buf.append("<center>Gray-white alternation indicates different ");
+
+      if (sortByUID) {
+	buf.append("blackboard objects.");
+      }
+      else {
+	buf.append("plugin execute cycles.");
+      }
+      buf.append ("<br/>Time shown is scenario time.</center>");
 
       buf.append("<table border=1 align=center>");
       buf.append("<tr>");
@@ -1184,8 +1278,16 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append("When");
       buf.append("</th>");
       buf.append("<th>");
+      buf.append("Type");
+      buf.append("</th>");
+      buf.append("<th>");
       buf.append("Event");
       buf.append("</th>");
+      if (showChangeReport) {
+	buf.append("<th>");
+	buf.append("Change Report");
+	buf.append("</th>");
+      }
       buf.append("<th>");
       buf.append("Comment");
       buf.append("</th>");
@@ -1196,11 +1298,6 @@ public class HistoryServlet extends ComponentPlugin {
 	buf.append("</th>");
       }
 
-      if (showChangeReport) {
-	buf.append("<th>");
-	buf.append("Change Report");
-	buf.append("</th>");
-      }
       buf.append("</tr>");
       long lastTime = -1;
       String lastUID = "";
@@ -1236,20 +1333,32 @@ public class HistoryServlet extends ComponentPlugin {
 	public int compare(Object o1, Object o2) {
 	  EventInfo e1 = (EventInfo) o1;
 	  EventInfo e2 = (EventInfo) o2;
-	  int comp = 0;
-	  if ((comp = e1.uid.compareTo(e2.uid)) == 0) {
-	    if (e1.timeStamp < e2.timeStamp)
-	      return -1;
-	    if (e1.timeStamp > e2.timeStamp)
-	      return 1;
+	  int comp = e1.uid.compareTo(e2.uid);
+
+	  if (comp == 0) {
+	    if (e1.timeStamp < e2.timeStamp) {
+	      comp = -1;
+	    }
+	    else if (e1.timeStamp > e2.timeStamp) {
+	      comp = 1;
+	    }
 	  }
 
-	  if (comp != 0) {
-	    return comp;
+	  if (comp == 0) {
+	    comp = e1.type-e2.type;
 	  }
-	  else {
-	    return e1.meaning.compareTo (e2.meaning);
+
+	  if (comp == 0) {
+	    comp = e1.meaning.compareTo (e2.meaning);
 	  }
+
+	  if (comp == 0) {
+	    if (logger.isInfoEnabled()) {
+	      logger.info (e1 + "\nequals\n" + e2);
+	    }
+	  }
+	  
+	  return comp;
 	}
       });
 
@@ -1273,17 +1382,20 @@ public class HistoryServlet extends ComponentPlugin {
 	String replacement = null;
 	switch (s.charAt(i)) {
 	case '"': replacement = "&quot;"; break;
-	case '[': replacement = "<br/>["; break;
+	  //case '[': replacement = "["; break;
 	case '<': replacement = "&lt;"; break;
-	case '>': replacement = "&gt;"; break;
+	case '>': replacement = "&gt;<br/>"; break;
 	case '&': replacement = "&amp;"; break;
 	case '=': sawEquals = true; break;
 	case ' ': 
-	  if (sawEquals && (i+1 < n) && s.charAt(i+1) != '>') 
-	    replacement = "<br/>";
-	  else if (noBreakSpaces) 
+	  //	  if (sawEquals && (i+1 < n) && s.charAt(i+1) != '>') {
+	  //	    replacement = "<br/>";
+	  //	  }
+	  //else if (noBreakSpaces) {
+	  if (noBreakSpaces) {
 	    replacement = "&nbsp;"; 
-	  sawEquals=false;
+	  }
+	  //sawEquals=false;
 	  break;
 	}
 	if (replacement != null) {
@@ -1307,28 +1419,30 @@ public class HistoryServlet extends ComponentPlugin {
     public long timeStamp;
     public String meaning;
     public Set changeReports = null;
-    public String toStringResult;
+    public String toStringResult="";
+    public int type;
 
-    public EventInfo (String uid, String event, long timeStamp, String meaning) {
+    public EventInfo (int type, String uid, String event, long timeStamp, String meaning) {
+      this.type = type;
       this.uid = uid;
       this.event = event;
       this.timeStamp = timeStamp;
       this.meaning = meaning;
     }
 
-    public EventInfo (String uid, String event, long timeStamp, String meaning, Set changeReports) {
-      this (uid, event, timeStamp, meaning);
+    public EventInfo (int type, String uid, String event, long timeStamp, String meaning, Set changeReports) {
+      this (type, uid, event, timeStamp, meaning);
       this.changeReports = changeReports;
     }
 
-    public EventInfo (String uid, String event, long timeStamp, String meaning, String toStringResult) {
-      this (uid, event, timeStamp, meaning);
+    public EventInfo (int type, String uid, String event, long timeStamp, String meaning, String toStringResult) {
+      this (type, uid, event, timeStamp, meaning);
       this.toStringResult = toStringResult;
     }
 
-    public EventInfo (String uid, String event, long timeStamp, 
+    public EventInfo (int type, String uid, String event, long timeStamp, 
 		      String meaning, Set changeReports, String toStringResult) {
-      this (uid, event, timeStamp, meaning, changeReports);
+      this (type, uid, event, timeStamp, meaning, changeReports);
       this.toStringResult = toStringResult;
     }
 
@@ -1344,7 +1458,14 @@ public class HistoryServlet extends ComponentPlugin {
       if (uidComp != 0)
 	return uidComp;
 
-      return meaning.compareTo (otherEvent.meaning);
+      int val = type-otherEvent.type;
+
+      if (val != 0)
+	return val;
+      
+      val = meaning.compareTo (otherEvent.meaning);
+      
+      return val;
     }
 
     public String toString () {
@@ -1356,12 +1477,19 @@ public class HistoryServlet extends ComponentPlugin {
       StringBuffer buf = new StringBuffer();
       buf.append("<tr BGCOLOR=" + color + ">");
       buf.append("<td>" + format.format(new Date(timeStamp)) + "</td>");
+      String typeString = "Added";
+      if (type == CHANGED)
+	typeString = "Changed";
+      else if (type == REMOVED)
+	typeString = "Removed";
+	
+      buf.append("<td>" + typeString + "</td>");
       buf.append("<td>" + event + "</td>");
 
       if (showChangeReport) {
 	buf.append ("<td>");
 
-	if (changeReports == null) {
+	if (changeReports != null) {
 	  buf.append(htmlForChangeReport());
 	}
 
@@ -1386,9 +1514,10 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append ("<table>");
 
       for (Iterator iter = changeReports.iterator(); iter.hasNext(); ) {
-	buf.append ("<tr><td>" + iter.next() + "</td></tr>");
+	Object obj = iter.next();
+	buf.append ("<tr><td>" + obj + "</td></tr>");
       }
-
+      
       buf.append ("</table>");
 
       return buf.toString();
