@@ -27,10 +27,14 @@ package=org.cougaar.pizza.asset
 ;defined in the pizza_assets.def file.  The code generators will create class
 ;files and supporting code for the property groups defined in this file.
 
-;The pizza property group factory should extend the planning PGFactory
-;so that we can use things like ItemIdentificationPG on our assets
+;The pizza property group factory should extend the Planning PGFactory
+;so that we can use things like ItemIdentificationPG on our Assets.
+; The PropertyGroupFactory gives you the newMyPropertyGroupPG() methods.
+
 factoryExtends=org.cougaar.planning.ldm.asset.PropertyGroupFactory
 
+; These are trivial PGs. They have no slots! We use their presence as
+; a marker, but most PGs will have data slots.
 [VeggiePG]
 
 [MeatPG]

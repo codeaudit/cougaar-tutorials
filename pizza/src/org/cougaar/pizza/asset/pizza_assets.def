@@ -27,12 +27,19 @@ package=org.cougaar.pizza.asset
 ;This file defines the Assets in the pizza application.  The code generators will
 ;produce class files and supporting code for the assets defined in this file.
 
-;This line indicates that there are properties that can be associated with the
-;assets listed in this file. 
+;This line indicates that there are properties that can be associated with these
+;assets listed in the named file. 
 propertydefs = properties.def
 
+; The pizza asset is used on the Order Task, indicating what is being
+; ordered and delivered. It indicates whether it is Meat or Veggie.
+; Note we name a new AssetSkeleton for this Domain. This will
+; be automatically created, allowing our Assets to get the
+; has/new/set/getMyPropertyGroupPG methods.
 [PizzaAsset org.cougaar.pizza.asset.AssetSkeleton]
 doc=Representation of a Pizza
 
+; The Pizza Providers each have a Kitchen, indicating the kinds of
+; pizza that they can deliver. 
 [KitchenAsset org.cougaar.pizza.asset.AssetSkeleton]
 doc=Representation of a Pizza Provider's Kitchen
