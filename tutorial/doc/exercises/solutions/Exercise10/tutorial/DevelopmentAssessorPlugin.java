@@ -38,7 +38,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.4 2003-04-14 14:08:27 dmontana Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.5 2003-04-16 22:44:41 dmontana Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
