@@ -154,7 +154,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 		  "<body>" +
 		  "<p/>" +
 		  "<p/><center><h1>Pizza Preferences</h1><p/>"+
-		  "<b>RSVP from each invited guest, invited by host" +
+		  "<b>RSVP from each invited guest, invited by host " +
 		  agentID +
 		  "</b></center><p/>"+
 		  getHtmlForPreferences () +
