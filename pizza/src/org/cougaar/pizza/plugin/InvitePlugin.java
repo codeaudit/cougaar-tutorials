@@ -42,6 +42,8 @@ import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.relay.RSVPRelaySource;
 import org.cougaar.planning.ldm.asset.Entity;
+
+import org.cougaar.util.Arguments;
 import org.cougaar.util.UnaryPredicate;
 
 import java.util.Collection;
@@ -73,6 +75,9 @@ public class InvitePlugin extends ComponentPlugin {
    */
   private UIDService uids;
 
+  /** initialize args to the empty instance */
+  private Arguments args = Arguments.EMPTY_INSTANCE;
+  
   /**
    * my subscription to relays
    */
@@ -106,6 +111,11 @@ public class InvitePlugin extends ComponentPlugin {
    * Have we published preferences
    */
   protected boolean publishedPreferences = false;
+
+  /** "setParameter" is only called if a plugin has parameters */
+  public void setParameter(Object o) {
+    args = new Arguments(o);
+  }  
 
   /**
    * Set up the services we need - logging and the uid service
@@ -152,35 +162,8 @@ public class InvitePlugin extends ComponentPlugin {
    */
   protected long getWaitParameter() {
     // get wait parameter
-    long waitParam = waitForRSVPDuration;
-    for (Iterator iter = getParameters().iterator(); iter.hasNext();) {
-      String param = (String) iter.next();
-      String[] keyAndValue = param.split(":");
-
-      if (keyAndValue.length == 2) {
-        if (keyAndValue[0].equals("WAIT_FOR_RSVP_DURATION")) {
-          try {
-            waitParam = Integer.parseInt(keyAndValue[1]);
-	    if (log.isInfoEnabled()) {
-	      log.info("We will wait " + (waitParam / 1000) +
-		       " seconds before publishing pizza prefs.");
-	    }
-          } catch (Exception e) {
-            log.warn(
-                "Could not parse wait param <" + keyAndValue[1] + ">");
-          }
-        } else {
-	  if (log.isInfoEnabled()) {
-	    log.info("ignoring " + keyAndValue);
-	  }
-        }
-      } else {
-	if (log.isInfoEnabled()) {
-	  log.info("ignoring " + keyAndValue);
-	}
-      }
-    }
-
+    long waitParam = 
+      args.getLong("WAIT_FOR_RSVP_DURATION", waitForRSVPDuration);
     return waitParam;
   }
 
