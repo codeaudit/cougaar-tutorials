@@ -52,8 +52,7 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
  */
 
 //todo extend appropriate base servlet
-
-public class TakeVacationServlet
+//hints: use the BaseServletComponent
   implements BlackboardClient
 {
   // The domainService acts as a provider of domain factory services
@@ -75,8 +74,8 @@ public class TakeVacationServlet
 
   private BlackboardService blackboard;
 
-
 //todo return name (path) of servlet
+//hints: return protected String using getPath() method
 
 
   protected Servlet createServlet() {
@@ -98,8 +97,8 @@ public class TakeVacationServlet
     return new MyServlet();
   }
 
-
 //todo set the BlackboardService
+//hints: use setBlackboardService method
 
 
   //
@@ -140,23 +139,28 @@ public class TakeVacationServlet
 	}
       };
 
-
 //todo define doGet and doPost methods
+//hints: these methods should call the same execute method below
+	public void doGet
+	public void doPost
 
-    public void doGet
-
-    public void doPost
 
 
 //todo define execute method to use makeVacation to have each programmer take some vacation
-    /**
+   /**
      * Iterate over the list of programmers and have each take some vacation.
      * Print the programmers name and vacation month to the Servlet response.
      */
     public void execute (
 			 HttpServletRequest req,
 			 HttpServletResponse res) throws IOException {
-
+//hints:  get PrintWriter
+//hints:  use PrintWriter to prepare to print HTML to the response
+//hints: define Collection
+//hints: try opening a blackboard transaction and use collection to get a blackboard query of the
+//hints:      UnaryPredicate 'pred' defined above
+//hints: iterate over the ProgrammerAssets and call 'makeVacation' defined below
+//hints: close the blackboard transaction and flush the PrintWriter
 
 
     /**

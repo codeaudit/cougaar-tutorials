@@ -52,8 +52,7 @@ import org.cougaar.tutorial.assets.ProgrammerAsset;
  */
 
 //todo extend appropriate base servlet
-
-public class TakeVacationServlet
+//more hints: public class TakeVacationServlet extends BaseServletComponent
   implements BlackboardClient
 {
   // The domainService acts as a provider of domain factory services
@@ -75,9 +74,10 @@ public class TakeVacationServlet
 
   private BlackboardService blackboard;
 
-
 //todo return name (path) of servlet
-
+//more hints:  protected String getPath() {
+//more hints:    return "/takeVacationServlet";
+//more hints:  }
 
   protected Servlet createServlet() {
     // get the blackboard service
@@ -98,9 +98,10 @@ public class TakeVacationServlet
     return new MyServlet();
   }
 
-
 //todo set the BlackboardService
-
+//more hints:  public void setBlackboardService(BlackboardService blackboard) {
+//more hints:    this.blackboard = blackboard;
+//more hints:  }
 
   //
   // These are required when implementing a BlackboardClient:
@@ -140,24 +141,46 @@ public class TakeVacationServlet
 	}
       };
 
-
 //todo define doGet and doPost methods
-
-    public void doGet
-
-    public void doPost
+//more hints:    public void doGet(
+//more hints:		      HttpServletRequest req,
+//more hints:		      HttpServletResponse res) throws IOException {
+//more hints:    execute(req, res);
+//more hints:    }
+//more hints:    public void doPost(
+//more hints:		       HttpServletRequest req,
+//more hints:		       HttpServletResponse res) throws IOException {
+//more hints:      execute(req, res);
+//more hints:    }
 
 
 //todo define execute method to use makeVacation to have each programmer take some vacation
-    /**
+   /**
      * Iterate over the list of programmers and have each take some vacation.
      * Print the programmers name and vacation month to the Servlet response.
      */
-    public void execute (
-			 HttpServletRequest req,
-			 HttpServletResponse res) throws IOException {
-
-
+//more hints:    public void execute (
+//more hints:			 HttpServletRequest req,
+//more hints:			 HttpServletResponse res) throws IOException {
+//more hints:      PrintWriter out = res.getWriter();
+//more hints:      out.println("<html><head></head><body>");
+//more hints:
+//more hints:      Collection col;
+//more hints:      try {
+//more hints:	ProgrammerAsset pa;
+//more hints:	blackboard.openTransaction();
+//more hints:	col = blackboard.query(pred);
+//more hints:	for (Iterator it=col.iterator(); it.hasNext(); ) {
+//more hints:	  pa=(ProgrammerAsset)it.next();
+//more hints:	  makeVacation (pa, out);
+//more hints:	}
+//more hints:      } finally {
+//more hints:	blackboard.closeTransactionDontReset();
+//more hints:	out.println("<BR>Done.</body></html>");
+//more hints:	out.flush();
+//more hints:      }
+//more hints:
+//more hints:    }
 
     /**
      * Find and take a vacation month for this programmer.  Print the vacation
