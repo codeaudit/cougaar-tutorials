@@ -26,9 +26,7 @@ import org.cougaar.core.service.*;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
+import java.util.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
@@ -40,7 +38,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.5 2003-01-23 19:44:24 mthome Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.6 2003-04-14 14:08:26 dmontana Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -62,127 +60,69 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
   }
 
   // The set of programmer assets
-  private IncrementalSubscription allProgrammers;
+  private IncrementalSubscription vacationAllocs;
 
   /**
-   * Create predicate that matches all programmer assets
+   * This predicate matches all vacation allocations
    */
-  private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
+  private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
-      return o instanceof ProgrammerAsset;
+      return (o instanceof Allocation) &&
+             (((Allocation) o).getTask().getVerb().equals
+               (Verb.getVerb ("VACATION")));
     }
   };
 
   /**
-   * Establish subscription for programmer assets
+   * Establish subscription for assets
    **/
   public void setupSubscriptions() {
-    allProgrammers = (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
+    vacationAllocs =
+      (IncrementalSubscription)getBlackboardService().subscribe(vacationsPredicate);
   }
 
   /**
-   * Top level plugin execute loop.  Look at all changed programmer
-   * assets and check their schedules.
+   * Top level plugin execute loop.  Look at all programmers
+   * with new vacations and mark their schedules as needing replanning
    **/
   public void execute() {
     System.out.println("DevelopmentAssessorPlugin::execute");
 
-    Enumeration e = null;
-    // todo:  process all programmer assets that have changed on the Blackboard
-    // hint:  see IncrementalSubscription.getChangedList()
-    // e = ...
-    // more hints:  for(Enumeration e = allProgrammers.getChangedList();e.hasMoreElements();)
-    while(e.hasMoreElements())
-    {
-      ProgrammerAsset pa = (ProgrammerAsset)e.nextElement();
-      validateSchedule(pa);
-    }
+// todo: loop through vacationAllocs and call validateSchedule with
+// todo: associated programmer
+// hints: IncrementalSubscription.getAddedList
+// hints: Allocation.getAsset
+// more hints:    for(Enumeration e = vacationAllocs.getAddedList(); e.hasMoreElements();)
+// more hints:    {
+// more hints:      Allocation alloc = (Allocation) e.nextElement();
+// more hints:      ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
+// more hints:      validateSchedule(pa);
+// more hints:    }
   }
 
   /**
-   * Check the programmer's schedule against his assigned tasks.
-   * If there are conflicts, update the task's allocation results.
+   * Remove from schedule all allocations that are not the vacation
+   * Allocator will put things back on
+   * It is easiest just to redo everything
    */
   private void validateSchedule(ProgrammerAsset asset) {
-      // todo:  Iterate over allocations in the role schedule and make
-      //        sure they're all on the calendar.
-      // hint:  see Asset.getRoleSchedule()
-      // hint:  see RoleSchedule.getRoleScheduleElements()
-      // hint:  see Asset.getRoleSchedule()
-      // more hints:  RoleSchedule role_schedule = asset.getRoleSchedule();
-      // more hints:  Enumeration re = role_schedule.getRoleScheduleElements();
+      System.out.println ("Validating schedule of " +
+        asset.getItemIdentificationPG().getItemIdentification());
 
-
-
-      Enumeration re = null;
-      // re = ...
-      for(; re.hasMoreElements();)
-      {
-        Allocation alloc = (Allocation)re.nextElement();
-        Task t = alloc.getTask();
-
-        // todo: get estimated start_time and end_time
-        // hint:  see Allocation.getEstimatedResult()
-        // hint:  see EstimatedResult.getValue()
-        int scheduled_start_month = 0;
-        // more hints:  scheduled_start_month =
-        // more hints:    (int)alloc.getEstimatedResult().getValue(AspectType.START_TIME);
-
-        // scheduled_start_month =
-
-
-        int scheduled_end_month  = 0;
-        // more hints:  scheduled_end_month =
-        // more hints:    (int)alloc.getEstimatedResult().getValue(AspectType.END_TIME);
-
-        // scheduled_end_month =
-
-
-
-        // look through the months in this role schedule element.  Make sure
-        // all of the months are scheduled for the allocated task.
-        for (int scheduled_month = scheduled_start_month;
-                 scheduled_month <= scheduled_end_month;
-                 scheduled_month++) {
-          if (asset.getSchedule().getWork(scheduled_month) != t) {
-
-            // Conflict : The role_schedule thinks it is allocated
-            // for a specific time, but the schedule doesn't think it is.
-            // We need to set the reported allocation result to be failure
-            System.out.println("Conflict detected : month = " +
-              scheduled_month + " " +
-              alloc + " " +
-              asset.getSchedule().getWork(scheduled_month));
-
-            // todo: publish ReportedResult indicating a failed AllocationResult
-            //       (use the next five lines)
-            // hint:  see PlanningFactory.newAllocationResult()
-            // hint:  see PlanElementForAssessor.setReceivedResult()
-            // hint:  see BlackboardService.publishChange()
-            AspectValue avs[] = new AspectValue[3];
-            avs[0] = AspectValue.newAspectValue(AspectType.START_TIME, (double)scheduled_start_month);
-            avs[1] = AspectValue.newAspectValue(AspectType.END_TIME, (double)scheduled_end_month);
-            avs[2] = AspectValue.newAspectValue(AspectType.DURATION,
-                                                alloc.getEstimatedResult().getValue(AspectType.DURATION));
-
-            // add code here ....
-
-            // more hints: AllocationResult failed_result =
-            // more hints:   ((PlanningFactory)getDomainService().getFactory("planning")).newAllocationResult(1.0, // rating,
-            // more hints:   false, avs);
-
-            // Set reported result on allocation
-            // Note : This is an operation intended only for assessors
-            // so we require a cast to make coder acknowledge
-            // that it is being done
-            // more hints: ((PlanElementForAssessor)alloc).setReceivedResult(failed_result);
-            // more hints: getBlackboardService().publishChange(alloc);
-
-          }
-        }
+      // if not a vacation, then remove it
+// todo: loop over asset's role schedule and remove from blackboard
+// todo: all allocations that aren't a vacation
+// hints: Assets.getRoleSchedule
+// hints: RoleSchedule.getRoleScheduleElements
+// hints: Allocation.getTask.getVerb
+// hints: BlackboardService.publishRemove
+// more hints:      RoleSchedule sched = asset.getRoleSchedule();
+// more hints:      Enumeration enum = sched.getRoleScheduleElements();
+// more hints:      while (enum.hasMoreElements()) {
+// more hints:        Allocation alloc = (Allocation) enum.nextElement();
+// more hints:        if (! alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION")))
+// more hints:          blackboard.publishRemove (alloc);
+// more hints:      }
       }
   }
-
 }
-
-

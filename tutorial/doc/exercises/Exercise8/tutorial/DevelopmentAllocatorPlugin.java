@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-10 18:04:31 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-14 14:08:25 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -59,6 +59,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
 
   private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
   private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
+  private IncrementalSubscription allExpansions;  // All expansions
 
   /**
    * Predicate matching all ProgrammerAssets
@@ -83,6 +84,15 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   };
 
   /**
+   * Predicate that matches all of expansions
+   */
+  private UnaryPredicate expansionPredicate = new UnaryPredicate() {
+    public boolean execute(Object o) {
+// todo: subscribe to expansions created by expander
+    }
+  };
+
+  /**
    * Establish subscription for tasks and assets
    **/
   public void setupSubscriptions() {
@@ -90,6 +100,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
+    allExpansions =
+      (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
   }
 
   /**
@@ -98,21 +110,49 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentAllocatorPlugin::execute");
 
-    // process unallocated tasks
-    Enumeration task_enum = allCodeTasks.elements();
-    while (task_enum.hasMoreElements()) {
-      Task task = (Task)task_enum.nextElement();
-      if (task.getPlanElement() == null)
-        allocateTask(task);
+    // process one task at a time until can't anymore
+    boolean anyLeft = true;
+    while (anyLeft) {
+      anyLeft = false;
+      Enumeration task_enum = allCodeTasks.elements();
+      while (task_enum.hasMoreElements()) {
+        Task task = (Task)task_enum.nextElement();
+        if ((task.getPlanElement() == null) &&
+            isReady (task)) {
+          anyLeft = true;
+          Task t = findConstraining (task);
+          allocateTask (task, (t == null) ? 0L :
+                   ((Allocation) t.getPlanElement()).getEndTime());
+          break;
+        }
+      }
     }
+  }
 
+  private boolean isReady (Task task) {
+    Task t = findConstraining (task);
+    return (t == null) || (t.getPlanElement() != null);
+  }
+
+  private Task findConstraining (Task task) {
+    Enumeration enum = allExpansions.elements();
+    while (enum.hasMoreElements()) {
+      Expansion exp = (Expansion) enum.nextElement();
+      Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
+      while (enum2.hasMoreElements()) {
+        Constraint c = (Constraint) enum2.nextElement();
+        if (task == c.getConstrainedTask())
+          return c.getConstrainingTask();
+      }
+    }
+    return null;
   }
 
   /**
    * Find an available ProgrammerAsset for this task.  Task must be scheduled
    * after the month "after"
    */
-  private void allocateTask(Task task) {
+  private void allocateTask(Task task, long prevEnd) {
     // extract from preferences
     Preference ePref = task.getPreference(AspectType.START_TIME);
     Preference dPref = task.getPreference(AspectType.DURATION);
@@ -120,36 +160,48 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     long earliest = (long) ePref.getScoringFunction().getBest().getValue();
     int duration = (int) dPref.getScoringFunction().getBest().getValue();
     long latest = (long) lPref.getScoringFunction().getBest().getValue();
+    boolean possiblyAtBeginning = prevEnd <= earliest;
+    earliest = Math.max (earliest, prevEnd);
 
-    // select an available programmer at random
+    // select best available programmer
+    ProgrammerAsset bestAsset = null;
+    long bestTime = 0L;
     Vector programmers = new Vector(allProgrammers.getCollection());
-    AllocationResult estAR = null;
-    ProgrammerAsset asset = null;
-    while ((estAR == null) && (programmers.size() > 0)) {
+    while (programmers.size() > 0) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
-      asset = (ProgrammerAsset)programmers.elementAt(stuckee);
+      ProgrammerAsset asset = (ProgrammerAsset)programmers.elementAt(stuckee);
       programmers.remove(asset);
-
-      System.out.println("\nAllocating the following task to "
-          +asset.getTypeIdentificationPG().getTypeIdentification()+": "
-          +asset.getItemIdentificationPG().getItemIdentification());
-      System.out.println("Task: "+task);
-
-      // find the times and make the allocation result that
-      // assigns these times
-      // if can't fit, go on to next programmer
-      AspectValue[] inter = findInterval (asset, earliest, latest, duration);
-      if (inter == null)
-        continue;
-      estAR = new AllocationResult (1.0, true, inter);
+      if ((possiblyAtBeginning && asset.getRoleSchedule().isEmpty()) ||
+          ((! asset.getRoleSchedule().isEmpty()) &&
+           (asset.getRoleSchedule().getEndTime() >= earliest))) {
+        long newTime = asset.getRoleSchedule().isEmpty() ? earliest :
+                       asset.getRoleSchedule().getEndTime();
+        if ((bestAsset == null) || (newTime < bestTime)) {
+          bestAsset = asset;
+          bestTime = newTime;
+        }
+      }
     }
 
-    if (estAR == null)
-      estAR = new AllocationResult (1.0, false, new AspectValue[0]);
+    System.out.println("\nAllocating the following task to "
+        +bestAsset.getTypeIdentificationPG().getTypeIdentification()+": "
+        +bestAsset.getItemIdentificationPG().getItemIdentification());
+    System.out.println("Task: "+task);
+
+    // find the times and make the allocation result that
+    // assigns these times
+    // if can't fit, go on to next programmer
+    AspectValue[] inter = findInterval (bestAsset, earliest, latest, duration);
+    boolean success = inter != null;
+    if (! success)
+      inter = new AspectValue[] {
+        AspectValue.newAspectValue (AspectType.START_TIME, latest),
+        AspectValue.newAspectValue (AspectType.END_TIME, latest) };
+    AllocationResult estAR = new AllocationResult (1.0, success, inter);
     Allocation allocation =
       ((PlanningFactory)getDomainService().getFactory("planning")).
         createAllocation (task.getPlan(), task,
-                          asset, estAR, Role.ASSIGNED);
+                          bestAsset, estAR, Role.ASSIGNED);
 
     getBlackboardService().publishAdd(allocation);
   }

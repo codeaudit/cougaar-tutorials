@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.7 2003-04-10 16:00:57 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.8 2003-04-14 14:08:25 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -62,12 +62,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   // Subscription for all 'CODE' tasks
   private IncrementalSubscription allCodeTasks;
 
-  // Subscription for all of my expansions
-  private IncrementalSubscription allMyExpansions;
-
-  // Subscription for allocations of all subtasks that I make
-  private IncrementalSubscription allSubTaskAllocations;
-
   // This predicate matches all tasks with verb "CODE"
   private UnaryPredicate allCodeTasksPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -80,39 +74,12 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     }
   };
 
-  // This predicate matches all of my subtask plan elements
-  private UnaryPredicate allSubTasksPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      boolean ret = false;
-      if (o instanceof PlanElement) {
-        Task t = ((PlanElement)o).getTask();
-        Verb v = t.getVerb();
-        ret = v.equals("DESIGN") || v.equals("DEVELOP") || v.equals("TEST");
-      }
-      return ret;
-    }
-  };
-
-  /**
-   * Predicate that matches all Expansion of CODE tasks
-   * todo: subscribe to expansions of CODE tasks
-   */
-  private UnaryPredicate expansionPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-
-
-      return false;
-    }
-  };
-
   /**
    * Establish subscription for CODE tasks
    **/
   public void setupSubscriptions() {
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
-    allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-    allSubTaskAllocations =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
@@ -121,27 +88,17 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentExpanderPlugin::execute");
 
-    // todo: Now look through all new 'CODE' tasks
+    // Now look through all new 'CODE' tasks
     // and expand
     for(Enumeration e = allCodeTasks.getAddedList();e.hasMoreElements();)
     {
-      // todo: Create expansion and workflow to represent the expansion
-      // of this task.  Publish the expansion and subtasks.
+      Task task = (Task) e.nextElement();
 
-
-
-
-
-
-
+      // Create expansion and workflow to represent the expansion
+      // of this task
+// todo: create a new workflow, call plan to fill it out, and
+// todo: create and publish a new expansion
     }
-
-    // Now look through all changed expansions and update the allocation result
-    Enumeration exps = allMyExpansions.elements();
-    while (exps.hasMoreElements()) {
-       checkForReplan((Expansion)exps.nextElement());
-    }
-// todo: report allocation results
   }
 
   /**
@@ -171,9 +128,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     return new_task;
   }
 
-  /**
-   * This convenience function is complete as-is
-   */
   private void setPreferences(NewTask new_task, long start, int duration, long deadline) {
     // Establish preferences for task
     Vector preferences = new Vector();
@@ -199,34 +153,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   }
 
   /**
-   * This convenience function is complete as-is
-   */
-  private void setPreferences(NewTask new_task, int duration, long deadline) {
-    // Establish preferences for task (just duration and deadline, not start)
-    Vector preferences = new Vector();
-
-    ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.DURATION, duration));
-    Preference pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.DURATION, scorefcn);
-    preferences.add(pref);
-
-    scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.END_TIME, deadline));
-    pref = ((PlanningFactory)domainService.getFactory("planning")).newPreference(AspectType.END_TIME, scorefcn);
-    preferences.add(pref);
-
-    new_task.setPreferences(preferences.elements());
-  }
-
-  /**
-   * Determine if we should replan this expansion because something changed
-   */
-  private void checkForReplan(Expansion exp) {
-  // todo: get the next pending constraint and update the constrained task's preferences
-
-  }
-
-  /**
    * This VERY primitive scheduler just keeps moving the whole workflow later until it can be scheduled
    */
   private void plan(NewWorkflow new_wf) {
@@ -236,25 +162,42 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     long start_month    = getStartTime(task);
     long deadline_month = latest_end;
 
-    Vector tasks = new Vector();  // Vector in which to hold subtasks
+    Vector tasks = new Vector();  // Vector in which to hold new subtasks
 
-    // todo : use makeTask and setPreferences convenience functions to create a "DESIGN" task
     // assign one month for design
     int this_task_duration = 1;
+    NewTask t1 = makeTask("DESIGN", task, new_wf);
+    setPreferences(t1, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t1);      // Add the task to the Blackboard
+    tasks.addElement(t1);  // Add the task to the vector of subtasks
 
     // assign three months for development
     this_task_duration = 3;
+    NewTask t2 = makeTask("DEVELOP", task, new_wf);
+    setPreferences(t2, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t2); 
+    tasks.addElement(t2); // Add the task to the vector of subtasks
 
-    // testing takes two months
+    // testing takes two month
     this_task_duration = 2;
+    NewTask t3 = makeTask("TEST", task, new_wf);
+    setPreferences(t3, start_month, this_task_duration, deadline_month);
+    getBlackboardService().publishAdd(t3);  
+    tasks.addElement(t3); // Add the task to the vector of subtasks
 
-    // todo: Add constraints onto the workflow that t1 < t2 < t3
+    new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow
+
+    // Add constraints onto the workflow that t1 < t2 < t3
+    Vector constraints = new Vector();
 
     // End(t1) must be before Start(t2)
+// todo : add new constraint for t1 before t2
 
     // End(t2) must be before Start(t3)
+// todo : add new constraint for t2 before t3
 
     // set the constraints on the workflow
+    new_wf.setConstraints(constraints.elements());
   }
 
   /**

@@ -38,7 +38,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java,v 1.5 2003-04-11 20:02:43 dmontana Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java,v 1.6 2003-04-14 14:08:27 dmontana Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -63,7 +63,7 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
   private IncrementalSubscription vacationAllocs;
 
   /**
-   * This predicate matches all programmer assets
+   * This predicate matches all vacation allocations
    */
   private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
@@ -82,13 +82,13 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
   }
 
   /**
-   * Top level plugin execute loop.  Look at all changed programmer
-   * assets and check their schedules.
+   * Top level plugin execute loop.  Look at all programmers
+   * with new vacations and mark their schedules as needing replanning
    **/
   public void execute() {
     System.out.println("DevelopmentAssessorPlugin::execute");
 
-    for(Enumeration e = vacationAllocs.getAddedList();e.hasMoreElements();)
+    for(Enumeration e = vacationAllocs.getAddedList(); e.hasMoreElements();)
     {
       Allocation alloc = (Allocation) e.nextElement();
       ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
@@ -97,14 +97,15 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
   }
 
   /**
-   * Check the programmer's schedule against his assigned tasks.
-   * If there are conflicts, update the task's allocation results.
+   * Remove from schedule all allocations that are not the vacation
+   * Allocator will put things back on
+   * It is easiest just to redo everything
    */
   private void validateSchedule(ProgrammerAsset asset) {
       System.out.println ("Validating schedule of " +
         asset.getItemIdentificationPG().getItemIdentification());
 
-      // first, find vacation task on schedule
+      // if not a vacation, then remove it
       RoleSchedule sched = asset.getRoleSchedule();
       Enumeration enum = sched.getRoleScheduleElements();
       while (enum.hasMoreElements()) {
@@ -114,42 +115,3 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
       }
   }
 }
-      
-
-/*
-      Allocation vacAlloc = null;
-      while (enum.hasMoreElements()) {
-        Allocation alloc = (Allocation) enum.nextElement();
-        if (alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION"))) {
-          vacAlloc = alloc;
-          break;
-        }
-      }
-
-      // if does not exist, return
-      if (vacAlloc == null)
-        return;
-
-      // next, find other task at same time as vacation
-      Collection c = sched.getOverlappingRoleSchedule
-        ((long) vacAlloc.getEstimatedResult().getValue(AspectType.START_TIME),
-         (long) vacAlloc.getEstimatedResult().getValue(AspectType.END_TIME) - 1);
-      Iterator iter = c.iterator();
-      Allocation badAlloc = null;
-      while (iter.hasNext()) {
-        Allocation alloc = (Allocation) iter.next();
-        if (! alloc.getTask().getVerb().equals (Verb.getVerb ("VACATION")))
-          badAlloc = alloc;
-      }
-
-      // if it exists, remove it
-      if (badAlloc != null) {
-        getBlackboardService().publishRemove (badAlloc);
-        System.out.println ("Removing allocation for " +
-          asset.getItemIdentificationPG().getItemIdentification());
-      }
-  }
-
-}
-
-*/
