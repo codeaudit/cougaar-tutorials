@@ -32,7 +32,7 @@ import org.cougaar.tutorial.faststart.computer.assets.ComputerAsset;
  * Package of static utility methods and constants in support
  * of the Computer tutorial lesson.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerUtils.java,v 1.5 2003-01-23 22:12:55 mbarger Exp $
+ * @version $Id: ComputerUtils.java,v 1.6 2003-04-08 17:43:27 dmontana Exp $
  **/
 public class ComputerUtils {
 
@@ -63,7 +63,7 @@ public class ComputerUtils {
     new_task.setPrepositionalPhrases((new Vector()).elements());
 
     // Set verb of task to 'SUPPLY'
-    new_task.setVerb(new Verb(SUPPLY_VERB));
+    new_task.setVerb(Verb.get(SUPPLY_VERB));
 
     // Set the reality plan for the task
     new_task.setPlan(theLDMF.getRealityPlan());

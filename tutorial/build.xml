@@ -124,7 +124,7 @@
     <!-- sys is for 3rd party jars -->
     <property name="target.sys" value="${TARGETBASE}/sys" />
     <!-- clib is for cougaar compile-time jars (codegen, etc) -->
-    <property name="target.clib" value="${TARGETBASE}/clib" />
+    <property name="target.clib" value="${TARGETBASE}/lib" />
     <!-- dir is which of lib or clib the jar gets installed to -->
     <property name="target.dir" value="${TARGETBASE}/lib"/>
 
@@ -251,7 +251,7 @@
       <property name="zipdir.regress" value="${zipbase}/${module}/regress"/>
       <property name="zipdir.examples" value="${zipbase}/${module}/examples"/>
       <property name="zipdir.lib" value="${zipbase}/lib"/>
-      <property name="zipdir.clib" value="${zipbase}/clib"/>
+      <property name="zipdir.clib" value="${zipbase}/lib"/>
     </target>
     
     <!-- ========================================================== -->

@@ -28,7 +28,7 @@ import java.util.*;
  * Class containing static methods and constants useful in constructing 
  * the Binary search tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryUtils.java,v 1.4 2003-01-23 22:12:54 mbarger Exp $
+ * @version $Id: BinaryUtils.java,v 1.5 2003-04-08 17:43:27 dmontana Exp $
  **/
 public class BinaryUtils {
 
@@ -86,7 +86,7 @@ public class BinaryUtils {
     new_task.setPrepositionalPhrases((new Vector()).elements());
 
     // Set verb of task to 'MANAGE'
-    new_task.setVerb(new Verb(BinaryUtils.MANAGE_VERB));
+    new_task.setVerb(Verb.get(BinaryUtils.MANAGE_VERB));
 
     // Set the reality plan for the task
     new_task.setPlan(theCOF.getRealityPlan());

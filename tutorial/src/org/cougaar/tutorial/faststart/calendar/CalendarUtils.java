@@ -29,7 +29,7 @@ import org.cougaar.tutorial.faststart.*;
  * Set of static methods and constants for supporting
  * Calendar society
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarUtils.java,v 1.5 2003-01-23 22:12:55 mbarger Exp $
+ * @version $Id: CalendarUtils.java,v 1.6 2003-04-08 17:43:27 dmontana Exp $
  **/
 public class CalendarUtils {
 
@@ -51,7 +51,7 @@ public class CalendarUtils {
     NewTask task = theCOF.newTask();
     
     task.setDirectObject(null);
-    task.setVerb(new Verb(SCHEDULE_VERB));
+    task.setVerb(Verb.get(SCHEDULE_VERB));
     Vector preps = new Vector();
     task.setPrepositionalPhrases(preps.elements());
     task.setPlan(theCOF.getRealityPlan());

@@ -30,7 +30,7 @@ import org.cougaar.tutorial.faststart.*;
 /**
  * Series of static methods supporting Towers of Hanoi tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiUtils.java,v 1.4 2003-01-23 22:12:56 mbarger Exp $
+ * @version $Id: HanoiUtils.java,v 1.5 2003-04-08 17:43:27 dmontana Exp $
  **/
 public class HanoiUtils 
 {
@@ -102,7 +102,7 @@ public class HanoiUtils
     new_task.setPrepositionalPhrases(prepositions.elements());
 
     // Set the verb as given
-    new_task.setVerb(new Verb(verb));
+    new_task.setVerb(Verb.get(verb));
 
     // Set the reality plan for the task
     new_task.setPlan(theCOF.getRealityPlan());

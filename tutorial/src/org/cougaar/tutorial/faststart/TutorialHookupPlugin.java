@@ -33,7 +33,7 @@ import org.cougaar.core.service.DomainService;
  * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.7 2003-02-04 16:16:02 mbarger Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.8 2003-04-08 17:43:27 dmontana Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -147,7 +147,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
   {
     // Why do I need a task and schedule element??
     NewTask task = ldmf.newTask();
-    task.setVerb(new Verb("Dummy"));
+    task.setVerb(Verb.get("Dummy"));
     task.setParentTask(task);
 
     //This makes asset available to the agent from 01/01/1990 tp 
