@@ -968,7 +968,7 @@ public class HistoryServlet extends ComponentPlugin {
     buf.append ("<tr><td>");
     buf.append (" Preferences : " );
     buf.append ("</td></tr>");
-    for (; prefs.hasMoreElements (); ) {
+    while (prefs.hasMoreElements()) {
       Preference pref = (Preference) prefs.nextElement ();
       AspectValue prefav = 
         pref.getScoringFunction().getBest().getAspectValue();
@@ -1246,10 +1246,7 @@ public class HistoryServlet extends ComponentPlugin {
             "</html>\n");
         out.flush();
       }
-      else if (format == FORMAT_XML) {
-      }
-      else if (format == FORMAT_DATA) {
-      }
+      // FIXME: Add support for FORMAT_XML and FORMAT_DATA
     }
 
     protected String getHtmlForState () {
@@ -1375,7 +1372,7 @@ public class HistoryServlet extends ComponentPlugin {
 	return "";
 
       boolean noBreakSpaces = true;
-      boolean sawEquals = false;
+      //      boolean sawEquals = false;
       StringBuffer buf = null;  // In case we need to edit the string
       int ix = 0;               // Beginning of uncopied part of s
       for (int i = 0, n = s.length(); i < n; i++) {
@@ -1386,7 +1383,7 @@ public class HistoryServlet extends ComponentPlugin {
 	case '<': replacement = "&lt;"; break;
 	case '>': replacement = "&gt;<br/>"; break;
 	case '&': replacement = "&amp;"; break;
-	case '=': sawEquals = true; break;
+	  //	case '=': sawEquals = true; break;
 	case ' ': 
 	  //	  if (sawEquals && (i+1 < n) && s.charAt(i+1) != '>') {
 	  //	    replacement = "<br/>";
