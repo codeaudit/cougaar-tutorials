@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-08 22:58:34 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2003-04-09 14:30:59 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -143,8 +143,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       AspectValue[] inter = findInterval (asset, earliest, latest, duration);
       if (inter == null)
         continue;
-      AllocationResult estAR =
-        new AllocationResult (1.0, true, inter);
+      AllocationResult estAR = new AllocationResult (1.0, true, inter);
 
       Allocation allocation =
         ((PlanningFactory)getDomainService().getFactory("planning")).

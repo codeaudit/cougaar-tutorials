@@ -137,7 +137,12 @@ protected Task makeTask(Asset what) {
     Vector preferences = new Vector();
 
     // todo:  Add a start_time strict preference
-    double start_month = 0;
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.add (GregorianCalendar.MONTH, 1);
+    GregorianCalendar cal2 = new GregorianCalendar();
+    cal2.clear();
+    cal2.set (Calendar.YEAR, cal.get (GregorianCalendar.YEAR));
+    cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
     Preference pref;
     ScoringFunction scorefcn;
 
@@ -148,8 +153,8 @@ protected Task makeTask(Asset what) {
 
 
 
-    // todo:  Add an end_time strict preference with value of 12
-    double end_month = 12;  // give them one year to do it
+    // todo:  Add an end_time strict preference
+    cal2.add (Calendar.YEAR, 1);  // give them one year to do it
 
 
 

@@ -138,16 +138,23 @@ protected Task makeTask(Asset what) {
     Vector preferences = new Vector();
 
     // Add a start_time and end_time strict preference
-    double start_month = 0;
-    ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.START_TIME, start_month));
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.add (GregorianCalendar.MONTH, 1);
+    GregorianCalendar cal2 = new GregorianCalendar();
+    cal2.clear();
+    cal2.set (Calendar.YEAR, cal.get (GregorianCalendar.YEAR));
+    cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
+    ScoringFunction scorefcn = ScoringFunction.createNearOrAbove
+      (AspectValue.newAspectValue(AspectType.START_TIME,
+       cal2.getTime().getTime()), 0.0000001);
     Preference pref =
       factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
-    double end_month = 12;  // give them one year to do it
-    scorefcn = ScoringFunction.createStrictlyAtValue
-      (AspectValue.newAspectValue(AspectType.END_TIME, end_month));
+    cal2.add (Calendar.YEAR, 1);
+    scorefcn = ScoringFunction.createNearOrBelow
+      (AspectValue.newAspectValue(AspectType.END_TIME,
+       cal2.getTime().getTime()), 0.0000001);
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 

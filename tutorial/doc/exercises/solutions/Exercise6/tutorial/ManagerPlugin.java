@@ -152,9 +152,9 @@ protected Task makeTask(Asset what) {
     preferences.add(pref);
 
     cal2.add (Calendar.YEAR, 1);
-    scorefcn = ScoringFunction.createStepScoringFunction
+    scorefcn = ScoringFunction.createNearOrBelow
       (AspectValue.newAspectValue(AspectType.END_TIME,
-       cal2.getTime().getTime()), 0.0, 1.0);
+       cal2.getTime().getTime()), 0.0000001);
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 

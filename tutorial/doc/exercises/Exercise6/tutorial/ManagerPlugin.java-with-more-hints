@@ -146,7 +146,12 @@ protected Task makeTask(Asset what) {
     Vector preferences = new Vector();
 
     // todo:  Add a start_time strict preference
-    double start_month = 0;
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.add (GregorianCalendar.MONTH, 1);
+    GregorianCalendar cal2 = new GregorianCalendar();
+    cal2.clear();
+    cal2.set (Calendar.YEAR, cal.get (GregorianCalendar.YEAR));
+    cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
     Preference pref;
     ScoringFunction scorefcn;
     // hint: see AspectType constants
@@ -167,11 +172,12 @@ protected Task makeTask(Asset what) {
 
 
 
-    // todo:  Add an end_time strict preference with value of 12
+    // todo:  Add an end_time strict preference
     // hint:  see add start_time (above)
-    double end_month = 12;  // give them one year to do it
+    cal2.add (Calendar.YEAR, 1);  // give them one year to do it
     // more hints: scorefcn = ScoringFunction.createStrictlyAtValue
-    // more hints:   (AspectValue.newAspectValue(AspectType.END_TIME, end_month));
+    // more hints:   (AspectValue.newAspectValue(AspectType.END_TIME,
+    // more hints:    cal2.getTime().getTime()));
     // more hints: pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     // more hints: preferences.add(pref);
 
