@@ -34,11 +34,10 @@ import org.cougaar.pizza.Constants;
 import java.io.Serializable;
 
 /**
- * A {@link org.cougaar.core.relay.Relay.TargetFactory} for RSVPRelayTarget
- * {@link RSVPRelayTarget}s.
+ * A {@link org.cougaar.core.relay.Relay.TargetFactory} for {@link RSVPRelayTarget}s.
  * <p/>
  * This factory is required in order to produce the correct Relay.Target
- * when the relay has been received by the target agent.
+ * when the Relay has been received by the target Agent.
  */
 public class RSVPTargetRelayFactory
     implements Relay.TargetFactory, Serializable {
@@ -46,6 +45,7 @@ public class RSVPTargetRelayFactory
   // Typically you only need one instance of your TargteFactory.
   private final static Relay.TargetFactory SINGLETON_FACTORY = new RSVPTargetRelayFactory();
 
+  /** Get s singleton instance of the TargetFactory */
   public static synchronized Relay.TargetFactory getTargetFactory() {
     return SINGLETON_FACTORY;
   }

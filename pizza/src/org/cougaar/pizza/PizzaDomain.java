@@ -41,7 +41,7 @@ import java.util.Collections;
 
 
 /**
- * PizzaDomain definition
+ * PizzaDomain definition, initializing our {@link Constants} and loading our AssetFactory. 
  * <p>
  * Required to ensure that Roles and Assets specific to the pizza
  * application are initialized correctly. The PizzaDomain does not include any

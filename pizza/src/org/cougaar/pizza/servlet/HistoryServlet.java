@@ -116,19 +116,19 @@ import org.cougaar.util.UnaryPredicate;
  * Has a default limit of 1000 events, but this can be set by the 
  * MAX_EVENTS_REMEMBERED component argument to the servlet.
  * E.g. :
- *   &lt;argument&gt;MAX_EVENTS_REMEMBERED=5000&lt;/argument&gt;
- * Another limits: 5 RoleSchedule elements displayed by default,
+ *   &lt;argument&gt;MAX_EVENTS_REMEMBERED=5000&lt;/argument&gt;  
+ * <p> Another limit: 5 RoleSchedule elements displayed by default,
  * set with MAX_ROLE_SCHEDULE_ELEMENTS argument. 
- * And a default of 5 child tasks in an Expansion, changed with
+ * And a default of 5 child Tasks shown per Expansion, changed with the 
  * MAX_CHILD_TASKS argument.
- *
+ *<p>
  * Note that this Servlet is actually a Plugin, so that it can subscribe
- * to all the blackboard changes, and keep a SortedSet of these Events, 
- * ready for display. It then provides an inner Serlvet to the ServletService,
+ * to all the blackboard changes, and keeps a SortedSet of these Events, 
+ * ready for display. It then provides an inner Servlet to the ServletService,
  * so a user can view the pre-collected Events Set.
  * <p>
  * Note that this Servlet has heavy Planning dependencies. It has minor
- * community dependencies, to allow printing details in the Meaning column.
+ * Community dependencies, to allow printing details in the Meaning column. 
  * By commenting out those items, this dependency could be removed.
  */
 public class HistoryServlet extends ComponentPlugin {
@@ -298,6 +298,7 @@ public class HistoryServlet extends ComponentPlugin {
     return "/history";
   }
 
+  /** Get a new {@link HistoryWorker} to be the Servlet */
   protected Servlet createServlet() {
     return new HistoryWorker();
   }
@@ -416,11 +417,12 @@ public class HistoryServlet extends ComponentPlugin {
   // Keep a running counter of events seen
   // Can later be used to number the rows for readability.
   private int eventNum = 0;
+  /** Get the next number for a new Event */
   protected int nextEventNum() {
     return eventNum++;
   }
 
-  /** Check the Tasks subscription adding any new events to the list */
+  /** Check the Tasks subscription, adding any new events to the list */
   protected void checkTasks (long now) {
     // If there were any Task events
     if (tasksSubscription.hasChanged()) {
@@ -472,7 +474,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
-  /** description of an added Task shows the verb, DO, and preferences. */
+  /** description of an added Task shows the Verb, DirectObject, and Preferences. */
   protected String getAddedTaskComment (Task task) {
     StringBuffer buf = new StringBuffer();
 
@@ -624,10 +626,12 @@ public class HistoryServlet extends ComponentPlugin {
     }
   }
 
+  /** Get the ChangedAssetComment */
   protected String getAddedAssetComment (Asset asset) {
     return getChangedAssetComment(asset);
   }
 
+  /** Show the asset class, typeID, ItemID, if an Entity then any Roles, Relationships, RoleSchedule, and the HistoryServletFriendly content */
   protected String getChangedAssetComment (Asset asset) {
     StringBuffer buf = new StringBuffer();
 
@@ -815,6 +819,7 @@ public class HistoryServlet extends ComponentPlugin {
     return getAddedUniqueObjectComment (unique);
   }
 
+  /** Changed/Removed unique objects use the same comment as for Add */
   protected String getRemovedUniqueObjectComment (UniqueObject unique) {
     return getAddedUniqueObjectComment (unique);
   }
@@ -827,6 +832,12 @@ public class HistoryServlet extends ComponentPlugin {
     return classname;
   }
   
+  /** 
+   * For a Source: show the target addresses, any community content or request, and the
+   * relay's Content.
+   * <p>
+   * For a Target, show any community info, the relay Source, and any HistoryServletFriendly content.
+   */
   protected String getAddedRelayComment (Relay relay) {
     StringBuffer buf = new StringBuffer();
 
@@ -930,6 +941,12 @@ public class HistoryServlet extends ComponentPlugin {
     return buf.toString();
   }
 
+  /**
+   * For a Source, show any community specific information, the Content.
+   *<p>
+   * For a Target, show any community specific information, and the response, and
+   * any HistoryServletFriendly content.
+   */
   protected String getChangedRelayComment (Relay relay) {
     StringBuffer buf = new StringBuffer();
     if (relay instanceof Relay.Source) { 
@@ -1137,6 +1154,14 @@ public class HistoryServlet extends ComponentPlugin {
       return buf.toString();
   }
 
+  /**
+   * If it's an Allocation, show the Task Verb and the allocated Asset's Type
+   * and ItemID, RoleSchedule, and Estimated result. 
+   * For an Expansion, show the child tasks (up to the MAX). 
+   * For an AssetTransfer, show the moving Asset and destination. 
+   * For an Aggregation, show just the count of parent tasks.
+   * Also show any Annotation
+   */
   protected String getAddedPEComment (PlanElement planElement) {
     StringBuffer buf = new StringBuffer();
 
@@ -1555,7 +1580,7 @@ public class HistoryServlet extends ComponentPlugin {
 
   /**
    * Encodes a string that may contain HTML syntax-significant
-   * characters by replacing with a character entity.
+   * characters.
    **/
   protected String encodeHTML(String s) {
     if (s == null)
@@ -1695,7 +1720,7 @@ public class HistoryServlet extends ComponentPlugin {
       return buf.toString();
     }
 
-    /** Odd boolean used to alternate colors for rows */
+    /** Produce HTML for the Servlet display. "odd" boolean used to alternate colors for rows */
     public String toHTML (boolean odd, boolean showChangeReport, boolean showDetails) {
       String color = odd ? "#FFFFFF" : "#c0c0c0";
       StringBuffer buf = new StringBuffer();
@@ -1735,7 +1760,7 @@ public class HistoryServlet extends ComponentPlugin {
     }
 
     /**
-     * Produce pretty HTML to show the ChangeReports on a Transcation
+     * Produce pretty HTML to show the ChangeReports on a Transaction
      * @return HTML Table of ChangeReport data
      **/
     public String htmlForChangeReport () {

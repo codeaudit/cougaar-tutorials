@@ -1,4 +1,4 @@
-/* 
+/** 
  * <copyright>
  *  
  *  Copyright 2002-2004 BBNT Solutions, LLC
@@ -44,7 +44,7 @@ import org.cougaar.pizza.servlet.HistoryServletFriendly;
 
 /**
  * Local accumulation of replies to invite, marking who has replied and the kinds
- * of pizza they want. Automatically updated by the {@link RSVPRelaySource}. Published
+ * of pizza they want. Automatically updated by the {@link org.cougaar.pizza.relay.RSVPRelaySource}. Published
  * by the InvitePlugin so that the PlaceOrderPlugin knows to start.
  *<p>
  * This class works as an example of publishing a custom object on 

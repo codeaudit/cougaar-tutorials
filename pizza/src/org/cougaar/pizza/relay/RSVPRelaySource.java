@@ -42,9 +42,9 @@ import java.util.Set;
 /**
  * A source-side {@link Relay} for RSVPs.
  * <p/>
- * As responses come back from remote agents, the updateResponse
- * method is called and entries are added to the {@link PizzaPreferences} 
- * object.
+ * As responses come back from remote agents, the infrastrusture (RelayLP) calls updateResponse(),
+ * and entries are added to the {@link PizzaPreferences} object.
+ *
  * @see org.cougaar.pizza.plugin.InvitePlugin
  * @see org.cougaar.pizza.plugin.PizzaPreferences
  */
@@ -55,22 +55,26 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   private final long creationTime = System.currentTimeMillis();
 
   /** 
-   * The set of target addresses - in this case, only one, the ABA 
+   * The set of target addresses - in this case, only one: the ABA.
    * @see org.cougaar.multicast.AttributeBasedAddress
    */
   private Set targets = new HashSet();
 
-  /** The source-side accumulation of RSVPs, so we can automatically accumulate responses */
+  /** The source-side accumulation of RSVPs, so we can automatically accumulate responses. */
   private PizzaPreferences pizzaPreferences;
 
   /**
-   * A static logger for all rsvp relay source objects.
+   * A static logger for all RSVPRelaySource objects.
    * Note that this is a nice way to use the Cougaar logger from an object that
-   * is not a Component, and therefore can't easily get an instace of the LoggingService.
+   * is not a Component, and therefore can't easily get an instance of the LoggingService.
    */
   private static Logger classLogger = 
     Logging.getLogger(RSVPRelaySource.class);
 
+  /** 
+   * Create a new Relay Source whose content is the query, and which will
+   * accumulate responses in the given {@link PizzaPreferences} object.
+   */
   public RSVPRelaySource(UID uid,
                          MessageAddress target,
                          Object query,
@@ -102,25 +106,26 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   /**
    * Get the Factory for RSVPTargets. 
    * <p/>
-   * Make sure on the target side we create a target relay.
-   * The target relay has just 
-   * a source, and no target address, so the the relay won't be propagated
-   * at the target.
-   * <p/>
-   * An alternative would be to have the relay implement both source and
-   * target interfaces, but this could lead to endless pinging in this case
+   * This factory creates a stand-alone Relay.Target implementation, simply
+   * copying over the content (our query). If we implemented the Relay.Target
+   * and Relay.Source in the same Class, we'd want to ensure
+   * that the target had an empty set of target addresses, to
+   * avoid re-propagating the Relay from the target agents.
+   *<p>
+   * If your Relay.Target was also a Relay.Source and <i>did</i>
+   * include target addresses, this could lead to endless pinging in this case
    * where the target address is an ABA broadcast to all members of the
    * community.
    *
-   * @return target factory that makes a target that has no target addresses
+   * @return target factory that makes a stand-alone Relay Target 
    */
   public TargetFactory getTargetFactory() {
     return RSVPTargetRelayFactory.getTargetFactory();
   }
 
   /**
-   * Record responses from remote agents as they come in on the pizza
-   * preferences object.
+   * Record responses from remote agents as they come in on the {@link PizzaPreferences} 
+   * object.
    * <p/>
    * Note that we assume the response will be a {@link RSVPReply}.
    * <p/>
@@ -154,7 +159,7 @@ public class RSVPRelaySource implements Relay.Source, UniqueObject {
   }
 
   /**
-   * @return the PizzaPreferences object in which our answers are collected
+   * @return the {@link PizzaPreferences} object in which our answers are collected
    */
   public PizzaPreferences getPizzaPrefs() {
     return pizzaPreferences;

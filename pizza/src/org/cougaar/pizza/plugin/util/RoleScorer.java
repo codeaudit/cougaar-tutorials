@@ -40,19 +40,20 @@ import org.cougaar.util.log.Logger;
 import org.cougaar.util.log.Logging;
 
 /**
- * ServiceDiscovery Service scoring function using Role name and an
+ * ServiceDiscovery Service scoring function using <code>Role</code> name and an
  * exclusion list.<br>
+ * <pre>
  * Uses 2 criteria -  
  *   service role must match scorer role
  *   service provider name must not match one of the names on the blacklist.
- *<p>
+ *</pre><p>
  * All passing descriptions get a score of 1, all failing descriptions get
  * a score of -1.
  * <p>
- * SDClientPlugin creates the RoleScorer and attaches it to the MMQueryRequest.
- * MatchmakerPlugin uses the RoleScorer to evaluate service descriptions
+ * <code>SDClientPlugin</code> creates the <code>RoleScorer</code> and attaches it to the <code>MMQueryRequest</code>.
+ * <code>MatchmakerPlugin</code> uses the <code>RoleScorer</code> to evaluate service descriptions
  * returned from the yellow pages. All passing service descriptions are added
- * to the MMQueryRequest results field.
+ * to the <code>MMQueryRequest</code> results field.
  * 
  */
 public class RoleScorer implements ServiceInfoScorer, Serializable {

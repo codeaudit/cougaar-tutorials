@@ -1,4 +1,4 @@
-/* 
+/** 
  * <copyright>
  *  
  *  Copyright 2002-2004 BBNT Solutions, LLC

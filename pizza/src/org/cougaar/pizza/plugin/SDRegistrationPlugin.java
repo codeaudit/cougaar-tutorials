@@ -260,7 +260,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   }
  
   
-  /* ProviderDescription is big - release resources if we don't need it
+  /** ProviderDescription is big - release resources if we don't need it
    * anymore.
    */
   private  void clearPD() {
@@ -273,7 +273,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     provD = null;
   }
 
-  /* Returns null if unable to parse the provider description */
+  /** @return null if unable to parse the provider description */
   private  ProviderDescription getPD() {
     if (provD == null) {
       if (log.isDebugEnabled()) {

@@ -86,18 +86,21 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
     super.unload();
   }
 
+  /** This servlet listens at "/pizza" */
   protected String getPath() {
     return "/pizza";
   }
 
-  // Using an inner class to implement the Servlet interface
-  // provides a useful design pattern
+  /**
+   * Using an inner class to implement the Servlet interface
+   * provides a useful design pattern.
+   */
   protected Servlet createServlet() {
     return new PizzaWorker();
   }
 
   /**
-   * Inner-class that's registered as the servlet.
+   * Inner class that's registered as the servlet.
    */
   protected class PizzaWorker extends HttpServlet {
     // Often we want the servlet to behave identically for Get or Post
@@ -114,6 +117,7 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
     }
   }
 
+  /** Worker class that actually produces HTML for the servlet */
   protected class PizzaFormatter {
     public static final int FORMAT_DATA = 0; // Not yet supported
     public static final int FORMAT_XML = 1; // Not yet supported
@@ -129,9 +133,11 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       execute (response);
     }         
 
-    // Parse the requested format. A similar pattern could be used to 
-    // handle other parameters.
-    // Note however that only HTML is currently supported.
+    /**
+     * Parse the requested format. A similar pattern could be used to 
+     * handle other parameters.
+     * Note however that only HTML is currently supported.
+     */
     protected void getFormat (HttpServletRequest request) {
       String formatParam = request.getParameter("format");
       if ("data".equals(formatParam)) {
@@ -143,6 +149,9 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       }
     }
 
+    /**
+     * Write the servlet response into the given response's stream. 
+     */
     public void execute(HttpServletResponse response) throws IOException, ServletException {
       if (format == FORMAT_HTML) {
         response.setContentType("text/html");
@@ -165,6 +174,10 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
       // FIXME: Add support for FORMAT_XML and FORMAT_DATA
     }
 
+    /**
+     * Query the Blackboard for the {@link PizzaPreferences} object, 
+     * and display the contents in a Table.
+     */
     protected String getHtmlForPreferences () {
       Collection pizzaPreferences = blackboardQueryService.query (new UnaryPredicate() {
 	  public boolean execute(Object o) {
