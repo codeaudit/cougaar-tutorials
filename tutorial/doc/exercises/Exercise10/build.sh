@@ -22,7 +22,8 @@
 
 
 # Regenerate and recompile all property/asset files
-if [ -x makeassets.sh ]; then
+if [ -a makeassets.sh ]; then
+  chmod +x ./makeassets.sh
   ./makeassets.sh;
 fi
 
