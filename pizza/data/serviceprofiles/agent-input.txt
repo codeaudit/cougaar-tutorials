@@ -1,0 +1,17 @@
+[GlobalProperties]
+# Define your CougaarInstallPath Below.
+# on Linux: congaarInstallPath=/opt/cougaar
+# on Windows: C:/projects/cougaar
+# Note: On windows be sure that your drive letter is CAPS!!!
+# Note: On unix be sure that the path does not use any symbolic links.
+cougaarInstallPath=/my/Fake/CougaarInstallPath #this is your cougaar install path. Use capital letter for drive.
+profileDirectory=pizza/data/serviceprofiles  #you shouldn't need to change this.
+cougaarOWLSFilename=cougaar.owl #you shouldn't need to change this.
+
+[AgentInfo]
+
+agentName = JoesLocalPizzaShack
+roleName = PizzaProvider
+
+agentName = Dominos
+roleName = PizzaProvider
