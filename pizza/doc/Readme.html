@@ -12,8 +12,8 @@ still working, and a good set of sample code for modeling custom
 components off of.</p>
 
  <h2>2. SETUP</h2>
- <p>Insure that you installed cougaar.zip and cougaar-support.zip and
-that your Cougaar Install Path environment variable points to the
+ <p>Ensure that you installed <a href="http://cougaar.org/frs/?group_id=17">cougaar.zip and cougaar-support.zip</a> and
+that your COUGAAR_INSTALL_PATH environment variable points to the
  directory where those were unzipped. It will also help if you put
  COUGAAR_INSTALL_PATH/bin on your PATH.</p>
 
@@ -21,11 +21,11 @@ that your Cougaar Install Path environment variable points to the
  <p>To run this application, you run the 2 Cougaar Nodes that make up the system:<br><br>
  [In a command line window]<br>
  % <i>cd COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty</i><br>
- % <i>Cougaar SDPizzaNode1.xml</i><br>
+ % <i>cougaar SDPizzaNode1.xml</i><br>
  <br>
  [Start another window]<br>
  % <i>cd COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty</i><br>
- % <i>Cougaar SDPizzaNode2.xml</i><br>
+ % <i>cougaar SDPizzaNode2.xml</i><br>
  </p>
 
  <h2>4. EXPECTED OUTPUT</h2>
@@ -61,15 +61,21 @@ OS: Windows 2000 (5.0)
 <p>As with all Cougaar applications, user interfaces for the Pizza
 Application are available as web pages.<br>
 <p>
-The main interface for the Pizza Party is: <br>
-&nbsp;&nbsp;&nbsp;<a href="http://localhost:8800/$Alice/pizza">http://localhost:8800/$Alice/pizza</a> <br>
+The main interface for the Pizza Party is the "/pizza" servlet,
+available at runtime at: <br>
+&nbsp;&nbsp;&nbsp;<a
+href="http://localhost:8800/$Alice/pizza">http://localhost:8800/$Alice/pizza</a>.
+(See the Javadoc <a
+href="http://cougaar.cougaar.org/software/11.4/javadoc/pizza/doc/api/org/cougaar/pizza/servlet/PizzaPreferenceServlet.html">here</a>,
+and a sample final output <a href="http://tutorials.cougaar.org/pizza/pizza-servlet-snapshot.htm">here</a>.)<br>
 <p>
-To see all the servlets associated with the party planner, Alice, navigate to: <br>
+To see all the servlets associated with the party planner, Alice,
+navigate at runtime to the "/list" servlet: <br>
 &nbsp;&nbsp;&nbsp;<a href="http://localhost:8800/$Alice/list">http://localhost:8800/$Alice/list</a> <br>
 </p>
 <h2>6. LEARN MORE</h2>
 <p>Read more about the <a href="flow.html">story and flow</a> of the
-pizza party applcation; What is supposedly going on? What are the
+pizza party applcation: What is supposedly going on? What are the
 components involved?
 <p>
 <p>These components may be re-used in your application, or modified

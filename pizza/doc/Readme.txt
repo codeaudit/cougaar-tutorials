@@ -13,7 +13,7 @@ components off of.
 
 2. SETUP
 
-Insure that you installed cougaar.zip and cougaar-support.zip and that
+Ensure that you installed cougaar.zip and cougaar-support.zip and that
 your Cougaar Install Path environment variable points to the directory
 where those were unzipped. It will also help if you put
 COUGAAR_INSTALL_PATH/bin on your PATH.
@@ -24,11 +24,11 @@ To run this application, you run the 2 Cougaar Nodes that make up the
 system:
 [In a command line window]
 cd COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty
-Cougaar SDPizzaNode1.xml
+cougaar SDPizzaNode1.xml
 
 [Start another window]
 cd COUGAAR_INSTALL_PATH/pizza/configs/pizzaparty
-Cougaar SDPizzaNode2.xml
+cougaar SDPizzaNode2.xml
 
 4. EXPECTED OUTPUT
 
@@ -61,10 +61,14 @@ de1" from XML file "SDPizzaNode1.xml"
 
 As with all Cougaar applications, user interfaces for the Pizza Application are available as web pages.
 
-The main interface for the Pizza Party is:
+The main interface for the Pizza Party is the "/pizza" servlet,
+available at runtime at:
 http://localhost:8800/$Alice/pizza
+(See the Javadoc at http://cougaar.cougaar.org/software/11.4/javadoc/pizza/doc/api/org/cougaar/pizza/servlet/PizzaPreferenceServlet.html,
+and a sample final output at: http://tutorials.cougaar.org/pizza/pizza-servlet-snapshot.htm.
 
-To see all the servlets associated with the party planner, Alice, navigate to:
+To see all the servlets associated with the party planner, Alice,
+navigate at runtime to the "/list" servlet: 
 http://localhost:8800/$Alice/list
 
 6. LEARN MORE
