@@ -41,7 +41,13 @@ import org.cougaar.core.servlet.SimpleServletComponent;
 
 
 
-public class ScheduleServlet extends HttpServlet
+  /**
+   * todo:  Create Predicate matching all ProgrammerAssets
+   */
+
+
+ // todo:  add code to make this a servlet subclass
+public class ScheduleServlet
 {
 	private SimpleServletSupport support;
 
@@ -71,17 +77,13 @@ public class ScheduleServlet extends HttpServlet
 
 		PrintWriter out = response.getWriter();
 
+		// todo:  get the PrintWriter which sends data to HTTP
 		try
 		{
   		  System.out.println("Servlet called." );
 
-                  Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
-		  Iterator iter = programmers.iterator();
-		  while (iter.hasNext()) {
-		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
-		  }
-		}
+		// todo: query the Blackboard for a Collection of ProgrammerAssets
+           }
 		catch (Exception ex)
 		{
 			out.println("Error processing servlet:"+ex.getMessage());
@@ -92,13 +94,12 @@ public class ScheduleServlet extends HttpServlet
 
 	}
 
-
   /**
    * Print an HTML table of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
-      // dump classnames and count to output stream
-      out.println("<br><b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
+
+      // todo: print programmer's name and a line break
       out.println("<table border=1>");
       RoleSchedule s = pa.getRoleSchedule();
       Enumeration iter = s.getAllScheduleElements();
@@ -109,27 +110,21 @@ public class ScheduleServlet extends HttpServlet
         if (o instanceof Allocation) {
           Allocation alloc = (Allocation) o;
           SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
-          out.print ("<tr><td>" + sdf.format (alloc.getStartDate()) +
-                     "-" + sdf.format (new Date (alloc.getEndTime() - 1)) +
-                     "</td><td>" + alloc.getTask().getVerb() + " " +
-                     alloc.getTask().getDirectObject().
-                       getItemIdentificationPG().getItemIdentification() +
-                     "</td></tr>");
+          out.print ("<tr><td>");
+          // todo: print start month
+          out.print ("-");
+          // todo: print end month
+          out.print ("</td><td>");
+          // todo: print verb
+          out.print (" ");
+          // todo: print name of CODE task
+          out.print ("</td></tr>");
         }
       }
       out.println("</table>");
       out.flush();
   }
 
-}
-
-/**
- * This predicate matches all Programmer asset objects
- */
-class ProgrammersPredicate implements UnaryPredicate {
-  public boolean execute(Object o) {
-    return o instanceof ProgrammerAsset;
-  }
 }
 
 
