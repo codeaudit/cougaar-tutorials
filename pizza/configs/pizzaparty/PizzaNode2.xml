@@ -85,8 +85,8 @@
         </component>
 	<!-- Add RSVPPI -->
         <component
-          name='org.cougaar.pizza.RSVPPlugin'
-          class='org.cougaar.pizza.RSVPPlugin'
+          name='org.cougaar.pizza.plugin.RSVPPlugin'
+          class='org.cougaar.pizza.plugin.RSVPPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
@@ -132,8 +132,8 @@
         </component>
 	<!-- Add RSVPPI -->
         <component
-          name='org.cougaar.pizza.RSVPPlugin'
-          class='org.cougaar.pizza.RSVPPlugin'
+          name='org.cougaar.pizza.plugin.RSVPPlugin'
+          class='org.cougaar.pizza.plugin.RSVPPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
@@ -252,6 +252,15 @@
         </component>
 	<!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
 	SDRegistrationPI, PizzaOrderServlet, PizzaMenuServlet -->
+	<component
+          name='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
+          class='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+          <argument>
+            PIZZA_TYPES_PROVIDED=meat_only
+          </argument>
+	</component>
       </agent>
     </node>
   </host>
