@@ -33,7 +33,12 @@ import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.KitchenAsset;
 import org.cougaar.pizza.asset.PizzaAsset;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 
@@ -56,11 +61,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
    */
   public void load() {
     super.load();
-
-    logger = (LoggingService)
-        getServiceBroker().getService(this, LoggingService.class, null);
-    domainService = (DomainService)
-        getServiceBroker().getService(this, DomainService.class, null);
+    logger = (LoggingService) getServiceBroker().getService(this, LoggingService.class, null);
+    domainService = (DomainService) getServiceBroker().getService(this, DomainService.class, null);
     pFactory = (PlanningFactory) domainService.getFactory("planning");
   }
 
@@ -68,10 +70,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
    * Create the subscriptions to my tasks and kitchen assets
    */
   protected void setupSubscriptions() {
-    tasksSubscription = (IncrementalSubscription)
-        getBlackboardService().subscribe(OrderTasksPred);
-    kitchenAssetSubscription = (IncrementalSubscription)
-        getBlackboardService().subscribe(KitchenAssetPred);
+    tasksSubscription = (IncrementalSubscription) getBlackboardService().subscribe(OrderTasksPred);
+    kitchenAssetSubscription = (IncrementalSubscription) getBlackboardService().subscribe(KitchenAssetPred);
   }
 
   /**
@@ -90,7 +90,9 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       }
       //if the kitchen asset is still not there return out of the
       // execute cycle
-      if (kitchen == null) { return; }
+      if (kitchen == null) {
+        return;
+      }
     } else {
       //if we have our kitchen asset process our tasks
       //Right now assume we only get new tasks and no changes
@@ -102,8 +104,8 @@ public class ProcessOrderPlugin extends ComponentPlugin {
 
   /**
    * Allocate the new order tasks to the pizza kitchen asset
-   * @param newOrderTasks The tasks that are ordering pizzas from our
-   * kitchen.
+   *
+   * @param newOrderTasks The tasks that are ordering pizzas from our kitchen.
    */
   private void allocateOrderTasks(Collection newOrderTasks) {
     for (Iterator i = newOrderTasks.iterator(); i.hasNext();) {
@@ -113,31 +115,24 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       boolean kitchenCanMake = checkWithKitchen(newTask);
       AllocationResult ar;
       if (kitchenCanMake) {
-        ar = PluginHelper.createEstimatedAllocationResult(newTask,
-                                                          pFactory, 1.0,
-                                                          kitchenCanMake);
+        ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
       } else {
         // if we can't make the pizza provide a failed allocation result
         // with a quantity of zero.
-        AspectValue qtyAspectValue =
-            AspectValue.newAspectValue(AspectType.QUANTITY, 0);
+        AspectValue qtyAspectValue = AspectValue.newAspectValue(AspectType.QUANTITY, 0);
         AspectValue[] aspectValueArray = {qtyAspectValue};
-        ar = pFactory.newAllocationResult(1.0, kitchenCanMake,
-                                          aspectValueArray);
+        ar = pFactory.newAllocationResult(1.0, kitchenCanMake, aspectValueArray);
       }
-      Allocation alloc =
-          pFactory.createAllocation(newTask.getPlan(), newTask, kitchen,
-                                    ar, Constants.Role.PIZZAPROVIDER);
+      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar, Constants.Role.PIZZAPROVIDER);
       getBlackboardService().publishAdd(alloc);
     }
   }
 
   /**
-   * Check with our kitchen asset to see if it can make the requested
-   * type of pizza
+   * Check with our kitchen asset to see if it can make the requested type of pizza
+   *
    * @param newTask The order task.
-   * @return boolean If we can make the pizza - determines if the
-   * AllocationResult is successful or not.
+   * @return boolean If we can make the pizza - determines if the AllocationResult is successful or not.
    */
   private boolean checkWithKitchen(Task newTask) {
     boolean canMakePizza = true;
@@ -150,8 +145,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
         canMakePizza = false;
         //TODO: Turn logging down to debug
         if (logger.isErrorEnabled()) {
-          logger.error("Provider " + getAgentIdentifier().toString() +
-                       " can't make the VeggiePizza that was ordered!");
+          logger.error("Provider " + getAgentIdentifier().toString() + " can't make the VeggiePizza that was ordered!");
         }
       }
     }
@@ -162,8 +156,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
         canMakePizza = false;
         //TODO: Turn logging down to debug
         if (logger.isErrorEnabled()) {
-          logger.error("Provider " + getAgentIdentifier().toString() +
-                       " can't make the MeatPizza that was ordered!");
+          logger.error("Provider " + getAgentIdentifier().toString() + " can't make the MeatPizza that was ordered!");
         }
       }
     }
@@ -193,5 +186,4 @@ public class ProcessOrderPlugin extends ComponentPlugin {
       return false;
     }
   };
-
 }
