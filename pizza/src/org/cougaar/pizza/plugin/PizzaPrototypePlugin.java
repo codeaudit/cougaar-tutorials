@@ -25,6 +25,7 @@ import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.PizzaAsset;
+import org.cougaar.pizza.Constants;
 
 /**
  * This COUGAAR Plugin creates and publishes Pizza Asset objects.
@@ -78,11 +79,11 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
 
     // Create the prototypes that will be used to create the programmer assets
     PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype
-      (org.cougaar.pizza.asset.PizzaAsset.class, "pizza");
+      (org.cougaar.pizza.asset.PizzaAsset.class, Constants.PIZZA);
     // Cache the prototype in the LDM : note this is not treated
     // as an asset that is available in subscriptions, but can
     // be used to build 'real' assets when asked for by prototype name
-    getPrototypeRegistryService().cachePrototype("pizza", new_prototype);
+    getPrototypeRegistryService().cachePrototype(Constants.PIZZA, new_prototype);
   }
 
   /**
