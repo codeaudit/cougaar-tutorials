@@ -116,7 +116,7 @@ protected Task makeTask(Asset what) {
     NewTask new_task = factory.newTask();
 
     // Set the verb as given
-    new_task.setVerb(new Verb("CODE"));
+    new_task.setVerb(Verb.getVerb("CODE"));
 
     // Set the reality plan for the task
     new_task.setPlan(factory.getRealityPlan());
