@@ -25,8 +25,8 @@ package=org.cougaar.pizza.asset
 
 propertydefs = properties.def
 
-[PizzaAsset org.cougaar.planning.ldm.asset.Asset]
+[PizzaAsset org.cougaar.pizza.asset.PizzaPartyAsset]
 doc=Representation of a Pizza
 
-[KitchenAsset org.cougaar.planning.ldm.asset.Asset]
+[KitchenAsset org.cougaar.pizza.asset.PizzaPartyAsset]
 doc=Representation of a Pizza Provider's Kitchen
