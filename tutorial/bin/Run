@@ -22,30 +22,24 @@
 # </copyright>
 
 
-if [ "$COUGAAR_INSTALL_PATH" = "" ]
- then
-  echo Please set COUGAAR_INSTALL_PATH
-  exit 2
+if [ "$COUGAAR_INSTALL_PATH" = "" ]; then
+  echo Please set COUGAAR_INSTALL_PATH;
+  exit;
 fi
-
-if [ "$1" = "" ]
- then
-   echo Run requires an argument  eg: Run HanoiNode
-   exit 2
+if [ "$1" = "" ]; then
+  echo Run requires an argument  eg: Run ExerciseOneNode;
+  exit;
 fi
 
 LIBPATHS=$COUGAAR_INSTALL_PATH/lib/bootstrap.jar
-LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/xml4j_2_0_11.jar
-LIBPATHS=$LIBPATHS:$COUGAAR_INSTALL_PATH/lib/planserver.jar
-LIBPATHS=$COUGAAR_INSTALL_PATH/lib/tutorial.jar:$LIBPATHS
 
-#  pass in "NodeName" to run a specific named Node
+# pass in "NodeName" to run a specific named Node
 
-MYPROPERTIES=
-MYMEMORY=
-MYCLASSES=org.cougaar.core.node.Node
-MYARGUMENTS=" -c -n $1"
+MYPROPERTIES="-Dorg.cougaar.system.path=$COUGAAR_INSTALL_PATH/sys -Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH -Xbootclasspath/p:$COUGAAR_INSTALL_PATH/lib/javaiopatch.jar"
 
-# @ECHO ON
+MYMEMORY=""
+MYCLASSES="org.cougaar.bootstrap.Bootstrapper org.cougaar.core.node.Node"
+MYARGUMENTS="-c -n $1"
 
+echo java $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS $MYCLASSES $MYARGUMENTS $2 $3
 java $MYPROPERTIES $MYMEMORY -classpath $LIBPATHS $MYCLASSES $MYARGUMENTS $2 $3
