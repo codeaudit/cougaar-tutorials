@@ -64,6 +64,7 @@ import org.cougaar.core.servlet.BaseServletComponent;
 import org.cougaar.core.blackboard.ChangeReport;
 import org.cougaar.core.blackboard.Claimable;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.Allocation;
@@ -80,8 +81,6 @@ import org.cougaar.core.util.UID;
 import org.cougaar.planning.servlet.PlanViewServlet;
 
 import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.pizza.Constants;
-import org.cougaar.pizza.plugin.PizzaPreferences;
 
 /**
  * 
@@ -249,7 +248,7 @@ public class HistoryServlet extends ComponentPlugin {
   }
 
   protected Servlet createServlet() {
-    return new PizzaWorker();
+    return new HistoryWorker();
   }
 
   /**
@@ -579,13 +578,12 @@ public class HistoryServlet extends ComponentPlugin {
 
     if (relay instanceof Relay.Source) {
       Relay.Source sourceRelay = (Relay.Source) relay;
-      if (!sourceRelay.getTargets().isEmpty()) {
-	buf.append("Source Targets : " + encodeHTML(sourceRelay.getTargets().iterator().next().toString()) + "<br/>");
-	if (sourceRelay.getContent() instanceof CommunityDescriptor) {
-	  CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
-	  Community community = (Community)response.getCommunity();
-	  buf.append(getCommunityText("Source Response : ", community));
-	}
+      buf.append (showTargetAddresses (sourceRelay));
+
+      if (sourceRelay.getContent() instanceof CommunityDescriptor) {
+	CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
+	Community community = (Community)response.getCommunity();
+	buf.append(getCommunityText("Source Relay Response : ", community));
       }
     }
     if (relay instanceof Relay.Target) {
@@ -597,7 +595,37 @@ public class HistoryServlet extends ComponentPlugin {
 	buf.append("Entity " + targetRelay.getSource() + " registers with community " + community.getName());
       }
       else {
-	buf.append("Target Source  : " + encodeHTML(((Relay.Target)relay).getSource().toString()));
+	buf.append("Target Relay Source  : " + encodeHTML(((Relay.Target)relay).getSource().toString()));
+      }
+    }
+
+    return buf.toString();
+  }
+
+  protected String showTargetAddresses (Relay.Source sourceRelay) {
+    StringBuffer buf = new StringBuffer();
+
+    if (!sourceRelay.getTargets().isEmpty()) {
+      buf.append("Source Relay Target addresses : ");
+      for (Iterator iter = sourceRelay.getTargets().iterator();
+	   iter.hasNext(); ) {
+	buf.append(
+		   "<font size=small color=mediumblue>"+
+		   "<li>");
+	MessageAddress address = (MessageAddress) iter.next();
+	if (address instanceof AttributeBasedAddress) {
+	  AttributeBasedAddress aba = (AttributeBasedAddress) address;
+	  buf.append ("AttributeBasedAddress : Broadcast to community=");
+	  buf.append (aba.getCommunityName());
+	  buf.append (" attribute type=");
+	  buf.append (aba.getAttributeType());
+	  buf.append (" value=");
+	  buf.append (aba.getAttributeValue());
+	}
+	// buf.append (encodeHTML(address.toString()));
+	buf.append (
+		    "</li>"+
+		    "</font>\n");
       }
     }
 
@@ -611,12 +639,12 @@ public class HistoryServlet extends ComponentPlugin {
 
       Relay.Source sourceRelay = (Relay.Source)relay;
       if (!(sourceRelay.getContent() instanceof Relay))
-	buf.append("Source Query    : " + encodeHTML(sourceRelay.getContent().toString()) + "<br/>");
+	buf.append("Source Relay Query    : " + encodeHTML(sourceRelay.getContent().toString()) + "<br/>");
       
       if (sourceRelay.getContent() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) sourceRelay.getContent();
 	Community community = (Community)response.getCommunity();
-	buf.append(getCommunityText("Source Response : ", community));
+	buf.append(getCommunityText("Source Relay Response : ", community));
       }
     }
     if (relay instanceof Relay.Target) {
@@ -625,15 +653,15 @@ public class HistoryServlet extends ComponentPlugin {
       if (targetRelay.getResponse() instanceof CommunityResponse) {
 	CommunityResponse response = (CommunityResponse) targetRelay.getResponse();
 	Community community = (Community)response.getContent();
-	buf.append(getCommunityText("Target Response : ", community));
+	buf.append(getCommunityText("Target Relay Response : ", community));
       }
       else if (targetRelay.getResponse() instanceof CommunityDescriptor) {
 	CommunityDescriptor response = (CommunityDescriptor) targetRelay.getResponse();
 	Community community = (Community)response.getCommunity();
-	buf.append(getCommunityText("Target Response : ", community));
+	buf.append(getCommunityText("Target Relay Response : ", community));
       }
       else {
-	buf.append("Target Response : " + encodeHTML(targetRelay.getResponse().toString()));
+	buf.append("Target Relay Response : " + encodeHTML(targetRelay.getResponse().toString()));
       }
     }
 
@@ -796,7 +824,7 @@ public class HistoryServlet extends ComponentPlugin {
 	return "";
       else {
 	StringBuffer buf = new StringBuffer();
-	buf.append ("Do");
+	buf.append ("Do ");
 	buf.append (allocation.getTask().getVerb());
 	buf.append (" with ");
 	buf.append (getTypeAndItemInfo(allocation.getAsset()));
@@ -860,7 +888,7 @@ public class HistoryServlet extends ComponentPlugin {
   /**
    * Inner-class that's registered as the servlet.
    */
-  protected class PizzaWorker extends HttpServlet {
+  protected class HistoryWorker extends HttpServlet {
     public void doGet(
         HttpServletRequest request,
         HttpServletResponse response) throws IOException, ServletException {
@@ -870,7 +898,7 @@ public class HistoryServlet extends ComponentPlugin {
     public void doPost(
         HttpServletRequest request,
         HttpServletResponse response) throws IOException, ServletException {
-      new PizzaFormatter(request, response);
+      new HistoryFormatter(request, response);
     }
   }
 
@@ -878,14 +906,14 @@ public class HistoryServlet extends ComponentPlugin {
     this.events = events;
   }
 
-  protected class PizzaFormatter {
+  protected class HistoryFormatter {
     public static final int FORMAT_DATA = 0;
     public static final int FORMAT_XML = 1;
     public static final int FORMAT_HTML = 2;
 
     private int format;
 
-    public PizzaFormatter(
+    public HistoryFormatter(
         HttpServletRequest request, 
         HttpServletResponse response) throws IOException, ServletException
     {
@@ -990,8 +1018,6 @@ public class HistoryServlet extends ComponentPlugin {
             "History Servlet for " + agentId.getAddress()+
 	    "</title></head>"+
 	    "<body>" +
-	    //	    "<p><center>Pizza Preferences</center>"+
-	    //	    getHtmlForPreferences () +
 	    "<p><center><h1>State History</h1></center>"+
 	    "<p>" +
 
@@ -1009,52 +1035,6 @@ public class HistoryServlet extends ComponentPlugin {
       else if (format == FORMAT_XML) {
       }
       else if (format == FORMAT_DATA) {
-      }
-    }
-
-    protected String getHtmlForPreferences () {
-      blackboard.openTransaction();
-      Collection pizzaPreferences = blackboard.query (new UnaryPredicate() {
-	  public boolean execute(Object o) {
-	    return (o instanceof PizzaPreferences);
-	  }
-	}
-					      );
-      blackboard.closeTransaction();
-
-      if (pizzaPreferences.isEmpty()) {
-	return "<center><b>Waiting for invitiation RSVP from friends.</b></center>";
-      }
-      else {
-	PizzaPreferences prefs = (PizzaPreferences) pizzaPreferences.iterator().next();
-	StringBuffer buf = new StringBuffer();
-	buf.append("<table border=1 align=center>");
-	buf.append("<tr>");
-	buf.append("<th>");
-	buf.append("Friend");
-	buf.append("</th>");
-	buf.append("<th>");
-	buf.append("Preference");
-	buf.append("</th>");
-	buf.append("</tr>");
-	for (Iterator iter = new TreeSet(prefs.getFriends()).iterator(); iter.hasNext(); ) {
-	  buf.append("<tr>");
-
-	  buf.append("<td>");
-	  String friend = (String) iter.next();
-	  buf.append(friend);
-	  buf.append("</td>");
-
-	  buf.append("<td>");
-	  String preference = prefs.getPreferenceForFriend(friend);
-	  buf.append(preference);
-	  buf.append("</td>");
-
-	  buf.append("</tr>");
-	}
-	buf.append("</table>");
-	stopRefresh = true;
-	return buf.toString();
       }
     }
 
