@@ -83,6 +83,13 @@
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
 	<!-- Add RSVPPI -->
+        <component
+          name='org.cougaar.pizza.RSVPPlugin'
+          class='org.cougaar.pizza.RSVPPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+
       </agent>
       <!-- Mark is a party guest -->
       <agent name="Mark">
@@ -122,6 +129,13 @@
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
 	<!-- Add RSVPPI -->
+        <component
+          name='org.cougaar.pizza.RSVPPlugin'
+          class='org.cougaar.pizza.RSVPPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+
       </agent>
       <!-- This agent just serves as a YPServer and community manager -->
       <agent name="MA">
