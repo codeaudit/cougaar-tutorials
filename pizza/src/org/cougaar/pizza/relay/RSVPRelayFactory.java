@@ -26,25 +26,23 @@
 
 package org.cougaar.pizza.relay;
 
-import java.io.Serializable;
-
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.persist.NotPersistable;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.UID;
-
 import org.cougaar.pizza.Constants;
 
+import java.io.Serializable;
+
 /**
- * A {@link org.cougaar.core.relay.Relay.TargetFactory} for
- * RSVPRelayTarget {@link RSVPRelayTarget}s.
- * <p>
- * This factory is required in order to produce the correct Relay.Target 
+ * A {@link org.cougaar.core.relay.Relay.TargetFactory} for RSVPRelayTarget
+ * {@link RSVPRelayTarget}s.
+ * <p/>
+ * This factory is required in order to produce the correct Relay.Target
  * when the relay has been received by the target agent.
  */
 public class RSVPRelayFactory
-  implements Relay.TargetFactory, NotPersistable, Serializable
-{
+    implements Relay.TargetFactory, NotPersistable, Serializable {
   private static RSVPRelayFactory instance;
 
   public static synchronized Relay.TargetFactory getTargetFactory() {
@@ -55,12 +53,10 @@ public class RSVPRelayFactory
   }
 
   // TargetFactory implementation
-  public Relay.Target create(UID uid,
-                             MessageAddress source,
-                             Object content,
-                             Relay.Token token)
-  {
-    RSVPRelayTarget result = new RSVPRelayTarget(source, Constants.INVITATION_QUERY);
+  public Relay.Target create(UID uid, MessageAddress source, Object content,
+                             Relay.Token token) {
+    RSVPRelayTarget result = new RSVPRelayTarget(source,
+                                                 Constants.INVITATION_QUERY);
     result.setUID(uid);
     return result;
   }

@@ -26,51 +26,45 @@
 
 package org.cougaar.pizza.relay;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.persist.NotPersistable;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.util.SimpleUniqueObject;
-
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A source-side  {@link Relay}.
- * <p>
+ * <p/>
  */
 public class RSVPRelaySource
-  extends SimpleUniqueObject
-  implements Relay.Source, NotPersistable
-{
+    extends SimpleUniqueObject
+    implements Relay.Source, NotPersistable {
   private LoggingService log;
   Set targets = new HashSet();
   MessageAddress target;
-  Object query; 
+  Object query;
   PizzaPreferences pizzaPreferences;
 
-  long then = System.currentTimeMillis ();
+  long then = System.currentTimeMillis();
 
-  public RSVPRelaySource (LoggingService log, 
-			  MessageAddress target, 
-			  Object query, 
-			  PizzaPreferences pizzaPreferences) {
-    this.log    = log;
+  public RSVPRelaySource(LoggingService log,
+                         MessageAddress target,
+                         Object query,
+                         PizzaPreferences pizzaPreferences) {
+    this.log = log;
     this.target = target;
-    this.query  = query;
+    this.query = query;
     this.pizzaPreferences = pizzaPreferences;
-    targets.add (target);
+    targets.add(target);
   }
 
-  /** 
-   * Relay.Source implementation 
+  /**
+   * Relay.Source implementation
    *
    * @return set of target (just one member - the AttributeBasedAddress)
    */
@@ -78,8 +72,8 @@ public class RSVPRelaySource
     return targets;
   }
 
-  /** 
-   * Relay.Source implementation 
+  /**
+   * Relay.Source implementation
    *
    * @return the query in the RSVP - meat or veg?
    */
@@ -87,18 +81,19 @@ public class RSVPRelaySource
     return query;
   }
 
-  /** 
-   * Relay.Source implementation 
+  /**
+   * Relay.Source implementation
+   * <p/>
+   * Make sure on the target side we create a target relay. This ensures
+   * that the target agent gets a target relay.  The target relay has just
+   * a source, and no target address, so the the relay won't be propagated
+   * at the target.
+   * <p/>
+   * An alternative would be to have the relay implement both source and
+   * target interfaces, but this would lead to endless pinging in this case
+   * where the target address is an ABA broadcast to all members of the
+   * community.
    *
-   * Make sure on the target side we create a target relay. 
-   * This ensures that the target agent gets a target relay.  The
-   * target relay has just a source, and no target address, so the 
-   * the relay won't be propagated at the target.
-   *
-   * An alternative would be to have the relay implement both source and target
-   * interfaces, but this would lead to endless pinging in this case where
-   * the target address is an ABA broadcast to all members of the community.
-   * 
    * @return target factory that makes a target that has no target address
    */
   public TargetFactory getTargetFactory() {
@@ -106,36 +101,41 @@ public class RSVPRelaySource
   }
 
   /**
-   * Relay.Source implementation 
-   *
-   * Record responses from remote agents as they come in on the pizza preferences object.
-   *
+   * Relay.Source implementation
+   * <p/>
+   * Record responses from remote agents as they come in on the pizza
+   * preferences object.
+   * <p/>
    * Note that we assume the response will be a RSVPReply.
+   * <p/>
+   * If info is on, tells how many long we had to wait until all responses
+   * came back.
    *
-   * If info is on, tells how many long we had to wait until all responses came back.
-   *
-   * @return Relay.RESPONSE_CHANGE - since every time we get a response, we want to examine it
+   * @return Relay.RESPONSE_CHANGE - since every time we get a response, we
+   *         want to examine it
    */
   public int updateResponse(MessageAddress target, Object response) {
     RSVPReply rsvpReply = (RSVPReply) response;
-    pizzaPreferences.addFriendToPizza (rsvpReply.friend, 
-				       rsvpReply.pizzaPreference);
+    pizzaPreferences.addFriendToPizza(rsvpReply.friend,
+                                      rsvpReply.pizzaPreference);
 
-    log.info ("RSVPRelaySource - pizza prefs now : " + pizzaPreferences);
+    log.info("RSVPRelaySource - pizza prefs now : " + pizzaPreferences);
 
-    if ((pizzaPreferences.getNumMeat () + pizzaPreferences.getNumVeg ()) == Constants.EXPECTED_NUM_FRIENDS) {
-      log.info ("Waited " + ((System.currentTimeMillis ()-then)/1000) + 
-		" seconds to get responses back from " + Constants.EXPECTED_NUM_FRIENDS + 
-		" friends (including party planner).");
+    if ((pizzaPreferences.getNumMeat() + pizzaPreferences.getNumVeg()) ==
+        Constants.EXPECTED_NUM_FRIENDS) {
+      log.info("Waited " + ((System.currentTimeMillis() - then) / 1000) +
+               " seconds to get responses back from " +
+               Constants.EXPECTED_NUM_FRIENDS +
+               " friends (including party planner).");
     }
 
     return Relay.RESPONSE_CHANGE;
   }
 
-  public String toString () { 
-    return "RSVPRelaySource : " + 
-      " query=" + getContent() + 
-      " target=" + target +
-      " preferences=" + pizzaPreferences;
+  public String toString() {
+    return "RSVPRelaySource : " +
+        " query=" + getContent() +
+        " target=" + target +
+        " preferences=" + pizzaPreferences;
   }
 }

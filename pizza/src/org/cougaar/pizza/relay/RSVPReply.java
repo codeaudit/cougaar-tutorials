@@ -28,20 +28,27 @@ package org.cougaar.pizza.relay;
 
 import java.io.Serializable;
 
-/** 
- * the RSVP reply - just the friend and their pizza preference 
+/**
+ * the RSVP reply - just the friend and their pizza preference
  */
 public class RSVPReply implements Serializable {
   public String friend;
   public String pizzaPreference;
 
-  public RSVPReply (String friend, String pizzaPreference) {
+  public RSVPReply(String friend, String pizzaPreference) {
     this.friend = friend;
     this.pizzaPreference = pizzaPreference;
   }
 
-  public String getFriend () { return friend; }
-  public String getPizzaPreference () { return pizzaPreference; }
+  public String getFriend() {
+    return friend;
+  }
 
-  public String toString () { return "RSVPReply : " + friend + " - " + pizzaPreference; }
+  public String getPizzaPreference() {
+    return pizzaPreference;
+  }
+
+  public String toString() {
+    return "RSVPReply : " + friend + " - " + pizzaPreference;
+  }
 }

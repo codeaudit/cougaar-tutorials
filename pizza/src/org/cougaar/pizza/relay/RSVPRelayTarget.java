@@ -26,41 +26,40 @@
 
 package org.cougaar.pizza.relay;
 
-import java.util.Set;
-
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.persist.NotPersistable;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.SimpleUniqueObject;
 
 /**
- * A target-side relay {@link Relay}.  It has a slot for the query and the response.
- * <p>
- * The target relay has just a source, and no target address, so the 
- * the relay won't be propagated at the target agent.
- *
- * An alternative would be to have the relay implement both source and target
- * interfaces, but this would lead to endless pinging in this case where
- * the target address is an ABA broadcast to all members of the community.
- * 
- * In contrast, @see org.cougaar.core.relay.SimpleRelayImpl which implements both
- * source and target.
+ * A target-side relay {@link Relay}.  It has a slot for the query and the
+ * response.
+ * <p/>
+ * The target relay has just a source, and no target address, so the the
+ * relay won't be propagated at the target agent.
+ * <p/>
+ * An alternative would be to have the relay implement both source and
+ * target interfaces, but this would lead to endless pinging in this case
+ * where the target address is an ABA broadcast to all members of the
+ * community.
+ * <p/>
+ * In contrast, @see org.cougaar.core.relay.SimpleRelayImpl which
+ * implements both source and target.
  */
 public class RSVPRelayTarget
-  extends SimpleUniqueObject
-  implements Relay.Target, NotPersistable
-{
+    extends SimpleUniqueObject
+    implements Relay.Target, NotPersistable {
   transient MessageAddress sourceAddress;
   transient Object response;
-  transient Object query; 
+  transient Object query;
 
   public RSVPRelayTarget(MessageAddress source, Object query) {
     this.sourceAddress = source;
     this.query = query;
   }
 
-  /** 
-   * Relay.Target implementation 
+  /**
+   * Relay.Target implementation
    *
    * @return source (sender or inviter) address
    */
@@ -68,15 +67,15 @@ public class RSVPRelayTarget
     return sourceAddress;
   }
 
-  /** 
+  /**
    * @param response - reply to relay
    */
-  public void setResponse (Object response) { 
-    this.response = response; 
+  public void setResponse(Object response) {
+    this.response = response;
   }
-  
-  /** 
-   * Relay.Target implementation 
+
+  /**
+   * Relay.Target implementation
    *
    * @return reply to relay
    */
@@ -84,31 +83,32 @@ public class RSVPRelayTarget
     return response;
   }
 
-  /** 
-   * This is important so that if there are multiple relays, the
-   * RSVP plugin can know which to examine.
+  /**
+   * This is important so that if there are multiple relays, the RSVP
+   * plugin can know which to examine.
    *
    * @return query - the type of invitation
    */
-  public Object getQuery () {
+  public Object getQuery() {
     return query;
   }
 
-  /** 
-   * Relay.Target implementation 
+  /**
+   * Relay.Target implementation
    *
-   * @return Relay.NO_CHANGE - content doesn't need to be updated, only the response
+   * @return Relay.NO_CHANGE - content doesn't need to be updated, only the
+   *         response
    */
   public int updateContent(Object newContent, Token token) {
     return Relay.NO_CHANGE;     // Content is never updated
   }
 
-  public String toString () { 
-    return 
-      "RSVPRelayTarget : " + 
-      " source=" + getSource() + 
-      " query=" + getQuery() + 
-      " response=" + getResponse();
+  public String toString() {
+    return
+        "RSVPRelayTarget : " +
+        " source=" + getSource() +
+        " query=" + getQuery() +
+        " response=" + getResponse();
   }
 }
 
