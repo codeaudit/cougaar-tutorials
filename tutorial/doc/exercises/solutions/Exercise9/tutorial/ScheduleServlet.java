@@ -24,15 +24,13 @@ import org.cougaar.core.servlet.SimpleServletComponent;
 
 public class ScheduleServlet extends HttpServlet
 {
-	private Properties properties = null;
+	private Properties properties = new Properties();
 	private PrintWriter out;
 	private SimpleServletSupport support;
 
-	public ScheduleServlet(SimpleServletSupport support)
+	public void setSimpleServletSupport(SimpleServletSupport support)
 	{
-		super();
 		this.support = support;
-		properties = new Properties();
 	}
 
 	public void doGet(

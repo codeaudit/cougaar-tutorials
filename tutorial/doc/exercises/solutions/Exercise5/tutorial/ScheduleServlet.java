@@ -26,9 +26,8 @@ public class ScheduleServlet extends HttpServlet
 {
 	private SimpleServletSupport support;
 
-	public ScheduleServlet(SimpleServletSupport support)
+	public void setSimpleServletSupport(SimpleServletSupport support)
 	{
-		super();
 		this.support = support;
 	}
 

@@ -30,15 +30,13 @@ import org.cougaar.core.servlet.SimpleServletComponent;
  // todo:  add code to make this a servlet subclass
 public class ScheduleServlet
 {
-	private Properties properties = null;
+	private Properties properties = new Properties();
 	private PrintWriter out;
 	private SimpleServletSupport support;
 
-	public ScheduleServlet(SimpleServletSupport mySupport)
+	public void setSimpleServletSupport(SimpleServletSupport mySupport)
 	{
-		super();
 		support = mySupport;
-		properties = new Properties();
 	}
 
 	public void doGet(
