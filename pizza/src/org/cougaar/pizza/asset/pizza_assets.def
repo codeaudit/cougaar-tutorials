@@ -24,6 +24,11 @@
 
 package=org.cougaar.pizza.asset
 
+;This file defines the Assets in the pizza application.  The code generators will
+;produce class files and supporting code for the assets defined in this file.
+
+;This line indicates that there are properties that can be associated with the
+;assets listed in this file. 
 propertydefs = properties.def
 
 [PizzaAsset org.cougaar.pizza.asset.AssetSkeleton]

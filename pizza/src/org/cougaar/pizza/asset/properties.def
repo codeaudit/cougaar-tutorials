@@ -23,13 +23,14 @@
 
 package=org.cougaar.pizza.asset
 
+;This file defines the property groups that can be associated with the assets
+;defined in the pizza_assets.def file.  The code generators will create class
+;files and supporting code for the property groups defined in this file.
+
 ;The pizza property group factory should extend the planning PGFactory
 ;so that we can use things like ItemIdentificationPG on our assets
 factoryExtends=org.cougaar.planning.ldm.asset.PropertyGroupFactory
 
-;Specify the PropertyGroups that should be created for our assets.
-;Note that this file provides direction to the code generators that create
-; the PG interfaces, class files and factory.
 [VeggiePG]
 
 [MeatPG]
