@@ -71,8 +71,17 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 
   private ProviderDescription provD = null;
 
+
   public void setCommunityService(CommunityService cs) { 
     this.communityService = cs; 
+  }
+
+  public void setLoggingService(LoggingService log) {
+    this.log = log;
+  }
+
+  public void setRegistrationService(RegistrationService rs) {
+    registrationService = rs;
   }
 
   public void suspend() {
@@ -105,14 +114,15 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   }
 
   protected void setupSubscriptions() {
-    if (getBlackboardService().didRehydrate()) {
-      // rebuild ypInfo & reregister
-      initYPInfo();
-    }
   }
 
   protected void execute () {
     if (isProvider()) {
+      if (ypInfo == null) {
+	initYPInfo();
+	handleYP();
+      }
+
       if (ypInfo.readyToRegister()) {
 	if (log.isDebugEnabled()) {
 	  log.debug("Registering: " + getAgentIdentifier() + " with " +
@@ -224,6 +234,9 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 		  ypInfo.getCommunity());
       }
       initialRegister();
+    } else if (log.isDebugEnabled()) {
+      log.debug(getAgentIdentifier() + " waiting on community info " +
+		getYPCommunityName(ypInfo.getAgentName()));
     }
   }
 
@@ -239,6 +252,8 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       ypInfo = new YPInfo((String) params.iterator().next(),
 			    null, false, false, false);
     }
+
+    System.out.println(getAgentIdentifier() + ": ypInfo = " + ypInfo);
   }
 
   private String getYPCommunityName(String ypAgentName) {
@@ -270,7 +285,11 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       
       ProviderDescription pd = new ProviderDescriptionImpl();
       try {
-	boolean ok = pd.parseOWL(getAgentIdentifier() + OWL_IDENTIFIER);
+	URL serviceProfileURL = 
+	  Configuration.urlify(Constants.getDataPath() + File.separator + 
+			       "serviceprofiles");
+	boolean ok = pd.parseOWL(serviceProfileURL, 
+				 getAgentIdentifier() + OWL_IDENTIFIER);
 	
 	if (ok && (pd.getProviderName() != null)) {
 	  if (log.isDebugEnabled()) {
@@ -294,6 +313,11 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 		    ": getPD() ConcurrentModificationException - " +
 		    cme);
 	}
+      } catch (java.net.MalformedURLException mue) {
+	log.error(getAgentIdentifier() +
+		  ": getPD() unable to construct a URL from " + 
+		  Constants.getDataPath() + File.separator + 
+		  "serviceprofiles", mue);
       }
     }
     return provD;
@@ -504,6 +528,8 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     }
 
     public void getResponse(CommunityResponse resp){
+      System.out.println(getAgentIdentifier() + ": got community info for " +
+			 (Community) resp.getContent());
       if (log.isDebugEnabled()) {
 	log.debug(getAgentIdentifier() + " got Community info for " +
 		  (Community) resp.getContent());

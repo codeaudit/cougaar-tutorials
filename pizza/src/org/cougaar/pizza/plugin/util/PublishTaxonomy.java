@@ -269,8 +269,8 @@ public class PublishTaxonomy extends ComponentSupport {
             String name = (String) getArgument();
             String file_ext = "-yp.xml";
 
-            String basePath = System.getProperty("org.cougaar.install.path") + File.separator +
-              "servicediscovery" + File.separator + "data" + File.separator + "taxonomies" + File.separator;
+            String basePath = Constants.getDataPath() + File.separator + 
+	      "taxonomies" + File.separator;
 
             if(validPath(basePath + name + file_ext)) {
               call("createTaxonomy", new String[] {name,  basePath + name + file_ext}, "POP");

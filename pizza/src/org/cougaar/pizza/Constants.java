@@ -1,5 +1,7 @@
 package org.cougaar.pizza;
 
+import java.io.File;
+
 /**
  *  String constants for the pizza party application
  */
@@ -58,6 +60,11 @@ public class Constants {
     public static final org.cougaar.planning.ldm.plan.Role PIZZACUSTOMER = 
       org.cougaar.planning.ldm.plan.Role.getRole("PIZZA" + 
                                 RelationshipType.CUSTOMER_SUFFIX);
+  }
+
+  public static String getDataPath() {
+    return System.getProperty("org.cougaar.install.path") + File.separator +
+      "pizza" + File.separator + "data";
   }
 
   public interface UDDIConstants {
