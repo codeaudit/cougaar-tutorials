@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.1 2002-02-12 19:30:18 jwinston Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java-with-more-hints,v 1.2 2002-03-07 18:28:38 wwright Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -64,8 +64,8 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
   // Subscription for all of my expansions
   private IncrementalSubscription allMyExpansions;
 
-  // Subscription for all subtasks that I make
-  private IncrementalSubscription allSubTasks;
+  // Subscription for allocations of all subtasks that I make
+  private IncrementalSubscription allSubTaskAllocations;
 
   // This predicate matches all tasks with verb "CODE"
   private UnaryPredicate allCodeTasksPredicate = new UnaryPredicate() {
@@ -79,12 +79,12 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     }
   };
 
-  // This predicate matches all of my subtsks
+  // This predicate matches all of my subtask plan elements
   private UnaryPredicate allSubTasksPredicate = new UnaryPredicate() {
     public boolean execute(Object o) {
       boolean ret = false;
-      if (o instanceof Task) {
-        Task t = (Task)o;
+      if (o instanceof PlanElement) {
+        Task t = ((PlanElement)o).getTask();
         Verb v = t.getVerb();
         ret = v.equals("DESIGN") || v.equals("DEVELOP") || v.equals("TEST");
       }
@@ -113,7 +113,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(allCodeTasksPredicate);
     allMyExpansions = (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-    allSubTasks =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
+    allSubTaskAllocations =(IncrementalSubscription)getBlackboardService().subscribe(allSubTasksPredicate);
   }
 
   /**
