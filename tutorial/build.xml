@@ -1,4 +1,4 @@
-<!-- Autobuild-generated ANT v1.5 script for building the Cougaar module "tutorial". -->
+<!-- Autobuild-generated ANT v1.6 script for building the Cougaar module "tutorial". -->
 
 <!--                                                 -->
 <!-- THIS IS A MACHINE GENERATED FILE - DO NOT EDIT! -->
@@ -125,6 +125,8 @@
     <property name="target.sys" value="${TARGETBASE}/sys" />
     <!-- clib is for cougaar compile-time jars (codegen, etc) -->
     <property name="target.clib" value="${TARGETBASE}/clib" />
+    <!-- pmd is for PMD compile-time jars -->
+    <property name="target.pmd" value="${TARGETBASE}/pmd-1.5/lib" />
     <!-- dir is which of lib or clib the jar gets installed to -->
     <property name="target.dir" value="${TARGETBASE}/lib"/>
 
@@ -167,16 +169,16 @@
     
     <!-- jarfiles required by this module, relative to various other paths -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.sys}/xerces.jar,${target.sys}/servlet.jar"/>
+    <property name="compile.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.sys}/servlet.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="compile.abs.jarlist" value=""/>
 
     <!-- javadoc package spec for building javadocs -->
-    <property name="javadoc.packages" value=""/>
+    <property name="javadoc.packages" value="org.cougaar.tutorial,org.cougaar.tutorial.assets,org.cougaar.tutorial.exercise1,org.cougaar.tutorial.exercise2,org.cougaar.tutorial.exercise3,org.cougaar.tutorial.exercise4,org.cougaar.tutorial.exercise5,org.cougaar.tutorial.exercise6,org.cougaar.tutorial.exercise7,org.cougaar.tutorial.exercise8,org.cougaar.tutorial.exercise9,org.cougaar.tutorial.exercise10,org.cougaar.tutorial.exercise11"/>
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.sys}/xerces.jar"/>
+    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.sys}/servlet.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="run.abs.jarlist" value=""/>
     
@@ -199,6 +201,9 @@
     </path> 
 
     <!-- Define path for doing javadoc: Basically, the runtime path -->
+    <!-- tools.jar from the JDK must usually be in your JRE/lib
+    directory, or you get ClassNotFoundExceptions "... while trying to
+    register Taglet ..." -->
     <path id="javadoc.path">
       <path location="${module.classes}" />
       <path location="${module.regress}" />
@@ -240,6 +245,14 @@
 
     <!-- ================ Targets ================ -->
 
+    <!-- ==================================================== -->
+    <!-- Rebuild the Ant DTD, for use with XML editors. But note the warnings -->
+    <!-- at http://ant.apache.org/manual/CoreTasks/antstructure.html -->
+    <!-- ==================================================== -->
+    <target name="build-ant-dtd" description="Rebuild the Ant DTD in CIP/build/data">
+       <antstructure output="${TARGETBASE}/build/data/ant-1.6.dtd"/>
+    </target>
+
     <!-- ========================================================== -->
     <!-- Define dirs for copying files into for zipping -->
     <!-- All based on property zipbase -->
@@ -265,6 +278,27 @@
     <!-- ========================================================== -->
     <target name="junit" depends="prepare" if="has.regress">
       <available property="junit.present" classname="junit.framework.TestCase" classpathref="junit.classpath"/>
+    </target>
+
+    <!-- ========================================================== -->
+    <!-- Test for presence of PMD. Skip PMD targets if not found. -->
+    <!-- ========================================================== -->
+    <target name="pmd" depends="prepare" if="has.pmd">
+      <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+        <classpath>
+          <pathelement location="${target.pmd}/jaxen-core-1.0-fcs.jar"/>
+          <pathelement location="${target.pmd}/pmd-1.5.jar"/>
+          <pathelement location="${target.pmd}/saxpath-1.0-fcs.jar"/>
+          <pathelement location="${target.pmd}/xercesImpl-2.0.2.jar"/>
+          <pathelement location="${target.pmd}/xmlParserAPIs-2.0.2.jar"/>
+        </classpath>
+      </taskdef>
+      <pmd rulesetfiles="rulesets/basic.xml,rulesets/braces.xml,rulesets/codesize.xml,rulesets/controversial.xml,rulesets/coupling.xml,rulesets/design.xml,rulesets/favorites.xml,rulesets/finalizers.xml,rulesets/imports.xml,rulesets/javabeans.xml,rulesets/junit.xml,rulesets/naming.xml,rulesets/newrules.xml,rulesets/scratchpad.xml,rulesets/strictexception.xml,rulesets/strings.xml,rulesets/unusedcode.xml">
+        <formatter type="html" toFile="${module}_report.html"/>
+        <fileset dir="${src}" >
+          <include name="**/*.java"/>
+        </fileset>
+      </pmd>
     </target>
 
     <!-- ========================================================== -->
@@ -361,6 +395,7 @@
       <available property="has.dev" file="${dev}"/>
       <available property="has.doc" file="${doc}"/>
       <available property="has.regress" file="${regress}"/>
+      <available property="has.pmd" file="${target.pmd}"/>
       <available property="has.lib" file="${local.lib}"/>
       
       <!-- Create the timestamp -->
@@ -401,7 +436,7 @@
     <!-- ========================================================== -->
     <!-- Compiles the Module Code			                -->
     <!-- ========================================================== -->	
-    <target name="compile" depends="prepare, defrunner, really-compile, rmic-source"
+    <target name="compile" depends="prepare, defrunner, custom.codegen, really-compile, rmic-source"
 	    description="Compile the source Code"> </target>
 
     <!-- See if the jarfile needs recompiling -->
@@ -451,6 +486,12 @@
     </target>
     <target name="really.install" depends="install.jar, install.lib">
     </target>
+    <target name="custom.codegen" if="has.custom.xml">
+      <ant antfile="${custom.xml}" dir="${MODSOURCE}" target="codegen" inheritAll="true"/>
+    </target>
+    <target name="custom.clean" if="has.custom.xml">
+      <ant antfile="${custom.xml}" dir="${MODSOURCE}" target="clean" inheritAll="true"/>
+    </target>
     <target name="pre.install" if="has.custom.xml">
       <ant antfile="${custom.xml}" dir="${MODSOURCE}" target="pre.install" inheritAll="true"/>
     </target>
@@ -481,7 +522,7 @@
     <!-- ========================================================== -->
     <!-- Clean up all built code                    	-->
     <!-- ========================================================== -->
-    <target name="clean" depends="clean-gencode" description="Delete compiled code">
+    <target name="clean" depends="clean-gencode, custom.clean" description="Delete compiled code">
       <delete dir="${module.classes}" />
       <delete>
 	<fileset dir="${target.dir}" includes="**/${module.jar}" />
@@ -555,18 +596,30 @@
     <!-- FIXME: Handle unified javadoc -->
     <target name="javadocs" depends="prepare, defrunner, clean-docs" description="Create javadocs for this module" if="has.src">
       <mkdir dir="${javadoc.target}"/>
+      <!-- Note that we should go to breakiterator="true" when we
+      assume Ant1.6 -->
       <javadoc packagenames="${javadoc.packages}"
 	       sourcepath="${src}"
 	       destdir="${javadoc.target}"
 	       author="true"
 	       version="true"
+	       use="true"
 	       doclet="org.cougaar.tools.javadoc.CougaarDoclet"
 	       docletpath="${target.clib}/build.jar"
-	       additionalparam="-breakiterator -source 1.4 -tagletpath ${target.clib}/build.jar -taglet org.cougaar.tools.javadoc.PropertyTaglet -taglet org.cougaar.tools.javadoc.NoteTaglet -taglet org.cougaar.tools.javadoc.ToDoTaglet -taglet org.cougaar.tools.javadoc.GeneratedTaglet"
+	       source="1.4"
+	       additionalparam="-breakiterator"
 	       windowtitle="${moduleUp} API"
 	       doctitle="${moduleUp} API"
-	       bottom="Copyright &#169; 2003 by BBNT Solutions LLC, all rights reserved.">
+	       bottom="Copyright &#169; 2004 by BBNT Solutions LLC, all rights reserved.">
 	<classpath refid="javadoc.path" />
+	<taglet name="org.cougaar.tools.javadoc.PropertyTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.NoteTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.ToDoTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.GeneratedTaglet"
+	       path="${target.clib}/build.jar" />
       </javadoc>
     </target>
 
