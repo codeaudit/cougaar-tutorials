@@ -135,7 +135,7 @@ public class HistoryServlet extends ComponentPlugin {
     };
 
   protected String getPath() {
-    return "/pizza";
+    return "/history";
   }
 
   public void load() {
