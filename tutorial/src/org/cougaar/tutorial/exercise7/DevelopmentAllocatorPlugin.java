@@ -47,7 +47,7 @@ import java.util.Vector;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2004-01-30 14:34:34 jwong Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -164,7 +164,6 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       ((PlanningFactory)getDomainService().getFactory("planning")).
         createAllocation (task.getPlan(), task,
                           asset, estAR, Role.ASSIGNED);
-
     getBlackboardService().publishAdd(allocation);
   }
 
