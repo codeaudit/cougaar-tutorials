@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2002-03-07 18:28:38 wwright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.3 2002-03-15 21:35:33 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -269,14 +269,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     int this_task_duration = 1;
     NewTask t1 = makeTask("DESIGN", task, new_wf);
     setPreferences(t1, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t1);      // Add the task to the PLAN
+    getBlackboardService().publishAdd(t1);      // Add the task to the Blackboard
     tasks.addElement(t1);  // Add the task to the vector of subtasks
 
     // assign three months for development
     this_task_duration = 3;
     NewTask t2 = makeTask("DEVELOP", task, new_wf);
     setPreferences(t2, this_task_duration, deadline_month);
-    // publishAdd(t2);      // Don't add the task to the PLAN yet
+    // publishAdd(t2);      // Don't add the task to the Blackboard yet
     tasks.addElement(t2); // Add the task to the vector of subtasks
 
     // testing takes two month
@@ -284,7 +284,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     NewTask t3 = makeTask("TEST", task, new_wf);
     setPreferences(t3, this_task_duration, deadline_month);
 
-    // publishAdd(t3);      // Don't add the task to the PLAN yet
+    // publishAdd(t3);      // Don't add the task to the Blackboard yet
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
     new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow

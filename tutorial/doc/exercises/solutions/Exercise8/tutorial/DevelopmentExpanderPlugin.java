@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.2 2002-03-07 18:28:38 wwright Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.3 2002-03-15 21:38:29 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -249,14 +249,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     int this_task_duration = 1;
     NewTask t1 = makeTask("DESIGN", task, new_wf);
     setPreferences(t1, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t1);      // Add the task to the PLAN
+    getBlackboardService().publishAdd(t1);      // Add the task to the Blackboard
     new_wf.addTask(t1);  // Add the task to the Workflow
 
     // assign three months for development
     this_task_duration = 3;
     NewTask t2 = makeTask("DEVELOP", task, new_wf);
     setPreferences(t2, this_task_duration, deadline_month);
-    // publishAdd(t2);      // Don't add the task to the PLAN yet
+    // publishAdd(t2);      // Don't add the task to the Blackboard yet
     new_wf.addTask(t2);  // Add the task to the Workflow
 
     // testing takes two month
@@ -264,7 +264,7 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     NewTask t3 = makeTask("TEST", task, new_wf);
     setPreferences(t3, this_task_duration, deadline_month);
 
-    // publishAdd(t2);      // Don't add the task to the PLAN yet
+    // publishAdd(t2);      // Don't add the task to the Blackboard yet
     new_wf.addTask(t3);  // Add the task to the Workflow
 
     // Add constraints onto the workflow that t1 < t2 < t3

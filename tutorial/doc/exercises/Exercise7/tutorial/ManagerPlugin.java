@@ -145,7 +145,7 @@ protected Task makeTask(Asset what) {
       factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
-    double end_month = 36;  // give them three years to do it
+    double end_month = 12;  // give them one year to do it
     scorefcn = ScoringFunction.createStrictlyAtValue
       (new AspectValue(AspectType.END_TIME, end_month));
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);

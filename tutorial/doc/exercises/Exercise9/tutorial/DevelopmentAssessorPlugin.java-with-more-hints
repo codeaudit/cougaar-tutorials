@@ -39,7 +39,7 @@ import tutorial.assets.*;
  * detected, the task allocation results are updated to reflect the conflict.
  *
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.1 2002-02-12 19:30:17 jwinston Exp $
+ * @version $Id: DevelopmentAssessorPlugin.java-with-more-hints,v 1.2 2002-03-15 21:34:19 mbarger Exp $
  **/
 public class DevelopmentAssessorPlugin extends ComponentPlugin
 {
@@ -87,7 +87,7 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
     System.out.println("DevelopmentAssessorPlugin::execute");
 
     Enumeration e = null;
-    // todo:  process all programmer assets that have changed on the PLAN
+    // todo:  process all programmer assets that have changed on the Blackboard
     // hint:  see IncrementalSubscription.getChangedList()
     // e = ...
     // more hints:  for(Enumeration e = allProgrammers.getChangedList();e.hasMoreElements();)
