@@ -29,7 +29,7 @@ import tutorial.assets.*;
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2000-12-18 15:40:58 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-01-18 23:36:47 wwright Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 public class ManagerAllocatorPlugIn  {
@@ -71,6 +71,7 @@ protected void execute () {
   //              Note the allocateTo function later in this file
   // hint:  see IncrementalSubscription.getAddedList()
   // hint:  see IncrementalSubscription.first()
+  // hint:  see Task.getPlanElement()
   // hint:  remember Enumeration functions: hasMoreElements(), nextElement()
 
   }

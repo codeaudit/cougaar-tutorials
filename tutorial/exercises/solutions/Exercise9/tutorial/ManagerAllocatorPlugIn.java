@@ -20,15 +20,14 @@ import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
- * A predicate that matches all unallocated "CODE" tasks
+ * A predicate that matches all "CODE" tasks
  */
 class myTaskPredicate implements UnaryPredicate{
   public boolean execute(Object o) {
     boolean ret = false;
     if (o instanceof Task) {
       Task t = (Task)o;
-      ret = (t.getVerb().equals(Verb.getVerb("CODE"))) &&
-            (t.getPlanElement() == null);
+      ret = t.getVerb().equals(Verb.getVerb("CODE"));
     }
     return ret;
   }
@@ -68,11 +67,11 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2000-12-20 18:18:50 mthome Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.4 2001-01-18 23:36:49 wwright Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 
-  private IncrementalSubscription tasks;         // Unallocated "CODE" tasks
+  private IncrementalSubscription tasks;         // "CODE" tasks
   private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
   private IncrementalSubscription allocations;   // My allocations
 
@@ -95,6 +94,8 @@ protected void execute () {
   Enumeration task_enum = tasks.elements();
   while (task_enum.hasMoreElements()) {
     Task t = (Task)task_enum.nextElement();
+    if (t.getPlanElement() != null) // already allocated
+      continue;
     Asset organization = (Asset)programmers.first();
     if (organization != null)  // if no organization yet, give up for now
       allocateTo(organization, t);

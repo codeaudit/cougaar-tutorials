@@ -11,49 +11,57 @@ package tutorial;
 
 import org.cougaar.core.plugin.SimplePlugIn;
 import org.cougaar.core.cluster.IncrementalSubscription;
+import java.util.*;
 import org.cougaar.util.UnaryPredicate;
-import java.util.Enumeration;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.*;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
- * A predicate that matches all unallocated "CODE" tasks
+ * A predicate that matches all "CODE" tasks
  */
 class myTaskPredicate implements UnaryPredicate{
   public boolean execute(Object o) {
     boolean ret = false;
     if (o instanceof Task) {
       Task t = (Task)o;
-      ret = (t.getVerb().equals(Verb.getVerb("CODE"))) &&
-            (t.getPlanElement() == null);
+      ret = t.getVerb().equals(Verb.getVerb("CODE"));
     }
     return ret;
   }
 }
 
 /**
- * A predicate that matches all ProgrammerAssets
+ * A predicate that matches all organizations that can
+ * fulfill the SoftwareDevelopment role
  */
 class myProgrammersPredicate implements UnaryPredicate{
   public boolean execute(Object o) {
-    return o instanceof ProgrammerAsset;
+    boolean ret = false;
+    if (o instanceof Organization) {
+      Organization org = (Organization)o;
+      OrganizationPG orgPG = org.getOrganizationPG();
+      ret = orgPG.inRoles(Role.getRole("SoftwareDevelopment"));
+    }
+    return ret;
   }
 }
 
 /**
  * This ALP PlugIn allocates tasks of verb "CODE"
- * to ProgrammerAssets
+ * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2000-12-18 15:41:01 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-01-18 23:36:48 wwright Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 
   private IncrementalSubscription tasks;         // "CODE" tasks
-  private IncrementalSubscription programmers;   // Programmers
+  private IncrementalSubscription programmers;   // SoftwareDevelopment orgs
 
   /**
-   * subscribe to tasks and programming assets
+   * subscribe to tasks and programming organizations
    */
 protected void setupSubscriptions() {
   tasks = (IncrementalSubscription)subscribe(new myTaskPredicate());
@@ -70,9 +78,11 @@ protected void execute () {
   Enumeration task_enum = tasks.elements();
   while (task_enum.hasMoreElements()) {
     Task t = (Task)task_enum.nextElement();
-    Asset programmer = (Asset)programmers.first();
-    if (programmer != null)  // if no programmer yet, give up for now
-      allocateTo(programmer, t);
+    if (t.getPlanElement() != null)
+      continue;
+    Asset organization = (Asset)programmers.first();
+    if (organization != null)  // if no organization yet, give up for now
+      allocateTo(organization, t);
   }
 
 }
@@ -81,19 +91,15 @@ protected void execute () {
  * Allocate the task to the asset
  */
 private void allocateTo(Asset asset, Task task) {
+
 	  AllocationResult estAR = null;
 
 	  Allocation allocation =
 	    theLDMF.createAllocation(task.getPlan(), task, asset,
 				     estAR, Role.ASSIGNED);
 
-    System.out.println("\nAllocating the following task to "
-          +asset.getTypeIdentificationPG().getTypeIdentification()+": "
-          +asset.getItemIdentificationPG().getItemIdentification());
-    System.out.println("Task: "+task);
-
+    System.out.println("Allocating to programmer: "+asset.getItemIdentificationPG().getItemIdentification());
 	  publishAdd(allocation);
 
 }
-
 }

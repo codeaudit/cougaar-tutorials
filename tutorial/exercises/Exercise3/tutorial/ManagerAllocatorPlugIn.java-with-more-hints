@@ -40,8 +40,7 @@ import tutorial.assets.*;
 // more hints:      boolean ret = false;
 // more hints:      if (o instanceof Task) {
 // more hints:        Task t = (Task)o;
-// more hints:        ret = (t.getVerb().equals(Verb.getVerb("CODE"))) &&
-// more hints:              (t.getPlanElement() == null);
+// more hints:        ret = t.getVerb().equals(Verb.getVerb("CODE"));
 // more hints:      }
 // more hints:      return ret;
 // more hints:    }
@@ -51,7 +50,7 @@ import tutorial.assets.*;
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java-with-more-hints,v 1.2 2000-12-18 15:40:58 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java-with-more-hints,v 1.3 2001-01-18 23:36:47 wwright Exp $
  **/
 // todo:  Make ManagerAllocatorPlugIn a subclass
 // hint:  see SimplePlugIn (parent class)
@@ -95,6 +94,8 @@ protected void execute () {
 // more hints:     Enumeration task_enum = tasks.elements();
 // more hints:     while (task_enum.hasMoreElements()) {
 // more hints:       Task t = (Task)task_enum.nextElement();
+// more hints:       if (t.getPlanElement() != null)
+// more hints:         continue;
 // more hints:       Asset programmer = (Asset)programmers.first();
 // more hints:       if (programmer != null)  // if no programmer yet, give up for now
 // more hints:         allocateTo(programmer, t);

@@ -18,15 +18,14 @@ import org.cougaar.domain.planning.ldm.asset.*;
 import tutorial.assets.*;
 
 /**
- * A predicate that matches all unallocated "CODE" tasks
+ * A predicate that matches all "CODE" tasks
  */
 class myTaskPredicate implements UnaryPredicate{
   public boolean execute(Object o) {
     boolean ret = false;
     if (o instanceof Task) {
       Task t = (Task)o;
-      ret = (t.getVerb().equals(Verb.getVerb("CODE"))) &&
-            (t.getPlanElement() == null);
+      ret = t.getVerb().equals(Verb.getVerb("CODE"));
     }
     return ret;
   }
@@ -45,7 +44,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to ProgrammerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2000-12-18 15:41:07 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2001-01-18 23:36:48 wwright Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 
@@ -70,6 +69,8 @@ protected void execute () {
   Enumeration task_enum = tasks.elements();
   while (task_enum.hasMoreElements()) {
     Task t = (Task)task_enum.nextElement();
+    if (t.getPlanElement() != null)
+      continue; // already allocated.
     Asset programmer = (Asset)programmers.first();
     if (programmer != null)  // if no programmer yet, give up for now
       allocateTo(programmer, t);
