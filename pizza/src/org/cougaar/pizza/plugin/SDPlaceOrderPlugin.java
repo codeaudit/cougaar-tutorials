@@ -79,7 +79,7 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
         logger.debug(" found pizzaPrefs " + pizzaPrefSub);
       }
       publishFindProvidersTask(null);
-      Task orderTask = makeTask(Constants.Verbs.ORDER, planningFactory.createInstance(Constants.PIZZA));
+      Task orderTask = makeTask(Constants.Verbs.ORDER, makePizzaAsset(Constants.PIZZA));
       getBlackboardService().publishAdd(orderTask);
       Collection subtasks = makeSubtasks(pizzaPrefs, orderTask);
       makeExpansionAndPublish(orderTask, subtasks);
