@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.4 2003-04-14 14:08:26 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java-with-hints,v 1.5 2003-04-17 15:33:14 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -59,8 +59,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
 
   private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
   private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
-  private IncrementalSubscription allExpansions;  // All expansions
-  private IncrementalSubscription myAllocations;  // All expansions
+  private IncrementalSubscription allExpansions;
 
   /**
    * Predicate matching all ProgrammerAssets
@@ -89,24 +88,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     }
   };
 
-  /**
-   * Predicate that matches all of allocations that I made
-   */
-  private UnaryPredicate allocPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-// todo: test if allocation with task that pass task predicate
-// hints: Allocation.getTask
-    }
-  };
-
-  /**
-   * Predicate that matches all of expansions
-   */
-  private UnaryPredicate expansionPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof Expansion;
-    }
-  };
+// todo: create Predicate that matches all of expansions
+// hint: test whether in class Expansion
 
   /**
    * Establish subscription for tasks and assets
@@ -116,10 +99,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
     allCodeTasks =
       (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
-    allExpansions =
-      (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-    myAllocations =
-      (IncrementalSubscription)getBlackboardService().subscribe(allocPredicate);
+// todo: subscribe to expansions
+// hint: like above two
   }
 
   /**
@@ -152,17 +133,17 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     return (t == null) || (t.getPlanElement() != null);
   }
 
+  /**
+   *  find the task, if any, that this task must follow
+   */
   private Task findConstraining (Task task) {
-    Enumeration enum = allExpansions.elements();
-    while (enum.hasMoreElements()) {
-      Expansion exp = (Expansion) enum.nextElement();
-      Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
-      while (enum2.hasMoreElements()) {
-        Constraint c = (Constraint) enum2.nextElement();
-        if (task == c.getConstrainedTask())
-          return c.getConstrainingTask();
-      }
-    }
+// todo: loop through all the expansions to find one (if any)
+//       with a constraint whose constrained task is the one of interest;
+//       if so, return the constraining task
+// hint: Expansion.getWorkflow
+// hint: Workflow.getTaskConstraints
+// hint: Constraint.getConstrainedTask
+// hint: Constraint.getConstrainingTask
     return null;
   }
 
