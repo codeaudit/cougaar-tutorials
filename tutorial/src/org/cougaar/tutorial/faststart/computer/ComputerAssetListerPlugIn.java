@@ -14,12 +14,16 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
+
 /**
  * Simple Plugin to list new instances of ComputerAssets
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerAssetListerPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: ComputerAssetListerPlugIn.java,v 1.3 2002-01-31 20:10:04 krotherm Exp $
  */
-public class ComputerAssetListerPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
+public class ComputerAssetListerPlugIn extends ComponentPlugin
 {
 
   private IncrementalSubscription allComputerAssets;
@@ -37,7 +41,7 @@ public class ComputerAssetListerPlugIn extends org.cougaar.core.plugin.SimplePlu
     //    System.out.println("ComputerAssetListerPlugIn::setupSubscriptions");
 
     allComputerAssets = 
-      (IncrementalSubscription)subscribe(allComputerAssetsPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allComputerAssetsPredicate);
   }
 
   /**

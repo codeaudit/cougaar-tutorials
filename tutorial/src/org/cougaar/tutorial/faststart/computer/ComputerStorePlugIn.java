@@ -15,16 +15,36 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
+
 /**
  * PlugIn to simulate the behavior of a computer store
  * Given a request for an estimate, it can provide a no-commitment
  * estimate. Given a request for supply, it can commit a computer and return
  * the costs in all aspects
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerStorePlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: ComputerStorePlugIn.java,v 1.3 2002-01-31 20:10:04 krotherm Exp $
  */
-public class ComputerStorePlugIn extends org.cougaar.core.plugin.SimplePlugIn 
+public class ComputerStorePlugIn  extends ComponentPlugin
 {
+
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
 
   private IncrementalSubscription allComputerAssets;
   private UnaryPredicate allComputerAssetsPredicate = new UnaryPredicate() {
@@ -51,11 +71,11 @@ public class ComputerStorePlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Set up subscription for all assets
     allComputerAssets = 
-      (IncrementalSubscription)subscribe(allComputerAssetsPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allComputerAssetsPredicate);
 
     // Subscribe to all SUPPLY tasks
     allSupplyTasks = 
-      (IncrementalSubscription)subscribe(allSupplyTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allSupplyTasksPredicate);
   }
 
   /**
@@ -70,7 +90,7 @@ public class ComputerStorePlugIn extends org.cougaar.core.plugin.SimplePlugIn
     {
       Task task = (Task)e.nextElement();
       PlanElement plan_element = allocateTask(task);
-      publishAdd(plan_element);
+      getBlackboardService().publishAdd(plan_element);
     }
   }
 
@@ -112,9 +132,9 @@ public class ComputerStorePlugIn extends org.cougaar.core.plugin.SimplePlugIn
     {
       // Found one : Create an allocation
       AllocationResult estAR = ComputerUtils.computeAllocationResult
-        (task, true, best_asset, theLDMF);
-      plan_element =
-        theLDMF.createAllocation(task.getPlan(), task, best_asset, 
+        (task, true, best_asset, getDomainService().getFactory());
+      plan_element = getDomainService().getFactory()
+        .createAllocation(task.getPlan(), task, best_asset, 
       estAR, Role.AVAILABLE);
       System.out.println("Allocating task to " + best_asset + 
         " Score = " + best_score);
@@ -123,9 +143,10 @@ public class ComputerStorePlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
       // Nope : No asset fits the order adequately. Report failure
       AllocationResult estAR = 
-        ComputerUtils.computeAllocationResult(task, false, best_asset, theLDMF);
-      plan_element =
-        theLDMF.createFailedDisposition(task.getPlan(), task, estAR);
+        ComputerUtils.computeAllocationResult(task, false, best_asset, 
+					      getDomainService().getFactory());
+      plan_element = getDomainService().getFactory()
+        .createFailedDisposition(task.getPlan(), task, estAR);
       //	System.out.println("Failed to allocate");
     }
     return plan_element;

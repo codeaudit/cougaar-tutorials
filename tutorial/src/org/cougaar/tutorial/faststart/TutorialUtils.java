@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * Utility class for writing all tutorial plugin classes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialUtils.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: TutorialUtils.java,v 1.3 2002-01-31 20:10:04 krotherm Exp $
  **/
 public class TutorialUtils {
 
@@ -112,6 +112,29 @@ public class TutorialUtils {
     int value = default_value;
     while(parameters.hasMoreElements()) {
       String param = (String)parameters.nextElement();
+      try {
+        value = Integer.parseInt(param);
+        break;
+      } 
+      catch (NumberFormatException nfe) {
+        System.out.println("Error formatting numeric argument : " + param);
+      }
+    }
+    return value;
+  }
+
+  /**
+   * Return an integer parameter from the head of a list of plugin parameters
+   * @param Iterator of Plugin command line parameters
+   * @param integer default value if no numeric value found
+   * @return int value parsed from first numeric argument
+   */
+  public static int getNumericParameter(Iterator parameters, 
+  int default_value) 
+  {
+    int value = default_value;
+    while(parameters.hasNext()) {
+      String param = (String)parameters.next();
       try {
         value = Integer.parseInt(param);
         break;

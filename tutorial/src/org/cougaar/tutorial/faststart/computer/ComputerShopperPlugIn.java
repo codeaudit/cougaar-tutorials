@@ -12,17 +12,36 @@ import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.util.UnaryPredicate;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
+
 /**
  * Computer shopper plugin - makes requests for computers
  * asking for 'as much CPU and RAM as possible for as cheap as possible
  * and as soon as possible' with different scoring functions and weights.
  * Operates in both estimate and ordering modes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerShopperPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: ComputerShopperPlugIn.java,v 1.3 2002-01-31 20:10:04 krotherm Exp $
  */
-public class ComputerShopperPlugIn extends org.cougaar.core.plugin.SimplePlugIn 
-{
-  
+public class ComputerShopperPlugIn  extends ComponentPlugin
+{  
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // Set up subscription for all plan elements of tasks with verb 'SUPPLY'
   private IncrementalSubscription allSupplyPlanElements;
   private UnaryPredicate allSupplyPlanElementsPredicate = new UnaryPredicate() {
@@ -37,7 +56,7 @@ public class ComputerShopperPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
     // Subscribe to new allocations of 'SUPPLY' tasks
     allSupplyPlanElements =
-      (IncrementalSubscription)subscribe(allSupplyPlanElementsPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allSupplyPlanElementsPredicate);
 
     // Set up dummy arrays with different mixes of weights
     double []price_weights = {0.25, 1.0, 0.0, 0.0, 0.0, 0.25, 0.25};
@@ -52,8 +71,8 @@ public class ComputerShopperPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 					      ship_weights[i],
 					      cpu_weights[i],
 					      ram_weights[i],
-					      theLDMF);
-      publishAdd(task);
+					      getDomainService().getFactory());
+      getBlackboardService().publishAdd(task);
       //      System.out.println("Publishing task!");
     }
   }

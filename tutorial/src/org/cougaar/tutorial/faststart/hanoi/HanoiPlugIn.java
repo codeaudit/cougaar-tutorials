@@ -13,6 +13,10 @@ import org.cougaar.util.UnaryPredicate;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.*;
+
 
 /**
  * Towers of Hanoi Plugin :
@@ -26,10 +30,26 @@ import java.util.Vector;
  * TRANSPORT <from pole> <to pole> <1>
  * MANAGE <remaining pole> <to pole> <count - 1>
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiPlugIn.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: HanoiPlugIn.java,v 1.3 2002-01-31 20:10:05 krotherm Exp $
  **/
-public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
+public class HanoiPlugIn  extends ComponentPlugin
 {
+  private DomainService domainService = null;
+
+  /**
+   * Used by the binding utility through reflection to set my DomainService
+   */
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
+  }
+
+  /**
+   * Used by the binding utility through reflection to get my DomainService
+   */
+  public DomainService getDomainService() {
+    return domainService;
+  }
+
   // Subscription for all 'MANAGE' tasks
   private IncrementalSubscription allManageTasks;
   private UnaryPredicate allManageTasksPredicate = new UnaryPredicate() {
@@ -53,14 +73,14 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
    * Establish subscription for TRANSPORT tasks
    **/
   public void setupSubscriptions() { 
-    //    System.out.println("HanoiPlugIn::setupSubscriptions");
+    System.out.println("HanoiPlugIn::setupSubscriptions ");
 
     allManageTasks =
-      (IncrementalSubscription)subscribe(allManageTasksPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allManageTasksPredicate);
 
     // [Level4]
     allManageExpansions = 
-      (IncrementalSubscription)subscribe(allManageExpansionsPredicate);
+      (IncrementalSubscription)getBlackboardService().subscribe(allManageExpansionsPredicate);
   }
 
   /**
@@ -68,7 +88,7 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
    * new tasks for it as above, or print top level message
    **/
   public void execute() { 
-  //      System.out.println("HanoiPlugIn::execute");
+      // System.out.println("HanoiPlugIn::execute ");
 
     // [Level4]
     // First, look at changed expansions : need to take 
@@ -87,7 +107,7 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
 	if (expansion.getEstimatedResult() == null) {
 	  expansion.setEstimatedResult(expansion.getReportedResult());
-	  publishChange(expansion);
+	  getBlackboardService().publishChange(expansion);
 	}
       }
     // End [Level4]
@@ -118,7 +138,7 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
 	// Create expansion and workflow to represent the expansion 
 	// of this task
-	NewWorkflow new_wf = theLDMF.newWorkflow();
+	NewWorkflow new_wf = getDomainService().getFactory().newWorkflow();
 	new_wf.setParentTask(task);
 
 	// Base recursion case : If only one disk to move, generate
@@ -128,9 +148,9 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 	    HanoiUtils.createNewTask
 	    (from_pole, to_pole, 1, 
 	     start_time, end_time,
-	     HanoiUtils.TRANSPORT_VERB, task, theLDMF);
+	     HanoiUtils.TRANSPORT_VERB, task, getDomainService().getFactory());
 	  new_wf.addTask(t1);
-	  publishAdd(t1);
+	  getBlackboardService().publishAdd(t1);
 	} else {
 	  // Otherwise, generate three subtasks as above, 
 	  // with preferences sharing the allotted time in thirds
@@ -141,9 +161,9 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 	     count-1, 
 	     start_time, start_time + third_of_delta,
 	     HanoiUtils.MANAGE_VERB,
-	     task, theLDMF);
+	     task, getDomainService().getFactory());
 	  new_wf.addTask(t1);
-	  publishAdd(t1);
+	  getBlackboardService().publishAdd(t1);
 
 	  Task t2 = 
 	    HanoiUtils.createNewTask(from_pole,
@@ -152,9 +172,9 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 				     start_time + third_of_delta,
 				     end_time - third_of_delta,
 				     HanoiUtils.TRANSPORT_VERB,
-				     task, theLDMF);
+				     task, getDomainService().getFactory());
 	  new_wf.addTask(t2);
-	  publishAdd(t2);
+	  getBlackboardService().publishAdd(t2);
 
 	  Task t3 = 
 	    HanoiUtils.createNewTask
@@ -164,16 +184,16 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 	     end_time - third_of_delta,
 	     end_time,
 	     HanoiUtils.MANAGE_VERB,
-	     task, theLDMF);
+	     task, getDomainService().getFactory());
 	  new_wf.addTask(t3);
-	  publishAdd(t3);
+	  getBlackboardService().publishAdd(t3);
 
 	  // [Level5]
 	  // Add constraints onto the workflow that t1 < t2 < t3
 	  Vector constraints = new Vector();
 
 	  // End(t1) must be before Start(t2)
-	  NewConstraint c1 = theLDMF.newConstraint();
+	  NewConstraint c1 = getDomainService().getFactory().newConstraint();
 	  c1.setConstrainingTask(t1);
 	  c1.setConstrainingAspect(AspectType.END_TIME);
 	  c1.setConstrainedTask(t2);
@@ -182,7 +202,7 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 	  constraints.addElement(c1);
 
 	  // End(t2) must be before Start(t3)
-	  NewConstraint c2 = theLDMF.newConstraint();
+	  NewConstraint c2 = getDomainService().getFactory().newConstraint();
 	  c2.setConstrainingTask(t2);
 	  c2.setConstrainingAspect(AspectType.END_TIME);
 	  c2.setConstrainedTask(t3);
@@ -196,9 +216,9 @@ public class HanoiPlugIn extends org.cougaar.core.plugin.SimplePlugIn
 
 	AllocationResult estAR = null;
 	Expansion new_exp = 
-	  theLDMF.createExpansion(task.getPlan(), task, new_wf, estAR);
-	publishAdd(new_wf);
-	publishAdd(new_exp);
+	  getDomainService().getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
+	getBlackboardService().publishAdd(new_wf);
+	getBlackboardService().publishAdd(new_exp);
 
       }
   }
