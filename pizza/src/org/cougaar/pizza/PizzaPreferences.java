@@ -56,9 +56,9 @@ public class PizzaPreferences implements UniqueObject {
   public void addFriendToPizza (String friend, String preference) {
     friendToPizza.put(friend, preference);
 
-    if (preference.equals ("meat"))
+    if (preference.toLowerCase().equals ("meat"))
       numMeat++;
-    else if (preference.equals ("veg"))
+    else if (preference.toLowerCase().equals ("veg"))
       numVeg++;
     else
       log.warn ("unknown preference " + preference + " for " + friend);
