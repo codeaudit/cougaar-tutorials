@@ -31,7 +31,7 @@ import java.io.File;
 
 /**
  * Constants for the pizza party application. Initialized by the 
- * load of the PizzaDomain, so Roles in particular are well defined.
+ * load of the {@link PizzaDomain}, so Roles in particular are well defined.
  * 
  * Having a Domain-specific Constants file for Roles, Verbs, 
  * and other objects that Plugins will match on off the Blackboard
@@ -45,7 +45,7 @@ public class Constants {
   // Some heavily used Strings. In particular, the invitation Relay
   // uses these.
   public static final String PIZZA = "Pizza";
-  public static final String INVITATION_QUERY = "invitation-meat_or_veg";
+  public static final String INVITATION_QUERY = "Come to my party! RSVP: Meat or Veggie Pizza?";
   public static final String MEAT_PIZZA = "Meat Pizza";
   public static final String VEGGIE_PIZZA = "Veggie Pizza";
 
@@ -54,7 +54,7 @@ public class Constants {
   public static final String PROVIDER_SUFFIX = "Provider";
   public static final String CUSTOMER_SUFFIX = "Customer";
 
-  /* used when showing how long it takes for this number of friends to reply */
+  /** used when showing how long it takes for this number of friends to reply */
   public static final int EXPECTED_NUM_FRIENDS = 4;
 
   /**
@@ -63,7 +63,7 @@ public class Constants {
   public interface Verbs {
     /** Verb for ordering pizzas */
     public static final Verb ORDER = Verb.get("Order");
-    /* Initiates service discovery to find a provider */
+    /** SDPlaceOrderPlugin uses to Initiates service discovery to find a provider */
     public static final Verb FIND_PROVIDERS = Verb.get("FindProviders");
   }
 
@@ -71,7 +71,7 @@ public class Constants {
    * Special Prepositions used by the pizza application
    */
   public interface Prepositions {
-    /* Used in excluding a particular provider */
+    /** Used in excluding a particular provider (see SDPlaceOrderPlugin) */
     public static final String NOT = "Not";
   }
 
