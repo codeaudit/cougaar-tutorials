@@ -55,7 +55,6 @@ import java.util.Vector;
  * This Plugin manages ordering pizzas at customer agents.
  */
 public class SDPlaceOrderPlugin extends ComponentPlugin {
-  private static final String AS = "AS";
   private static final String VEGGIE = "Veggie";
   private static final String MEAT = "Meat";
   private static final String VEGGIE_PIZZA = "Veggie Pizza";
@@ -260,7 +259,7 @@ public class SDPlaceOrderPlugin extends ComponentPlugin {
     NewTask newTask = makeTask(Constants.FIND_PROVIDERS, self);
     Vector prepPhrases = new Vector();
     NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
-    pp.setPreposition(AS);
+    pp.setPreposition(org.cougaar.planning.Constants.Preposition.AS);
     pp.setIndirectObject(Constants.Role.PIZZAPROVIDER);
     prepPhrases.add(pp);
     if (excludePhrase != null) {

@@ -126,6 +126,8 @@ public class SDProviderPlugin extends ComponentPlugin {
   }
 
   public void load() {
+    super.load();
+
     mySDFactory = (SDFactory) getDomainService().getFactory(SDDomain.SD_NAME);
     myPlanningFactory = (PlanningFactory) getDomainService().getFactory(PlanningDomain.PLANNING_NAME);
 
