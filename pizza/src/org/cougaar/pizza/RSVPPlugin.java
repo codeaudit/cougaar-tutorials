@@ -26,9 +26,7 @@
 
 package org.cougaar.pizza;
 
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.Subscription;
@@ -36,7 +34,7 @@ import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.logging.LoggingServiceWithPrefix;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.relay.SimpleRelay;
+import org.cougaar.core.relay.Relay;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.core.util.UID;
@@ -84,9 +82,7 @@ public class RSVPPlugin extends ComponentPlugin {
   }
 
   protected void execute() {
-    if (log.isDebugEnabled()) {
-      log.debug("execute");
-    }
+    log.info("execute");
 
     if (!sub.hasChanged()) {
       // usually never happens, since the only reason to execute
@@ -96,24 +92,23 @@ public class RSVPPlugin extends ComponentPlugin {
 
     // observe added relays
     for (Enumeration en = sub.getAddedList(); en.hasMoreElements();) {
-      SimpleRelay relay = (SimpleRelay) en.nextElement();
+      RSVPRelayTarget relay = (RSVPRelayTarget) en.nextElement();
 
-      if (log.isDebugEnabled()) {
-        log.debug(" - observe added "+relay);
-      }
+      log.info (" - observe added "+relay);
 
-      if (InvitePlugin.INVITATION_QUERY.equals(relay.getQuery())) {
+      if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
         // send back reply
 	String preference = (iLikeMeat) ? "meat" : "veg";
-	relay.setReply(new InvitePlugin.RSVPReply (agentId.toString(), preference)); 
 
-        if (log.isShoutEnabled()) {
-          log.shout(" - Reply : " + relay);
-        }
+	RSVPReply reply = new RSVPReply (agentId.toString(), preference); 
+
+	((RSVPRelayTarget) relay).setResponse(reply);
+
+	log.info(" - Reply : " + relay);
 
         blackboard.publishChange(relay);
       } else {
-        // ignore relays we sent
+        log.info ("ignoring relay " + relay);
       }
     }
 
@@ -131,11 +126,11 @@ public class RSVPPlugin extends ComponentPlugin {
    */ 
   private class InvitePred implements UnaryPredicate {
     public boolean execute(Object o) {
-      if (o instanceof SimpleRelay) {
+      if (o instanceof RSVPRelayTarget) {
 	return true;
       }
-      else {
-	log.warn ("\nIgnoring : " + o + 
+      else if (o instanceof Relay) {
+	log.info ("\nIgnoring : " + o + 
 		  "\nclass    : " + o.getClass());
       }
       return false;
