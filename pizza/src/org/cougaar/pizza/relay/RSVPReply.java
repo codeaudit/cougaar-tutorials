@@ -29,9 +29,11 @@ package org.cougaar.pizza.relay;
 import java.io.Serializable;
 
 /**
- * the RSVP reply - just the friend and their pizza preference
+ * The RSVP reply - just the friend's name, and their pizza preference.
  */
 public class RSVPReply implements Serializable {
+  // Note that this must be serializable to travel between Agents
+
   private String friend;
   private String pizzaPreference;
 

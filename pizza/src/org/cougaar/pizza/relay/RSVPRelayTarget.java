@@ -33,24 +33,24 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObject;
 
 /**
- * A target-side relay {@link Relay}.  It has a slot for the query and the
- * response.
+ * A target-side relay {@link Relay}.  It has a slot for the query (from the sender) and the
+ * local response.
  * <p/>
- * The target relay has just a source, and no target address, so the the
- * relay won't be propagated at the target agent.
+ * The target relay has just a source address, and no target address, so that the
+ * relay won't be (re)propagated at the target agent.
  * <p/>
  * An alternative would be to have the relay implement both source and
- * target interfaces, but this would lead to endless pinging in this case
+ * target interfaces, but this could lead to endless pinging in this case
  * where the target address is an ABA broadcast to all members of the
- * community.
+ * community (as in this pizza app).
  * <p/>
  * In contrast, @see org.cougaar.core.relay.SimpleRelayImpl which
  * implements both source and target.
  */
 public class RSVPRelayTarget implements Relay.Target, UniqueObject {
-  private final MessageAddress source;
-  private final Object query;
-  private Object response;
+  private final MessageAddress source; // Who do we respond to?
+  private final Object query; // What info did they send to us?
+  private Object response; // Our response, an RSVPReply for the pizza app
   private final UID uid;
 
   public RSVPRelayTarget(UID uid, MessageAddress source, Object query) {
@@ -69,7 +69,7 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
   }
 
   /**
-   * @param response - reply to relay
+   * @param response - reply to relay (should be an RSVPReply object)
    */
   public void setResponse(Object response) {
     this.response = response;
@@ -77,7 +77,7 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
 
   /**
    * Relay.Target implementation
-   *
+   * Used by the RelayLP.
    * @return reply to relay
    */
   public Object getResponse() {
@@ -101,7 +101,11 @@ public class RSVPRelayTarget implements Relay.Target, UniqueObject {
    *         response
    */
   public int updateContent(Object newContent, Token token) {
-    return Relay.NO_CHANGE;     // Content is never updated
+    // Content is never updated in the pizza app
+    // Another application could have Alice change details about the party, 
+    // so send new relay content out. This method would be
+    // used by the RelayLP to propogate that change out to her invitees.
+    return Relay.NO_CHANGE;
   }
 
   /** 
