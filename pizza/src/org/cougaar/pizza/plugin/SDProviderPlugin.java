@@ -24,7 +24,7 @@
  * </copyright>
  */
 
-package org.cougaar.servicediscovery.plugin;
+package org.cougaar.pizza.plugin;
 
 import java.util.ArrayList;
 import java.util.Collection;
