@@ -263,7 +263,7 @@
           <argument>ClusterPG:MessageAddress:MessageAddress:JoesLocalPizzaShack</argument>
           <argument>ItemIdentificationPG:ItemIdentification:String:JoesLocalPizzaShack</argument>
           <argument>ItemIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
-          <argument>TypeIdentificationPG:TypeIdentification:String:Store/RTOrg</argument>
+          <argument>TypeIdentificationPG:TypeIdentification:String:Store</argument>
           <argument>TypeIdentificationPG:Nomenclature:String:JoesLocalPizzaShack</argument>
 	  <!-- Note that we do not specify the PizzaProvider
           relationship with Alice here. Instead, we will use
