@@ -40,8 +40,6 @@ import org.cougaar.util.*;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.plugin.util.PluginHelper;
-
-import javax.servlet.Filter;
 import java.util.*;
 
 /**
@@ -52,28 +50,21 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   private DomainService domainService;
   private IncrementalSubscription selfSub;
   private IncrementalSubscription pizzaPrefSub;
-  private IncrementalSubscription findProvidersDispositionSub;
-  private IncrementalSubscription expansionSub;
+  private IncrementalSubscription allocationSub;
   private Subscription taskSub;
   private Entity self;
   private PlanningFactory planningFactory;
 
-  private static final String AS = "AS";
   private static final String VEGGIE = "Veggie";
   private static final String MEAT = "Meat";
   private static final String VEGGIE_PIZZA = "Veggie Pizza";
   private static final String MEAT_PIZZA = "Meat Pizza";
 
-  public void load() {
-    super.load();
-  }
-
   protected void setupSubscriptions() {
     selfSub = (IncrementalSubscription) blackboard.subscribe(selfPred);
     pizzaPrefSub = (IncrementalSubscription) blackboard.subscribe(pizzaPrefPred);
-    findProvidersDispositionSub = (IncrementalSubscription) blackboard.subscribe(findProvidersDispositionPred);
-    expansionSub = (IncrementalSubscription) blackboard.subscribe(expansionPred);
     taskSub = blackboard.subscribe(taskPred);
+    allocationSub = (IncrementalSubscription) blackboard.subscribe(allocationPred);
     getServices();
   }
 
@@ -100,6 +91,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   }
 
   protected void execute() {
+    //TODO: fix this
     if (self == null) {
       if ( selfSub.getAddedCollection().isEmpty()) {
         //cannot do anything until our self org is set
@@ -123,6 +115,13 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       Collection tasks = getUnallocatedTasks();
       if (! tasks.isEmpty()) {
         allocateTasks(tasks);
+      }
+    }
+
+    if ( ! allocationSub.getChangedCollection().isEmpty()) {
+      for (Iterator i = allocationSub.iterator(); i.hasNext();) {
+        PlanElement pe = (PlanElement) i.next();
+        PluginHelper.updatePlanElement(pe);
       }
     }
   }
@@ -168,18 +167,6 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     tasksToAllocate.add(meatPizzaTask);
     tasksToAllocate.add(veggiePizzaTask);
     return tasksToAllocate;
-  }
-
-  private void publishFindProvidersTask() {
-    NewTask newTask = planningFactory.newTask();
-    newTask.setVerb(Verb.get(Constants.FIND_PROVIDERS));
-    newTask.setPlan(planningFactory.getRealityPlan());
-    newTask.setDirectObject(self);
-    NewPrepositionalPhrase pp = planningFactory.newPrepositionalPhrase();
-    pp.setPreposition(AS);
-    pp.setIndirectObject(Role.getRole(Constants.PIZZA_PROVIDER));
-    newTask.setPrepositionalPhrases(pp);
-    blackboard.publishAdd(newTask);
   }
 
   private NewTask makePizzaTask(String pizzaType) {
@@ -250,19 +237,6 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
-  /**
-   * A predicate that matches dispositions of "FindProviders" tasks
-   */
-  private static UnaryPredicate findProvidersDispositionPred = new UnaryPredicate () {
-    public boolean execute(Object o) {
-      if (o instanceof Disposition) {
-        Task task = ((Disposition) o).getTask();
-        return task.getVerb().equals(Verb.get(Constants.FIND_PROVIDERS));
-      }
-      return false;
-    }
-  };
-
   private static UnaryPredicate undisposedTasks = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task)  {
@@ -273,23 +247,20 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     }
   };
 
-  /**
-   * A predicate that matches expansions of "ORDER" tasks
-   */
-  private static UnaryPredicate expansionPred = new UnaryPredicate () {
+  private static UnaryPredicate taskPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if (o instanceof Expansion) {
-        Task task = ( (Expansion) o).getTask();
-        return task.getVerb().equals(Verb.get(Constants.ORDER));
+      if (o instanceof Task) {
+        Task task = (Task) o;
+        return (task.getVerb().equals(Constants.ORDER));
       }
       return false;
     }
   };
 
-  private static UnaryPredicate taskPred = new UnaryPredicate() {
+  private static UnaryPredicate allocationPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if (o instanceof Task) {
-        Task task = (Task) o;
+      if (o instanceof Allocation) {
+        Task task = ((Allocation) o).getTask();
         return (task.getVerb().equals(Constants.ORDER));
       }
       return false;
