@@ -64,14 +64,15 @@ public class PizzaPreferences implements UniqueObject {
       log.warn ("unknown preference " + preference + " for " + friend);
   }
 
-  //  public String getPreferenceForFriend (String friend) {
-  //    return (String) friendToPizza.get (friend);
-  //  }
+  public String getPreferenceForFriend (String friend) {
+    return (String) friendToPizza.get (friend);
+  }
 
   public Set getFriends () { return friendToPizza.keySet(); }
 
   public String getFriendNames () { return friendToPizza.keySet().toString(); }
   public String getPreferenceValues () { return friendToPizza.values().toString(); }
+  public String getFriendToPreference () { return friendToPizza.toString(); }
 
   public int getNumMeat() { return numMeat; }
   public int getNumVeg () { return numVeg; }
