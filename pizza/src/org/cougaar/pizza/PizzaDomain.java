@@ -45,7 +45,13 @@ import java.util.Collections;
  * Required to ensure that Roles and Assets specific to the pizza
  * application are initialized correctly. PizzaDomain does not include any
  * domain specific LogicProviders. It only initializes our Constants
- * and loads our Asset Factory
+ * and loads our Asset Factory.
+ *
+ * Other applications might have custom objects to transmit between
+ * agents, and therefore need their own LogicProviders. Similarly,
+ * they might want their own XPlan, to have custom-tuned lookup
+ * methods for objects (the Planning LogPlan for example looks up
+ * PlanElements by Task UID).
  **/
 public class PizzaDomain extends DomainAdapter {
 
