@@ -66,7 +66,7 @@ import java.util.Vector;
  * On receiving the PizzaPreferences, it creates and publishes a Task with the Verb
  * "Order" and a Direct Object of type Pizza (Asset).  Next, it expands the Order Task
  * into a workflow of two subtasks, one subtask per type of pizza with a quantity
- * Preference for the number of requests.  To place the order, it allocates the subtasks
+ * Preference for the number of servings needed.  To place the order, it allocates the subtasks
  * to its pizza provider, Joes Local Pizza Shack.  This customer/provider relationship is
  * defined in the XML configuration files and is established when the agents start up. See
  * PizzaNode1.xml and PizzaNode2.xml for details.
@@ -192,7 +192,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
     while (subs.hasMoreElements()) {
       Task sub = (Task)subs.nextElement();
 
-      // Get quantity, type of pizza ordered
+      // Get number servings, type of pizza ordered
       double qty = sub.getPreferredValue(AspectType.QUANTITY);
       String piztype = sub.getDirectObject().getItemIdentificationPG().getItemIdentification();
 
@@ -201,7 +201,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
 
       // Remember that each sub-task succeeds or fails independently
       boolean subSucc = sub.getPlanElement().getReportedResult().isSuccess();
-      logger.shout("     " + store + " could" + (subSucc ? "" : " NOT") + " handle " + v + " for " + qty + " " + piztype);
+      logger.shout("     " + store + " could" + (subSucc ? "" : " NOT") + " handle " + v + " for " + qty + " servings of " + piztype);
     } // loop over sub-tasks
 
     if (succ)
@@ -249,7 +249,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
    * Returns a Collection of subtasks for ordering meat and veggie pizzas.  Creates a meat
    * pizza subtask and a veggie pizza subtask.  The number of individuals requesting meat
    * and veggie pizzas are obtained from the PizzaPreferences object.  A quantity
-   * Preference is created to represent the number of requests and is added to the
+   * Preference is created to represent the number of servings needed and is added to the
    * appropriate subtask. The parentTask is set as the parent of the subtasks.
    *
    * @param pizzaPrefs contains the number of people requesting meat or veggie pizzas
@@ -280,7 +280,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
       // Add veggie properties to the pizza
       veggiePizza.addOtherPropertyGroup(PropertyGroupFactory.newVeggiePG());
       NewTask veggiePizzaTask = makeTask(Constants.Verbs.ORDER, veggiePizza);
-      // Make a quantity Preference to represent the number of requests for veggie pizza
+      // Make a quantity Preference to represent the number of servings needed for veggie pizza
       Preference veggiePref = makeQuantityPreference(pizzaPrefs.getNumVeg());
       veggiePizzaTask.setPreference(veggiePref);
       veggiePizzaTask.setParentTask(parentTask);
@@ -440,7 +440,7 @@ public class PlaceOrderPlugin extends ComponentPlugin {
   }
 
   /**
-   * Returns a quantity Preference.  
+   * Returns a quantity Preference, representing the number of servings of pizza to order.
    * <p>
    * Creates a Preference with a Strictly-at ScoringFunction and a
    * quantity AspectType from the specified value. In other words,

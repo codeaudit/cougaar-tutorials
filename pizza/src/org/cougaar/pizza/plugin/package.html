@@ -37,8 +37,8 @@ Relationship on the self Entity to any PizzaProviders. In the SD
 version it does not, and must now do ServiceDiscovery. In the non-SD
 version, it does. So it then creates an {@link
 org.cougaar.pizza.Constants.Verbs.ORDER} Task, ordering {@link org.cougaar.pizza.Constants.PIZZA}. It
-then expands that - one for meat pizza (with an appropriate quantity
-depending on RSVPs) and one for veggie. It Allocates those child tasks
+then expands that - one for meat pizza (with an appropriate number of
+servings depending on RSVPs) and one for veggie. It Allocates those child tasks
 to the pizza provider it found on its self Entity (Joes in our example).
 <p>
 In the SD version, the SDPlaceOrderPlugin kicks off ServiceDiscovery by

@@ -169,7 +169,7 @@ public class ProcessOrderPlugin extends ComponentPlugin {
         // isSuccess to true.
         ar = PluginHelper.createEstimatedAllocationResult(newTask, planningFactory, 1.0, true);
       } else {
-        // Since we can't make the pizza we create a new aspect value to represent the zero quantity.
+        // Since we can't make the pizza we create a new aspect value to represent the zero quantity -- no pizzas provided
         AspectValue qtyAspectValue = AspectValue.newAspectValue(AspectType.QUANTITY, 0);
         AspectValue[] aspectValueArray = {qtyAspectValue};
         // Use the planning factory to create a new allocation result with a confidence of 1.0 and isSuccess is false.

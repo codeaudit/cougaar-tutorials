@@ -63,7 +63,7 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
   // Note this static method of getting a logger within an object.
   private static Logger log = Logging.getLogger(PizzaPreferences.class);
 
-  // Total meat and veg to order
+  // Total meat and veg servings to order
   private int numMeat = 0;
   private int numVeg = 0;
 
@@ -129,12 +129,12 @@ public class PizzaPreferences implements UniqueObject, HistoryServletFriendly {
     return friendToPizza.toString();
   }
 
-  /** @return Number of meat pizzas wanted */
+  /** @return Number of people wanting meat pizza */
   public int getNumMeat() {
     return numMeat;
   }
 
-  /** @return Number of veggie pizzas wanted */
+  /** @return Number of orders for veggie pizza */
   public int getNumVeg() {
     return numVeg;
   }
