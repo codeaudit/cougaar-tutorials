@@ -5,7 +5,7 @@
 [Relationship]
         
 [TypeIdentificationPG]                      
-TypeIdentification		String	"Management Organization"
+TypeIdentification		String	"UTC/RTOrg"
 Nomenclature			String	"Project Management"
 AlternateTypeIdentification	String	"Alice's Department"
 

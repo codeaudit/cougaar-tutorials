@@ -6,7 +6,7 @@
 Supporting	"Management"		"SoftwareDevelopment"
         
 [TypeIdentificationPG]                      
-TypeIdentification		String	"Technical Organization"
+TypeIdentification		String	"UTC/RTOrg"
 Nomenclature			String	"Software Development"
 AlternateTypeIdentification	String	"Bob's Deptarment"
 
