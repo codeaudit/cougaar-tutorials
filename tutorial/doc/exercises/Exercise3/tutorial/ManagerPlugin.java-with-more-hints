@@ -116,7 +116,7 @@ protected Task makeTask(Asset what) {
     // hint: see NewTask.setPlan()
     // hint: see NewTask.setDirectObject()
     // more hints: NewTask new_task = getDomainService().getFactory().newTask();
-    // more hints: new_task.setVerb(new Verb("CODE"));
+    // more hints: new_task.setVerb(Verb.getVerb("CODE"));
     // more hints: new_task.setPlan(getDomainService().getFactory().getRealityPlan());
     // more hints: new_task.setDirectObject(what);
 
