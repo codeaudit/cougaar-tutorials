@@ -57,12 +57,12 @@ IF "%EX%"=="11A" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\e
 IF "%EX%"=="11a" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
 IF "%EX%"=="11B" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
 IF "%EX%"=="11b" SET CONFIGS=%COUGAAR_INSTALL_PATH%\tutorial\configs\exercises\exercise11;%COUGAAR_INSTALL_PATH%\configs\common 
-SET NODE="Exercise%EX%Node"
+SET NODE="Exercise%EX%"
 GOTO L_6
 
 :L_6
   set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\bootstrap.jar
-  set MYPROPERTIES= -Dorg.cougaar.system.path=%COUGAAR_INSTALL_PATH%\sys -Dorg.cougaar.install.path=%COUGAAR_INSTALL_PATH% -Dorg.cougaar.config.path=%CONFIGS% -Dorg.cougaar.core.servlet.enable=true -Dorg.cougaar.lib.web.scanRange=100 -Dorg.cougaar.lib.web.http.port=8800 -Dorg.cougaar.lib.web.https.port=-1 -Dorg.cougaar.lib.web.https.clientAuth=true -Xbootclasspath/p:%COUGAAR_INSTALL_PATH%\lib\javaiopatch.jar
+  set MYPROPERTIES= -Dorg.cougaar.node.name=%NODE% -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.society.file=%NODE%.xml -Dorg.cougaar.system.path=%COUGAAR_INSTALL_PATH%\sys -Dorg.cougaar.install.path=%COUGAAR_INSTALL_PATH% -Dorg.cougaar.config.path=%CONFIGS% -Dorg.cougaar.core.servlet.enable=true -Dorg.cougaar.lib.web.scanRange=100 -Dorg.cougaar.lib.web.http.port=8800 -Dorg.cougaar.lib.web.https.port=-1 -Dorg.cougaar.lib.web.https.clientAuth=true -Xbootclasspath/p:%COUGAAR_INSTALL_PATH%\lib\javaiopatch.jar
   set MYMEMORY=
   set MYCLASSES=org.cougaar.bootstrap.Bootstrapper org.cougaar.core.node.Node
   set MYARGUMENTS= -c -n 

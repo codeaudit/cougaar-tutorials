@@ -94,9 +94,9 @@ if [ ! -e $JAR ]; then
   fi
 fi
 
-NODE="Exercise${i}Node"
-if [ ! -e $DIR/${NODE}.ini ]; then
-  echo "Unable to find node script: $DIR/${NODE}.ini"
+NODE="Exercise${i}"
+if [ ! -e $DIR/${NODE}.xml ]; then
+  echo "Unable to find node script: $DIR/${NODE}.xml"
   exit -1
 fi
 
@@ -116,6 +116,7 @@ if [ -z $BOOTSTRAP ]; then
   LIBPATHS="$LIBPATHS:$CIP/lib/util.jar"
   LIBPATHS="$LIBPATHS:$CIP/lib/webserver.jar"
   LIBPATHS="$LIBPATHS:$CIP/lib/webtomcat.jar"
+  LIBPATHS="$LIBPATHS:$CIP/lib/mtsstd.jar"
   LIBPATHS="$LIBPATHS:$CIP/sys/log4j.jar"
   LIBPATHS="$LIBPATHS:$CIP/sys/servlet.jar"
   LIBPATHS="$LIBPATHS:$CIP/sys/tomcat_40.jar"
@@ -135,6 +136,8 @@ java \
   -Dorg.cougaar.install.path=$CIP \
   -Dorg.cougaar.node.name=$NODE \
   -Dorg.cougaar.config.path=$DIR\;$CIP/configs/common \
+  -Dorg.cougaar.core.node.InitializationComponent=XML \
+  -Dorg.cougaar.society.file=$NODE.xml \
   $LOG4J_PROP \
   $BOOTCL \
   org.cougaar.core.node.Node \

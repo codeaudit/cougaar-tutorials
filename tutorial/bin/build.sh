@@ -39,7 +39,7 @@ Note that the solutions in "src" are compiled by the
 
 Example:
   # compile Exercise1 to \$CIP/lib/exercise1.jar
-  $0 -jar 1
+  $0 1
 EOF
   exit -1
 fi
