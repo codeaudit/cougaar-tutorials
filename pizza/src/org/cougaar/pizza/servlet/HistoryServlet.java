@@ -1449,7 +1449,7 @@ public class HistoryServlet extends ComponentPlugin {
 
       // First we print the Table header....
       if (didDropOldEntries) {
-        buf.append("<center>Note : Too many changes have occurred; only newest ");
+        buf.append("<center>Note: Too many changes have occurred; only newest ");
         buf.append(maxEvents);
         buf.append(" are shown.</center><br/>");
       }
