@@ -37,7 +37,7 @@ import java.util.Vector;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.3 2002-03-15 21:39:10 mbarger Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.4 2002-04-05 19:36:23 mbarger Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -138,7 +138,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
       AllocationResult estAR = null;
       Expansion new_exp =
         domainService.getFactory().createExpansion(task.getPlan(), task, new_wf, estAR);
-      getBlackboardService().publishAdd(new_wf);
       getBlackboardService().publishAdd(new_exp);
     }
 
@@ -313,28 +312,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
 
     // set the constraints on the workflow
     new_wf.setConstraints(constraints.elements());
-  }
-
-  /**
-   * Sort the subtasks into chronological order
-   */
-  private Enumeration sortTasks(Enumeration inTasks) {
-    // I know there are three tasks.
-    Task[] ret = new Task[3];
-    while (inTasks.hasMoreElements()) {
-      Task t = (Task)inTasks.nextElement();
-      if (t.getVerb().equals(Verb.getVerb("DESIGN")))
-        ret[0] = t;
-      if (t.getVerb().equals(Verb.getVerb("DEVELOP")))
-        ret[1] = t;
-      if (t.getVerb().equals(Verb.getVerb("TEST")))
-        ret[2] = t;
-    }
-    Vector v = new Vector (3);
-    v.add(ret[0]);
-    v.add(ret[1]);
-    v.add(ret[2]);
-    return v.elements();
   }
 
   /**
