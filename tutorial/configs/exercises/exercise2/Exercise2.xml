@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<society name='Exercise-2'
+  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+  xsi:noNamespaceSchemaLocation='http://www.cougaar.org/2003/society.xsd'>
+<host name="localhost">
+  <node name="Exercise2">
+    <agent name="MyAgent" class="org.cougaar.core.agent.SimpleAgent">
+      <component
+        name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+        class="org.cougaar.core.servlet.SimpleServletComponent"
+        priority="COMPONENT"
+        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+        <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+        <argument>/tasks</argument>
+      </component>
+      <component
+        name="org.cougaar.core.servlet.SimpleServletComponent(org.couggar.planning.servlet.CompletionServlet, /completion)"
+        class="org.cougaar.core.servlet.SimpleServletComponent"
+        priority="COMPONENT"
+        insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.CompletionServlet</argument>
+          <argument>/completion</argument>
+      </component>
+    </agent>
+  </node>
+</host>
+</society>
