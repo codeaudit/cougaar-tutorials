@@ -23,10 +23,10 @@ package org.cougaar.pizza.plugin;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
+import org.cougaar.pizza.Constants;
+import org.cougaar.pizza.asset.PizzaAsset;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.PrototypeRegistryService;
-import org.cougaar.pizza.asset.PizzaAsset;
-import org.cougaar.pizza.Constants;
 
 /**
  * This COUGAAR Plugin creates and publishes Pizza Asset objects.

@@ -21,13 +21,13 @@
  */
 package org.cougaar.pizza.util;
 
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.pizza.asset.NewMeatPG;
 import org.cougaar.pizza.asset.MeatPG;
+import org.cougaar.pizza.asset.NewMeatPG;
 import org.cougaar.pizza.asset.NewVeggiePG;
 import org.cougaar.pizza.asset.VeggiePG;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 
 /**
  * This is a helper class that creates various types of
