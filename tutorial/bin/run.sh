@@ -27,7 +27,7 @@ Usage:  $0 [-f] [-v] [-b] [NUMBER]
 
   -f        force use of "execise#.jar"
   -v        verbose output
-  -b        use jar bootstrapper
+  -b        Turn off use of jar bootstrapper (list jars explicitly)
   NUMBER    an exercise number (1 to 11)
 
 Runs the numbered exercise.
@@ -51,9 +51,9 @@ if [ "$1" = "-v" ]; then
   shift 1
 fi
 
-BOOTSTRAP=
+BOOTSTRAP=1
 if [ "$1" = "-b" ]; then
-  BOOTSTRAP=1
+  BOOTSTRAP=
   shift 1
 fi
 
