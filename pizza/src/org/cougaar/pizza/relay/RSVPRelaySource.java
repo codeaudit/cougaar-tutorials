@@ -113,21 +113,19 @@ public class RSVPRelaySource
    * @return Relay.RESPONSE_CHANGE - since every time we get a response, we want to examine it
    */
   public int updateResponse(MessageAddress target, Object response) {
-    //    synchronized (pizzaPreferences) {
-      RSVPReply rsvpReply = (RSVPReply) response;
-      pizzaPreferences.addFriendToPizza (rsvpReply.friend, 
-					 rsvpReply.pizzaPreference);
+    RSVPReply rsvpReply = (RSVPReply) response;
+    pizzaPreferences.addFriendToPizza (rsvpReply.friend, 
+				       rsvpReply.pizzaPreference);
 
-      log.info ("RSVPRelaySource - pizza prefs now : " + pizzaPreferences);
+    log.info ("RSVPRelaySource - pizza prefs now : " + pizzaPreferences);
 
-      if (pizzaPreferences.getNumMeat () == Constants.EXPECTED_NUM_FRIENDS) {
-	log.info ("Waited " + ((System.currentTimeMillis ()-then)/1000) + 
-		  " seconds to get responses back from " + Constants.EXPECTED_NUM_FRIENDS + 
-		  " friends (including party planner).");
-      }
+    if ((pizzaPreferences.getNumMeat () + pizzaPreferences.getNumVeg ()) == Constants.EXPECTED_NUM_FRIENDS) {
+      log.info ("Waited " + ((System.currentTimeMillis ()-then)/1000) + 
+		" seconds to get responses back from " + Constants.EXPECTED_NUM_FRIENDS + 
+		" friends (including party planner).");
+    }
 
-      return Relay.RESPONSE_CHANGE;
-      //    }
+    return Relay.RESPONSE_CHANGE;
   }
 
   public String toString () { 
