@@ -30,7 +30,6 @@ import org.cougaar.core.servlet.SimpleServletComponent;
 
  // todo:  add code to make this a servlet subclass
  // hint:  parent class should be HttpServlet
-
 public class ScheduleServlet 
 {
 	private Properties properties = null;
@@ -63,27 +62,14 @@ public class ScheduleServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
-		properties.clear();
 		// todo:  get the PrintWriter which sends data to HTTP
 		// hint:  get it from the HttpServletResponse
-
-		ServletUtil.ParamVisitor vis = new ServletUtil.ParamVisitor()
-		                               {
-			                               public void setParam(String name, String value)
-			                               {
-				                               name = name.toUpperCase();
-				                               System.out.println(name + "      " + value);
-				                               properties.setProperty(name, value);
-			                               }
-		                               };
-		ServletUtil.parseParams(vis, request);
-
-		try
-		{
-			System.out.println("Servlet called." );
-			PageGenerator gen=new PageGenerator();
-			gen.execute(out);
-		}
+	    try {
+		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
+		
+		// todo: query the PLAN for a Collection of ProgrammerAssets
+		// hint: use the SimpleServletSupport object
+           }	
 		catch (Exception ex)
 		{
 			out.println(ex.getMessage());
@@ -94,33 +80,6 @@ public class ScheduleServlet
 
 	}
 
-    private class PageGenerator {
-	
-	PageGenerator() {
-	}
-	void execute(PrintWriter out) {
-	    try {
-		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
-		
-		// todo: query the PLAN for a Collection of ProgrammerAssets
-		// hint: use the SimpleServletSupport object
-
-		Iterator iter = programmers.iterator();
-		while (iter.hasNext()) {
-		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
-		}
-		
-	    } catch (Exception ex) {
-		out.println(ex.getMessage());
-		ex.printStackTrace(out);
-		System.out.println(ex);
-	    } finally {
-		out.flush();
-	    }
-	}
-    }
-
   /**
    * Print an HTML table of this programmer's schedule to the PrintStream
    */
@@ -129,7 +88,6 @@ public class ScheduleServlet
       // todo: print programmer's name and a line break
       // hint:  see Asset.getItemIdentificationPG
       // hint:  see ItemIdentificatioinPG.getItemIdentification()
-
       out.println("<table border=1>");
       Schedule s = pa.getSchedule();
 

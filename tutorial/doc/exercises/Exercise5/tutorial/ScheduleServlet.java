@@ -60,27 +60,12 @@ public class ScheduleServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
-		properties.clear();
 		// todo:  get the PrintWriter which sends data to HTTP
-
-
-		ServletUtil.ParamVisitor vis = new ServletUtil.ParamVisitor()
-		                               {
-			                               public void setParam(String name, String value)
-			                               {
-				                               name = name.toUpperCase();
-				                               System.out.println(name + "      " + value);
-				                               properties.setProperty(name, value);
-			                               }
-		                               };
-		ServletUtil.parseParams(vis, request);
-
-		try
-		{
-			System.out.println("Servlet called." );
-			PageGenerator gen=new PageGenerator();
-			gen.execute(out);
-		}
+	    try {
+		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
+		
+		// todo: query the PLAN for a Collection of ProgrammerAssets
+           }	
 		catch (Exception ex)
 		{
 			out.println(ex.getMessage());
@@ -91,41 +76,12 @@ public class ScheduleServlet
 
 	}
 
-    private class PageGenerator {
-	
-	PageGenerator() {
-	}
-	void execute(PrintWriter out) {
-	    try {
-		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
-		
-		// todo: query the PLAN for a Collection of ProgrammerAssets
-
-
-		Iterator iter = programmers.iterator();
-		while (iter.hasNext()) {
-		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
-		}
-		
-	    } catch (Exception ex) {
-		out.println(ex.getMessage());
-		ex.printStackTrace(out);
-		System.out.println(ex);
-	    } finally {
-		out.flush();
-	    }
-	}
-    }
-
   /**
    * Print an HTML table of this programmer's schedule to the PrintStream
    */
   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
 
       // todo: print programmer's name and a line break
-
-
       out.println("<table border=1>");
       Schedule s = pa.getSchedule();
 
@@ -142,7 +98,6 @@ public class ScheduleServlet
         if (o instanceof Task) {
           Task task = (Task)o;
           // todo:  print the verb and the item to be coded
-
         } else {
           out.print(o);
         }
