@@ -13,12 +13,10 @@
 <!ATTLIST Attribute Value CDATA #REQUIRED>
 ]>
 <Communities>
-  <!-- Community of people to invite to the party. This is Alices
-  buddy list -->
+  <!-- Community of people to invite to the party. This is Alices  buddy list -->
   <Community Name='FriendsOfMark-COMM' >
     <Attribute ID='CommunityType' Value='Domain' />
-    <!-- You do not always need to specify the CommunityManager, but
-    it helps -->
+    <!-- You do not always need to specify the CommunityManager, but it helps -->
     <Attribute ID='CommunityManager' Value='Alice' />
     <Entity Name='Alice' >
       <Attribute ID='EntityType' Value='Agent' />
@@ -38,18 +36,16 @@
     </Entity>
   </Community>
 
-  <!-- Yellow pages for Massachusetts-wide businesses. Includes all
-  Cambridge businesses. -->
+  <!-- Yellow pages for Massachusetts-wide businesses. Includes all Cambridge businesses. -->
   <Community Name='MA-YPCOMMUNITY' >
     <Attribute ID='CommunityType' Value='YPCommunity' />
-    <!-- YPCommunities have this extra attribute to say who is in
-    charge -->
+    <!-- YPCommunities have this extra attribute to say who is in charge -->
     <Attribute ID='YPServerAgent' Value='MA' />
     <Attribute ID='CommunityManager' Value='MA' />
     <Entity Name='MA' >
       <Attribute ID='EntityType' Value='Agent' />
       <Attribute ID='Role' Value='Member' />
-      <!-- this role duplicates the invo of the YPServerAgent attribute ->
+      <!-- this role duplicates the info of the YPServerAgent attribute -->
       <Attribute ID='Role' Value='YPServer' />
     </Entity>
     <Entity Name='Cambridge-YPCOMMUNITY' >
@@ -62,8 +58,7 @@
     </Entity>
   </Community>
 
-  <!-- Community for Cambridge local businesses. Those who want to
-  look up businesses in this community are also members. -->
+  <!-- Community for Cambridge local businesses. Those who want to look up businesses in this community are also members. -->
   <Community Name='Cambridge-YPCOMMUNITY' >
     <Attribute ID='CommunityType' Value='YPCommunity' />
     <Attribute ID='YPServerAgent' Value='Cambridge' />
