@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.7 2003-04-16 22:54:03 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.8 2003-04-18 17:26:55 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -134,11 +134,19 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     }
   }
 
+  /**
+   * A task is ready to be scheduled either there is no task that
+   * needs to go before it, or if the preceeding task has already
+   * been scheduled
+   */
   private boolean isReady (Task task) {
     Task t = findConstraining (task);
     return (t == null) || (t.getPlanElement() != null);
   }
 
+  /**
+   *  find the task, if any, that this task must follow
+   */
   private Task findConstraining (Task task) {
     Enumeration enum = allExpansions.elements();
     while (enum.hasMoreElements()) {
@@ -154,8 +162,8 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   }
 
   /**
-   * Find an available ProgrammerAsset for this task.  Task must be scheduled
-   * after the month "after"
+   * Find an available ProgrammerAsset for this task and allocate the
+   * the task to this asset.
    */
   private void allocateTask(Task task, long prevEnd) {
     // extract from preferences
@@ -212,9 +220,12 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   }
 
   /**
-   * Find the three-month interval starting either the beginning of
-   * next month or the end of the last task on the asset, and
-   * return an array of aspect values indicating the time interval
+   * Find the interval on asset's schedule with the properties
+   * - the interval starts at the latest of earliest and the end
+   *   time of the last task on the schedule
+   * - the interval is of duration durationMonths months
+   * - the interval ends no later than latest
+   * Return an array of aspect values indicating the time interval
    */
   private AspectValue[] findInterval (Asset asset, long earliest,
                                       long latest, int durationMonths) {

@@ -36,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.6 2003-04-17 16:41:54 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.7 2003-04-18 17:26:54 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -205,9 +205,12 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   }
 
   /**
-   * Find the three-month interval starting either the beginning of
-   * next month or the end of the last task on the asset, and
-   * return an array of aspect values indicating the time interval
+   * Find the interval on asset's schedule with the properties
+   * - the interval starts at the latest of earliest and the end
+   *   time of the last task on the schedule
+   * - the interval is of duration durationMonths months
+   * - the interval ends no later than latest
+   * Return an array of aspect values indicating the time interval
    */
   private AspectValue[] findInterval (Asset asset, long earliest,
                                       long latest, int durationMonths) {
