@@ -73,7 +73,7 @@
 
       <!-- By default, messaging uses RMI. HTTP, SOAP, etc are
       options. -->
-      <!-- For example, to use HTTP, load:
+      <!-- For example, to use HTTP, load: -->
       <!-- component class="org.cougaar.mts.http.HTTPLinkProtocol"
       insertionpoint="Node.AgentManager.Agent.MessageTransport.Component" -->
 
