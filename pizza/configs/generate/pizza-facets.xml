@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is the facets file for the basic definition of the -->
+<!-- agents in the Pizza Party application. Apply the rules in the -->
+<!-- rules subdirectory to this file to produce the full agent and -->
+<!-- community definitions for the Pizza Party application. -->
+<society 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  name="Pizza-SOCIETY-facets" 
+  xsi:noNamespaceSchemaLocation="http://www.cougaar.org/2003/society.xsd">
+  <host name="localhost">
+    <node name="localnode">
+      <!-- FIXME: Supply all the default Node arguments here? Or via a
+      rule? -->
+
+    <!-- Do I want the rules to generate the agents? At first, I'll
+    create them -->
+
+      <!-- Alice is the party planner -->
+      <agent name="Alice">
+        <facet org_id="Alice"/>
+        <facet orig_org_id="Alice"/>
+	<!-- Invited to party, so must be able to respond -->
+        <facet role="Invitee"/>
+        <!-- Invites people to the party, with the community it invites -->
+        <facet role="Inviter" community="FriendsOfMark-COMM"/>
+	<!-- Indicate community membership -->
+        <facet community="Cambridge-YPCOMM"/>
+	<facet community="FriendsOfMark-COMM"/>
+	<!-- Indicates someone who does YP lookups -->
+	<facet role="YPUser"/>
+	<!-- fixme: SD client implies yp user, right? -->
+	<!-- Indicates someone who does SD lookups. -->
+	<facet role="SDClient"/>
+	<!-- Indicates someone who orders pizza -->
+	<!-- Could also be used to configure non-SD relationships -->
+	<facet role="PizzaConsumer"/>
+	<!-- Indicates someone whose Entity asset has a PG to say what
+        kind of Pizza they eat -->
+	<!-- Note this could be combined with Invitee role -->
+	<facet role="EatsPizza" preference="Meat"/>
+      </agent>    
+
+      <!-- Bob is a guest -->
+      <agent name="Bob">
+        <facet org_id="Bob"/>
+        <facet orig_org_id="Bob"/>
+	<!-- Invited to party, so must be able to respond -->
+        <facet role="Invitee"/>
+	<!-- Indicate community membership -->
+	<facet community="FriendsOfMark-COMM"/>
+	<!-- Indicates someone whose Entity asset has a PG to say what
+        kind of Pizza they eat -->
+	<facet role="EatsPizza" preference="Meat"/>
+      </agent>
+
+      <!-- This agent just serves as a YPServer and community manager -->
+      <agent name="Cambridge">
+        <facet org_id="Cambridge"/>
+        <facet orig_org_id="Cambridge"/>
+	<!-- Indicate community membership -->
+	<!-- memberof attribute (could be multiple) indicates that
+        this community should nest in other communities. By
+        convention, put the memberof tag only on the agent you expect
+        to manage the community -->
+	<!-- Could be surmised from YPServer facet? -->
+        <facet community="Cambridge-YPCOMM" memberof="MA-YPCOMM"/>
+	<!-- Acts as a YP Server. Optional community tag indicates
+        which community this is the YP server for -->
+	<facet role="YPServer" community="Cambridge-YPCOMM"/>
+      </agent>
+
+      <!-- Dominos is a Pizza Provider for all of Massachussetts -->
+      <agent name="Dominos">
+        <facet org_id="Dominos"/>
+        <facet orig_org_id="Dominos"/>
+	<!-- Provides services via Service Discovery (and registers
+        them) -->
+	<!-- Could be combined with the service facet? -->
+	<facet role="SDProvider"/>
+	<!-- Provides named service. Put this role on self Entity for
+        example. Typically paired with FooConsumer -->
+	<facet service="PizzaProvider"/>
+	<!-- Indicate community membership -->
+	<facet community="MA-YPCOMM"/>
+	<!-- Indicates the given asset must be loaded -->
+	<!-- could do asset=Pizza pg=MeatToppingsPG or some such --> 
+	<facet role="HasPizza" toppings="Meat" toppings="Veggie"/>
+      </agent>
+
+      <!-- Tony is a Invitee -->
+      <agent name="Tony">
+        <facet org_id="Tony"/>
+        <facet orig_org_id="Tony"/>
+	<!-- Invited to party, so must be able to respond -->
+        <facet role="Invitee"/>
+	<!-- Indicate community membership -->
+	<facet community="FriendsOfMark-COMM"/>
+	<!-- Indicates someone whose Entity asset has a PG to say what
+        kind of Pizza they eat -->
+	<facet role="EatsPizza" preference="Veggie"/>
+      </agent>
+
+      <!-- Mark is a Invitee -->
+      <agent name="Mark">
+        <facet org_id="Mark"/>
+        <facet orig_org_id="Mark"/>
+	<!-- Invited to party, so must be able to respond -->
+        <facet role="Invitee"/>
+	<!-- Indicate community membership -->
+	<facet community="FriendsOfMark-COMM"/>
+	<!-- Indicates someone whose Entity asset has a PG to say what
+        kind of Pizza they eat -->
+	<facet role="EatsPizza" preference="Veggie"/>
+      </agent>
+
+      <!-- This agent just serves as a YPServer and community manager -->
+      <agent name="MA">
+        <facet org_id="MA"/>
+        <facet orig_org_id="MA"/>
+	<!-- Indicate community membership -->
+	<!-- Could be surmised from YPServer facet? -->
+	<facet community="MA-YPCOMM"/>
+	<!-- Acts as a YP Server. Optional community tag indicates
+        which community this is the YP server for -->
+	<facet role="YPServer" community="MA-YPCOMM"/>
+      </agent>
+
+      <!-- Joes is a Pizza Provider for Cambridge only -->
+      <agent name="JoesLocalPizzaShack">
+        <facet org_id="JoesLocalPizzaShack"/>
+        <facet orig_org_id="JoesLocalPizzaShack"/>
+	<!-- Indicate community membership -->
+        <facet community="Cambridge-YPCOMM"/>
+	<!-- Provides services via Service Discovery (and registers
+        them) -->
+	<!-- Could be combined with the service facet? -->
+	<facet role="SDProvider"/>
+	<!-- Provides named service. Put this role on self Entity for
+        example. Typically paired with FooConsumer -->
+	<facet service="PizzaProvider"/>
+	<!-- Indicates the given asset must be loaded -->
+	<!-- could do asset=Pizza pg=MeatToppingsPG or some such --> 
+	<facet role="HasPizza" toppings="Meat"/>
+      </agent>
+    </node>
+  </host>
+</society>
+
