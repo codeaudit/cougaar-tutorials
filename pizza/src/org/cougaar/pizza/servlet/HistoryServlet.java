@@ -145,7 +145,7 @@ public class HistoryServlet extends ComponentPlugin {
   // Note that this is an everything-but-the-above subscription
   private IncrementalSubscription uniqueObjectsSubscription;
 
-  protected static SimpleDateFormat format = new SimpleDateFormat ("MM-dd hh:mm:ss:SSS");
+  protected static SimpleDateFormat format = new SimpleDateFormat ("MM-dd hh:mm:ss,SSS");
   protected String encAgentName;
 
   // The actual Blackboard history we collect
