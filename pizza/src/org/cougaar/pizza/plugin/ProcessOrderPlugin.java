@@ -30,17 +30,16 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.PropertyGroup;
 import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.asset.KitchenAsset;
+import org.cougaar.pizza.asset.PizzaAsset;
+import org.cougaar.pizza.asset.PizzaPartyAsset;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Enumeration;
 
 /**
  *
@@ -108,15 +107,16 @@ public class ProcessOrderPlugin extends ComponentPlugin {
   /**
    * Allocate the new order tasks to the pizza kitchen asset
    */
-  private void allocateOrderTasks(Collection newOrderTasks)  {
+  private void allocateOrderTasks(Collection newOrderTasks) {
     for (Iterator i = newOrderTasks.iterator(); i.hasNext();) {
       Task newTask = (Task) i.next();
       // See if our kitchen can make the type of pizza requested and then
       // make a successful or unsuccessful allocation result.
       boolean kitchenCanMake = checkWithKitchen(newTask);
-      AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory, 1.0, kitchenCanMake);
-      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen, ar,
-                                                   Role.getRole(Constants.PIZZA_PROVIDER));
+      AllocationResult ar = PluginHelper.createEstimatedAllocationResult(newTask, pFactory,
+                                                                         1.0, kitchenCanMake);
+      Allocation alloc = pFactory.createAllocation(newTask.getPlan(), newTask, kitchen,
+                                                   ar, Role.getRole(Constants.PIZZA_PROVIDER));
       blackboard.publishAdd(alloc);
     }
   }
@@ -125,38 +125,40 @@ public class ProcessOrderPlugin extends ComponentPlugin {
    * Check with our kitchen asset to see if it can make the requested type of pizza
    * @param newTask The order task.
    * @return boolean If we can make the pizza - determines if the AllocationResult is
-   * successful or not.
+   *         successful or not.
    */
   private boolean checkWithKitchen(Task newTask) {
-    boolean canMakePizza = false;
-    Asset directObject = newTask.getDirectObject();
-    Enumeration pgs = (directObject.fetchAllProperties()).elements();
-    while (pgs.hasMoreElements()) {
-      PropertyGroup pg = (PropertyGroup) pgs.nextElement();
-      PropertyGroup match = kitchen.searchForPropertyGroup(pg.getPrimaryClass());
-      if (match != null) {
-        //TODO: turn down logging to debug
-        if (logger.isErrorEnabled()) {
-          logger.error("Found a match for the pizza in the kitchen for PG: " + pg);
-        }
-        canMakePizza = true;
-      } else {
-        //TODO: turn down logging to debug
-        if (logger.isErrorEnabled()) {
-          logger.error("Did NOT find a match for the pizza in the kitchen for PG: " + pg + " match: " + match + " calling" +
-                       "Kitchen pg directly " + kitchen.getItemIdentificationPG().getItemIdentification());
-        }
+    boolean canMakePizza = true;
+    PizzaPartyAsset directObject = (PizzaAsset) newTask.getDirectObject();
+    // Compare PGs on the pizza to PGs on the kitchen
+    // check the veggie pg
+    boolean vegPG = directObject.hasVeggiePG();
+    if (vegPG) {
+      if (!kitchen.hasVeggiePG()) {
         canMakePizza = false;
+        //TODO: Turn logging down to debug
+        if (logger.isErrorEnabled()) {
+          logger.error("Provider " + getAgentIdentifier().toString() +
+                       " can't make the VeggiePizza that was ordered!");
+        }
       }
     }
-    //TODO: turn down logging to debug
-    if (logger.isErrorEnabled()) {
-      logger.error("Returning can make pizza answer of: " + canMakePizza + " for task " + newTask);
+    //check the meat pg
+    boolean meatPG = directObject.hasMeatPG();
+    if (meatPG) {
+      if (!kitchen.hasMeatPG()) {
+        canMakePizza = false;
+        //TODO: Turn logging down to debug
+        if (logger.isErrorEnabled()) {
+          logger.error("Provider " + getAgentIdentifier().toString() +
+                       " can't make the MeatPizza that was ordered!");
+        }
+      }
     }
     return canMakePizza;
   }
 
-   /**
+  /**
    * Get the planning factory if we already have it, if not set it.
    * @return PlanningFactory The factory that creates planning objects.
    */
@@ -167,22 +169,22 @@ public class ProcessOrderPlugin extends ComponentPlugin {
     return pFactory;
   }
 
-   /**
+  /**
    * A predicate that filters for "ORDER" tasks
    */
-  private static UnaryPredicate OrderTasksPred = new UnaryPredicate (){
+  private static UnaryPredicate OrderTasksPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof Task) {
-        return ((Task)o).getVerb().equals(Verb.get(Constants.ORDER));
+        return ((Task) o).getVerb().equals(Verb.get(Constants.ORDER));
       }
       return false;
     }
   };
 
-   /**
+  /**
    * A predicate that filters for KitchenAsset objects
    */
-  private static UnaryPredicate KitchenAssetPred = new UnaryPredicate (){
+  private static UnaryPredicate KitchenAssetPred = new UnaryPredicate() {
     public boolean execute(Object o) {
       if (o instanceof KitchenAsset) {
         return true;
