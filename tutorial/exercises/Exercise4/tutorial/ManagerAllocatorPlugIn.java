@@ -15,8 +15,8 @@ import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.OrganizationPG;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
 
 /**
  * A predicate that matches all unallocated "CODE" tasks
@@ -54,7 +54,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This ALP PlugIn allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugIn.java,v 1.2 2000-12-18 15:40:59 wwright Exp $
+ * @version $Id: ManagerAllocatorPlugIn.java,v 1.3 2000-12-20 18:18:48 mthome Exp $
  **/
 public class ManagerAllocatorPlugIn extends SimplePlugIn {
 

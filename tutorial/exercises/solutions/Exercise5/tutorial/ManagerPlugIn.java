@@ -15,8 +15,8 @@ import java.util.*;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.domain.planning.ldm.plan.*;
 import org.cougaar.domain.planning.ldm.asset.*;
-import org.cougaar.domain.glm.asset.Organization;
-import org.cougaar.domain.glm.asset.OrganizationPG;
+import org.cougaar.domain.glm.ldm.asset.Organization;
+import org.cougaar.domain.glm.ldm.asset.OrganizationPG;
 import tutorial.assets.*;
 
 /**
