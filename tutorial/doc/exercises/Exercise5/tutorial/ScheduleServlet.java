@@ -34,9 +34,7 @@ import org.cougaar.core.agent.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.TaskImpl;
-import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.servlet.SimpleServletComponent;
@@ -51,13 +49,11 @@ import org.cougaar.core.servlet.SimpleServletComponent;
  // todo:  add code to make this a servlet subclass
 public class ScheduleServlet
 {
-	private Properties properties = new Properties();
-	private PrintWriter out;
 	private SimpleServletSupport support;
 
-	public void setSimpleServletSupport(SimpleServletSupport mySupport)
+	public void setSimpleServletSupport(SimpleServletSupport support)
 	{
-		support = mySupport;
+		this.support = support;
 	}
 
 	public void doGet(
@@ -79,15 +75,18 @@ public class ScheduleServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
+		PrintWriter out = response.getWriter();
+
 		// todo:  get the PrintWriter which sends data to HTTP
-	    try {
-		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
+		try
+		{
+  		  System.out.println("Servlet called." );
 
 		// todo: query the Blackboard for a Collection of ProgrammerAssets
            }
 		catch (Exception ex)
 		{
-			out.println(ex.getMessage());
+			out.println("Error processing servlet:"+ex.getMessage());
 			ex.printStackTrace(out);
 			System.out.println(ex);
 			out.flush();

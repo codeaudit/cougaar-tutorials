@@ -1,3 +1,23 @@
+/*
+ * <copyright>
+ *  Copyright 2003 BBNT Solutions, LLC
+ *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
+ * 
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the Cougaar Open Source License as published by
+ *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
+ * 
+ *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
+ *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
+ *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND WITHOUT
+ *  ANY WARRANTIES AS TO NON-INFRINGEMENT.  IN NO EVENT SHALL COPYRIGHT
+ *  HOLDER BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL
+ *  DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE OF DATA OR PROFITS,
+ *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ *  PERFORMANCE OF THE COUGAAR SOFTWARE.
+ * </copyright>
+ */
 package tutorial;
 
 import java.io.*;
@@ -9,13 +29,12 @@ import org.cougaar.core.servlet.*;
 
 import tutorial.assets.*;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.core.mts.*;
 import org.cougaar.core.agent.*;
 import org.cougaar.glm.ldm.asset.*;
 import org.cougaar.planning.ldm.asset.*;
 import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.planning.ldm.plan.NewTask;
-import org.cougaar.planning.ldm.plan.TaskImpl;
-import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.servlet.SimpleServletComponent;
@@ -36,15 +55,13 @@ import org.cougaar.core.servlet.SimpleServletComponent;
  // todo:  add code to make this a servlet subclass
  // hint:  parent class should be HttpServlet
  // more hints: public class ScheduleServlet extends HttpServlet
-public class ScheduleServlet 
+public class ScheduleServlet
 {
-	private Properties properties = new Properties();
-	private PrintWriter out;
 	private SimpleServletSupport support;
 
-	public void setSimpleServletSupport(SimpleServletSupport mySupport)
+	public void setSimpleServletSupport(SimpleServletSupport support)
 	{
-		support = mySupport;
+		this.support = support;
 	}
 
 	public void doGet(
@@ -53,7 +70,7 @@ public class ScheduleServlet
 	{
 		execute(request, response);
 	}
- 
+
 	public void doPost(
 	        HttpServletRequest request,
 	        HttpServletResponse response) throws IOException, ServletException
@@ -66,12 +83,15 @@ public class ScheduleServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
+		PrintWriter out = response.getWriter();
+
 		// todo:  get the PrintWriter which sends data to HTTP
 		// hint:  get it from the HttpServletResponse
 		// more hints:  out = response.getWriter();
-	    try {
-		System.out.println("ScheduleServlet called from agent: " + support.getEncodedAgentName());
-		
+		try
+		{
+  		  System.out.println("Servlet called." );
+
 		// todo: query the Blackboard for a Collection of ProgrammerAssets
 		// hint: use the SimpleServletSupport object
 		// more hints:  Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
@@ -80,10 +100,10 @@ public class ScheduleServlet
 	        // more hints:    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
 	        // more hints:    dumpProgrammerSchedule(pa, out);
 		// more hints:  }
-           }	
+           }
 		catch (Exception ex)
 		{
-			out.println(ex.getMessage());
+			out.println("Error processing servlet:"+ex.getMessage());
 			ex.printStackTrace(out);
 			System.out.println(ex);
 			out.flush();
@@ -125,7 +145,6 @@ public class ScheduleServlet
           //      alloc.getTask().getDirectObject().
           //        getItemIdentificationPG().getItemIdentification() +
           //      "</td></tr>");
-
         }
       }
       out.println("</table>");
