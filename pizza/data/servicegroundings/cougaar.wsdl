@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <schema xmlns="http://www/w3.org/2001/XMLSchema"
-xmlns:cougaar="http://stout.bbn.com/~aleung/cougaar.wsdl"
+# Replace UNUSED in the following definitions if you intend to 
+# use the uddi4j BindingTemplate associated with the registration. See 
+# <COUGAAR_INSTALL_PATH>/servicediscovery/data/serviceprofiles/agent-input.txt 
+# for instructions on the correct format.
+xmlns:cougaar="file://UNUSED/servicediscovery/data/servicegroundings/cougaar.wsdl" 
 xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-targetnamespace="http://stout.bbn.com/~aleung/cougaar.wsdl">
+targetnamespace="file://UNUSED/servicediscovery/data/servicegroundings/cougaar.wsdl">
 
 <import namespace="http://schemas.xmlsoap.org/wsdl/" />
 

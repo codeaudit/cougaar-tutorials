@@ -56,6 +56,12 @@ sub setup_descriptions{
     );		    
 }
 
+sub setup_generic_wsdl{
+    %genericProviders = (
+    "PizzaProvider" => "PizzaProvider",
+    );			
+}
+
 sub resetServiceVariables{
     $cumulativeDescription="";
     $rememberedRole="none";
@@ -275,7 +281,60 @@ sub print_commercial {
     &print_serviceCategory_bottom;
 }
 
-#read from @data and print out a serviceCategory, ServiceCategory
+#print out the grounding but do not read anything from @data
+sub print_WsdlGrounding {
+    print "print_WsdlGrounding\n" if $dump;
+    print OUTPUT "\n";
+    open(TEMPLATE, "$TEMPLATEFILE");
+    $print=0;
+    $tmppath = "file://".$cougaarInstallPath."/".$groundingDirectory."/".$uniqueServiceIndex."-".$agentName.".wsdl";
+    while($_=<TEMPLATE>) {
+	if(/cougaar:WsdlGrounding/) {
+	    $print=1;
+	}
+	if($print) {
+	    s/%AGENT_NAME%/$agentName/;
+	    s/%INDEX%/$uniqueServiceIndex/;
+	    s/%FULL_GROUNDING_FILEPATH%/$tmppath/;
+	    print OUTPUT $_;
+	    print $_ if $dump;
+	}
+	if(m!/cougaar:WsdlGrounding!) {
+	    last;
+	}
+    }
+    close(TEMPLATE);
+}
+
+sub output_wsdl_file {
+
+    $generic = $genericProviders{$rememberedRole};
+    if($generic eq "none") {
+	return;
+    }
+    $genericFile = $generic."CougaarGrounding.wsdl";
+    $genericBinding = $generic."CougaarBinding";
+    $filepath = "../../.."."/".$groundingDirectory."/".$uniqueServiceIndex."-".$agentName.".wsdl";
+    $genericpath = $cougaarInstallPath."/".$groundingDirectory."/".$genericFile;
+    $cougaarpath = $cougaarInstallPath."/".$groundingDirectory."/"."cougaar.wsdl";
+    $WSDL_TEMPLATEFILE = "../../.."."/".$groundingDirectory."/"."grounding-template.txt";
+#    open(OUTPUT, ">$OUTPUTFILE")
+#    open(TEMPLATE, "$TEMPLATEFILE") || &error_out("Can't open file $TEMPLATEFILE");
+    open(WSDL_TEMPLATE, "$WSDL_TEMPLATEFILE") || &error_out("Can't open file $WSDL_TEMPLATEFILE");
+    open(WSDL_OUTPUT, ">$filepath") || &error_out("Can't open file $filepath");
+    while($_=<WSDL_TEMPLATE>){
+	s/%AGENT_NAME%/$agentName/;
+	s/%INDEX%/$uniqueServiceIndex/;
+	s!%SPECIFIC_GROUNDING_FILEPATH%!file://$filepath!;
+	s!%GENERIC_GROUNDING_FILEPATH%!file://$genericpath!;
+	s!%COUGAAR_GROUNDING_FILEPATH%!file://$cougaarpath!;
+	s/%GENERIC_PROVIDER_BINDING%/$genericBinding/;
+	print WSDL_OUTPUT;
+    }
+    close(WSDL_TEMPLATE);
+    close(WSDL_OUTPUT);
+
+}
 
 #print out the end rdf tag but do not read anything from @data
 sub print_end_rdf {
@@ -331,6 +390,8 @@ sub process_agent {
 		    }
 		} #while shift data
 		&print_ServiceProfile_bottom;
+		&print_WsdlGrounding;
+		&output_wsdl_file;
 		$uniqueServiceIndex++;		
 		if($_=shift(@data)){
 		    unshift(@data, $_);
@@ -375,6 +436,7 @@ sub main {
     ($cougaarInstallPath, $profileDirectory, $groundingDirectory, $cougaarOWLFile)=&read_globals;
      
     &setup_descriptions; #text descriptions of services
+    &setup_generic_wsdl; #names of generic provider wsdl
 
     while($#data>0) {
 	&process_agent;

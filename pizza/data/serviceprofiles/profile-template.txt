@@ -22,7 +22,7 @@
 
   <owl:Ontology rdf:about="">
     <owl:versionInfo>
-      $Id: profile-template.txt,v 1.1 2004-10-18 19:55:07 ngivler Exp $
+      $Id: profile-template.txt,v 1.2 2004-11-05 17:35:46 ngivler Exp $
     </owl:versionInfo>
     <rdfs:comment>
       OWL service profile for %AGENT_NAME%
@@ -38,6 +38,7 @@
 
   <service:Service rdf:ID="%INDEX%_%AGENT_NAME%">
     <service:presents rdf:resource="#%INDEX%_%AGENT_NAME%_Profile"/>
+    <service:supports rdf:resource="#%INDEX%_%AGENT_NAME%_Grounding"/>
   </service:Service>
 
   <cougaar:ServiceProfile rdf:ID="%INDEX%_%AGENT_NAME%_Profile">
@@ -67,5 +68,12 @@
     </profile:providedBy>
 
   </cougaar:ServiceProfile>
+
+  <cougaar:WsdlGrounding rdf:ID="%INDEX%_%AGENT_NAME%_Grounding">
+    <cougaar:wsdlDocument>%FULL_GROUNDING_FILEPATH%</cougaar:wsdlDocument>
+    <cougaar:bindingType>COUGAAR</cougaar:bindingType>
+    <service:isSupportedBy rdf:resource="#%INDEX%_%AGENT_NAME%"/> 
+  </cougaar:WsdlGrounding>
+
 
 </rdf:RDF>
