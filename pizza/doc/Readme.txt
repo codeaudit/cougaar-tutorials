@@ -1,4 +1,4 @@
-The Pizza Planner application is a simple 8 agent society that
+The Pizza Planner application is a simple 8 agent society that 
 exercises many key Cougaar modules, while staying relatively
 simple. As such, it is a good test to ensure key pieces of Cougaar are
 still working, and a good set of sample code for modelling custom
