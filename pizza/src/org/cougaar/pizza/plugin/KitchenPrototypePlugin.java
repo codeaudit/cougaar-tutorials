@@ -24,7 +24,6 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
 import org.cougaar.pizza.asset.KitchenAsset;
@@ -32,29 +31,28 @@ import org.cougaar.pizza.asset.PropertyGroupFactory;
 import org.cougaar.util.Arguments;
 
 /**
- * This COUGAAR Plugin creates and publishes the Pizza Provider Kitchen
- * Asset object which identifies what kind of pizza that provider's
- * kitchen can make.
+ * This Plugin creates and publishes the Pizza Provider Kitchen Asset object which identifies
+ * what kind of pizza a provider's kitchen can make. This plugin does not require any inputs,
+ * it simply creates and registers the prototype and then publishes the kitchen asset instances.
+ * Note that this plugin will only run once since there are no inputs(subscriptions) to cause it to run.
  */
 public class KitchenPrototypePlugin extends ComponentPlugin {
 
-  // The domainService acts as a provider of domain factory services
+  // The domainService provides domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype
-  // registration services
+  // The prototypeRegistryService provides prototype registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
   // The planning factory we use to create planning objects.
-  private PlanningFactory factory;
+  private PlanningFactory planningFactory;
 
-  // Initialize my plugin args to the empty instance
+  // Initialize the plugin args to an empty instance
   private Arguments args = Arguments.EMPTY_INSTANCE;
 
   /**
-   * Variables for storing plugin arguments that determine whether the
-   * kitchen assets are capable of creating meat and/or veggie pizzas.
-   * Default is to create both.
+   * Variables for storing plugin arguments that determine whether the kitchen assets are
+   * capable of creating meat and/or veggie pizzas. Default is to create both.
    */
   private boolean createVeggie = true;
   private boolean createMeat = true;
@@ -79,38 +77,40 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Get the plugin parameters and our factory when our component is loaded.
+   * Get the plugin parameters and our planning factory when our component is loaded.
    * If we want additional services that are not required for the plugin, we should get them in load.
    * However, if the component gets a service in load, it should override the unload() method and
    * release the services.
    */
   public void load() {
     super.load();
-    factory = (PlanningFactory)domainService.getFactory("planning");
+    planningFactory = (PlanningFactory)domainService.getFactory("planning");
+    // unload the domain service since we only need it to get the planning factory
+    getServiceBroker().releaseService(this, DomainService.class, domainService);
     // Process the plugin params
     args = new Arguments(getParameter());
     setKitchenParameters();
   }
 
   /**
-   * Used for initialization to populate the Blackboard with Kitchen prototype and Asset objects
+   * Generally used to initalize plugin subscriptions. But in this case, we will use it to
+   * create our Kitchen assets since we have no subscriptions and we want to publish the assets
+   * as soon as we can.
    */
   protected void setupSubscriptions() {
-    // create the kitchen prototypes and assets
     createKitchenAssets();
   }
 
   /**
    * Create the Kitchen prototype and asset instances with the appropriate
-   * veggie and/org meat PGs based on the existing kitchen prototype
-   * and the plugin arguments.
+   * veggie and/or meat PGs based on the existing kitchen prototype and the plugin arguments.
    */
   private void createKitchenAssets() {
-    KitchenAsset new_prototype = (KitchenAsset)factory.createPrototype(KitchenAsset.class, "kitchen");
+    KitchenAsset new_prototype = (KitchenAsset)planningFactory.createPrototype(KitchenAsset.class, "kitchen");
     // Cache the prototype in the LDM so that it can be used to create
     // instances of Kitchen assets when asked for by prototype name
     prototypeRegistryService.cachePrototype("kitchen", new_prototype);
-    KitchenAsset kitchen_asset = (KitchenAsset) factory.createInstance("kitchen");
+    KitchenAsset kitchen_asset = (KitchenAsset) planningFactory.createInstance("kitchen");
     // Check the plugin arguments to see if this plugin should create a Kitchen asset that can make veggie pizza.
     if (createVeggie) {
       kitchen_asset.addOtherPropertyGroup(PropertyGroupFactory.newVeggiePG());
@@ -126,7 +126,7 @@ public class KitchenPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * No subscriptions, so this method does nothing
+   * No subscriptions to process, so this method does nothing.
    */
   protected void execute () {}
 
