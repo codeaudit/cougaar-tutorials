@@ -126,13 +126,19 @@
 	<!-- Add InvitePI(argument of 4 invitees), SDClientPI, PlaceOrderPI, RSVPPI,
 	PizzaOrderServlet, PartyPlanServlet -->
         <component
-          name='org.cougaar.pizza.InvitePlugin'
-          class='org.cougaar.pizza.InvitePlugin'
+          name='org.cougaar.pizza.plugin.InvitePlugin'
+          class='org.cougaar.pizza.plugin.InvitePlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
           <argument>
             WAIT_FOR_RSVP_DURATION:45000
           </argument>
+        </component>
+	<component
+          name='org.cougaar.pizza.plugin.PizzaPrototypePlugin'
+          class='org.cougaar.pizza.plugin.PizzaPrototypePlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
 
       </agent>
@@ -176,8 +182,8 @@
         </component>
 	<!-- Add RSVPPI -->
         <component
-          name='org.cougaar.pizza.RSVPPlugin'
-          class='org.cougaar.pizza.RSVPPlugin'
+          name='org.cougaar.pizza.plugin.RSVPPlugin'
+          class='org.cougaar.pizza.plugin.RSVPPlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
@@ -294,8 +300,17 @@
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
         </component>
-	<!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
+        <!-- Add PizzaPrototypeProvider, ProcessOrderPI, SDProviderPI,
 	SDRegistrationPI, PizzaOrderServlet, PizzaMenuServlet -->
+	<component
+          name='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
+          class='org.cougaar.pizza.plugin.KitchenPrototypePlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+          <argument>
+            PIZZA_TYPES_PROVIDED=all
+          </argument>
+        </component>
       </agent>
     </node>
   </host>
