@@ -17,7 +17,7 @@ import java.awt.*;
 /**
  * Utility class for writing all tutorial plugin classes
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialUtils.java,v 1.4 2002-03-14 14:58:20 ahelsing Exp $
+ * @version $Id: TutorialUtils.java,v 1.5 2002-10-17 19:48:59 mthome Exp $
  **/
 public class TutorialUtils {
 
@@ -84,8 +84,8 @@ public class TutorialUtils {
 
         ScoringFunction func = pref.getScoringFunction();
         for(Enumeration e = 
-	      func.getValidRanges(new AspectValue(aspect_type, default_value), 
-				  new AspectValue(aspect_type, default_value));
+	      func.getValidRanges(AspectValue.newAspectValue(aspect_type, default_value), 
+				  AspectValue.newAspectValue(aspect_type, default_value));
 	    e.hasMoreElements();) 
         {
           AspectScoreRange range = (AspectScoreRange)e.nextElement();

@@ -13,7 +13,7 @@ import java.util.*;
  * Class containing static methods and constants useful in constructing 
  * the Binary search tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: BinaryUtils.java,v 1.2 2001-12-27 23:53:14 bdepass Exp $
+ * @version $Id: BinaryUtils.java,v 1.3 2002-10-17 19:48:59 mthome Exp $
  **/
 public class BinaryUtils {
 
@@ -47,8 +47,8 @@ public class BinaryUtils {
 
     ScoringFunction scorefcn = 
       ScoringFunction.createStrictlyBetweenValues
-      (new AspectValue(BINARY_BOUNDS_ASPECT, low_bounds), 
-       new AspectValue(BINARY_BOUNDS_ASPECT, high_bounds));
+      (AspectValue.newAspectValue(BINARY_BOUNDS_ASPECT, low_bounds), 
+       AspectValue.newAspectValue(BINARY_BOUNDS_ASPECT, high_bounds));
 
     Preference pref = theCOF.newPreference(BINARY_BOUNDS_ASPECT, scorefcn);
     newPreferences.addElement(pref);

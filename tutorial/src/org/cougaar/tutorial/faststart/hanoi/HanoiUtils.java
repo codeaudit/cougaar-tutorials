@@ -15,7 +15,7 @@ import org.cougaar.tutorial.faststart.*;
 /**
  * Series of static methods supporting Towers of Hanoi tutorial plugins
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: HanoiUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: HanoiUtils.java,v 1.3 2002-10-17 19:49:00 mthome Exp $
  **/
 public class HanoiUtils 
 {
@@ -99,7 +99,7 @@ public class HanoiUtils
     // Add quantity preference
     ScoringFunction scorefcn =
       ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.QUANTITY, (double)count));
+      (AspectValue.newAspectValue(AspectType.QUANTITY, (double)count));
     Preference pref =
       theCOF.newPreference(AspectType.QUANTITY, scorefcn);
     preferences.add(pref);
@@ -108,14 +108,14 @@ public class HanoiUtils
     // Add a start_time and end_time strict preference
     scorefcn =
       ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.START_TIME, start_time));
+      (AspectValue.newAspectValue(AspectType.START_TIME, start_time));
     pref =
       theCOF.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
 
     scorefcn =
       ScoringFunction.createStrictlyAtValue
-      (new AspectValue(AspectType.END_TIME, end_time));
+      (AspectValue.newAspectValue(AspectType.END_TIME, end_time));
     pref = theCOF.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 

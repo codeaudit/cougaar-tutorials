@@ -14,7 +14,7 @@ import org.cougaar.tutorial.faststart.*;
  * Set of static methods and constants for supporting
  * Calendar society
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: CalendarUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: CalendarUtils.java,v 1.3 2002-10-17 19:48:59 mthome Exp $
  **/
 public class CalendarUtils {
 
@@ -88,8 +88,8 @@ public class CalendarUtils {
     Vector newPreferences = new Vector();
     ScoringFunction scorefcn = 
       ScoringFunction.createStrictlyBetweenValues
-      (new AspectValue(AspectType.START_TIME, low_day), 
-       new AspectValue(AspectType.START_TIME, low_day + range));
+      (AspectValue.newAspectValue(AspectType.START_TIME, low_day), 
+       AspectValue.newAspectValue(AspectType.START_TIME, low_day + range));
     Preference pref = theCOF.newPreference(AspectType.START_TIME, scorefcn);
     newPreferences.addElement(pref);
     ((NewTask)task).setPreferences(newPreferences.elements());

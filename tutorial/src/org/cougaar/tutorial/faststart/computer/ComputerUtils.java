@@ -17,7 +17,7 @@ import org.cougaar.tutorial.faststart.computer.assets.ComputerAsset;
  * Package of static utility methods and constants in support
  * of the Computer tutorial lesson.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ComputerUtils.java,v 1.2 2001-12-27 23:53:15 bdepass Exp $
+ * @version $Id: ComputerUtils.java,v 1.3 2002-10-17 19:48:59 mthome Exp $
  **/
 public class ComputerUtils {
 
@@ -78,7 +78,7 @@ public class ComputerUtils {
     // assess a penaly of .05 days per day later
     // (so that later than 20 days is unacceptable).
     ScoringFunction scorefcn =
-      ScoringFunction.createNearOrAbove(new AspectValue(SHIP_ASPECT, 0.0), .05);
+      ScoringFunction.createNearOrAbove(AspectValue.newAspectValue(SHIP_ASPECT, 0.0), .05);
     Preference pref =
       theLDMF.newPreference(SHIP_ASPECT, scorefcn, ship_weight);
     newPreferences.addElement(pref);
@@ -89,7 +89,7 @@ public class ComputerUtils {
     // (so that $3000 is unacceptable)
     scorefcn =
       ScoringFunction.createNearOrAbove
-      (new AspectValue(PRICE_ASPECT, 1000.0), 0.0005);
+      (AspectValue.newAspectValue(PRICE_ASPECT, 1000.0), 0.0005);
     pref = theLDMF.newPreference(PRICE_ASPECT, scorefcn, price_weight);
     newPreferences.addElement(pref);
 
@@ -98,7 +98,7 @@ public class ComputerUtils {
     // penalized by .0025 so that < 112Mb will be unacceptable
     scorefcn =
       ScoringFunction.createNearOrBelow
-      (new AspectValue(RAM_ASPECT, 512), .0025);
+      (AspectValue.newAspectValue(RAM_ASPECT, 512), .0025);
     pref = theLDMF.newPreference(RAM_ASPECT, scorefcn, ram_weight);
     newPreferences.addElement(pref);
 
@@ -108,7 +108,7 @@ public class ComputerUtils {
     // be unacceptable
     scorefcn =
       ScoringFunction.createNearOrBelow
-      (new AspectValue(CPU_ASPECT, 400), .005);
+      (AspectValue.newAspectValue(CPU_ASPECT, 400), .005);
     pref = theLDMF.newPreference(CPU_ASPECT, scorefcn, cpu_weight);
     newPreferences.addElement(pref);
 
@@ -127,22 +127,22 @@ public class ComputerUtils {
 
     Preference cpu_pref = TutorialUtils.getPreference(task, CPU_ASPECT);
     double cpu_score = cpu_pref.getScoringFunction().getScore
-      (new AspectValue(CPU_ASPECT, (double)cpu));
+      (AspectValue.newAspectValue(CPU_ASPECT, (double)cpu));
     double cpu_weight = cpu_pref.getWeight();
 
     Preference ram_pref = TutorialUtils.getPreference(task, RAM_ASPECT);
     double ram_score = ram_pref.getScoringFunction().getScore
-      (new AspectValue(RAM_ASPECT, (double)ram));
+      (AspectValue.newAspectValue(RAM_ASPECT, (double)ram));
     double ram_weight = ram_pref.getWeight();
 
     Preference price_pref = TutorialUtils.getPreference(task, PRICE_ASPECT);
     double price_score = price_pref.getScoringFunction().getScore
-      (new AspectValue(PRICE_ASPECT, (double)price));
+      (AspectValue.newAspectValue(PRICE_ASPECT, (double)price));
     double price_weight = price_pref.getWeight();
 
     Preference ship_pref = TutorialUtils.getPreference(task, SHIP_ASPECT);
     double ship_score = ship_pref.getScoringFunction().getScore
-      (new AspectValue(SHIP_ASPECT, (double)ship));
+      (AspectValue.newAspectValue(SHIP_ASPECT, (double)ship));
     double ship_weight = ship_pref.getWeight();
 
     /*
