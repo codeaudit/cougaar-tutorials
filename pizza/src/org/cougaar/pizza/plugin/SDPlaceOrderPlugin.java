@@ -282,7 +282,6 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
     }
   };
 
-
   /**
    * This predicate matches Order tasks.
    */
@@ -306,6 +305,4 @@ public class SDPlaceOrderPlugin extends PlaceOrderPlugin {
         return (((Task) o).getPlanElement() == null);
     }
   };
-
-
 }
