@@ -26,7 +26,6 @@
 
 package org.cougaar.pizza.plugin;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,23 +40,18 @@ import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Preference;
-import org.cougaar.planning.ldm.plan.Role;
-import org.cougaar.planning.ldm.plan.Schedule;
-import org.cougaar.planning.ldm.plan.ScheduleElement;
 import org.cougaar.servicediscovery.SDDomain;
 import org.cougaar.servicediscovery.SDFactory;
 import org.cougaar.servicediscovery.description.ServiceContract;
-import org.cougaar.servicediscovery.description.ServiceContractImpl;
 import org.cougaar.servicediscovery.description.ServiceRequest;
 import org.cougaar.servicediscovery.transaction.ProviderServiceContractRelay;
 import org.cougaar.servicediscovery.transaction.ServiceContractRelay;
-import org.cougaar.util.MutableTimeSpan;
 import org.cougaar.util.TimeSpan;
 import org.cougaar.util.UnaryPredicate;
 
 /**
  * SDProviderPlugin responds to ServiceContractRelays. This version says 
- * yes to all requests - generating a contract which exactly matches
+ * YES to all requests - generating a contract which exactly matches
  * the request.
  */
 public class SDProviderPlugin extends ComponentPlugin {
@@ -133,6 +127,7 @@ public class SDProviderPlugin extends ComponentPlugin {
   public void execute() {
     if (myServiceContractRelaySubscription.hasChanged()) {
 
+      // For each new service contract request, handle it
       Collection addedRelays =
 	myServiceContractRelaySubscription.getAddedCollection();
       for (Iterator adds = addedRelays.iterator(); adds.hasNext();) {
@@ -146,6 +141,8 @@ public class SDProviderPlugin extends ComponentPlugin {
 	}
         handleServiceContractRelay(relay);
       }
+
+      // We do not handle changed or removed service contract requests....
 
       Collection changedRelays = 
 	myServiceContractRelaySubscription.getChangedCollection();
@@ -174,8 +171,9 @@ public class SDProviderPlugin extends ComponentPlugin {
 	}
       }
     }
-  }
+  } // end of execute()
 
+  // Create a ServiceContract that matches the request, and publishChange it to the Relay
   protected void handleServiceContractRelay(ProviderServiceContractRelay relay){
     ServiceRequest serviceRequest = relay.getServiceRequest();
     ServiceContract serviceContract = relay.getServiceContract();
