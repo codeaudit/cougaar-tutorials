@@ -1,0 +1,147 @@
+/*
+ * <copyright>
+ *  Copyright 1997-2003 BBNT Solutions, LLC
+ *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the Cougaar Open Source License as published by
+ *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
+ *
+ *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
+ *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
+ *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
+ *  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, AND WITHOUT
+ *  ANY WARRANTIES AS TO NON-INFRINGEMENT.  IN NO EVENT SHALL COPYRIGHT
+ *  HOLDER BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT OR CONSEQUENTIAL
+ *  DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE OF DATA OR PROFITS,
+ *  TORTIOUS CONDUCT, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ *  PERFORMANCE OF THE COUGAAR SOFTWARE.
+ * </copyright>
+ */
+package org.cougaar.tutorial.exercise2;
+
+import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.service.PrototypeRegistryService;
+import org.cougaar.tutorial.assets.LanguagePG;
+import org.cougaar.tutorial.assets.NewLanguagePG;
+import org.cougaar.tutorial.assets.NewSkillsPG;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.tutorial.assets.SkillsPG;
+
+/**
+ * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
+ */
+
+ // todo:  add code to make this a subclass
+public class ProgrammerLDMPlugin {
+
+  // todo:  Add attributes and methods for access to the DomainService and the
+  //        PrototypeRegistryService
+  // hint:  You'll need an attribute to hold the DomainService and public methods
+  //        to get and set the attribute
+  // hint:  You'll also need an attribute and related get/set methods for the
+  //        PrototypeRegistryService
+
+  // more hints: private DomainService domainService = null;
+  // more hints: private PrototypeRegistryService prototypeRegistryService = null;
+
+  // more hints: public void setDomainService(DomainService aDomainService) {
+  // more hints:  domainService = aDomainService;
+  // more hints:}
+
+  // more hints:public DomainService getDomainService() {
+  // more hints:  return domainService;
+  // more hints:}
+
+  // more hints:public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
+  // more hints:  prototypeRegistryService = aPrototypeRegistryService;
+  // more hints:}
+
+  // more hints:public PrototypeRegistryService getPrototypeRegistryService() {
+  // more hints:  return prototypeRegistryService;
+  // more hints:}
+
+
+  /**
+   * Used for initialization to populate the Blackboard with ProgrammerAsset objects
+   */
+protected void setupSubscriptions() {
+
+    // todo: Register our new PropertyFactory so we can refer to properties by name
+    // more hints: PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
+    // hint: see  addPropertyGroupFactory()
+    // more hints: pass in a new tutorial.assets.PropertyGroupFactory()
+    // more hints: factory.addPropertyGroupFactory(new tutorial.assets.PropertyGroupFactory());
+
+    // todo: Create the prototypes that will be used to create the programmer assets
+    // hint: see  createPrototype
+    // hint: see  cachePrototype
+    // hint: run build and see tutorial.assets.NewLanguagePG
+    // hint: see helper function makeALanguagePG (later in this file)
+    // more hints: ProgrammerAsset new_prototype = (ProgrammerAsset)factory.createPrototype(tutorial.assets.ProgrammerAsset.class, "programmer");
+    // more hints: new_prototype.setLanguagePG(makeALanguagePG(true, false) );  // knows Java but not JavaScript
+    // more hints: getPrototypeRegistryService().cachePrototype("programmer", new_prototype);
+
+    // todo: Create an asset for programmer 'Bill Gates' based on an existing prototype
+    // hint: see createInstance()
+    // hint: see setSkillsPG()
+    // hint: see setItemIdentificationPG()
+    // hint: see publishAdd()
+    // more hints: ProgrammerAsset asset = (ProgrammerAsset) factory.createInstance("programmer");
+    // more hints: asset.setLanguagePG(makeALanguagePG(true, true) );  // knows Java and JavaScript
+    // more hints: asset.setSkillsPG(makeASkillsPG(10, 100));    // 10 years experience, 100 SLOC/day
+    // more hints: asset.setItemIdentificationPG(makeAItemIdentificationPG("Bill Gates"));
+    // more hints: getBlackboardService().publishAdd(asset);
+
+    // todo: Create an asset for programmer 'Linus Torvalds' based on an existing prototype
+    // hint: see Bill Gates above
+    // more hints: ProgrammerAsset another_asset = (ProgrammerAsset) factory.createInstance(asset);
+    // more hints: another_asset.setSkillsPG(makeASkillsPG(15, 150));   // 15 years experience, 150 SLOC/day
+    // more hints: another_asset.setItemIdentificationPG(makeAItemIdentificationPG("Linus Torvalds"));
+    // more hints: getBlackboardService().publishAdd(another_asset);
+
+}
+
+/**
+ * todo: Create and populate a Language property group
+ */
+private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
+  // hint: see  createPropertyGroup
+  // more hints: NewLanguagePG new_language_pg = (NewLanguagePG)((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
+  // more hints: new_language_pg.setKnowsJava(knowsJava);
+  // more hints: new_language_pg.setKnowsJavaScript(knowsJavaScript);
+  // more hints: return new_language_pg;
+}
+
+/**
+ * todo: Create and populate a Skills property group
+ */
+private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
+  // hint: see  makeALanguagePG above
+  // more hints: NewSkillsPG new_skills_pg = ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
+  // more hints: new_skills_pg.setYearsExperience(yearsExperience);
+  // more hints: new_skills_pg.setSLOCPerDay(productivity);
+  // more hints: return new_skills_pg;
+}
+
+/**
+ * todo: Create and populate an ItemIdentification property group
+ */
+private ItemIdentificationPG makeAItemIdentificationPG(String name) {
+  // hint: see  makeALanguagePG above
+  // more hints: NewItemIdentificationPG new_item_id_pg = ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
+  // more hints: new_item_id_pg.setItemIdentification(name);
+  // more hints: return new_item_id_pg;
+}
+
+/**
+ * No subscriptions, so this method does nothing
+ */
+protected void execute () {}
+
+}
+

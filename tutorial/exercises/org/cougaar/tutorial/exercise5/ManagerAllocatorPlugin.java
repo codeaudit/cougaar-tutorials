@@ -20,20 +20,21 @@
  */
 package org.cougaar.tutorial.exercise5;
 
-import java.util.*;
-
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
 import org.cougaar.glm.ldm.asset.Organization;
 import org.cougaar.glm.ldm.asset.OrganizationPG;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.asset.Asset;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.tutorial.assets.*;
+import java.util.Enumeration;
 
 /**
  * A predicate that matches all "CODE" tasks
@@ -69,7 +70,7 @@ class myProgrammersPredicate implements UnaryPredicate{
  * This COUGAAR Plugin allocates tasks of verb "CODE"
  * to Organizations that have the "SoftwareDevelopment" role.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: ManagerAllocatorPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
+ * @version $Id: ManagerAllocatorPlugin.java,v 1.4 2004-01-28 19:45:09 jwong Exp $
  **/
 public class ManagerAllocatorPlugin extends ComponentPlugin {
 

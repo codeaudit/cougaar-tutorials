@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -23,12 +23,15 @@ package org.cougaar.tutorial.exercise2;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
+import org.cougaar.tutorial.assets.LanguagePG;
+import org.cougaar.tutorial.assets.NewLanguagePG;
+import org.cougaar.tutorial.assets.NewSkillsPG;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.tutorial.assets.SkillsPG;
 
-import org.cougaar.tutorial.assets.*;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
@@ -54,6 +57,18 @@ protected void setupSubscriptions() {
     // todo: Create an asset for programmer 'Linus Torvalds' based on an existing prototype
 
 }
+
+/**
+ * todo: Create and populate a Language property group
+ */
+
+/**
+ * todo: Create and populate a Skills property group
+ */
+
+/**
+ * todo: Create and populate an ItemIdentification property group
+ */
 
 
 /**

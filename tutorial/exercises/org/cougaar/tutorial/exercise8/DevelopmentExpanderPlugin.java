@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,17 +20,25 @@
  */
 package org.cougaar.tutorial.exercise8;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.planning.plugin.util.PluginHelper;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.util.UnaryPredicate;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * This COUGAAR Plugin expands tasks of verb "CODE"
@@ -162,14 +170,14 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     this_task_duration = 3;
     NewTask t2 = makeTask("DEVELOP", task, new_wf);
     setPreferences(t2, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t2); 
+    getBlackboardService().publishAdd(t2);
     tasks.addElement(t2); // Add the task to the vector of subtasks
 
     // testing takes two month
     this_task_duration = 2;
     NewTask t3 = makeTask("TEST", task, new_wf);
     setPreferences(t3, start_month, this_task_duration, deadline_month);
-    getBlackboardService().publishAdd(t3);  
+    getBlackboardService().publishAdd(t3);
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
     // todo: add the new tasks to the old task's workflow

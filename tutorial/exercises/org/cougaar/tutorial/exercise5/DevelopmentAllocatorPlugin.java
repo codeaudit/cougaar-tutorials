@@ -20,18 +20,26 @@
  */
 package org.cougaar.tutorial.exercise5;
 
-import java.util.*;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.tutorial.assets.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 
 /**
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates

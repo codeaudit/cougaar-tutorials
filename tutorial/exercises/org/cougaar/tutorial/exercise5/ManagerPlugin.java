@@ -20,20 +20,14 @@
  */
 package org.cougaar.tutorial.exercise5;
 
-import java.util.*;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
-import org.cougaar.glm.ldm.asset.Organization;
-import org.cougaar.glm.ldm.asset.OrganizationPG;
-
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
 
 /**
  * This COUGAAR Plugin creates and publishes "CODE" tasks

@@ -20,6 +20,25 @@
  */
 package org.cougaar.tutorial.exercise11;
 
+import org.cougaar.core.blackboard.BlackboardClient;
+import org.cougaar.core.service.BlackboardService;
+import org.cougaar.core.service.DomainService;
+import org.cougaar.core.servlet.BaseServletComponent;
+import org.cougaar.planning.ldm.PlanningFactory;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
+
+import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -27,22 +46,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.cougaar.util.UnaryPredicate;
-
-import org.cougaar.core.blackboard.BlackboardClient;
-import org.cougaar.core.servlet.BaseServletComponent;
-import org.cougaar.core.service.BlackboardService;
-import org.cougaar.core.service.ServletService;
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
-
-import org.cougaar.tutorial.assets.ProgrammerAsset;
 
 /**
  * This Servlet assigns a vacation month to each ProgrammerAsset.

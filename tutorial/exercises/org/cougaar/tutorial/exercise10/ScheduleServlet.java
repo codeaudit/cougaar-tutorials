@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,20 +20,25 @@
  */
 package org.cougaar.tutorial.exercise10;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.cougaar.core.servlet.SimpleServletSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Iterator;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.cougaar.util.UnaryPredicate;
-import org.cougaar.core.servlet.SimpleServletComponent;
+import org.cougaar.core.servlet.SimpleServletSupport;
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
 
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
 
 public class ScheduleServlet extends HttpServlet
 {

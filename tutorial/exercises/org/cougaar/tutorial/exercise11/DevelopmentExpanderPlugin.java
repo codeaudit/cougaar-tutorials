@@ -20,16 +20,28 @@
  */
 package org.cougaar.tutorial.exercise11;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Constraint;
+import org.cougaar.planning.ldm.plan.Expansion;
+import org.cougaar.planning.ldm.plan.NewConstraint;
+import org.cougaar.planning.ldm.plan.NewTask;
+import org.cougaar.planning.ldm.plan.NewWorkflow;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.ScoringFunction;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.planning.ldm.plan.Workflow;
+import org.cougaar.util.UnaryPredicate;
+
+import java.util.Enumeration;
+import java.util.Vector;
+
 
 /**
  * This COUGAAR Plugin expands tasks of verb "CODE"

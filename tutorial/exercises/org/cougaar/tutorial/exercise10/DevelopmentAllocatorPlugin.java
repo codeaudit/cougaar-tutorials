@@ -20,7 +20,10 @@
  */
 package org.cougaar.tutorial.exercise10;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -31,7 +34,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.planning.ldm.plan.*;
 
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
 
 
 /**

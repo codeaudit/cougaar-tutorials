@@ -2,11 +2,11 @@
  * <copyright>
  *  Copyright 1997-2003 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
  *  DARPA on the Cougaar Open Source Website (www.cougaar.org).
- * 
+ *
  *  THE COUGAAR SOFTWARE AND ANY DERIVATIVE SUPPLIED BY LICENSOR IS
  *  PROVIDED 'AS IS' WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS OR
  *  IMPLIED, INCLUDING (BUT NOT LIMITED TO) ALL IMPLIED WARRANTIES OF
@@ -20,18 +20,27 @@
  */
 package org.cougaar.tutorial.exercise8;
 
-import java.util.*;
-
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.AllocationResult;
+import org.cougaar.planning.ldm.plan.AspectType;
+import org.cougaar.planning.ldm.plan.AspectValue;
+import org.cougaar.planning.ldm.plan.Preference;
+import org.cougaar.planning.ldm.plan.Role;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Task;
+import org.cougaar.planning.ldm.plan.Verb;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
 
-import org.cougaar.tutorial.assets.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 
 /**
  * This COUGAAR Plugin subscribes to tasks and allocates

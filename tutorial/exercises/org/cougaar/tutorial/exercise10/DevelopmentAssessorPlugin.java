@@ -20,7 +20,7 @@
  */
 package org.cougaar.tutorial.exercise10;
 
-import java.util.*;
+import java.util.Enumeration;
 
 import org.cougaar.util.UnaryPredicate;
 
@@ -28,11 +28,11 @@ import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 
-import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.plan.*;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.planning.ldm.plan.Verb;
 
-import org.cougaar.tutorial.assets.*;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
 
 /**
  * This COUGAAR Plugin monitors ProgrammerAssets for conflicts between their
