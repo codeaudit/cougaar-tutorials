@@ -144,9 +144,10 @@ protected Task makeTask(Asset what) {
     cal2.clear();
     cal2.set (Calendar.YEAR, cal.get (GregorianCalendar.YEAR));
     cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
+    double slope = 0.0000001;
     ScoringFunction scorefcn = ScoringFunction.createNearOrAbove
       (AspectValue.newAspectValue(AspectType.START_TIME,
-       cal2.getTime().getTime()), 0.0000001);
+       cal2.getTime().getTime()), slope);
     Preference pref =
       factory.newPreference(AspectType.START_TIME, scorefcn);
     preferences.add(pref);
@@ -154,7 +155,7 @@ protected Task makeTask(Asset what) {
     cal2.add (Calendar.YEAR, 1);
     scorefcn = ScoringFunction.createNearOrBelow
       (AspectValue.newAspectValue(AspectType.END_TIME,
-       cal2.getTime().getTime()), 0.0000001);
+       cal2.getTime().getTime()), slope);
     pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     preferences.add(pref);
 

@@ -128,15 +128,17 @@ protected Task makeTask(Asset what) {
     // hint: see  NewPrepositionalPhrase.setPreposition()
     // hint: see  NewPrepositionalPhrase.setIndirectObject()
     // hint: see  Vector.add()
-    // hint: see  NewTask.setPrepositionalPhrases()
     // more hints: NewPrepositionalPhrase npp = factory.newPrepositionalPhrase();
     // more hints: npp.setPreposition("USING_LANGUAGE");
     // more hints: npp.setIndirectObject("C++");
     // more hints: prepositions.add(npp);
+
+
+
+
+    // todo:  Remember to set the prepositions on the task
+    // hint: see  NewTask.setPrepositionalPhrases()
     // more hints: new_task.setPrepositionalPhrases(prepositions.elements());
-
-
-
 
 
 
@@ -145,22 +147,25 @@ protected Task makeTask(Asset what) {
     // Preferences specify when the task needs to be done
     Vector preferences = new Vector();
 
-    // todo:  Add a start_time strict preference
     GregorianCalendar cal = new GregorianCalendar();
     cal.add (GregorianCalendar.MONTH, 1);
     GregorianCalendar cal2 = new GregorianCalendar();
     cal2.clear();
     cal2.set (Calendar.YEAR, cal.get (GregorianCalendar.YEAR));
     cal2.set (Calendar.MONTH, cal.get (GregorianCalendar.MONTH));
+
+    // todo:  Add a start_time near or above preference using cal2
     Preference pref;
     ScoringFunction scorefcn;
+    double slope = 0.0000001;
     // hint: see AspectType constants
     // hint: see AspectValue.newAspectValue()
-    // hint: see ScoringFunction.createStrictlyAtValue()
+    // hint: see ScoringFunction.createNearOrAbove()
     // hint: see PlanningFactory.newPreference()
     // hint: see Vector.add
-    // more hints: ScoringFunction scorefcn = ScoringFunction.createStrictlyAtValue
-    // more hints:   (AspectValue.newAspectValue(AspectType.START_TIME, start_month));
+    // more hints: ScoringFunction scorefcn = ScoringFunction.createNearOrAbove
+    // more hints:   (AspectValue.newAspectValue(AspectType.START_TIME,
+    // more hints:    cal2.getTime().getTime()), slope);
     // more hints: Preference pref =
     // more hints:   factory.newPreference(AspectType.START_TIME, scorefcn);
     // more hints: preferences.add(pref);
@@ -172,12 +177,16 @@ protected Task makeTask(Asset what) {
 
 
 
-    // todo:  Add an end_time strict preference
-    // hint:  see add start_time (above)
     cal2.add (Calendar.YEAR, 1);  // give them one year to do it
-    // more hints: scorefcn = ScoringFunction.createStrictlyAtValue
+    // todo:  Add an end_time near or below preference using the updated cal2
+    // hint: see AspectType constants
+    // hint: see AspectValue.newAspectValue()
+    // hint: see ScoringFunction.createNearOrBelow()
+    // hint: see PlanningFactory.newPreference()
+    // hint: see Vector.add
+    // more hints: scorefcn = ScoringFunction.createNearOrBelow
     // more hints:   (AspectValue.newAspectValue(AspectType.END_TIME,
-    // more hints:    cal2.getTime().getTime()));
+    // more hints:    cal2.getTime().getTime()), slope);
     // more hints: pref = factory.newPreference(AspectType.END_TIME, scorefcn);
     // more hints: preferences.add(pref);
 
