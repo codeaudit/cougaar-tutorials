@@ -1,8 +1,7 @@
 /*
  * <copyright>
  *  Copyright 1997-2004 BBNT Solutions, LLC
- *  under sponsorship of the Defense Advanced Research Projects Agency
- *  (DARPA).
+ *  under sponsorship of the Defense Advanced Research Projects Agency (DARPA).
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the Cougaar Open Source License as published by
@@ -36,49 +35,43 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   // The domainService acts as a provider of domain factory services
   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype
-  // registration services
+  // The prototypeRegistryService acts as a provider of prototype registration services
   private PrototypeRegistryService prototypeRegistryService = null;
 
   // The planning factory we use to create planning objects.
   private PlanningFactory factory;
 
-
   /**
-   * Set up the services and factories we need.
+   * Used by the binding utility through introspection to set my DomainService
+   * Services that are required for plugin usage should be set through reflection instead of explicitly
+   * getting each service from your ServiceBroker in the load method. The setter methods are called after
+   * the component is constructed but before the state methods such as initialize, load, setupSubscriptions, etc.
+   * If the service is not available at that time the component will be unloaded.
    */
-  public void load() {
-    super.load();
-
-    // get services
-    domainService = (DomainService)
-        getServiceBroker().getService(this, DomainService.class, null);
-    prototypeRegistryService = (PrototypeRegistryService)
-        getServiceBroker().getService(this, PrototypeRegistryService.class,
-                                      null);
-    factory = (PlanningFactory)domainService.getFactory("planning");
+  public void setDomainService(DomainService aDomainService) {
+    domainService = aDomainService;
   }
 
+  /**
+   * Used by the binding utility through introspection to set my PrototypeRegistryService
+   */
+  public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
+    prototypeRegistryService = aPrototypeRegistryService;
+  }
 
   /**
    * Initialize our plugin. Since we don't have any subscriptions,
    * create the Pizza prototype right away.
    */
   protected void setupSubscriptions() {
+    factory = (PlanningFactory)domainService.getFactory("planning");
     createPizzaPrototype();
   }
 
   private void createPizzaPrototype() {
-    // Register our new PropertyGroupFactory
-    factory.addPropertyGroupFactory(
-        new org.cougaar.pizza.asset.PropertyGroupFactory());
-
-    PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype
-        (PizzaAsset.class, Constants.PIZZA);
-    // Cache the prototype in the LDM so that other plugins can create
-    // Pizza instances using the new prototype.
-    prototypeRegistryService.cachePrototype(Constants.PIZZA,
-                                            new_prototype);
+    PizzaAsset new_prototype = (PizzaAsset)factory.createPrototype(PizzaAsset.class, Constants.PIZZA);
+    // Cache the prototype in the LDM so that other plugins can create Pizza instances using the new prototype.
+    prototypeRegistryService.cachePrototype(Constants.PIZZA, new_prototype);
   }
 
   /**
