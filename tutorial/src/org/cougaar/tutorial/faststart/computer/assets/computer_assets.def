@@ -1,4 +1,4 @@
-;!generate: org.cougaar.tools.build.AssetWriter computer_assets.def
+;!generate: org.cougaar.tools.build.AssetWriter
 ;; Basis for generating class definitions for Subclasses of Assets
 ;;
 
