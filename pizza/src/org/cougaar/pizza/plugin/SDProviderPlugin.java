@@ -34,7 +34,7 @@ import java.util.Iterator;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.glm.ldm.asset.Organization;
+import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.planning.ldm.plan.AspectType;
 import org.cougaar.planning.ldm.plan.Preference;
 import org.cougaar.planning.ldm.plan.Role;
@@ -62,8 +62,7 @@ public class SDProviderPlugin extends SimplePlugin
   private static Integer START_TIME_KEY = new Integer(AspectType.START_TIME);
   private static Integer END_TIME_KEY = new Integer(AspectType.END_TIME);
 
-
-  private IncrementalSubscription mySelfOrgSubscription;
+  private IncrementalSubscription myLocalEntitySubscription;
   private IncrementalSubscription myServiceContractRelaySubscription;
   private IncrementalSubscription myProviderCapabilitiesSubscription;
   
@@ -85,11 +84,11 @@ public class SDProviderPlugin extends SimplePlugin
     }
   };
 
-  private UnaryPredicate mySelfOrgPred = new UnaryPredicate() {
+  private UnaryPredicate myLocalEntityPred = new UnaryPredicate() {
     public boolean execute(Object o) {
-      if (o instanceof Organization) {
-	Organization org = (Organization) o;
-	if (org.isLocal()) {
+      if (o instanceof Entity) {
+	Entity entity = (Entity) o;
+	if (entity.isLocal()) {
 	  return true;
 	}
       }
@@ -116,7 +115,7 @@ public class SDProviderPlugin extends SimplePlugin
     myAgentName = getBindingSite().getAgentIdentifier().toString();
 
     myServiceContractRelaySubscription = (IncrementalSubscription) subscribe(myServiceContractRelayPred);
-    mySelfOrgSubscription = (IncrementalSubscription) subscribe(mySelfOrgPred);
+    myLocalEntitySubscription = (IncrementalSubscription) subscribe(myLocalEntityPred);
     myProviderCapabilitiesSubscription = 
       (IncrementalSubscription)subscribe(myProviderCapabilitiesPred);
 
@@ -289,7 +288,7 @@ public class SDProviderPlugin extends SimplePlugin
 			      serviceRequest.getServiceRole());
       }
       serviceContract =
-	mySDFactory.newServiceContract(getSelfOrg(),
+	mySDFactory.newServiceContract(getLocalEntity(),
 				       serviceRequest.getServiceRole(),
 				       contractPreferences.values());
       relay.setServiceContract(serviceContract);
@@ -372,7 +371,7 @@ public class SDProviderPlugin extends SimplePlugin
 	      }
 
 	      ServiceContract newContract = 
-		mySDFactory.newServiceContract(getSelfOrg(),
+		mySDFactory.newServiceContract(getLocalEntity(),
 					       contract.getServiceRole(),
 					       copy.values());
 	      relay.setServiceContract(newContract);
@@ -408,10 +407,10 @@ public class SDProviderPlugin extends SimplePlugin
     return matchingRelays;
   }
 
-  protected Organization getSelfOrg() {
-    for (Iterator iterator = mySelfOrgSubscription.iterator();
+  protected Entity getLocalEntity() {
+    for (Iterator iterator = myLocalEntitySubscription.iterator();
 	 iterator.hasNext();) {
-      return (Organization) iterator.next();
+      return (Entity) iterator.next();
     }
 
     return null;
