@@ -47,14 +47,31 @@ import org.cougaar.util.Configuration;
 
 
 /**
- * Read local agent OWL profile file. Use the listed roles and register this agent with those
- * roles in the YP.
+ * Simplified version of SDRegistrationPlugin that registers this agent
+ * using the <agent name>-profile.owl file if any in the plugin parameter-named YP agent.
+ * <p>
+ * This version of the plugin is somewhat simplified -- fewer error checks for example.
+ * <p>
+ * First argument is the name of the agent hosting the YP that we will register with.
+ * @property org.cougaar.pizza.plugin.RegistrationGracePeriod is the number of minutes after startup,  during which 
+ * we ignore SD registration Warnings, to allow the YP to start up. After this we complain 
+ * more loudly. Default is 5 minutes.
  **/
 public class SDRegistrationPlugin extends ComponentPlugin {
-  private static int WARNING_SUPPRESSION_INTERVAL = 5;
-  private long warningCutoffTime = 0;
+
   private static final String REGISTRATION_GRACE_PERIOD_PROPERTY = 
     "org.cougaar.pizza.plugin.RegistrationGracePeriod";
+
+  private static final int DEFAULT_WARNING_SUPPRESSION_INTERVAL = 5; // in minutes
+
+  private static final int WARNING_SUPPRESSION_INTERVAL;
+
+  static {
+    WARNING_SUPPRESSION_INTERVAL = Integer.getInteger(REGISTRATION_GRACE_PERIOD_PROPERTY,
+						      DEFAULT_WARNING_SUPPRESSION_INTERVAL).intValue();
+  }
+
+  private long warningCutoffTime = 0;
 
   protected static final String OWL_IDENTIFIER = ".profile.owl";
 
@@ -81,6 +98,10 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     registrationService = rs;
   }
 
+  /**
+   * When the agent moves, we don't want dangling callbacks - so clear them. On resume, we'll just re-register
+   * from scratch, since we can't otherwise recover where we'd gotten to.
+   */
   public void suspend() {
     super.suspend();
 
@@ -89,7 +110,6 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       if (log.isInfoEnabled()) {
 	log.info("removing community change listeners.");
       }
-      
       
       ypInfo.clearCommunity();
     }
@@ -102,6 +122,13 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   protected void setupSubscriptions() {
   }
 
+  /**
+   * If this agent has a -profile.owl file, then ask for a handle on the named (in the only plugin parameter)
+   * YP agent's YP community. Once we have the community (may be
+   * a subsequent execute when our CommunityListener tells us
+   * we found the YP community), we call initialRegister
+   * to register this agent in the YP.
+   */
   protected void execute () {
     // Does this agent have a service profile
     if (isProvider()) {
@@ -124,88 +151,91 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   }
 
   private void initialRegister() {
-    if (isProvider()) {
-      if (!ypInfo.readyToRegister()) {
-	if (log.isDebugEnabled()) {
-	  log.debug("Exiting initialRegister early - " +
-		    " ypInfo not ready - " + 
-		    " community " + ypInfo.getCommunity().getName() +
-		    " isRegistered " + ypInfo.getIsRegistered() +
-		    " pendingRegistration " + ypInfo.getPendingRegistration());
-	    }
-	return;
+    // FIXME: Is this check necessary?
+    if (!ypInfo.readyToRegister()) {
+      if (log.isDebugEnabled()) {
+	log.debug("Exiting initialRegister early - " +
+		  " ypInfo not ready - " + 
+		  " community " + ypInfo.getCommunity().getName() +
+		  " isRegistered " + ypInfo.getIsRegistered() +
+		  " pendingRegistration " + ypInfo.getPendingRegistration());
       }
+      return;
+    } // end block to handle ypInfo not ready to register.
 
-
-      try {
-        final ProviderDescription pd = getPD();
-
-	if (pd == null) {
-	  ypInfo.setIsRegistered(false);	
-          ypInfo.setPendingRegistration(false); // okay to try again
-	  
-	  retryErrorLog("Problem getting ProviderDescription." + 
-			" Unable to add registration to " +
-			ypInfo.getCommunity().getName() + 
-			", try again later.");
-
-	  return;
-	}
-
-	ypInfo.setPendingRegistration(true);
-
-	RegistrationService.Callback cb =
-	  new RegistrationService.Callback() {
-	      
-	      /** 
-	       * YP Calls when the registration call completes. Note that the
-	       * Object argument is only useful for debugging.
-	       */ 
-	      public void invoke(Object o) {
-		if (log.isInfoEnabled()) {
-		  boolean success = ((Boolean) o).booleanValue();
-		  log.info(pd.getProviderName()+ " initialRegister success = " + 
-			   success + " with " + ypInfo.getCommunity().getName());
-		}
-		
-		ypInfo.setIsRegistered(true);
-		ypInfo.setPendingRegistration(false);
-		ypInfo.clearCommunity();
-		
-		retryAlarm = null;
-		
-		getBlackboardService().signalClientActivity();
-	      } // end of invoke()
-	      
-	      /**
-	       * YP Calls when there was an error trying to register the provider.
-	       */
-	      public void handle(Exception e) {
-		ypInfo.setPendingRegistration(false); // okay to try again
-		ypInfo.setIsRegistered(false);
-		
-		retryErrorLog("Problem adding ProviderDescription to " + 
-			      ypInfo.getCommunity().getName() + 
-			      ", try again later: " +
-			      getAgentIdentifier(), e);
-	      }
-	    }; // end of Callback definition
-	
-	// actually submit the request.
-        registrationService.addProviderDescription(ypInfo.getCommunity(),
-						   pd,
-						   cb);
-      } catch (RuntimeException e) {
+    // Wrap whole call to YP in a try/catch....
+    try {
+      // Get our ProviderDescription (what we're registering)
+      final ProviderDescription pd = getPD();
+      
+      if (pd == null) {
 	ypInfo.setIsRegistered(false);	
 	ypInfo.setPendingRegistration(false); // okay to try again
-	  
-	retryErrorLog("Problem adding ProviderDescription to " + 
+	
+	retryErrorLog("Problem getting ProviderDescription -- transient Jena error?" + 
+		      " Unable to add registration to " +
 		      ypInfo.getCommunity().getName() + 
-		      ", try again later: " +
-		      getAgentIdentifier(), e);
+		      ", try again later.");
+	
+	return;
       }
-    }
-  }
+      
+      ypInfo.setPendingRegistration(true);
+      
+      // Create the callback - by which the YP will tell us when it finishes
+      RegistrationService.Callback cb =
+	new RegistrationService.Callback() {
+	    
+	    /** 
+	     * YP Calls when the registration call completes. Note that the
+	     * Object argument is only useful for debugging.
+	     */ 
+	    public void invoke(Object o) {
+	      if (log.isInfoEnabled()) {
+		boolean success = ((Boolean) o).booleanValue();
+		log.info(pd.getProviderName()+ " initialRegister success = " + 
+			 success + " with " + ypInfo.getCommunity().getName());
+	      }
+	      
+	      ypInfo.setIsRegistered(true);
+	      ypInfo.setPendingRegistration(false);
+	      ypInfo.clearCommunity();
+	      
+	      retryAlarm = null;
+	      
+	      getBlackboardService().signalClientActivity();
+	    } // end of invoke()
+	    
+	    /**
+	     * YP Calls when there was an error trying to register the provider.
+	     */
+	    public void handle(Exception e) {
+	      ypInfo.setPendingRegistration(false); // okay to try again
+	      ypInfo.setIsRegistered(false);
+	      
+	      retryErrorLog("Problem adding ProviderDescription to " + 
+			    ypInfo.getCommunity().getName() + 
+			    ", try again later: " +
+			    getAgentIdentifier(), e);
+	    }
+	  }; // end of Callback definition
+      
+      // actually submit the request: register at the given community,
+      // with the given Provider information, calling back to us using 
+      // the given callback
+      registrationService.addProviderDescription(ypInfo.getCommunity(),
+						 pd,
+						 cb);
+    } catch (RuntimeException e) {
+      ypInfo.setIsRegistered(false);	
+      ypInfo.setPendingRegistration(false); // okay to try again
+      
+      retryErrorLog("Problem adding ProviderDescription to " + 
+		    ypInfo.getCommunity().getName() + 
+		    ", try again later: " +
+		    getAgentIdentifier(), e);
+    } // end of try/catch that actually does the registration (via callback)
+  } // end of initialRegister
 
   //
   private void findYPCommunity() {
@@ -226,7 +256,11 @@ public class SDRegistrationPlugin extends ComponentPlugin {
     }
   }
 
-  /** Create the YPInfo object for this instance */
+  /** 
+   * Create the YPInfo object for this instance.
+   * Takes the first plugin parameter as the name of the agent hosting the YP that
+   * we will register with.
+   */
   private void initYPInfo() {
     Collection params = getParameters();
     
@@ -265,6 +299,8 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 	boolean ok = pd.parseOWL(serviceProfileURL, 
 				 getAgentIdentifier() + OWL_IDENTIFIER);
 	
+	// We have to check the return status because
+	// occasionally Jena seems to hiccup on the parse...
 	if (ok && (pd.getProviderName() != null)) {
 	  if (log.isDebugEnabled()) {
 	    log.debug(": getPD() successfully parsed OWL.");
@@ -295,8 +331,6 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   
   private long getWarningCutOffTime() {
     if (warningCutoffTime == 0) {
-      WARNING_SUPPRESSION_INTERVAL = Integer.getInteger(REGISTRATION_GRACE_PERIOD_PROPERTY,
-							WARNING_SUPPRESSION_INTERVAL).intValue();
       warningCutoffTime = System.currentTimeMillis() + WARNING_SUPPRESSION_INTERVAL*60000;
     }
     
@@ -312,6 +346,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
   // at first. After a while it becomes an error.
   private void retryErrorLog(String message, Throwable e) {
     
+    // Note that we want this to be random because.. FIXME!!!!!
     long absTime = getAlarmService().currentTimeMillis()+ 
       (int)(Math.random()*10000) + 1000;
     
@@ -509,6 +544,7 @@ public class SDRegistrationPlugin extends ComponentPlugin {
 
       // Paranoia code - bug in community code seems to lead to
       // notifications with null communities.
+      // FIXME: This could be a Java assert
       if (ypCommunity == null) {
 	if (log.isDebugEnabled()) {
 	  log.debug("received Community change info for a null community");
@@ -519,13 +555,6 @@ public class SDRegistrationPlugin extends ComponentPlugin {
       if (log.isDebugEnabled()) {
 	log.debug("got Community change info for " +
 		  ypCommunity);
-      }
-
-      if (ypCommunity == null) {
-	if (log.isDebugEnabled()) {
-	  log.debug("received Community change info for a null community");
-	}
-	return;
       }
 
       if (ypCommunity.getName().equals(getCommunityName())) {
