@@ -129,13 +129,9 @@
           class='org.cougaar.pizza.InvitePlugin'
           priority='COMPONENT'
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
-        </component>
-
-        <component
-          name='org.cougaar.pizza.RSVPPlugin'
-          class='org.cougaar.pizza.RSVPPlugin'
-          priority='COMPONENT'
-          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+          <argument>
+            WAIT_FOR_RSVP_DURATION:45000
+          </argument>
         </component>
 
       </agent>
