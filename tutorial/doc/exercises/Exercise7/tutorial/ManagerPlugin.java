@@ -96,6 +96,7 @@ protected void setupSubscriptions() {
   getBlackboardService().publishAdd(what_else_to_code);
   getBlackboardService().publishAdd(makeTask(what_else_to_code));
 
+  // todo: Create one more task like the others to "break the camel's back"
 
 }
 
