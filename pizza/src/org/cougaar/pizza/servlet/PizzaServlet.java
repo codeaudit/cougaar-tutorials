@@ -434,10 +434,7 @@ public class PizzaServlet extends ComponentPlugin {
             "</html>\n");
         out.flush();
       }
-      else if (format == FORMAT_XML) {
-      }
-      else if (format == FORMAT_DATA) {
-      }
+      // FIXME: Add support for FORMAT_XML and FORMAT_DATA
     }
 
     protected String getHtmlForPreferences () {
