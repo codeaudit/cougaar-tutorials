@@ -27,13 +27,12 @@ import org.cougaar.core.mts.MessageAddress;
 
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
-import org.cougaar.core.plugin.PluginBindingSite;
 
 /**
- * Plugin to facilitate simple hooking up of clusters 
+ * Plugin to facilitate simple hooking up of agents 
  * based on identities, roles and relationships
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TutorialHookupPlugin.java,v 1.2 2002-11-08 16:47:06 mthome Exp $
+ * @version $Id: TutorialHookupPlugin.java,v 1.3 2002-11-13 18:59:49 ahelsing Exp $
  */
 public class TutorialHookupPlugin extends ComponentPlugin
 {
@@ -47,43 +46,42 @@ public class TutorialHookupPlugin extends ComponentPlugin
     }
 
   // At setup time, establish info from parameters
-  // Then make copies of all referenced clusters in logplan, 
-  // and copy self to referenced clusters
+  // Then make copies of all referenced agents in logplan, 
+  // and copy self to referenced agents
   public void setupSubscriptions() 
   {
     parseParameters();
 
     // Create 'SELF' and put in my log plan
-    String my_cluster_name = ((PluginBindingSite) getBindingSite())
-	.getAgentIdentifier().getAddress();
+    String my_agent_name = getAgentIdentifier().getAddress();
     Role []my_self_roles = {};
     Organization my_organization = 
-      createOrganization(my_cluster_name, my_self_roles, Organization.SELF_RELATIONSHIP);
+      createOrganization(my_agent_name, my_self_roles, Organization.SELF_RELATIONSHIP);
     getBlackboardService().publishAdd(my_organization);
 
-    // Go over all clusters specified in command line
-    for(int i = 0; i < my_related_clusters.size(); i++) {
+    // Go over all agents specified in command line
+    for(int i = 0; i < my_related_agents.size(); i++) {
 
-      // Put each specified clusters in my logplan
-      String my_related_cluster_name = (String)my_related_clusters.elementAt(i);
+      // Put each specified agents in my logplan
+      String my_related_agent_name = (String)my_related_agents.elementAt(i);
       String my_relationship = (String)my_relationships.elementAt(i);
       Role my_related_role = Role.getRole((String)my_related_roles.elementAt(i));
       Role []my_related_roles = {my_related_role};
-      Organization my_related_cluster =
-         createOrganization(my_related_cluster_name, my_related_roles,
+      Organization my_related_agent =
+         createOrganization(my_related_agent_name, my_related_roles,
 			   my_relationship);
-      getBlackboardService().publishAdd(my_related_cluster);
+      getBlackboardService().publishAdd(my_related_agent);
 
-      // And copy self to all specified related clusters
+      // And copy self to all specified related agents
       Organization my_copy =
-         createOrganization(my_cluster_name, my_related_roles,
+         createOrganization(my_agent_name, my_related_roles,
 			   convertRelationship(my_relationship));
-      copyAssetToCluster(my_copy, my_related_cluster);
+      copyAssetToCluster(my_copy, my_related_agent);
     }
   }
 
   // Flip sense of symmetric relationship
-  // for shipping to other cluster
+  // for shipping to other agent
   private String convertRelationship(String relationship) {
     if (relationship.equals(Organization.SUPPLIER_RELATIONSHIP))
       return Organization.CUSTOMER_RELATIONSHIP;
@@ -135,7 +133,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
   }
 
   /**
-   * Copy the given asset to the given cluster given by name
+   * Copy the given asset to the given agent given by name
    * by creating and publishing an asset transfer
    **/
   private void copyAssetToCluster(Asset the_asset, Asset the_receiving_asset)
@@ -145,7 +143,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
     task.setVerb(new Verb("Dummy"));
     task.setParentTask(task);
 
-    //This makes asset available to the cluster from 01/01/1990 tp 
+    //This makes asset available to the agent from 01/01/1990 tp 
     //01/01/2010
     NewSchedule schedule = 
       getDomainService().getFactory().newSimpleSchedule(TutorialUtils.createDate(1990, 1, 1),
@@ -163,7 +161,7 @@ public class TutorialHookupPlugin extends ComponentPlugin
                                   task, // task (dummy)
                                   the_asset,
                                   schedule,  // schedule(dummy)
-                                  the_receiving_asset, // to_cluster
+                                  the_receiving_asset, // to_agent
                                   est_ar, // estimated_result
 				  Role.AVAILABLE    // role
 				  );
@@ -173,8 +171,8 @@ public class TutorialHookupPlugin extends ComponentPlugin
   }
 
   /**
-   * Parse arguments, related cluster , then relationship, then roles
-   * All separated by slashes, e.g. BossCluster/Superior/TransporationProvider
+   * Parse arguments, related agent , then relationship, then roles
+   * All separated by slashes, e.g. BossAgent/Superior/TransporationProvider
    */
   private void parseParameters()
   {
@@ -182,21 +180,21 @@ public class TutorialHookupPlugin extends ComponentPlugin
       String combined = (String)it.next();
       int index1 = combined.indexOf('/');
       int index2 = combined.indexOf('/', index1+1);
-      String cluster_name = combined.substring(0, index1);
+      String agent_name = combined.substring(0, index1);
       String relationship = combined.substring(index1+1, index2);
       String role = combined.substring(index2+1);
-      my_related_clusters.addElement(cluster_name);
+      my_related_agents.addElement(agent_name);
       my_relationships.addElement(relationship);
       my_related_roles.addElement(role);
 
-      // System.out.println("Cluster = " + cluster_name +
+      // System.out.println("Agent = " + agent_name +
       //     " relationship = " + relationship + " role = " + role);
     }
 
   }
 
-  // Private storage for the information about related clusters
-  private Vector my_related_clusters = new Vector();
+  // Private storage for the information about related agents
+  private Vector my_related_agents = new Vector();
   private Vector my_relationships = new Vector();
   private Vector my_related_roles = new Vector();
 
