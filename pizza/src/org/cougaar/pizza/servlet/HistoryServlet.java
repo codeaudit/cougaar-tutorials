@@ -104,6 +104,7 @@ public class HistoryServlet extends ComponentPlugin {
   Set events = new TreeSet();
   boolean showChangeReport = false;
   boolean sortByUID = false;
+  boolean showDetails = false;
 
   private SimpleDateFormat myDateFormat = new SimpleDateFormat("MM_dd_yyyy_h:mma");
   private Date myDateInstance = new Date();
@@ -497,6 +498,14 @@ public class HistoryServlet extends ComponentPlugin {
 
     }
 
+    buf.append(getRoleSchedule(asset)); 
+
+    return buf.toString();
+  }
+
+  protected String getRoleSchedule (Asset asset) {
+    StringBuffer buf = new StringBuffer();
+
     if (asset.getRoleSchedule().getRoleScheduleElements().hasMoreElements()) {
       buf.append("<br/>with role schedule : "); 
     }
@@ -782,12 +791,29 @@ public class HistoryServlet extends ComponentPlugin {
   protected String getAddedComment (PlanElement planElement) {
     if (planElement instanceof Allocation) {
       Allocation allocation = (Allocation) planElement;
+
       if (allocation.getAsset() == null)
 	return "";
-      else
-	return "Do " + allocation.getTask().getVerb() + 
-	  " with " + getTypeAndItemInfo(allocation.getAsset()) + 
-	  " " + getChangedAssetComment(allocation.getAsset());
+      else {
+	StringBuffer buf = new StringBuffer();
+	buf.append ("Do");
+	buf.append (allocation.getTask().getVerb());
+	buf.append (" with ");
+	buf.append (getTypeAndItemInfo(allocation.getAsset()));
+	buf.append ("<br/>");
+	buf.append (getRoleSchedule(allocation.getAsset()));
+
+	if (allocation.getEstimatedResult () != null) {
+	  AspectValue [] values = allocation.getEstimatedResult().getAspectValueResults();
+	  boolean success = allocation.getEstimatedResult().isSuccess();
+	  String prefix = "<br/>Estimated Allocation Result - " + 
+	    (success ? "<font color=\"green\">success</font>" : "<font color=\"red\">failure</font>");
+	  buf.append (prefix + "<br/>");
+	  buf.append (getAspectValues2 (values));
+	}
+
+	return buf.toString();
+      }
     }
     else if (planElement instanceof Expansion) {
       Expansion expansion = (Expansion) planElement;
@@ -887,6 +913,10 @@ public class HistoryServlet extends ComponentPlugin {
       if (sortByUIDParam != null)
 	sortByUID = sortByUIDParam.equals ("true");
 
+      String showDetailsParam = request.getParameter("showDetails");
+      if (showDetailsParam != null)
+	showDetails = showDetailsParam.equals ("true");
+
       if (sortByUID != oldValue) {
 	if (sortByUID) {
 	  Set events2 = new TreeSet(new Comparator () {
@@ -921,6 +951,40 @@ public class HistoryServlet extends ComponentPlugin {
         response.setContentType("text/html");
 
 	PrintWriter out = response.getWriter();
+	String sortLink = 
+	  "<a href=\"/$" +
+	  encAgentName+
+	  getPath() +
+	  "?";
+
+	if (sortByUID) {
+	  sortLink = sortLink + 
+	    "sortByUID=false" +
+	    "\">sort by time</a>";
+	}
+	else {
+	  sortLink = sortLink + 
+	    "sortByUID=true" +
+	    "\">sort by uid</a>";
+	}
+
+	String detailsLink = 
+	  "<a href=\"/$" +
+	  encAgentName+
+	  getPath() +
+	  "?";
+
+	if (showDetails) {
+	  detailsLink = detailsLink + 
+	    "showDetails=false" +
+	    "\">hide object details</a>";
+	}
+	else {
+	  detailsLink = detailsLink + 
+	    "showDetails=true" +
+	    "\">show object details</a>";
+	}
+
         out.print(
             "<html><head><title>"+
             "History Servlet for " + agentId.getAddress()+
@@ -929,21 +993,13 @@ public class HistoryServlet extends ComponentPlugin {
 	    //	    "<p><center>Pizza Preferences</center>"+
 	    //	    getHtmlForPreferences () +
 	    "<p><center><h1>State History</h1></center>"+
-	    "<p><center>" +
+	    "<p>" +
 
-	    "<a href=\"/$" +
-	    encAgentName+
-	    getPath() +
-	    "?"+
-	    "sortByUID=true"+
-	    "\">sort by uid</a>"+
-
-	    "&nbsp;<a href=\"/$" +
-	    encAgentName+
-	    getPath() +
-	    "?"+
-	    "sortByUID=false"+
-	    "\">sort by time</a></center>"+
+	    "<center>" +
+	    sortLink + 
+	    "&nbsp;" + 
+	    detailsLink +
+	    "</center>"+
 
 	    getHtmlForState() +
 	    "</body>" +
@@ -1013,16 +1069,20 @@ public class HistoryServlet extends ComponentPlugin {
       buf.append("Event");
       buf.append("</th>");
       buf.append("<th>");
-      buf.append("Object");
+      buf.append("Comment");
       buf.append("</th>");
+
+      if (showDetails) {
+	buf.append("<th>");
+	buf.append("Object Details");
+	buf.append("</th>");
+      }
+
       if (showChangeReport) {
 	buf.append("<th>");
 	buf.append("Change Report");
 	buf.append("</th>");
       }
-      buf.append("<th>");
-      buf.append("Comment");
-      buf.append("</th>");
       buf.append("</tr>");
       long lastTime = -1;
       String lastUID = "";
@@ -1043,7 +1103,7 @@ public class HistoryServlet extends ComponentPlugin {
 	  }
 	}
 
-	buf.append(event.toString(colorRowGrey, showChangeReport));
+	buf.append(event.toString(colorRowGrey, showChangeReport, showDetails));
 	buf.append("\n");
       }
       buf.append("</table>");
@@ -1142,16 +1202,15 @@ public class HistoryServlet extends ComponentPlugin {
     }
 
     public String toString () {
-      return toString (true, false);
+      return toString (true, false, false);
     }
 
-    public String toString (boolean odd, boolean showChangeReport) {
+    public String toString (boolean odd, boolean showChangeReport, boolean showDetails) {
       String color = odd ? "#FFFFFF" : "#c0c0c0";
       StringBuffer buf = new StringBuffer();
       buf.append("<tr BGCOLOR=" + color + ">");
       buf.append("<td>" + format.format(new Date(timeStamp)) + "</td>");
       buf.append("<td>" + event + "</td>");
-      buf.append("<td>" + toStringResult + "</td>");
 
       if (showChangeReport) {
 	buf.append ("<td>");
@@ -1167,7 +1226,12 @@ public class HistoryServlet extends ComponentPlugin {
 	buf.append ("<td>" + meaning + "</td>");
       }
 
+      if (showDetails) {
+	buf.append("<td>" + toStringResult + "</td>");
+      }
+
       buf.append("</tr>");
+
       return buf.toString();
     }
 
