@@ -38,7 +38,7 @@ import org.cougaar.planning.ldm.PlanningFactory;
  * DEVELOP
  * TEST
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentExpanderPlugin.java,v 1.9 2003-04-14 14:08:27 dmontana Exp $
+ * @version $Id: DevelopmentExpanderPlugin.java,v 1.10 2003-04-17 12:44:09 dmontana Exp $
  **/
 public class DevelopmentExpanderPlugin extends ComponentPlugin
 {
@@ -193,30 +193,6 @@ public class DevelopmentExpanderPlugin extends ComponentPlugin
     tasks.addElement(t3); // Add the task to the vector of subtasks
 
     new_wf.setTasks(tasks.elements()); // Add all the subtasks to the workflow
-
-    // Add constraints onto the workflow that t1 < t2 < t3
-    Vector constraints = new Vector();
-
-    // End(t1) must be before Start(t2)
-    NewConstraint c1 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
-    c1.setConstrainingTask(t1);
-    c1.setConstrainingAspect(AspectType.END_TIME);
-    c1.setConstrainedTask(t2);
-    c1.setConstrainedAspect(AspectType.START_TIME);
-    c1.setConstraintOrder(Constraint.BEFORE);
-    constraints.addElement(c1);
-
-    // End(t2) must be before Start(t3)
-    NewConstraint c2 = ((PlanningFactory)domainService.getFactory("planning")).newConstraint();
-    c2.setConstrainingTask(t2);
-    c2.setConstrainingAspect(AspectType.END_TIME);
-    c2.setConstrainedTask(t3);
-    c2.setConstrainedAspect(AspectType.START_TIME);
-    c2.setConstraintOrder(Constraint.BEFORE);
-    constraints.addElement(c2);
-
-    // set the constraints on the workflow
-    new_wf.setConstraints(constraints.elements());
   }
 
   /**
