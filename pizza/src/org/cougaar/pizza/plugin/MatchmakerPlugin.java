@@ -89,34 +89,34 @@ public class MatchmakerPlugin extends ComponentPlugin {
     super.load();
 
     myLoggingService = (LoggingService)
-      getBindingSite().getServiceBroker().getService(this, 
-						     LoggingService.class, 
-						     null);
+      getServiceBroker().getService(this, 
+				    LoggingService.class, 
+				    null);
     if (myLoggingService == null) {
       myLoggingService = LoggingService.NULL;
     }
 
     myRegistryQueryService = (RegistryQueryService)
-      getBindingSite().getServiceBroker().getService(this,
-                                                     RegistryQueryService.class,
-                                                     null);
+      getServiceBroker().getService(this,
+				    RegistryQueryService.class,
+				    null);
     if (myRegistryQueryService == null)
       throw new RuntimeException("Unable to obtain RegistryQuery service");
   }
 
   public void unload() {
     if (myRegistryQueryService != null) {
-      getBindingSite().getServiceBroker().releaseService(this,
-                                                         RegistryQueryService.class,
-                                                         myRegistryQueryService);
+      getServiceBroker().releaseService(this,
+					RegistryQueryService.class,
+					myRegistryQueryService);
       myRegistryQueryService = null;
     }
 
     if ((myLoggingService != null) && 
 	(myLoggingService != LoggingService.NULL)) {
-      getBindingSite().getServiceBroker().releaseService(this, 
-							 LoggingService.class,
-							 myLoggingService);
+      getServiceBroker().releaseService(this, 
+					LoggingService.class,
+					myLoggingService);
       myLoggingService = null;
     }
     super.unload();
