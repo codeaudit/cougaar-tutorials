@@ -119,7 +119,8 @@ if [ -z $BOOTSTRAP ]; then
   LIBPATHS="$LIBPATHS:$CIP/sys/log4j.jar"
   LIBPATHS="$LIBPATHS:$CIP/sys/servlet.jar"
   LIBPATHS="$LIBPATHS:$CIP/sys/tomcat_40.jar"
-  LIBPATHS="$LIBPATHS:$CIP/sys/xerces.jar"
+  LIBPATHS="$LIBPATHS:$CIP/sys/xml-apis.jar"
+  LIBPATHS="$LIBPATHS:$CIP/sys/xercesImpl.jar"
   LIBPATHS="$LIBPATHS:$JAR"
   BOOTCL=
 else
