@@ -26,9 +26,7 @@ import org.cougaar.planning.ldm.asset.Asset;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.*;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Collection;
+import java.util.*;
 import org.cougaar.planning.ldm.PlanningFactory;
 
 import tutorial.assets.*;
@@ -38,7 +36,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-08 17:43:25 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-08 22:58:34 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -108,26 +106,25 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     while (task_enum.hasMoreElements()) {
       Task task = (Task)task_enum.nextElement();
       if (task.getPlanElement() == null)
-        allocateTask(task, startMonth(task));
+        allocateTask(task);
     }
 
-  }
-
-  /**
-   * Extract the start month from a task
-   */
-  private int startMonth(Task t) {
-      Preference start_pref = t.getPreference(AspectType.START_TIME);
-      return (int)start_pref.getScoringFunction().getBest().getValue();
   }
 
   /**
    * Find an available ProgrammerAsset for this task.  Task must be scheduled
    * after the month "after"
    */
-  private int allocateTask(Task task, int after) {
-    int end = after;
-      // select an available programmer at random
+  private void allocateTask(Task task) {
+    // extract from preferences
+    Preference ePref = task.getPreference(AspectType.START_TIME);
+    Preference dPref = task.getPreference(AspectType.DURATION);
+    Preference lPref = task.getPreference(AspectType.END_TIME);
+    long earliest = (long) ePref.getScoringFunction().getBest().getValue();
+    int duration = (int) dPref.getScoringFunction().getBest().getValue();
+    long latest = (long) lPref.getScoringFunction().getBest().getValue();
+
+    // select an available programmer at random
     Vector programmers = new Vector(allProgrammers.getCollection());
     boolean allocated = false;
     while ((!allocated) && (programmers.size() > 0)) {
@@ -140,66 +137,53 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
           +asset.getItemIdentificationPG().getItemIdentification());
       System.out.println("Task: "+task);
 
-      Preference duration_pref = task.getPreference(AspectType.DURATION);
-      Preference end_time_pref = task.getPreference(AspectType.END_TIME);
-      Schedule sched = asset.getSchedule();
-      int duration = (int)duration_pref.getScoringFunction().getBest().getValue();
-      int desired_delivery = (int)end_time_pref.getScoringFunction().getBest().getValue();
-
-      // Check the programmer's schedule
-      int earliest = findEarliest(sched, after, duration);
-
-      end = earliest + duration -1;
-
-      // Add the task to the programmer's schedule
-      for (int i=earliest; i<=end; i++) {
-        sched.setWork(i, task);
-      }
-      getBlackboardService().publishChange(asset);
-
-      AllocationResult estAR = null;
-
-      // Create an estimate that reports that we did just what we
-      // were asked to do
-
-      boolean onTime = (end <= desired_delivery);
-      String tmpstr =  " start_month: "+earliest;
-      tmpstr +=  " duration: "+duration;
-      tmpstr +=  " end_month: "+end;
-      tmpstr +=  " desired_delivery: "+desired_delivery;
-      tmpstr +=  " onTime: "+onTime;
-      System.out.println(tmpstr);
+      // find the times and make the allocation result that
+      // assigns these times
+      // if can't fit, go on to next programmer
+      AspectValue[] inter = findInterval (asset, earliest, latest, duration);
+      if (inter == null)
+        continue;
+      AllocationResult estAR =
+        new AllocationResult (1.0, true, inter);
 
       Allocation allocation =
-        ((PlanningFactory)getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task,
+        ((PlanningFactory)getDomainService().getFactory("planning")).
+          createAllocation(task.getPlan(), task,
                                   asset, estAR, Role.ASSIGNED);
 
       getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
-    return end;
   }
 
   /**
-   * find the earliest available time in the schedule.
-   * @param sched the programmer's schedule
-   * @param earliest the earliest month to look for
-   * @param duration the number of months we want to schedule
+   * Find the three-month interval starting either the beginning of
+   * next month or the end of the last task on the asset, and
+   * return an array of aspect values indicating the time interval
    */
-  private int findEarliest(Schedule sched, int earliest, int duration) {
-    boolean found = false;
-    int month = earliest;
-    while (!found) {
-      found = true;
-      for (int i=month; i<month+duration; i++) {
-        if (sched.getWork(i) != null) {
-          found = false;
-          month = i+1;
-          break;
-        }
-      }
+  private AspectValue[] findInterval (Asset asset, long earliest,
+                                      long latest, int durationMonths) {
+    // figure out time interal, inserting at earliest possible time
+    RoleSchedule sched = asset.getRoleSchedule();
+    long start = sched.isEmpty() ? earliest :
+                 Math.max (earliest, sched.getEndTime());
+    GregorianCalendar cal = new GregorianCalendar();
+    cal.setTime (new Date (start));
+    cal.add (GregorianCalendar.MONTH, durationMonths);
+    long end = cal.getTime().getTime();
+    String str = " start: " + new Date (start) + " end: " + new Date (end);
+
+    // check that does not violate constraint
+    if (end > latest) {
+      System.out.println (" Cannot schedule with" + str);
+      return null;
     }
-    return month;
+
+    // tell the dates chosen and return the aspect values
+    System.out.println (str);
+    return new AspectValue[] {
+      AspectValue.newAspectValue (AspectType.START_TIME, start),
+      AspectValue.newAspectValue (AspectType.END_TIME, end) };
   }
 
 }

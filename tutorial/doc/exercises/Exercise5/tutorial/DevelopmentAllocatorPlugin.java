@@ -40,7 +40,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2003-04-08 19:05:40 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.5 2003-04-08 22:58:33 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -162,7 +162,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     else {
       // startDate should be first day of next month
       GregorianCalendar cal = new GregorianCalendar();
-      cal.roll (GregorianCalendar.MONTH, true);
+      cal.add (GregorianCalendar.MONTH, 1);
       GregorianCalendar cal2 = new GregorianCalendar();
       cal2.clear();
       cal2.set (GregorianCalendar.YEAR, cal.get (GregorianCalendar.YEAR));
@@ -173,7 +173,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     // set end time to be three months later
     GregorianCalendar cal3 = new GregorianCalendar();
     cal3.setTime (startDate);
-    cal3.roll (GregorianCalendar.MONTH, 3);
+    cal3.add (GregorianCalendar.MONTH, 3);
     Date endDate = cal3.getTime();
 
     // tell the dates chosen

@@ -40,7 +40,7 @@ import tutorial.assets.*;
  * This COUGAAR Plugin subscribes to tasks in a workflow and allocates
  * the workflow sub-tasks to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.7 2003-04-08 19:05:40 dmontana Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.8 2003-04-08 22:58:33 dmontana Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -62,40 +62,41 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     return domainService;
   }
 
-  // todo:  add instance variables to hold subscriptions
-
-
-
-
-
+  private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
+  private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
 
   /**
-   * todo: Predicate matching all ProgrammerAssets
+   * Predicate matching all ProgrammerAssets
    */
-
-
-
-
-
-
+  private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      return o instanceof ProgrammerAsset;
+    }
+  };
 
   /**
-   * todo: Predicate that matches all CODE tasks
+   * Predicate that matches all Test tasks
    */
-
-
-
-
+  private UnaryPredicate codeTaskPredicate = new UnaryPredicate() {
+    public boolean execute(Object o) {
+      if (o instanceof Task)
+      {
+        Task task = (Task)o;
+        return task.getVerb().equals(Verb.getVerb("CODE"));
+      }
+      return false;
+    }
+  };
 
 
   /**
-   * todo:  Establish subscription for tasks and assets
-   *        Store subscriptions in the instance variables above
+   * Establish subscription for tasks and assets
    **/
   public void setupSubscriptions() {
-
-
-
+    allProgrammers =
+      (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
+    allCodeTasks =
+      (IncrementalSubscription)getBlackboardService().subscribe(codeTaskPredicate);
   }
 
   /**
@@ -104,11 +105,13 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
   public void execute() {
     System.out.println("DevelopmentAllocatorPlugin::execute");
 
-    // Plan any new software development tasks
-    // todo:  Allocate new tasks using the allocateTask fn later in this file
-
-
-
+    // process unallocated tasks
+    Enumeration task_enum = allCodeTasks.elements();
+    while (task_enum.hasMoreElements()) {
+      Task task = (Task)task_enum.nextElement();
+      if (task.getPlanElement() == null)
+        allocateTask(task);
+    }
   }
 
   /**
@@ -117,8 +120,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    */
   private void allocateTask(Task task) {
     // select an available programmer at random
-    // todo:  get a vector containing the programmers
-    Vector programmers = null;// get all of the programmers from the subscription
+    Vector programmers = new Vector(allProgrammers.getCollection());
     boolean allocated = false;
     while ((!allocated) && (programmers.size() > 0)) {
       int stuckee = (int)Math.floor(Math.random() * programmers.size());
@@ -135,8 +137,12 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       AllocationResult estAR =
         new AllocationResult (1.0, true, findInterval (asset));
 
-      // todo: Create an allocation and put it on the Blackboard
+      Allocation allocation =
+        ((PlanningFactory)getDomainService().getFactory("planning")).
+          createAllocation(task.getPlan(), task,
+                                  asset, estAR, Role.ASSIGNED);
 
+      getBlackboardService().publishAdd(allocation);
       allocated = true;
     }
   }
@@ -154,10 +160,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
       // startDate should be right after last task assigned
       startDate = new Date (sched.getEndTime());
     else {
-
       // startDate should be first day of next month
       GregorianCalendar cal = new GregorianCalendar();
-      cal.roll (GregorianCalendar.MONTH, true);
+      cal.add (GregorianCalendar.MONTH, 1);
       GregorianCalendar cal2 = new GregorianCalendar();
       cal2.clear();
       cal2.set (GregorianCalendar.YEAR, cal.get (GregorianCalendar.YEAR));
@@ -168,7 +173,7 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
     // set end time to be three months later
     GregorianCalendar cal3 = new GregorianCalendar();
     cal3.setTime (startDate);
-    cal3.roll (GregorianCalendar.MONTH, 3);
+    cal3.add (GregorianCalendar.MONTH, 3);
     Date endDate = cal3.getTime();
 
     // tell the dates chosen
