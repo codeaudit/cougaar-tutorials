@@ -23,12 +23,9 @@ package org.cougaar.pizza.plugin;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.planning.ldm.PlanningFactory;
-import org.cougaar.planning.ldm.asset.Asset;
-import org.cougaar.planning.ldm.asset.NewItemIdentificationPG;
-import org.cougaar.planning.ldm.asset.ItemIdentificationPG;
 import org.cougaar.planning.service.PrototypeRegistryService;
-
-import org.cougaar.pizza.asset.*;
+import org.cougaar.pizza.asset.PizzaAsset;
+//import org.cougaar.pizza.util.PGCreator;
 
 /**
  * This COUGAAR Plugin creates and publishes Pizza Asset objects.
@@ -70,7 +67,7 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
   }
 
   /**
-   * Used for initialization to populate the Blackboard with ProgrammerAsset objects
+   * Used for initialization to register the PizzaAsset prototype 
    */
   protected void setupSubscriptions() {
 
@@ -89,50 +86,18 @@ public class PizzaPrototypePlugin extends ComponentPlugin {
     getPrototypeRegistryService().cachePrototype("pizza", new_prototype);
 
     // Create a Veggie Pizza Asset based on the existing pizza prototype
-    PizzaAsset veggie_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    veggie_pizza_asset.addOtherPropertyGroup(makeAVeggiePG(true));
-    veggie_pizza_asset.setItemIdentificationPG(makeAItemIdentificationPG("Veggie Pizza"));
-    getBlackboardService().publishAdd(veggie_pizza_asset);
-//    System.out.println("publishAdding veggie pizza asset: "+ veggie_pizza_asset +
-//        " uid is: " + veggie_pizza_asset.getUID());
+    //TODO: Lora put this in the invite plugin
+    //PizzaAsset veggie_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
+    //veggie_pizza_asset.addOtherPropertyGroup(PGCreator.makeAVeggiePG(factory, true));
+    //veggie_pizza_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Veggie Pizza"));
+    //getBlackboardService().publishAdd(veggie_pizza_asset);
 
     // Create a Meat Pizza Asset based on the existing pizza prototype
-    PizzaAsset meat_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
-    meat_pizza_asset.addOtherPropertyGroup(makeAMeatPG(true));
-    meat_pizza_asset.setItemIdentificationPG(makeAItemIdentificationPG("Meat Pizza"));
-    getBlackboardService().publishAdd(meat_pizza_asset);
-//    System.out.println("publishAdding meat pizza asset: " + meat_pizza_asset +
-//        " uid is: " + meat_pizza_asset.getUID());
-  }
-
-  /**
-   * Create and populate a Veggie property group
-   */
-  private VeggiePG makeAVeggiePG(boolean veggieOnly) {
-    NewVeggiePG new_veggie_pg = (NewVeggiePG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("VeggiePG");
-    new_veggie_pg.setVeggieOnly(veggieOnly);
-    return new_veggie_pg;
-  }
-
-  /**
-   * Create and populate a Meat property group
-   */
-  private MeatPG makeAMeatPG(boolean meatOK) {
-    NewMeatPG new_meat_pg = (NewMeatPG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("MeatPG");
-    new_meat_pg.setMeatOK(meatOK);
-    return new_meat_pg;
-  }
-
-  /**
-   * Create and populate an ItemIdentification property group
-   */
-  private ItemIdentificationPG makeAItemIdentificationPG(String name) {
-    NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
-      ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
-    new_item_id_pg.setItemIdentification(name);
-    return new_item_id_pg;
+    //PizzaAsset meat_pizza_asset = (PizzaAsset) factory.createInstance("pizza");
+    //meat_pizza_asset.addOtherPropertyGroup(PGCreator.makeAMeatPG(factory, true));
+    //meat_pizza_asset.setItemIdentificationPG(PGCreator.makeAItemIdentificationPG(factory, "Meat Pizza"));
+    //getBlackboardService().publishAdd(meat_pizza_asset);
+    // TODO: End of new stuff for invite plugin
   }
 
   /**
