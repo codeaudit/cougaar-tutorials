@@ -1,6 +1,6 @@
 
-<!--
-Additional PSPs loaded by PSP Launcher
+<!-- 
+Additional PSPs loaded by PSP Launcher 
   (in addition to basic SLP services such as SLP_Echo, SLP_Proxy, etc).
  Allows a user to customize the PSPs loaded on a per-Node or
  per-Cluster basis.
@@ -10,14 +10,14 @@ Additional PSPs loaded by PSP Launcher
       is copied to the Node's running directory then that copy
       will be used instead (see org.cougaar.util.ConfigFileFinder).
    (AND/OR)
-   2) In a cluster "ABC"'s "ABC.ini" an optional "file=" parameter can
-      be specified for the PlanServerPlugIn, e.g.
+   2) In a cluster "ABC"'s "ABC.ini" an optional "file=" parameter can 
+      be specified for the PlanServerPlugIn, e.g. 
        plugin = org.cougaar.lib.planserver.PlanServerPlugIn(file=mypsps.xml)
 -->
 
 <object type="java.util.Vector">
 
-  <!-- Core PSPs
+  <!-- Core PSPs  
        Keep the old "alpine/demo" paths, even though these are now core.
   -->
   <element type="org.cougaar.lib.planserver.NamedPSP">
@@ -50,7 +50,6 @@ Additional PSPs loaded by PSP Launcher
   </element>
 
   <!-- ALPINE PSPs -->
-  <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_LogPlanProvider</Classname>
     <PSPName>alpine/demo/DEBUG.PSP</PSPName>
@@ -111,14 +110,11 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_ClusterRelationships</Classname>
     <PSPName>alpine/demo/CLUSTERS_R.PSP</PSPName>
   </element>
-  -->
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.alert.PSP_HTMLAlerts</Classname>
     <PSPName>alpine/demo/HTMLALERT.PSP</PSPName>
   </element>
--->
-<!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_Map</Classname>
     <PSPName>alpine/demo/MAP.PSP</PSPName>
@@ -138,7 +134,6 @@ Additional PSPs loaded by PSP Launcher
     <PSPName>alpine/demo/REPORT.PSP</PSPName>
   </element>
 -->
-<!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.xmlservice.PSP_EquipmentTransport</Classname>
     <PSPName>alpine/demo/EQUIPMENTTRANSPORT.PSP</PSPName>
@@ -163,14 +158,12 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_UIAssets</Classname>
     <PSPName>alpine/demo/UIASSETS.PSP</PSPName>
   </element>
--->
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>com.sra.ui.PSP_Demand</Classname>
     <PSPName>alpine/demo/com/sra/ui/DEMAND.PSP</PSPName>
   </element>
 -->
-<!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.perturbation.asset.PSP_AssetPerturbation</Classname>
     <PSPName>alpine/demo/ASSET_PERTURBATION.PSP</PSPName>
@@ -179,7 +172,6 @@ Additional PSPs loaded by PSP Launcher
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_InputTaskAssetVolume</Classname>
     <PSPName>alpine/demo/TRANSPORT_VOLUME.PSP</PSPName>
   </element>
--->
 <!--
   <element type="org.cougaar.lib.planserver.NamedPSP">
     <Classname>org.cougaar.domain.mlm.ui.psp.plan.PSP_FailedAllocation</Classname>

@@ -27,6 +27,8 @@ set LIBPATHS=%COUGAAR_INSTALL_PATH%\lib\core.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\glm.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\lib\planserver.jar
 set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\xerces.jar
+set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\log4j.jar
+set LIBPATHS=%LIBPATHS%;%COUGAAR_INSTALL_PATH%\sys\j2ee.jar
 set LIBPATHS=.;%LIBPATHS%
 
 REM pass in "NodeName" to run a specific named Node
