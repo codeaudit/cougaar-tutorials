@@ -164,9 +164,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    *  find the task, if any, that this task must follow
    */
   private Task findConstraining (Task task) {
-    Enumeration enum = allExpansions.elements();
-    while (enum.hasMoreElements()) {
-      Expansion exp = (Expansion) enum.nextElement();
+    Enumeration en = allExpansions.elements();
+    while (en.hasMoreElements()) {
+      Expansion exp = (Expansion) en.nextElement();
       Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
       while (enum2.hasMoreElements()) {
         Constraint c = (Constraint) enum2.nextElement();

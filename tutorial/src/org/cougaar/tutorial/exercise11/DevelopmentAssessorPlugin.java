@@ -106,9 +106,9 @@ public class DevelopmentAssessorPlugin extends ComponentPlugin
 
     // if not a vacation, then remove it
     RoleSchedule sched = asset.getRoleSchedule();
-    Enumeration enum = sched.getRoleScheduleElements();
-    while (enum.hasMoreElements()) {
-      Allocation alloc = (Allocation) enum.nextElement();
+    Enumeration en = sched.getRoleScheduleElements();
+    while (en.hasMoreElements()) {
+      Allocation alloc = (Allocation) en.nextElement();
       if (! alloc.getTask().getVerb().equals (Verb.get("VACATION")))
 	blackboard.publishRemove (alloc);
     }

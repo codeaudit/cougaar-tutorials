@@ -49,7 +49,7 @@ import java.util.Vector;
  * This COUGAAR Plugin subscribes to tasks and allocates
  * to programmer assets.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.3 2004-01-21 17:25:50 jwong Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2004-11-29 19:44:34 mthome Exp $
  **/
 public class DevelopmentAllocatorPlugin extends ComponentPlugin
 {
@@ -161,9 +161,9 @@ public class DevelopmentAllocatorPlugin extends ComponentPlugin
    *  find the task, if any, that this task must follow
    */
   private Task findConstraining (Task task) {
-    Enumeration enum = allExpansions.elements();
-    while (enum.hasMoreElements()) {
-      Expansion exp = (Expansion) enum.nextElement();
+    Enumeration en = allExpansions.elements();
+    while (en.hasMoreElements()) {
+      Expansion exp = (Expansion) en.nextElement();
       Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
       while (enum2.hasMoreElements()) {
         Constraint c = (Constraint) enum2.nextElement();
