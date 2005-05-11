@@ -744,11 +744,11 @@ public class HistoryServlet extends ComponentPlugin {
     }
 
     int numShown = 0;
-    for (Enumeration enum = asset.getRoleSchedule().getRoleScheduleElements();
-         enum.hasMoreElements(); numShown++) {
+    for (Enumeration en = asset.getRoleSchedule().getRoleScheduleElements();
+         en.hasMoreElements(); numShown++) {
       buf.append("<font size=small color=mediumblue>" +
           "<li>");
-      Object elem = enum.nextElement();
+      Object elem = en.nextElement();
       if (numShown >= maxRoleScheduleElements) {
         buf.append("... (more than ");
         buf.append(maxRoleScheduleElements);
@@ -762,7 +762,7 @@ public class HistoryServlet extends ComponentPlugin {
         } else if (elem instanceof PlanElement) {
           buf.append(getAddedPEComment((PlanElement) elem));
         } else {
-          buf.append(enum.nextElement());
+          buf.append(en.nextElement());
         }
       }
 

@@ -202,11 +202,11 @@ public class PizzaPreferenceServlet extends BaseServletComponent {
 
           buf.append("<center>");
           buf.append("<table border=\"1\"><tr><th>Servings</th><th>Type</th><th>Ordered From</th><th>Status</th></tr>");
-          Enumeration enum = exp.getWorkflow().getTasks();
+          Enumeration en = exp.getWorkflow().getTasks();
 	  // Loop over the sub-tasks
-          while(enum.hasMoreElements()) {
+          while(en.hasMoreElements()) {
             buf.append("<tr>");
-            Task t = (Task)enum.nextElement();
+            Task t = (Task)en.nextElement();
             buf.append("<td>");
 	    // Number of servings of pizzas ordered
             double qty = t.getPreferredValue(AspectType.QUANTITY);
