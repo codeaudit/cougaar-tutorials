@@ -71,8 +71,11 @@ public class ScheduleServlet
 		       HttpServletResponse response) throws IOException, ServletException
   {
 
+    response.setContentType("text/html");
     // todo:  get the PrintWriter which sends data to HTTP
 
+
+    out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
     try
       {
 	System.out.println("Servlet called." );
@@ -86,6 +89,7 @@ public class ScheduleServlet
 	System.out.println(ex);
 	out.flush();
       }
+    out.println("</body></html>");
 
   }
 

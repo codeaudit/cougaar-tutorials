@@ -67,8 +67,10 @@ public class ScheduleServlet extends HttpServlet
 		       HttpServletResponse response) throws IOException, ServletException
   {
 
+    response.setContentType("text/html");
     PrintWriter out = response.getWriter();
     ArrayList failedAllocs = new ArrayList();
+    out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
 
     try
       {
@@ -88,6 +90,7 @@ public class ScheduleServlet extends HttpServlet
 	System.out.println(ex);
 	out.flush();
       }
+
     out.println ("<br><b>Failed Allocations</b><br>");
     out.println("<table border=1>");
     for (int i = 0; i < failedAllocs.size(); i++) {
@@ -98,6 +101,7 @@ public class ScheduleServlet extends HttpServlet
 		   "</td></tr>");
     }
     out.println("</table>");
+    out.println("</body></html>");
     out.flush();
   }
 

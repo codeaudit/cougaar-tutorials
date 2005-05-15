@@ -68,7 +68,9 @@ public class ScheduleServlet extends HttpServlet
 	        HttpServletResponse response) throws IOException, ServletException
 	{
 
+		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
+		out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
 
 		try
 		{
@@ -88,6 +90,7 @@ public class ScheduleServlet extends HttpServlet
 			System.out.println(ex);
 			out.flush();
 		}
+		out.println("</body></html>");
 
 	}
 

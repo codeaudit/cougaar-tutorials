@@ -68,7 +68,9 @@ public class ScheduleServlet extends HttpServlet
 		       HttpServletResponse response) throws IOException, ServletException
   {
 
+    response.setContentType("text/html");
     PrintWriter out = response.getWriter();
+    out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
     ArrayList failedAllocs = new ArrayList();
 
     try
@@ -99,6 +101,7 @@ public class ScheduleServlet extends HttpServlet
 		   "</td></tr>");
     }
     out.println("</table>");
+    out.println("</body></html>");
     out.flush();
   }
 
