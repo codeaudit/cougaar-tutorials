@@ -1,0 +1,12 @@
+<?xml version='1.0'?>
+
+<!--
+This file contains the "hello world" society definition.
+-->
+<society>
+  <node name="Node1">
+    <agent name="A">
+      <component class="org.cougaar.demo.hello.HelloPlugin"/>
+    </agent>
+  </node>
+</society>

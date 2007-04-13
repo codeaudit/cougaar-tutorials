@@ -1,0 +1,218 @@
+<html>
+<head><title>Cougaar "Hello World" Demo</title></head>
+<body>
+<h1>Cougaar "Hello World" Demo</h1>
+<p>
+This module contains the Cougaar "Hello World" demo.
+<p>
+This is a bare-minimum Cougaar demo.  A single plugin simply prints "Hello, world!".
+<p>
+For additional information and demos, please see the Cougaar Overview Slides:<br>
+&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt">http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt</a>
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#contents">Contents</a></li><p>
+  <li><a href="#installation">Installation</a></li><p>
+  <li><a href="#usage">Usage</a></li><p>
+  <li><a href="#support">Support</a></li><p>
+</ul>
+
+<p>
+<hr>
+<p>
+
+<h2>Contents:</h2>
+
+<ol>
+  <li><a href="../configs/HelloSociety.xml">configs/HelloSociety.xml</a>:<br>
+  The society configuration file.
+  </li><p>
+
+  <li><a href="../run/SingleNodeRuntime.xml">run/SingleNodeRuntime.xml</a>:<br>
+  The runtime configuration file.
+  </li><p>
+
+  <li><a href="../run/logging.props">run/logging.props</a>:<br>
+  The Log4j logging configuration file.
+  </li><p>
+
+  <li><a href="../lib/hello.jar">lib/hello.jar</a>:<br>
+  The compiled source code.
+  </li><p>
+
+  <li><a href="../src/org/cougaar/demo/hello/HelloPlugin.java">src/org/cougaar/demo/hello/HelloPlugin.java</a>:<br>
+  The source code.
+  </li><p>
+
+  <li><a href="../build.xml">build.xml</a>:<br>
+  An Ant script to recompile the code.
+  </li><p>
+</ol>
+<p>
+
+<h2>Installation:</h2>
+
+<ol>
+  <li>Verify that Java 1.5 or 1.6 is installed and is on the PATH:<br>
+  &nbsp;&nbsp;<code>java -version</code>
+  </li><p>
+
+  <li>Create a Cougaar install directory, e.g.:<br>
+  &nbsp;&nbsp;<code>mkdir /usr/local/cougaar</code><br>
+  Set this directory as the COUGAAR_INSTALL_PATH environment variable:<br>
+  &nbsp;&nbsp;<code>export COUGAAR_INSTALL_PATH=/usr/local/cougaar</code><br>
+  <p>
+  This directory can optionally be shared and read-only.<br>
+  </li><p>
+
+  <li>Download Cougaar 12.2 or later.  The 12.2 release can be found at:<br>
+  &nbsp;&nbsp;<a href="http://cougaar.org/frs/?group_id=17&release_id=132"
+    >http://cougaar.org/frs/?group_id=17&release_id=132</a><br>
+  Or download the latest nightly build from:<br>
+  &nbsp;&nbsp;<a href="http://build.cougaar.org/auto/HEAD/latest_success/"
+    >http://build.cougaar.org/auto/HEAD/latest_success/</a>
+  </li><p>
+
+  <li>Unzip the "cougaar.zip" and "cougaar-support.zip" into the 
+  COUGAAR_INSTALL_PATH.
+  </li><p>
+
+  <li>Optionally add the "$COUGAAR_INSTALL_PATH/bin/cougaar" script to the
+  command-line search PATH:<br>
+  &nbsp;&nbsp;<code>export PATH=$COUGAAR_INSTALL_PATH/bin:$PATH</code><br>
+  <p>
+  This can also be done by adding the following line to your "~/.bashrc":<br>
+  &nbsp;&nbsp;<code>function cougaar() { $COUGAAR_INSTALL_PATH/bin/cougaar $* ; }</code>
+  </li><p>
+
+  <li>Create a per-user Cougaar "user" directory, e.g.:<br>
+  &nbsp;&nbsp;<code>mkdir ~/cougaar</code><br>
+  <p>
+  Applications and demos will go into this directory.
+  <p>
+  This directory can be the same as the COUGAAR_INSTALL_PATH, but (in general)
+  it is cleaner to keep these directories separate.
+  <p>
+  The Cougaar "user" directory will be the Eclipse "workspace" directory.
+  </li><p>
+
+  <li>Move the "hello/" directory into your Cougaar "user" directory.
+  <p>
+  If you're using the "cougaar-hello.zip", then unzip this zip into your
+  Cougaar "user" directory.  The "cougaar-hello.zip" is created by the nightly
+  build:<br>
+  &nbsp;&nbsp;<a href="http://build.cougaar.org/auto/HEAD/latest_success/"
+    >http://build.cougaar.org/auto/HEAD/latest_success/</a>
+  <p>
+  If you're using CSV, then checkout the "hello" module into your 
+  Cougaar "user" directory:<br>
+  &nbsp;&nbsp;<code>cvs -d :ext:cougaar.org:/cvsroot/tutorials co hello</code><br>
+  </li><p>
+
+  <li>Set the COUGAAR_SOCIETY_PATH environment variable:<br>
+  &nbsp;&nbsp;<code>export COUGAAR_SOCIETY_PATH=~/cougaar/hello</code>
+  <p>
+  The COUGAAR_SOCIETY_PATH will be the Eclipse "project" directory.
+  </li><p>
+
+  <li>Set the COUGAAR_RUNTIME_PATH environment variable:<br>
+  &nbsp;&nbsp;<code>export COUGAAR_RUNTIME_PATH=$COUGAAR_SOCIETY_PATH/run</code><br>
+  <p>
+  This directory will contain the "runtime" XML file, which defines the Java
+  System Properties, and will contain any output logs and other per-run temporary
+  files.
+  <p>
+  For simplicity, this directory is packaged as the "run/" subdirectory of the
+  COUGAAR_SOCIETY_PATH.  Users can move and rename this "run" directory to any
+  location, so long as the COUGAAR_RUNTIME_PATH environment variable is set
+  correctly and the directory is writable.
+  <p>
+  The COUGAAR_RUNTIME_PATH will be the Eclipse "working" directory.
+  </li><p>
+
+  <li>Compile the source code to create the "lib/hello.jar":<br>
+  &nbsp;&nbsp;<code>ant dist</code><br>
+  <p>
+  If you've unzipped the "cougaar-hello.zip" then this step is optional.  The
+  zip includes a pre-compiled "lib/hello.jar".
+  </li><p>
+
+</ol>
+
+<h2>Usage:</h2>
+
+<ul>
+
+  <li><b>From the command line:</b>
+  <p>
+  Run:<br>
+  &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+  &nbsp;&nbsp;<code>cougaar 
+    -v 
+    <a href="../configs/HelloSociety.xml">$COUGAAR_SOCIETY_PATH/configs/HelloSociety.xml</a> 
+    <a href="../run/SingleNodeRuntime.xml">SingleNodeRuntime.xml</a>
+  </code>
+  <p>
+  This should print:<br>
+  &nbsp;&nbsp;<code>[HelloPlugin] - A: Hello, world!</code><br>
+  <p>
+  To stop the run, press "CTRL-C".
+  </li><p>
+
+  <li><b>From Eclipse (or any other IDE):</b>
+  <p>
+  We are working to enhance the <a href="http://cougaaride.cougaar.org/">Cougaar Eclipse Plugin</a>
+  to simplify the configuration of Cougaar within Eclipse.
+  <p>
+  For now, Eclipse can be configured to run Cougaar just like any other Java application.
+  <p>
+  As noted above, the important paths are:<ul>
+    <li>The Eclipse "workspace" directory is the parent directory of the
+        $COUGAAR_SOCIETY_PATH</li>
+    <li>The Eclipse "project" directory is the $COUGAAR_SOCIETY_PATH</li>
+    <li>The Eclipse "working" directory is the $COUGAAR_RUNTIME_PATH</li>
+  </ul>
+  <p>
+  The required Java system properties are illustrated in the above command-line
+  "cougaar -v" output:
+  <p>
+  <code>java<code><br>
+  &nbsp;&nbsp; <i># specified on the command line:</i><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.society.file=$COUGAAR_SOCIETY_PATH/configs/HelloSociety.xml<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.runtime.file=SingleNodeRuntime.xml<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># the first node specified in <a href="../configs/HelloSociety.xml">HelloSociety.xml</a></i><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.node.name=Node1<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># extracted from <a href="../run/SingleNodeRuntime.xml">SingleNodeRuntime.xml</a></i><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.society.xsl.param.template=single_node<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.core.logging.config.filename=logging.props<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># our environment variables</i><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.install.path=$COUGAAR_INSTALL_PATH<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.society.path=$COUGAAR_SOCIETY_PATH<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.runtime.path=$COUGAAR_RUNTIME_PATH<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># boilerplate</i><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.core.node.InitializationComponent=XML<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.core.persistence.verifyJavaIOPatch=false<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># the classpath, which <b>ALWAYS ONLY</b> contains the Cougaar jar locator</i><br>
+  &nbsp;&nbsp; <code>-Djava.class.path=$COUGAAR_INSTALL_PATH/lib/bootstrap.jar<code><br>
+  &nbsp;&nbsp; <br>
+  &nbsp;&nbsp; <i># the "main()" class</i><br>
+  &nbsp;&nbsp; <code>org.cougaar.bootstrap.Bootstrapper<code><br>
+</li></p>
+
+</ul>
+
+<h2>Support:</h2>
+If you have any questions or comments, please:<ol>
+  <li>Subscribe to the cougaar-developers mailing list:<br>
+       &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
+  <li>Then send email to:<br>
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+</ol>
+</body>
