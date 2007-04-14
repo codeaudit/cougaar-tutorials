@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<!--
+Metrics-enabled "ping" with reduced logging.
+-->
+<runtime>
+
+  <!-- Enable metrics, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="single_debug"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+
+  <!-- Turn off "+/-" logging on every message send/receive -->
+  <vm_parameter name="-Dorg.cougaar.core.agent.quiet" value="true"/>
+
+</runtime>

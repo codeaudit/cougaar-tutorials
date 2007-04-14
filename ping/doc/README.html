@@ -1,0 +1,279 @@
+<html>
+<head><title>Cougaar "Ping" Demos</title></head>
+<body>
+<h1>Cougaar "Ping" Demos</h1>
+<p>
+This module contains the Cougaar "ping" demos.
+<p>
+There are five demos:
+<ol>
+  <li>A basic "ping" test, where agent "A" sends a ping message to agent "B"
+  once every 5 seconds.</li><p>
+
+  <li>A two-node "ping" test, which is identical to the above test, except
+  the agents run in different JVMs.</li><p>
+
+  <li>A two-host "ping" test, which simply distributes the above JVMs
+  (and their agents) across two hosts.</li><p>
+
+  <li>A single-node "ping" benchmark, where the the agents send ping messages
+  as fast as possible.  The "messages-per-second" throughput can be viewed
+  by accessing a browser page.</li><p>
+
+  <li>A two-node "ping" profiled benchmark, where detailed performance metrics
+  are logged every 10 seconds.  Logged metrics include the throughput,
+  inter-agent traffic matrix, and cpu load</li><p>
+
+</ol>
+<p>
+For additional information, please see the Cougaar Overview Slides:<br>
+&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt">http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt</a>.
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#contents">Contents</a></li><p>
+  <li><a href="#installation">Installation</a></li><p>
+  <li><a href="#usage">Usage</a></li><p>
+  <li><a href="#support">Support</a></li><p>
+</ul>
+
+<p>
+<hr>
+<p>
+
+<h2>Contents:</h2>
+
+<ol>
+  <li><a href="../configs/">configs/*.xml</a>:<br>
+  The society files.
+  </li><p>
+
+  <li><a href="../run/">run/*.xml</a>:<br>
+  The runtime files.
+  </li><p>
+
+  <li><a href="../run/logging.props">run/logging.props</a>:<br>
+  The Log4j logging configuration file.
+  </li><p>
+
+  <li><i>Ping source code</i>:<br>
+  The Java source code for the "ping" demo is included in the "cougaar-src.zip" download,
+  or available online:<ul>
+    <li>A "ping sender" (<a
+      href="http://cougaar.cougaar.org/software/12.2/javadoc/core/doc/api/org/cougaar/core/relay/PingSender.html"
+      >javadoc</a>, <a
+      href="http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/core/src/org/cougaar/core/relay/PingSender.java?rev=HEAD&cvsroot=core"
+      >code</a>)</li>
+    <li>A "ping receiver" (<a
+      href="http://cougaar.cougaar.org/software/12.2/javadoc/core/doc/api/org/cougaar/core/relay/PingReceiver.html"
+      >javadoc</a>, <a
+      href="http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/core/src/org/cougaar/core/relay/PingReceiver.java?rev=HEAD&cvsroot=core"
+      >code</a>)</li>
+    <li>A "ping servlet" (<a
+      href="http://cougaar.cougaar.org/software/12.2/javadoc/core/doc/api/org/cougaar/core/relay/PingServlet.html"
+      >javadoc</a>, <a
+      href="http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/core/src/org/cougaar/core/relay/PingServlet.java?rev=HEAD&cvsroot=core"
+      >code</a>)</li>
+  </ul>
+  </li><p>
+</ol>
+<p>
+
+<h2>Installation:</h2>
+
+Please follow the same installation steps as in the "Hello World" example,
+substituting "ping" for "hello".
+<p>
+The "Hello World" README is available online at:<br>
+&nbsp;&nbsp; <a href=
+  "http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation"
+  >http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation</a><br>
+and in the "cougaar-hello.zip" produced by the nightly build:<br>
+&nbsp;&nbsp; <a href=
+  "http://build.cougaar.org/auto/HEAD/latest_success/"
+  >http://build.cougaar.org/auto/HEAD/latest_success/</a><br>
+<p>
+Unlike the "Hello World" demo, the ping source code and compiled classes are
+included in the Cougaar release, in the "lib/core.jar".
+
+<h2>Usage:</h2>
+
+There are five demos:
+<ol>
+
+  <li><b>A basic "ping" test</b>:
+  <ol>
+    <li>Run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cougaar 
+      <a href="configs/ping/PingBasicSociety.xml">PingBasicSociety.xml</a>
+      <a href="configs/ping/PingBasicRuntime.xml">PingBasicRuntime.xml</a>
+    </code><br>
+    This should print:<br>
+    &nbsp;&nbsp;<code>[PingSender] - A: Sending ping 0 to B</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - +-</code><br>
+    &nbsp;&nbsp;<code>[PingReceiver] - B: Responding to ping 0 from A</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - +-</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - A: Received response 0 from B</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - A: Will send ping 1 to B in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - .</code><br>
+    &nbsp;&nbsp;...<br>
+    </li><p>
+
+    <li>Optionally view the servlet at<br>
+    &nbsp;&nbsp;<a href="http://localhost:8800/$A/ping"
+      >http://localhost:8800/$A/ping</a>
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A two-node "ping" test</b>:
+  <ol>
+    <li>In one console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="configs/ping/PingTwoNodesSociety.xml">PingTwoNodesSociety.xml</a>
+      <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+      Node1</code>
+    </li><p>
+
+    <li>In a second console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="configs/ping/PingTwoNodesSociety.xml">PingTwoNodesSociety.xml</a>
+      <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+      Node2</code>
+    </li><p>
+
+    <li>The output should match the output of the single-node ping test.  There may
+    be a startup delay of up to a minute, due to the naming service.
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A two-host "ping" test</b>:
+  <ol>
+    <li>Modify the 
+    <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+    to change the host name from "localhost" to the host that will run "Node1".
+    </li><p>
+
+    <li>Perform the same steps as in the two-node test.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A single-node "ping" benchmark</b>:
+  <ol>
+    <li>Run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="configs/ping/PingBenchmarkSociety.xml">PingBenchmarkSociety.xml</a>
+      <a href="configs/ping/PingBenchmarkRuntime.xml">PingBenchmarkRuntime.xml</a>
+    </code><br>
+    Note that the above runtime XML file has been modified to disable the
+    logging output.
+    </li><p>
+
+    <li>Optionally view the servlet at<br>
+    &nbsp;&nbsp;<a href="http://localhost:8800/$A/ping"
+      >http://localhost:8800/$A/ping</a><br>
+    Note the high "pings-per-second" throughput, due to the below
+    "delayMillis=0" setting.
+    </li><p>
+
+    <li>Optionally view the metrics servlets, e.g.:<br>
+    &nbsp;&nbsp;<a href="http://localhost:8800/metrics/agent/load"
+      >http://localhost:8800/metrics/agent/load</a><br>
+    For a full listing of included metrics servlets, see:<br>
+    &nbsp;&nbsp;<a href="http://cougaar.cougaar.org/software/latest/OnlineManual/MetricsService/operation.html"
+      >doc/OnlineManual/MetricsService/operation.html</a>
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A two-node "ping" profiled benchmark</b>:
+  <ol>
+    <li>In one console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingProfileSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingProfileSociety.xml</a>
+      <a href="../run/PingProfileRuntime.xml">PingProfileRuntime.xml</a>
+      Node1</code>
+    </li><p>
+
+    <li>In a second console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingProfileSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingProfileSociety.xml</a>
+      <a href="../run/PingProfileRuntime.xml">PingProfileRuntime.xml</a>
+      Node2</code>
+    </li><p>
+
+    <li>As in the single-node "ping" benchmark, the standard ping logging has
+    been disabled.
+    <p>
+    However, Node1 is configured to log detailed profiling output every 10
+    seconds.
+    <p>
+    The logged metrics include various Cougaar-internal metrics:<ul>
+      <li>inter-agent messaging traffic matrix</li>
+      <li>aggregate messaging throughput</li>
+      <li>blackboard sizes and number of add/change/remove operations</li>
+      <li>thread pool load</li>
+      <li>JVM heap size</li>
+    </ul>
+    and system metrics:<ul>
+      <li>cpu load (from /proc/loadavg)</li>
+      <li>memory load (from /proc/meminfo)</li>
+      <li>network stats (from /proc/net/dev)</li>
+      <li>overall system stats (from /usr/bin/vmstat)</li>
+    </ul>
+    </li><p>
+    
+    <li>Let both nodes run for a couple minutes, then examine the logs for the
+    following interesting metrics:<ul>
+      <li>"[tl_A]" is the number of messages sent by agent A to any target</li>
+      <li>"[tr_B]" is the number of messages received from agent B to any agent on Node1</li>
+      <li>"[tm_A__to__B]" is the number of messages sent between agents A and B</li>
+      <li>"[throughput]" is the number of message sent and received</li>
+      <li>"[bb_A__Relay]" is the number of relay add/change/removes</li>
+      <li>"[load_node_Node1]" is the cpu load average</li>
+    </ul>
+    <p>
+    The "[throughput]" is a good overall performance metric.  Here is example output:<br>
+    &nbsp;&nbsp;<code>[throughput] - #agent_send_count_per_second, total_send_count_per_second, agent_send_count, total_send_count,</code><br>
+    &nbsp;&nbsp;<code>[throughput] - 257.90, 258.10, 8190, 8205</code><br>
+    The above throughput rates should be twice the "/ping" servlet rate, since each
+    ping iteration consists of a ping message and an "ack" message.
+    <p>
+    For documentation on the other profiled metrics, please see the "profile" module 
+    <a href=http://cougaar.org/cgi-bin/viewcvs.cgi/profile/src/org/cougaar/core/qos/profile/?cvsroot=qos">code</a>
+    and
+    <a href="http://cougaar.cougaar.org/software/12.2/javadoc/profile/doc/api/index.html">javadoc</a>.
+    </li><p>
+
+    <li>Press CTRL-C in both console windows to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+</ol>
+<p>
+
+<h2>Support:</h2>
+If you have any questions or comments, please:<ol>
+  <li>Subscribe to the cougaar-developers mailing list:<br>
+       &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
+  <li>Then send email to:<br>
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+</ol>
+</body>

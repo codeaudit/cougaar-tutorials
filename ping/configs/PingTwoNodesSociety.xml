@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+
+<!--
+Two-node "ping" society definition.
+-->
+<society>
+
+  <node name="Node1">
+
+    <agent name="NameServer">
+      <!-- Act as a naming service agent for the society -->
+      <component class='org.cougaar.core.wp.server.Server'/>
+    </agent>
+
+    <agent name="A">
+      <component class="org.cougaar.core.relay.PingSender">
+        <argument name="target" value="B"/>
+        <argument name="delayMillis" value="5000"/>
+        <argument name="verbose" value="true"/>
+      </component>
+      <component class="org.cougaar.core.relay.PingServlet">
+        <argument name="path" value="/ping"/>
+      </component>
+    </agent>
+  </node>
+
+  <node name="Node2">
+    <agent name="B">
+      <component class="org.cougaar.core.relay.PingReceiver">
+        <argument name="verbose" value="true"/>
+      </component>
+    </agent>
+  </node>
+
+</society>

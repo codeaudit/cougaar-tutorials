@@ -1,0 +1,29 @@
+<?xml version='1.0'?>
+
+<!--
+Quiet "ping" set to run as fast as possible.
+-->
+<society>
+
+  <node name="Node1">
+
+    <agent name="A">
+      <component class="org.cougaar.core.relay.PingSender">
+        <argument name="target" value="B"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.core.relay.PingServlet">
+        <argument name="path" value="/ping"/>
+      </component>
+    </agent>
+
+    <agent name="B">
+      <component class="org.cougaar.core.relay.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+
+  </node>
+
+</society>
