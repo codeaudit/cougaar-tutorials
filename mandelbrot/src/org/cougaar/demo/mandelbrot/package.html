@@ -1,0 +1,82 @@
+<body>
+This package contains the <a href="http://cougaar.org">Cougaar</a>
+Mandelbrot demonstration application.
+<p>
+Please see the accompanying "Cougaar Mandelbrot" slides:<br>
+&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/201/cougaar_mandelbrot.ppt">http://cougaar.org/docman/view.php/17/201/cougaar_mandelbrot.ppt</a>
+<p>
+Each "v*" package is a different implementation of the "Mandelbrot Set"
+application:<ul>
+
+  <li>
+  <b>"v0"</b> {@link org.cougaar.demo.mandelbrot.v0.MandelbrotPopup}<br>
+  A simple command-line test that runs without Cougaar.  This can be run
+  from Ant, using "ant test-popup" or "ant test-file".
+  </li><p>
+
+  <li>
+  <b>"v1"</b> {@link org.cougaar.demo.mandelbrot.v1.MandelbrotServlet}<br>
+  This servlet, and all the following "v*" servlets, are invoked by the
+  "/mandebrot" {@link org.cougaar.demo.mandelbrot.FrontPageServlet}.
+  <p>
+  This "v1" implementation performs the image calculation in the servlet
+  "doGet" method.  It is nearly cut-n-paste from the above "v0" code.
+  <p>
+  Usage is documented in the doc/README.html.
+  </li><p>
+
+  <li>
+  <b>"v2"</b> {@link org.cougaar.demo.mandelbrot.v2.FractalServlet}<br>
+  In this version, a generic FractalServlet obtains a FractalService.  There
+  are two service implementations:<ol>
+    <li>{@link org.cougaar.demo.mandelbrot.v2.MandelbrotCalculator}</li>
+    <li>{@link org.cougaar.demo.mandelbrot.v2.JuliaCalculator}</li>
+  </ol>
+  The choice of calculator implementation is defined in:<br>
+  &nbsp;&nbsp; <code>../configs/MandelbrotSociety_v2.xml</code><br>
+  </li><p>
+
+  <li>
+  <b>"v3"</b><br>
+  <i>TODO</i> proposed blackboard request hand-off.
+  </li><p>
+
+  <li>
+  <b>"v4"</b><br>
+  <i>TODO</i> proposed non-servlet blackboard request, with no odd wait/notify.
+  </li><p>
+
+  <li>
+  <b>"v5"</b><br>
+  <i>TODO</i> proposed minor variation of "v4" to separate the request/response
+  blackboard objects.
+  </li><p>
+
+  <li>
+  <b>"v6"</b><br>
+  <i>TODO</i> proposed use of a relay to send the request to a remote agent.
+  </li><p>
+
+  <li>
+  <b>"v7"</b><br>
+  <i>TODO</i> proposed variation of "v6" to add a "dispatcher" plugin, to
+  specify the remote agent.
+  </li><p>
+
+  <li>
+  <b>"v8"</b><br>
+  <i>TODO</i> proposed more complex dipatcher, to select between multiple
+  remote agent "workers".
+  </li><p>
+
+  <li>
+  <b>"v9"</b><br>
+  <i>TODO</i> proposed task decomposition and parallel computation.
+  </li><p>
+
+  <li>
+  <b>"v10"</b><br>
+  <i>TODO</i> proposed policies and QoS adaptive behavior.
+  </li><p>
+
+</body>

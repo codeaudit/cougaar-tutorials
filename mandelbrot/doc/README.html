@@ -1,0 +1,114 @@
+<html>
+<head><title>Cougaar "Mandelbrot" Demo</title></head>
+<body>
+<h1>Cougaar "Mandelbrot" Demo</h1>
+<p>
+This module contains the Cougaar "Mandelbrot" demo.
+<p>
+This demo illustrates various design solutions for implementing a
+"Mandelbrot Set" fractal image generator within Cougaar.
+<p>
+The point is to produce the exact same UI image but with very different backend
+implementations.  The different design "versions" vary in their use of service
+APIs, blackboard objects, relays, distributed processing, etc.
+<p>
+Please see the accompanying "Cougaar Mandelbrot" slides:<br>
+&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/201/cougaar_mandelbrot.ppt">http://cougaar.org/docman/view.php/17/201/cougaar_mandelbrot.ppt</a>
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#contents">Contents</a></li><p>
+  <li><a href="#installation">Installation</a></li><p>
+  <li><a href="#usage">Usage</a></li><p>
+  <li><a href="#support">Support</a></li><p>
+</ul>
+
+<p>
+<hr>
+<p>
+
+<h2>Contents:</h2>
+
+<ol>
+  <li>configs/MandelbrotSociety_v*.xml</a>:<br>
+  The society configuration files.
+  </li><p>
+
+  <li>run/MandelbrotRuntime_v*.xml</a>:<br>
+  The runtime configuration files.
+  </li><p>
+
+  <li><a href="../run/logging.props">run/logging.props</a>:<br>
+  The Log4j logging configuration file.
+  </li><p>
+
+  <li><a href="../lib/mandelbrot.jar">lib/mandelbrot.jar</a>:<br>
+  The compiled source code.
+  </li><p>
+
+  <li><a href="../src/org/cougaar/demo/package.html">src/org/cougaar/demo/mandelbrot</a>:<br>
+  The source code.  The above "package.html" link summarizes the various
+  design versions that are supported in this demo.
+  </li><p>
+
+  <li><a href="../build.xml">build.xml</a>:<br>
+  An Ant script to recompile the code.
+  </li><p>
+</ol>
+<p>
+
+<h2>Installation:</h2>
+
+Please follow the same installation steps as in the "Hello World" example,
+substituting "ping" for "hello".
+<p>
+The "Hello World" README is available online at:<br>
+&nbsp;&nbsp; <a href=
+  "http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation"
+  >http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation</a><br>
+and in the "cougaar-hello.zip" produced by the nightly build:<br>
+&nbsp;&nbsp; <a href=
+  "http://build.cougaar.org/auto/HEAD/latest_success/"
+  >http://build.cougaar.org/auto/HEAD/latest_success/</a><br>
+
+<h2>Usage:</h2>
+
+If you lack a <code>lib/mandelbrot.jar</code>, you must first run:<br>
+&nbsp;&nbsp; <code>ant dist</code><br>
+<p>
+
+The minimal "version 0" non-Cougaar demo can be run from the command line:<br>
+&nbsp;&nbsp; <code>ant test-popup</code><br>
+<p>
+
+To run the "version 1" Cougaar demo, do:<pre>
+  export COUGAAR_INSTALL_PATH=<i>your Cougaar install path, which contains "lib/core.jar"</i>
+
+  export COUGAAR_SOCIETY_PATH=<i>the mandelbrot base directory, which contains this "doc/README.html"</i>
+
+  export COUGAAR_RUNTIME_PATH=$COUGAAR_SOCIETY_PATH/run
+
+  cd $COUGAAR_RUNTIME_PATH
+
+  $COUGAAR_INSTALL_PATH/bin/cougaar ../configs/MandelbrotSociety_v<i>1</i>.xml MandelbrotRuntime_v<i>1</i>.xml
+</pre>
+
+Then point a browser at:<br>
+&nbsp;&nbsp; <a href="http://localhost:8800/mandelbrot">http://localhost:8800/mandelbrot</a><br>
+You should see a Mandelbrot Set image and HTML Form navigation options.
+Click on upper-left and lower-right points in the image to zoom in.
+
+To run the other "version <i>X</i>" Cougaar demos, e.g. "version 2", substitute
+the version number for the above "v<i>1</i>".
+</li><p>
+
+</ul>
+
+<h2>Support:</h2>
+If you have any questions or comments, please:<ol>
+  <li>Subscribe to the cougaar-developers mailing list:<br>
+       &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
+  <li>Then send email to:<br>
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+</ol>
+</body>

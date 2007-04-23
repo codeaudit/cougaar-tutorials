@@ -1,0 +1,24 @@
+<?xml version='1.0'?>
+
+<!--
+This file contains the "v1" Mandelbrot society definition.
+-->
+<society>
+  <node name="Node1">
+    <!--
+    <component class="org.cougaar.demo.mandelbrot.v2.MandelbrotCalculator"/>
+    -->
+    <component class="org.cougaar.demo.mandelbrot.v2.JuliaCalculator">
+      <argument name="cx" value="0.285"/>
+      <argument name="cy" value="0.01"/>
+    </component>
+
+    <component class="org.cougaar.demo.mandelbrot.v2.FractalServlet">
+      <argument name="path" value="/image"/>
+    </component>
+
+    <component class="org.cougaar.demo.mandelbrot.FrontPageServlet">
+      <argument name="path" value="/mandelbrot"/>
+    </component>
+  </node>
+</society>
