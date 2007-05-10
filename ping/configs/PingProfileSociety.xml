@@ -73,13 +73,13 @@ Two-node "ping" society definition with profiling enabled.
       <component class='org.cougaar.core.qos.profile.BlackboardSizeInAgent'/>
 
       <!-- This plugin sends the ping to agent "B" -->
-      <component class="org.cougaar.core.relay.PingSender">
+      <component class="org.cougaar.demo.ping.PingSender">
         <argument name="target" value="B"/>
         <argument name="delayMillis" value="0"/>
         <argument name="verbose" value="false"/>
       </component>
       <!-- Our servlet to view the blackboard -->
-      <component class="org.cougaar.core.relay.PingServlet">
+      <component class="org.cougaar.demo.ping.PingServlet">
         <argument name="path" value="/ping"/>
       </component>
     </agent>
@@ -94,7 +94,7 @@ Two-node "ping" society definition with profiling enabled.
 
     <agent name="B">
       <!-- This plugin replies to pings from any sender -->
-      <component class="org.cougaar.core.relay.PingReceiver">
+      <component class="org.cougaar.demo.ping.PingReceiver">
         <argument name="verbose" value="false"/>
       </component>
     </agent>

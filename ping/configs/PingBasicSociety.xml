@@ -9,21 +9,21 @@ Single-node "ping" society definition.
 
     <agent name="A">
       <!-- This plugin sends the ping to agent "B" -->
-      <component class="org.cougaar.core.relay.PingSender">
+      <component class="org.cougaar.demo.ping.PingSender">
         <argument name="target" value="B"/>
         <argument name="delayMillis" value="5000"/>
         <argument name="verbose" value="true"/>
       </component>
 
       <!-- Our servlet to view the blackboard -->
-      <component class="org.cougaar.core.relay.PingServlet">
+      <component class="org.cougaar.demo.ping.PingServlet">
         <argument name="path" value="/ping"/>
       </component>
     </agent>
 
     <agent name="B">
       <!-- This plugin replies to pings from any sender -->
-      <component class="org.cougaar.core.relay.PingReceiver">
+      <component class="org.cougaar.demo.ping.PingReceiver">
         <argument name="verbose" value="true"/>
       </component>
     </agent>
