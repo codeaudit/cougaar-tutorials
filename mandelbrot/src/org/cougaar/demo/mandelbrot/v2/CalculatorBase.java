@@ -29,13 +29,13 @@ public abstract class CalculatorBase extends ComponentSupport {
 
     // advertise our service
     sp = new TrivialServiceProvider(svc);
-    getServiceBroker().addService(FractalService.class, sp);
+    sb.addService(FractalService.class, sp);
   }
 
   public void unload() {
     // shutting down, revoke our service
     if (sp != null) {
-      getServiceBroker().revokeService(FractalService.class, sp);
+      sb.revokeService(FractalService.class, sp);
       sp = null;
     }
 
