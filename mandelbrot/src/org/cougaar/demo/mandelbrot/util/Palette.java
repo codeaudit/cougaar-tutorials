@@ -1,13 +1,11 @@
 package org.cougaar.demo.mandelbrot.util;
 
+import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.io.Reader;
-import java.awt.Color;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
