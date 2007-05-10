@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+
+<!--
+This file contains the "v3" Mandelbrot society definition.
+-->
+<society>
+  <node name="Node1">
+    <component class="org.cougaar.demo.mandelbrot.v3.MandelbrotCalculator"/>
+
+    <component class="org.cougaar.demo.mandelbrot.v3.FractalServlet">
+      <argument name="path" value="/image"/>
+    </component>
+
+    <component class="org.cougaar.demo.mandelbrot.FrontPageServlet">
+      <argument name="path" value="/mandelbrot"/>
+    </component>
+  </node>
+</society>
