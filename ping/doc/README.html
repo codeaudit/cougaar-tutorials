@@ -41,6 +41,7 @@ For additional information, please see the Cougaar Overview Slides:<br>
 <hr>
 <p>
 
+<a name="contents">
 <h2>Contents:</h2>
 
 <ol>
@@ -59,19 +60,20 @@ For additional information, please see the Cougaar Overview Slides:<br>
   <li><a href="../src/org/cougaar/demo/ping">src/org/cougaar/demo/ping/*.java</a>:<br>
   The Java source code consists of:<ul>
     <li>A "ping sender"
-        (<a href="../doc/api/org/cougaar/demo/ping/PingSender.html">javadoc</a>,
+        (<a href="api/org/cougaar/demo/ping/PingSender.html">javadoc</a>,
          <a href="../src/org/cougaar/demo/ping/PingSender.java">code</a>)</li>
     <li>A "ping receiver"
-        (<a href="../doc/api/org/cougaar/demo/ping/PingReceiver.html">javadoc</a>,
+        (<a href="api/org/cougaar/demo/ping/PingReceiver.html">javadoc</a>,
          <a href="../src/org/cougaar/demo/ping/PingReceiver.java">code</a>)</li>
     <li>A "ping servlet"
-        (<a href="../doc/api/org/cougaar/demo/ping/PingServlet.html">javadoc</a>,
+        (<a href="api/org/cougaar/demo/ping/PingServlet.html">javadoc</a>,
          <a href="../src/org/cougaar/demo/ping/PingServlet.java">code</a>)</li>
   </ul>
   </li><p>
 </ol>
 <p>
 
+<a name="installation">
 <h2>Installation:</h2>
 
 Please follow the same installation steps as in the "Hello World" example,
@@ -86,6 +88,7 @@ and in the "cougaar-hello.zip" produced by the nightly build:<br>
   "http://build.cougaar.org/auto/HEAD/latest_success/"
   >http://build.cougaar.org/auto/HEAD/latest_success/</a><br>
 
+<a name="usage">
 <h2>Usage:</h2>
 
 There are five demos:
@@ -94,10 +97,10 @@ There are five demos:
   <li><b>A basic "ping" test</b>:
   <ol>
     <li>Run:<br>
-    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar 
-      <a href="configs/ping/PingBasicSociety.xml">PingBasicSociety.xml</a>
-      <a href="configs/ping/PingBasicRuntime.xml">PingBasicRuntime.xml</a>
+      <a href="../configs/PingBasicSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingBasicSociety.xml</a>
+      <a href="../run/PingBasicRuntime.xml">PingBasicRuntime.xml</a>
     </code><br>
     This should print:<br>
     &nbsp;&nbsp;<code>[PingSender] - A: Sending ping 0 to B</code><br>
@@ -123,18 +126,18 @@ There are five demos:
   <li><b>A two-node "ping" test</b>:
   <ol>
     <li>In one console window, run:<br>
-    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="configs/ping/PingTwoNodesSociety.xml">PingTwoNodesSociety.xml</a>
-      <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+      <a href="../configs/PingTwoNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingTwoNodesSociety.xml</a>
+      <a href="../run/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
       Node1</code>
     </li><p>
 
     <li>In a second console window, run:<br>
-    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="configs/ping/PingTwoNodesSociety.xml">PingTwoNodesSociety.xml</a>
-      <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+      <a href="../configs/PingTwoNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingTwoNodesSociety.xml</a>
+      <a href="../run/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
       Node2</code>
     </li><p>
 
@@ -150,11 +153,16 @@ There are five demos:
   <li><b>A two-host "ping" test</b>:
   <ol>
     <li>Modify the 
-    <a href="configs/ping/PingTwoNodesRuntime.xml">PingTwoNodesRuntime.xml</a>
+    <a href="../configs/PingTwoNodesRuntime.xml">$COUGAAR_SOCIETY_PATH/configs/PingTwoNodesRuntime.xml</a>
     to change the host name from "localhost" to the host that will run "Node1".
     </li><p>
 
     <li>Perform the same steps as in the two-node test.
+    <p>
+    If the agents are unable to communicate with one another, verify that both
+    hosts can `/bin/ping` one another, that ports 8888 and 8800 are not blocked,
+    and that `/bin/hostname -iv` prints the correct host names and IP addresses.
+    If all else fails, please contact us for additional <a href="#support">support</a>.
     </li><p>
   </ol>
   </li><p>
@@ -162,10 +170,10 @@ There are five demos:
   <li><b>A single-node "ping" benchmark</b>:
   <ol>
     <li>Run:<br>
-    &nbsp;&nbsp;<code>cd $COUGAAR_SOCIETY_PATH/configs/ping</code><br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="configs/ping/PingBenchmarkSociety.xml">PingBenchmarkSociety.xml</a>
-      <a href="configs/ping/PingBenchmarkRuntime.xml">PingBenchmarkRuntime.xml</a>
+      <a href="../configs/PingBenchmarkSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingBenchmarkSociety.xml</a>
+      <a href="../run/PingBenchmarkRuntime.xml">PingBenchmarkRuntime.xml</a>
     </code><br>
     Note that the above runtime XML file has been modified to disable the
     logging output.
@@ -259,6 +267,7 @@ There are five demos:
 </ol>
 <p>
 
+<a name="support">
 <h2>Support:</h2>
 If you have any questions or comments, please:<ol>
   <li>Subscribe to the cougaar-developers mailing list:<br>
