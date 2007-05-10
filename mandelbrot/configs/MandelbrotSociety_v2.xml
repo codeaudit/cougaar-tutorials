@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 
 <!--
-This file contains the "v1" Mandelbrot society definition.
+This file contains the "v2" Mandelbrot society definition.
 -->
 <society>
   <node name="Node1">
