@@ -72,11 +72,11 @@ import org.cougaar.util.UnaryPredicate;
  *       </pre></dd><p>
  * </dl>
  *
- * @property org.cougaar.demo.ping.delayMillis=5000
+ * @property org.cougaar.demo.ping.PingSender.delayMillis=5000
  *   PingSender delay between ping iterations, if not set as a plugin
  *   parameter.
  *
- * @property org.cougaar.demo.ping.verbose=true
+ * @property org.cougaar.demo.ping.PingSender.verbose=true
  *   PingSender should output SHOUT-level logging messages, if not set as
  *   a plugin parameter.
  *
@@ -86,14 +86,6 @@ import org.cougaar.util.UnaryPredicate;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingSender extends ComponentPlugin {
-
-  private static final long DEFAULT_DELAY_MILLIS =
-    SystemProperties.getLong(
-        "org.cougaar.demo.ping.delayMillis", 5000);
-
-  private static final boolean DEFAULT_VERBOSE =
-    SystemProperties.getBoolean(
-        "org.cougaar.demo.ping.verbose", true);
 
   private LoggingService log;
   private UIDService uids;
@@ -105,7 +97,21 @@ public class PingSender extends ComponentPlugin {
   private IncrementalSubscription sub;
   private TodoSubscription expiredAlarms;
 
-  /** This method is called when the agent is created */
+  /** This method is called when the agent is constructed. */
+  public void setArguments(Arguments args) {
+    // Parse our plugin parameters
+    String target_name = args.getString("target");
+    target = MessageAddress.getMessageAddress(target_name);
+    if (target == null) {
+      throw new IllegalArgumentException("Must specify a target");
+    } else if (target.equals(agentId)) {
+      throw new IllegalArgumentException("Target matches self: "+target);
+    }
+    delayMillis = args.getLong("delayMillis", 5000);
+    verbose = args.getBoolean("verbose", true);
+  }
+
+  /** This method is called when the agent loads. */
   public void load() {
     super.load();
 
@@ -114,18 +120,6 @@ public class PingSender extends ComponentPlugin {
       getServiceBroker().getService(this, LoggingService.class, null);
     uids = (UIDService)
       getServiceBroker().getService(this, UIDService.class, null);
-
-    // Parse our plugin parameters
-    Arguments args = new Arguments(getParameters());
-    String target_name = args.getString("target", null);
-    target = MessageAddress.getMessageAddress(target_name);
-    if (target == null) {
-      throw new IllegalArgumentException("Must specify a target");
-    } else if (target.equals(agentId)) {
-      throw new IllegalArgumentException("Target matches self: "+target);
-    }
-    delayMillis = args.getLong("delayMillis", DEFAULT_DELAY_MILLIS);
-    verbose = args.getBoolean("verbose", DEFAULT_VERBOSE);
   }
 
   /** This method is called when the agent starts. */

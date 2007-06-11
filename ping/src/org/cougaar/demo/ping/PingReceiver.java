@@ -47,15 +47,15 @@ import org.cougaar.util.UnaryPredicate;
  * receive {@link PingSender} relays.  For simplicity, it's easiest to load
  * a copy of this plugin into every agent.
  *
+ * @property org.cougaar.demo.ping.PingReceiver.verbose=true
+ *   PingReceiver should output SHOUT-level logging messages, if not set as
+ *   a plugin parameter.
+ *
  * @see PingSender Remote plugin that sends the ping relays to this plugin
  *
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingReceiver extends ComponentPlugin {
-
-  private static final boolean DEFAULT_VERBOSE =
-    SystemProperties.getBoolean(
-        "org.cougaar.demo.ping.verbose", true);
 
   private LoggingService log;
 
@@ -63,17 +63,18 @@ public class PingReceiver extends ComponentPlugin {
 
   private IncrementalSubscription sub;
 
-  /** This method is called when the agent is created */
+  /** This method is called when the agent is constructed. */
+  public void setArguments(Arguments args) {
+    verbose = args.getBoolean("verbose", true);
+  }
+
+  /** This method is called when the agent loads. */
   public void load() {
     super.load();
 
     // Get our required Cougaar services
     log = (LoggingService)
       getServiceBroker().getService(this, LoggingService.class, null);
-
-    // Parse our plugin parameters
-    Arguments args = new Arguments(getParameters());
-    verbose = args.getBoolean("verbose", DEFAULT_VERBOSE);
   }
 
   /** This method is called when the agent starts. */
