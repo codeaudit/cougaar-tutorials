@@ -1,7 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
-<booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.cougaar.bootstrap.Bootstrapper"/>
+<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${project_loc:ping/run}"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/ping"/>
+</listAttribute>
 <listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER&quot; javaProject=&quot;ping&quot; path=&quot;1&quot; type=&quot;4&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.defaultClasspath&quot;&gt;&#10;&lt;memento exportedEntriesOnly=&quot;false&quot; project=&quot;ping&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;&#10;"/>
@@ -17,18 +20,15 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry path=&quot;3&quot; projectName=&quot;bootstrap&quot; type=&quot;1&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry path=&quot;3&quot; projectName=&quot;webtomcat&quot; type=&quot;1&quot;/&gt;&#10;"/>
 </listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ping"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=../configs/PingBenchmarkSociety.xml -Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1 -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=logging.props -Dorg.cougaar.install.path=${project_loc:base} -Dorg.cougaar.society.path=${project_loc:ping} -Dorg.cougaar.runtime.path=${project_loc:ping}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.persistence.verifyJavaIOPatch=false -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot; -Xms1m -Xmx256m -XX:ThreadStackSize=256"/>
+<booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.cougaar.bootstrap.Bootstrapper"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="4"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ping"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=${project_loc:ping}/configs/PingBenchmarkSociety.xml -Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1 -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=logging.props -Dorg.cougaar.install.path=${project_loc:base} -Dorg.cougaar.society.path=${project_loc:ping} -Dorg.cougaar.runtime.path=${project_loc:ping}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.persistence.verifyJavaIOPatch=false -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot; -Xms1m -Xmx256m -XX:ThreadStackSize=256"/>
-<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
-<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
-</listAttribute>
-<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/ping"/>
-</listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${project_loc:ping/run}"/>
-<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 </launchConfiguration>
