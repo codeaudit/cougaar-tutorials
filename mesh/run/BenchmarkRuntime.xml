@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<!-- Run as fast as possible -->
+<runtime>
+
+  <!-- Run as fast as possible and with minimal logging -->
+  <vm_parameter name="-Dorg.cougaar.demo.mesh.MeshPlugin.delayMillis" value="0"/>
+  <vm_parameter name="-Dorg.cougaar.demo.mesh.MeshPlugin.verbose" value="false"/>
+  <vm_parameter name="-Dorg.cougaar.core.agent.quiet" value="true"/>
+
+  <!-- Change to "single_debug" for metrics servlets -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="single_node"/>
+
+  <!-- Set our log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+
+</runtime>

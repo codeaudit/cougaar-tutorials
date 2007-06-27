@@ -1,0 +1,82 @@
+<?xml version='1.0'?>
+
+<!--
+A seven-agent tree:
+
+         T
+       /   \
+     L       R
+    / \     / \
+  LL  LR   RL  RR
+-->
+<society>
+
+  <node name="Node1">
+
+    <agent name="T">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="T,L,R"/>
+        <!-- we'll use a -D to set our arguments -->
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="L">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="T,L,LL,LR"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="R">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="T,R,RL,RR"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="LL">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="L,LL"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="LR">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="L,LR"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="RL">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="R,RL"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="RR">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="R,RR"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+  </node>
+
+</society>

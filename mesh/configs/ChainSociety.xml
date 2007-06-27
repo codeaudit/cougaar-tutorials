@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+
+<!--
+A five-agent chain.
+-->
+<society>
+
+  <node name="Node1">
+
+    <agent name="A">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="A,B"/>
+        <!-- we'll use a -D to set our arguments -->
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="B">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="A,B,C"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="C">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="B,C,D"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="D">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="C,D,E"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+    <agent name="E">
+      <component class="org.cougaar.demo.mesh.MeshPlugin">
+        <argument name="targets" value="D,E"/>
+      </component>
+      <component class="org.cougaar.demo.mesh.MeshServlet">
+        <argument name="path" value="/mesh"/>
+      </component>
+    </agent>
+
+  </node>
+
+</society>

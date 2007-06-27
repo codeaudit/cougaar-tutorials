@@ -1,0 +1,191 @@
+<html>
+<head><title>Cougaar "Mesh" Demos</title></head>
+<body>
+<h1>Cougaar "Mesh" Demos</h1>
+<p>
+This module contains the Cougaar "mesh" demos, which are designed for
+scalability and performance testing.
+<p>
+The mesh benchmark is similar to a distributed clock.  At startup every peer
+sends a relay with a "1" counter to all its peers.  When a peer has received
+all the "1"s from its peers, that peer sends out a "2".  All peers run
+asynchronously but are effectively throttled by the slowest peer.  No peer
+can get far ahead of any other peer; they are limited by the "distance" between
+one another.  Note that, although the slowest peer is random, the aggregate
+throughput will be correct.
+<p>
+In a fully connected mesh, every peer lists all the peers in its "targets"
+parameter.  This will create an "N^2" connection topology.  Other topologies
+(rings, trees, etc) are supported, as illustrated in the
+<a href="../configs/">configs</a> directory.
+<p>
+A peer will log a warning if it receives a duplicate counter, or if it has
+waited more than 30 seconds for an input counter.  The plugins also support
+several other benchmark-friendly options:<ul>
+  <li>A "maxIteration" for when the test should end.</li>
+  <li>A "bloatSize" to increase the relay message sizes.</li>
+</ul>
+For a complete list of supported options, please see the 
+<a href="api/org/cougaar/demo/mesh/MeshPlugin.html">Javadoc</a>.
+<p>
+For additional information, please see the Cougaar Overview Slides:<br>
+&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt">http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt</a>.
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#contents">Contents</a></li><p>
+  <li><a href="#installation">Installation</a></li><p>
+  <li><a href="#usage">Usage</a></li><p>
+  <li><a href="#support">Support</a></li><p>
+</ul>
+
+<p>
+<hr>
+<p>
+
+<a name="contents">
+<h2>Contents:</h2>
+
+<ol>
+  <li><a href="../configs/">configs/*.xml</a>:<br>
+  The society files.
+  </li><p>
+
+  <li><a href="../run/">run/*.xml</a>:<br>
+  The runtime files.
+  </li><p>
+
+  <li><a href="../run/logging.props">run/logging.props</a>:<br>
+  The Log4j logging configuration file.
+  </li><p>
+
+  <li><a href="../src/org/cougaar/demo/mesh">src/org/cougaar/demo/mesh/*.java</a>:<br>
+  The Java source code consists of:<ul>
+    <li>A "mesh plugin"
+        (<a href="api/org/cougaar/demo/mesh/MeshPlugin.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/mesh/MeshPlugin.java">code</a>)</li>
+    <li>A "mesh servlet"
+        (<a href="api/org/cougaar/demo/mesh/MeshServlet.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/mesh/MeshServlet.java">code</a>)</li>
+  </ul>
+  </li><p>
+</ol>
+<p>
+
+<a name="installation">
+<h2>Installation:</h2>
+
+Please follow the same installation steps as in the "Hello World" example,
+substituting "mesh" for "hello".
+<p>
+The "Hello World" README is available online at:<br>
+&nbsp;&nbsp; <a href=
+  "http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation"
+  >http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation</a><br>
+and in the "demo-hello.zip" produced by the nightly build:<br>
+&nbsp;&nbsp; <a href=
+  "http://build.cougaar.org/auto/HEAD/latest_success/"
+  >http://build.cougaar.org/auto/HEAD/latest_success/</a><br>
+
+<a name="usage">
+<h2>Usage:</h2>
+
+There are <b>FIXME</b> demos:
+<ol>
+
+  <li><b>A basic 3-agent "mesh" test</b>:
+  <ol>
+    <li>Run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar 
+      <a href="../configs/BasicSociety.xml">$COUGAAR_SOCIETY_PATH/configs/BasicSociety.xml</a>
+      <a href="../run/BasicRuntime.xml">BasicRuntime.xml</a>
+    </code><br>
+    This should print:<br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Parsed 2 targets: [B, C]</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Sending counter 1 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Parsed 2 targets: [A, C]</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Sending counter 1 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Parsed 2 targets: [A, B]</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Sending counter 1 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - ++-+-+-+--+-</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Received 1 from C</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Received 1 from C</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Received 1 from B</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Will send counter 1 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Received 1 from A</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Received 1 from B</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Will send counter 1 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Received 1 from A</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Will send counter 1 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - .</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Sending counter 2 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - +-+-</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Sending counter 2 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - +-+-</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Sending counter 2 to 2 targets</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Received 2 from C</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Received 2 from B</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - A: Will send counter 2 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - +-+-</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Received 2 from C</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Received 2 from A</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - B: Will send counter 2 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Received 2 from B</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Received 2 from A</code><br>
+    &nbsp;&nbsp;<code>[MeshPlugin] - C: Will send counter 2 in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - .</code><br>
+    &nbsp;&nbsp;...<br>
+    </li><p>
+
+    <li>Optionally view the servlet at<br>
+    &nbsp;&nbsp;<a href="http://localhost:8800/$A/mesh"
+      >http://localhost:8800/$A/mesh</a>
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A benchmark 3-agent "mesh" test</b>:
+  <ol>
+    <li>Run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/BenchmarkSociety.xml">$COUGAAR_SOCIETY_PATH/configs/BenchmarkSociety.xml</a>
+      <a href="../run/BenchmarkRuntime.xml">BenchmarkRuntime.xml</a>
+    </code><br>
+    Note that the above runtime XML file has been modified to disable the
+    logging output.
+    </li><p>
+
+    <li>Optionally view the servlet at<br>
+    &nbsp;&nbsp;<a href="http://localhost:8800/$A/mesh"
+      >http://localhost:8800/$A/mesh</a><br>
+    Note the high "relays-per-second" throughput, due to the "delayMillis=0"
+    setting in the society XML file.
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>More topologies tests</b>:
+  The benchmark can be configured into other topologies, such as rings, trees,
+  etc.  See <a href="../configs/">configs/*.xml</a>.  The usage is similar to
+  the above examples.
+  </li><p>
+</ol>
+<p>
+
+<a name="support">
+<h2>Support:</h2>
+If you have any questions or comments, please:<ol>
+  <li>Subscribe to the cougaar-developers mailing list:<br>
+       &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
+  <li>Then send email to:<br>
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+</ol>
+</body>

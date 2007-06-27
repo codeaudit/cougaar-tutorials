@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+
+<!-- Run slowly and with verbose output -->
+<runtime>
+
+  <!-- Wait 5 seconds between iterations and enable verbose logging -->
+  <vm_parameter name="-Dorg.cougaar.demo.mesh.MeshPlugin.delayMillis" value="5000"/>
+  <vm_parameter name="-Dorg.cougaar.demo.mesh.MeshPlugin.verbose" value="true"/>
+
+  <!-- Set infrastructure to single-JVM, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+     name="-Dorg.cougaar.society.xsl.param.template"
+     value="single_node"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+    name="-Dorg.cougaar.core.logging.config.filename"
+    value="logging.props"/>
+
+</runtime>
