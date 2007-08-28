@@ -26,97 +26,61 @@
 
 package org.cougaar.demo.ping;
 
-import java.util.Iterator;
-
-import org.cougaar.bootstrap.SystemProperties;
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.AnnotatedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.LoggingService;
-import org.cougaar.util.Arguments;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
- * This plugin is an example ping target that receives relays and sends
- * back a reply.
+ * This plugin is an example ping target that receives relays and sends back a
+ * reply.
  * <p>
  * A "verbose=<i>boolean</i>" plugin parameter and System property is
  * supported, exactly as documented in {@link PingSender}.
  * <p>
- * There must be one instance of this plugin in every agent that will
- * receive {@link PingSender} relays.  For simplicity, it's easiest to load
- * a copy of this plugin into every agent.
- *
- * @property org.cougaar.demo.ping.PingReceiver.verbose=true
- *   PingReceiver should output SHOUT-level logging messages, if not set as
- *   a plugin parameter.
- *
+ * There must be one instance of this plugin in every agent that will receive
+ * {@link PingSender} relays. For simplicity, it's easiest to load a copy of
+ * this plugin into every agent.
+ * 
+ * @property org.cougaar.demo.ping.PingReceiver.verbose=true PingReceiver should
+ *           output SHOUT-level logging messages, if not set as a plugin
+ *           parameter.
+ * 
  * @see PingSender Remote plugin that sends the ping relays to this plugin
- *
+ * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingReceiver extends ComponentPlugin {
+public class PingReceiver extends AnnotatedPlugin {
 
-  private LoggingService log;
+    private LoggingService log;
 
-  private boolean verbose;
+    @Cougaar.Param(name = "verbose", defaultValue = "true")
+    public boolean verbose;
 
-  private IncrementalSubscription sub;
-
-  /** This method is called when the agent is constructed. */
-  public void setArguments(Arguments args) {
-    verbose = args.getBoolean("verbose", true);
-  }
-
-  /** This method is called when the agent loads. */
-  public void load() {
-    super.load();
-
-    // Get our required Cougaar services
-    log = (LoggingService)
-      getServiceBroker().getService(this, LoggingService.class, null);
-  }
-
-  /** This method is called when the agent starts. */
-  protected void setupSubscriptions() {
-    // Subscribe to all relays sent to our agent
-    sub = (IncrementalSubscription) blackboard.subscribe(createPredicate());
-
-    // When a relay arrives on our blackboard, our "execute()" method
-    // will be called.
-  }
-
-  /** This method is called whenever a subscription changes. */
-  protected void execute() {
-    // Observe added relays by looking at our subscription's add list
-    for (Iterator iter = sub.getAddedCollection().iterator();
-        iter.hasNext();
-        ) {
-      SimpleRelay relay = (SimpleRelay) iter.next();
-      replyTo(relay);
+    public void setLoggingService(LoggingService logger) {
+        this.log = logger;
     }
-  }
 
-  /** Create our subscription filter */
-  private UnaryPredicate createPredicate() {
-    // Matches any relay sent to our agent
-    return new UnaryPredicate() {
-      public boolean execute(Object o) {
-        return
-          ((o instanceof SimpleRelay) &&
-           agentId.equals(((SimpleRelay) o).getTarget()));
-      }
-    };
-  }
-
-  private void replyTo(SimpleRelay relay) {
-    // Send back the same content as our response
-    Object content = relay.getQuery();
-    Object response = content;
-    relay.setReply(response); 
-    if (verbose && log.isShoutEnabled()) {
-      log.shout("Responding to ping "+response+" from "+relay.getSource());
+    @Cougaar.Execute(from=Cougaar.BlackboardEvt.BLACKBOARD, 
+                     on=Cougaar.BlackboardOp.ADD, 
+                     when="isMyRelay")
+    public void executeRelay(Object object) {
+        SimpleRelay relay = (SimpleRelay) object;
+        replyTo(relay);
     }
-    blackboard.publishChange(relay);
-  }
+    
+    public boolean isMyRelay(Object o) {
+        return o instanceof SimpleRelay && agentId.equals(((SimpleRelay) o).getTarget());
+    }
+
+    private void replyTo(SimpleRelay relay) {
+        // Send back the same content as our response
+        Object content = relay.getQuery();
+        Object response = content;
+        relay.setReply(response);
+        if (verbose && log.isShoutEnabled()) {
+            log.shout("Responding to ping " + response + " from " + relay.getSource());
+        }
+        blackboard.publishChange(relay);
+    }
 }
