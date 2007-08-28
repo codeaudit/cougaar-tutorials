@@ -28,7 +28,6 @@ package org.cougaar.demo.ping;
 
 import org.cougaar.core.plugin.AnnotatedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
-import org.cougaar.core.service.LoggingService;
 import org.cougaar.util.annotations.Cougaar;
 
 /**
@@ -52,25 +51,16 @@ import org.cougaar.util.annotations.Cougaar;
  */
 public class PingReceiver extends AnnotatedPlugin {
 
-    private LoggingService log;
-
-    @Cougaar.Param(name = "verbose", defaultValue = "true")
+    @Cougaar.Param(name="verbose", defaultValue="true")
     public boolean verbose;
 
-    public void setLoggingService(LoggingService logger) {
-        this.log = logger;
-    }
-
-    @Cougaar.Execute(from=Cougaar.BlackboardEvt.BLACKBOARD, 
-                     on=Cougaar.BlackboardOp.ADD, 
-                     when="isMyRelay")
-    public void executeRelay(Object object) {
-        SimpleRelay relay = (SimpleRelay) object;
+    @Cougaar.Execute(on=Cougaar.BlackboardOp.ADD, when="isMyRelay")
+    public void executeRelay(SimpleRelay relay) {
         replyTo(relay);
     }
     
-    public boolean isMyRelay(Object o) {
-        return o instanceof SimpleRelay && agentId.equals(((SimpleRelay) o).getTarget());
+    public boolean isMyRelay(SimpleRelay relay) {
+        return agentId.equals(relay.getTarget());
     }
 
     private void replyTo(SimpleRelay relay) {

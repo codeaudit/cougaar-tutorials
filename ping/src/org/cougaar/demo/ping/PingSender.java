@@ -29,16 +29,14 @@ package org.cougaar.demo.ping;
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.agent.service.alarm.AlarmBase;
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.blackboard.Subscription;
 import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ComponentPlugin;
-import org.cougaar.core.plugin.ParameterizedPlugin;
+import org.cougaar.core.plugin.AnnotatedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
-import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.util.Arguments;
-import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.annotations.Cougaar;
 
 /**
@@ -91,12 +89,14 @@ import org.cougaar.util.annotations.Cougaar;
  * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingSender extends ParameterizedPlugin {
+public class PingSender extends AnnotatedPlugin {
 
-    private LoggingService log;
     private UIDService uids;
 
     private MessageAddress target;
+    
+    @Cougaar.Param(name="target", required=true)
+    public String targetName;
     
     @Cougaar.Param(name="delayMillis", defaultValue="5000")
     public long delayMillis;
@@ -104,14 +104,11 @@ public class PingSender extends ParameterizedPlugin {
     @Cougaar.Param(name="verbose", defaultValue="true")
     public boolean verbose;
 
-    private IncrementalSubscription sub;
-    private TodoSubscription expiredAlarms;
-
     /** This method is called when the agent is constructed. */
     public void setArguments(Arguments args) {
+        super.setArguments(args);
         // Parse our plugin parameters
-        String target_name = args.getString("target");
-        target = MessageAddress.getMessageAddress(target_name);
+        target = MessageAddress.getMessageAddress(targetName);
         if (target == null) {
             throw new IllegalArgumentException("Must specify a target");
         } else if (target.equals(agentId)) {
@@ -119,29 +116,13 @@ public class PingSender extends ParameterizedPlugin {
         }
     }
 
-    public void setLoggoingService(LoggingService log) {
-        this.log = log;
-    }
-    
     public void setUIDService(UIDService uids) {
         this.uids = uids;
     }
     
     /** This method is called when the agent starts. */
     protected void setupSubscriptions() {
-
-        // Create a holder for alarms that have come due
-        //
-        // The "myAlarms" string is any arbitrary identifier, and would only be
-        // significant if we made more than one TodoSubscription instance.
-        if (delayMillis > 0) {
-            expiredAlarms =
-                    (TodoSubscription) blackboard.subscribe(new TodoSubscription("myAlarms"));
-        }
-
-        // Subscribe to all relays sent by our agent
-        sub = (IncrementalSubscription) blackboard.subscribe(createPredicate());
-
+        super.setupSubscriptions();
         // Get our initial counter value, which is zero unless we're restarting
         // from an agent move or persistence snapshot
         int counter = getInitialCounter();
@@ -153,42 +134,26 @@ public class PingSender extends ParameterizedPlugin {
         // be called.
     }
 
-    /** This method is called whenever a subscription changes. */
-    protected void execute() {
-        // Observe changed relays by looking at our subscription's change list
-        if (sub.hasChanged()) {
-            for (Object o : sub.getChangedCollection()) {
-                SimpleRelay relay = (SimpleRelay) o;
-                handleResponse(relay);
-            }
-        }
-
-        // If we're using a delay, check to see if it is time to send the
-        // next ping iteration
-        if (delayMillis > 0 && expiredAlarms.hasChanged()) {
-            for (Object o : expiredAlarms.getAddedCollection()) {
-                MyAlarm alarm = (MyAlarm) o;
-                handleAlarm(alarm);
-            }
-        }
+    /** Create our "myAlarm" queue and handle ADD callbacks. */
+    @Cougaar.Execute(on=Cougaar.BlackboardOp.ADD, todo="myAlarm")
+    public void executeAlarm(MyAlarm alarm) {
+        handleAlarm(alarm);
     }
-
-    /** Create our subscription filter */
-    private UnaryPredicate createPredicate() {
-        // Match any relay sent by our agent and to our specific target,
-        // in case this agent contains multiple senders to different targets.
-        return new UnaryPredicate() {
-            public boolean execute(Object o) {
-                if (o instanceof SimpleRelay) {
-                    SimpleRelay relay = (SimpleRelay) o;
-                    if (agentId.equals(relay.getSource()) && target.equals(relay.getTarget())) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
+    
+    /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
+    @Cougaar.Execute(on=Cougaar.BlackboardOp.CHANGE, when="isMyRelay")
+    public void executeRelay(SimpleRelay relay) {
+        if (delayMillis <= 0) {
+            return;
+        }
+        handleResponse(relay);
     }
+    
+    /** Blackboard predicate */
+    public boolean isMyRelay(SimpleRelay relay) {
+        return agentId.equals(relay.getSource()) && target.equals(relay.getTarget());
+    }
+    
 
     /** Get our initial ping iteration counter value */
     private int getInitialCounter() {
@@ -197,7 +162,8 @@ public class PingSender extends ParameterizedPlugin {
         int ret = 0;
         if (blackboard.didRehydrate()) {
             // Get the counter from our sent ping, if any, then remove it
-            for (Object o: sub) {
+            Subscription sub = getSubscription("isMyRelay");
+            for (Object o: (IncrementalSubscription) sub) {
                 SimpleRelay relay = (SimpleRelay) o;
                 ret = ((Integer) relay.getQuery()).intValue();
                 blackboard.publishRemove(relay);
@@ -298,9 +264,9 @@ public class PingSender extends ParameterizedPlugin {
             return content;
         }
 
-        // Put this alarm on the "expiredAlarms" queue and request an
-        // "execute()"
+        // Put this alarm on the "myAlarms" queue and request an "execute()"
         public void onExpire() {
+            TodoSubscription expiredAlarms = (TodoSubscription) getSubscription("myAlarm");
             expiredAlarms.add(this);
         }
     }
