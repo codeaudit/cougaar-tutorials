@@ -94,14 +94,14 @@ public class PingSender extends AnnotatedPlugin {
 
     private UIDService uids;
 
-    @Cougaar.Param(name="target", required=true)
+    @Cougaar.Arg(name="target", required=true)
     public MessageAddress target;
     
     
-    @Cougaar.Param(name="delayMillis", defaultValue="5000")
+    @Cougaar.Arg(name="delayMillis", defaultValue="5000")
     public long delayMillis;
     
-    @Cougaar.Param(name="verbose", defaultValue="true")
+    @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
 
     /** This method is called when the agent is constructed. */

@@ -52,7 +52,7 @@ import org.cougaar.util.annotations.Subscribe;
  */
 public class PingReceiver extends AnnotatedPlugin {
 
-    @Cougaar.Param(name="verbose", defaultValue="true")
+    @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
 
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isMyRelay")
