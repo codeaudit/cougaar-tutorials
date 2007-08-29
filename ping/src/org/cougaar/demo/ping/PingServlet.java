@@ -42,7 +42,7 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.servlet.ComponentServlet;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.IsInstanceOf;
 
 /**
  * This servlet shows our ping relays as an HTML page.
@@ -52,10 +52,9 @@ import org.cougaar.util.UnaryPredicate;
  * For simplicity, it's easiest to load a copy of this servlet into every agent.
  */
 public class PingServlet extends ComponentServlet {
-
     private long loadTime;
-
     private BlackboardQueryService blackboard;
+    private final Comparator<SimpleRelay> relayComparator = new SimpleRelayComparator();
 
     /** @return a default path if a plugin parameter is not specified */
     protected String getPath() {
@@ -89,18 +88,13 @@ public class PingServlet extends ComponentServlet {
         long runTime = System.currentTimeMillis() - loadTime;
         out.println("Milliseconds since agent load: " + runTime + "<p>");
 
-        // Query the blackboard for relays
-        UnaryPredicate pred = new UnaryPredicate() {
-            public boolean execute(Object o) {
-                return o instanceof SimpleRelay;
-            }
-        };
-
         @SuppressWarnings("unchecked")
-        Collection<SimpleRelay> col = blackboard.query(pred);
+        Collection<SimpleRelay> col = blackboard.query(new IsInstanceOf(SimpleRelay.class));
+        List<SimpleRelay> l1 = new ArrayList<SimpleRelay>(col);
+        Collections.sort(l1, relayComparator);
 
         // Sort by source then target
-        List<SimpleRelay> l = sortRelays(new ArrayList<SimpleRelay>(col));
+        List<SimpleRelay> l = l1;
 
         // Write the relays as an HTML table
         out.println("<table border=1>" + "<tr>" + "  <th></th>" + "  <th>UID</th>"
@@ -133,38 +127,30 @@ public class PingServlet extends ComponentServlet {
         out.println("</body></html>");
     }
 
-    /** Sorting methods */
-    private static List<SimpleRelay> sortRelays(List<SimpleRelay> l) {
-        Comparator<SimpleRelay> c = new Comparator<SimpleRelay>() {
-            public int compare(SimpleRelay o1, SimpleRelay o2) {
-                return compareRelays(o1, o2);
+
+    private static class SimpleRelayComparator implements Comparator<SimpleRelay> {
+        public int compare(SimpleRelay r1, SimpleRelay r2) {
+            int ret;
+            ret = compareAddresses(r1.getSource(), r2.getSource());
+            if (ret != 0) {
+                return ret;
             }
-        };
-        Collections.sort(l, c);
-        return l;
-    }
-
-    private static int compareRelays(SimpleRelay r1, SimpleRelay r2) {
-        int ret;
-        ret = compareAddresses(r1.getSource(), r2.getSource());
-        if (ret != 0) {
-            return ret;
+            ret = compareAddresses(r1.getTarget(), r2.getTarget());
+            if (ret != 0) {
+                return ret;
+            }
+            return compare(r1.getUID(), r2.getUID());
         }
-        ret = compareAddresses(r1.getTarget(), r2.getTarget());
-        if (ret != 0) {
-            return ret;
+
+        private int compareAddresses(MessageAddress m1, MessageAddress m2) {
+            String a = m1 == null ? null : m1.getAddress();
+            String b = m2 == null ? null : m2.getAddress();
+            return compare(a, b);
         }
-        return compare(r1.getUID(), r2.getUID());
-    }
 
-    private static int compareAddresses(MessageAddress m1, MessageAddress m2) {
-        String a = m1 == null ? null : m1.getAddress();
-        String b = m2 == null ? null : m2.getAddress();
-        return compare(a, b);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static int compare(Comparable a, Comparable b) {
-        return a == null ? (b == null ? 0 : 1) : b == null ? -1 : a.compareTo(b);
+        @SuppressWarnings("unchecked")
+        private int compare(Comparable a, Comparable b) {
+            return a == null ? (b == null ? 0 : 1) : b == null ? -1 : a.compareTo(b);
+        }
     }
 }
