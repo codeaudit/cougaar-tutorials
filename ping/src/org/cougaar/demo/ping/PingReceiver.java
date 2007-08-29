@@ -29,6 +29,7 @@ package org.cougaar.demo.ping;
 import org.cougaar.core.plugin.AnnotatedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.util.annotations.Cougaar;
+import org.cougaar.util.annotations.Subscribe;
 
 /**
  * This plugin is an example ping target that receives relays and sends back a
@@ -54,7 +55,7 @@ public class PingReceiver extends AnnotatedPlugin {
     @Cougaar.Param(name="verbose", defaultValue="true")
     public boolean verbose;
 
-    @Cougaar.Execute(on=Cougaar.BlackboardOp.ADD, when="isMyRelay")
+    @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isMyRelay")
     public void executeRelay(SimpleRelay relay) {
         replyTo(relay);
     }

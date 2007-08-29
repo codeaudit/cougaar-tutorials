@@ -38,6 +38,7 @@ import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.util.Arguments;
 import org.cougaar.util.annotations.Cougaar;
+import org.cougaar.util.annotations.Subscribe;
 
 /**
  * This plugin is an example ping source that sends relays to a remote agent.
@@ -130,13 +131,13 @@ public class PingSender extends AnnotatedPlugin {
     }
 
     /** Create our "myAlarm" queue and handle ADD callbacks. */
-    @Cougaar.Execute(on=Cougaar.BlackboardOp.ADD, todo="myAlarm")
+    @Cougaar.Execute(on=Subscribe.ModType.ADD, todo="myAlarm")
     public void executeAlarm(MyAlarm alarm) {
         handleAlarm(alarm);
     }
     
     /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
-    @Cougaar.Execute(on=Cougaar.BlackboardOp.CHANGE, when="isMyRelay")
+    @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyRelay")
     public void executeRelay(SimpleRelay relay) {
         if (delayMillis <= 0) {
             return;
