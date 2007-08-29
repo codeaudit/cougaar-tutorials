@@ -51,7 +51,7 @@ import java.util.Iterator;
  * It always looks for the earliest scheduled (to a task) month
  * for the vacation month.  It responds with text describing what it did.
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: TakeVacationServlet.java,v 1.4 2004-02-02 17:05:54 jwong Exp $
+ * @version $Id: TakeVacationServlet.java,v 1.5 2007-08-29 19:16:50 rshapiro Exp $
  */
 
 public class TakeVacationServlet extends BaseServletComponent
@@ -130,7 +130,7 @@ implements BlackboardClient
     // release the blackboard service
     if (blackboard != null) {
       serviceBroker.releaseService(
-        this, BlackboardService.class, servletService);
+        this, BlackboardService.class, blackboard);
       blackboard = null;
     }
   }

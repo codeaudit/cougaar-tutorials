@@ -126,7 +126,7 @@ public class TakeVacationServlet extends BaseServletComponent
     // release the blackboard service
     if (blackboard != null) {
       serviceBroker.releaseService(
-				   this, BlackboardService.class, servletService);
+				   this, BlackboardService.class, blackboard);
       blackboard = null;
     }
   }
