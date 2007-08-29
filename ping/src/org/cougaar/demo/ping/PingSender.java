@@ -93,10 +93,9 @@ public class PingSender extends AnnotatedPlugin {
 
     private UIDService uids;
 
-    private MessageAddress target;
-    
     @Cougaar.Param(name="target", required=true)
-    public String targetName;
+    public MessageAddress target;
+    
     
     @Cougaar.Param(name="delayMillis", defaultValue="5000")
     public long delayMillis;
@@ -107,11 +106,7 @@ public class PingSender extends AnnotatedPlugin {
     /** This method is called when the agent is constructed. */
     public void setArguments(Arguments args) {
         super.setArguments(args);
-        // Parse our plugin parameters
-        target = MessageAddress.getMessageAddress(targetName);
-        if (target == null) {
-            throw new IllegalArgumentException("Must specify a target");
-        } else if (target.equals(agentId)) {
+        if (target.equals(agentId)) {
             throw new IllegalArgumentException("Target matches self: " + target);
         }
     }
