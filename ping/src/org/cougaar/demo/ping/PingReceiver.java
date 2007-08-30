@@ -57,14 +57,6 @@ public class PingReceiver extends AnnotatedPlugin {
 
     @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isMyRelay")
     public void executeRelay(SimpleRelay relay) {
-        replyTo(relay);
-    }
-    
-    public boolean isMyRelay(SimpleRelay relay) {
-        return agentId.equals(relay.getTarget());
-    }
-
-    private void replyTo(SimpleRelay relay) {
         // Send back the same content as our response
         Object content = relay.getQuery();
         Object response = content;
@@ -73,5 +65,9 @@ public class PingReceiver extends AnnotatedPlugin {
             log.shout("Responding to ping " + response + " from " + relay.getSource());
         }
         blackboard.publishChange(relay);
+    }
+    
+    public boolean isMyRelay(SimpleRelay relay) {
+        return agentId.equals(relay.getTarget());
     }
 }

@@ -97,7 +97,6 @@ public class PingSender extends AnnotatedPlugin {
     @Cougaar.Arg(name="target", required=true)
     public MessageAddress target;
     
-    
     @Cougaar.Arg(name="delayMillis", defaultValue="5000")
     public long delayMillis;
     
