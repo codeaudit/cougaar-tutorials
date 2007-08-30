@@ -133,16 +133,33 @@ public class PingSender extends AnnotatedPlugin {
     /** Create our "myAlarm" queue and handle ADD callbacks. */
     @Cougaar.Execute(on=Subscribe.ModType.ADD, todo="myAlarm")
     public void executeAlarm(MyAlarm alarm) {
-        handleAlarm(alarm);
+        // Send our next relay iteration to the target
+        SimpleRelay priorRelay = alarm.getPriorRelay();
+        Object content = alarm.getContent();
+        sendNow(priorRelay, content);
     }
     
     /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyRelay")
     public void executeRelay(SimpleRelay relay) {
-        if (delayMillis <= 0) {
-            return;
+        // Print the target's response
+        if (verbose && log.isShoutEnabled()) {
+            log.shout("Received response " + relay.getReply() + " from " + target);
         }
-        handleResponse(relay);
+        
+        // Figure out our next content value
+        //
+        // For scalability testing we could make this a large byte array.
+        Integer old_content = (Integer) relay.getQuery();
+        Integer new_content = new Integer(old_content.intValue() + 1);
+        
+        if (delayMillis > 0) {
+            // Set an alarm to call our "execute()" method in the future
+            sendLater(relay, new_content);
+        } else {
+            // Send our relay now
+            sendNow(relay, new_content);
+        }
     }
     
     /** Blackboard predicate */
@@ -169,39 +186,6 @@ public class PingSender extends AnnotatedPlugin {
             }
         }
         return ret;
-    }
-
-    /** Handle a response to a ping relay that we sent */
-    private void handleResponse(SimpleRelay relay) {
-        // Print the target's response
-        if (verbose && log.isShoutEnabled()) {
-            log.shout("Received response " + relay.getReply() + " from " + target);
-        }
-
-        // Figure out our next content value
-        //
-        // For scalability testing we could make this a large byte array.
-        Integer old_content = (Integer) relay.getQuery();
-        Integer new_content = new Integer(old_content.intValue() + 1);
-
-        if (delayMillis > 0) {
-            // Set an alarm to call our "execute()" method in the future
-            sendLater(relay, new_content);
-        } else {
-            // Send our relay now
-            sendNow(relay, new_content);
-        }
-    }
-
-    /**
-     * Wake up from an alarm to send our next relay iteration (only use if
-     * delayMillis is greater than zero),
-     */
-    private void handleAlarm(MyAlarm alarm) {
-        // Send our next relay iteration to the target
-        SimpleRelay priorRelay = alarm.getPriorRelay();
-        Object content = alarm.getContent();
-        sendNow(priorRelay, content);
     }
 
     /** Send our next relay iteration now */
