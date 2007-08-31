@@ -26,7 +26,7 @@
 
 package org.cougaar.demo.ping;
 
-import org.cougaar.core.plugin.AnnotatedPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
@@ -50,7 +50,7 @@ import org.cougaar.util.annotations.Subscribe;
  * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingReceiver extends AnnotatedPlugin {
+public class PingReceiver extends AnnotatedSubscriptionsPlugin {
 
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
@@ -67,7 +67,8 @@ public class PingReceiver extends AnnotatedPlugin {
         blackboard.publishChange(relay);
     }
     
-    public boolean isMyRelay(SimpleRelay relay) {
+    @Cougaar.Predicate(when="isMyRelay")
+    public boolean isRelayForAgent(SimpleRelay relay) {
         return agentId.equals(relay.getTarget());
     }
 }

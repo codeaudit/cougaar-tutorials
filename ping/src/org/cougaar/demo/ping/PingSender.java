@@ -32,7 +32,6 @@ import org.cougaar.core.blackboard.TodoPlugin;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
-import org.cougaar.core.service.UIDService;
 import org.cougaar.util.Arguments;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
@@ -96,14 +95,9 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
     
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
-    
-    private UIDService uidService;
-    
-    public void setUIDService(UIDService uidService) {
-        this.uidService=uidService;
-    }
 
     /** This method is called when the agent is constructed. */
+    @Cougaar.Lifecycle()
     public void setArguments(Arguments args) {
         super.setArguments(args);
         if (target.equals(agentId)) {
@@ -111,7 +105,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         }
     }
     
-    /** This method is called when the agent starts. */
+    @Cougaar.Lifecycle()
     protected void setupSubscriptions() {
         super.setupSubscriptions();
         // Get our initial counter value, which is zero unless we're restarting
@@ -125,7 +119,8 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         // be called.
     }
 
-    protected void doTodoItem(TodoRelay item) {
+    @Cougaar.Execute(on=Subscribe.ModType.ADD, todo=TODO_ID)
+    public void executeToDoItem(TodoRelay item) {
         // Send our next relay iteration to the target
         SimpleRelay priorRelay = item.getPriorRelay();
         Object content = item.getContent();
@@ -155,8 +150,8 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         }
     }
     
-    /** Blackboard predicate */
-    public boolean isMyRelay(SimpleRelay relay) {
+    @Cougaar.Predicate(when="isMyRelay")
+    public boolean isRelayForAgent(SimpleRelay relay) {
         return agentId.equals(relay.getSource()) && target.equals(relay.getTarget());
     }
 
@@ -189,7 +184,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         }
 
         // Send a new relay to the target
-        SimpleRelay relay = new SimpleRelaySource(uidService.nextUID(), agentId, target, content);
+        SimpleRelay relay = new SimpleRelaySource(uids.nextUID(), agentId, target, content);
         if (verbose && log.isShoutEnabled()) {
             log.shout("Sending ping " + content + " to " + target);
         }
@@ -212,12 +207,13 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
             log.shout("Will send ping " + content + " to " + target + " in " + delayMillis / 1000
                     + " seconds");
         }
-        long futureTime = System.currentTimeMillis() + delayMillis;
         TodoRelay newItem = new TodoRelay(priorRelay, content);
-        doLater(futureTime, newItem);
+        addTodoItem(delayMillis, newItem);
     }
 
-    /** An alarm that we use to wake us up after the delayMillis */
+    /**
+     * These are the items on the TodoSubscription.
+     */
     private static class TodoRelay implements TodoItem {
         private final SimpleRelay priorRelay;
         private final Object content;
