@@ -87,6 +87,8 @@ import org.cougaar.util.annotations.Subscribe;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
+    private static final String TODO_ID = "ping";
+
     @Cougaar.Arg(name="target", required=true)
     public MessageAddress target;
     
@@ -208,7 +210,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
                     + " seconds");
         }
         TodoRelay newItem = new TodoRelay(priorRelay, content);
-        addTodoItem(delayMillis, newItem);
+        addTodoItem(delayMillis, newItem, TODO_ID);
     }
 
     /**
