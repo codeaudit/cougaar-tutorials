@@ -26,7 +26,6 @@
 
 package org.cougaar.demo.ping;
 
-import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.TodoItem;
 import org.cougaar.core.blackboard.TodoPlugin;
@@ -215,12 +214,11 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         }
         long futureTime = System.currentTimeMillis() + delayMillis;
         TodoRelay newItem = new TodoRelay(priorRelay, content);
-        Alarm alarm = new TodoAlarm(newItem, futureTime);
-        getAlarmService().addRealTimeAlarm(alarm);
+        doLater(futureTime, newItem);
     }
 
     /** An alarm that we use to wake us up after the delayMillis */
-    public static class TodoRelay implements TodoItem {
+    private static class TodoRelay implements TodoItem {
         private final SimpleRelay priorRelay;
         private final Object content;
 
