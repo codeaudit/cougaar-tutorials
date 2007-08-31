@@ -27,12 +27,10 @@
 package org.cougaar.demo.ping;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
-import org.cougaar.core.agent.service.alarm.AlarmBase;
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.Subscription;
-import org.cougaar.core.blackboard.TodoSubscription;
+import org.cougaar.core.blackboard.TodoItem;
+import org.cougaar.core.blackboard.TodoPlugin;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.AnnotatedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.UIDService;
@@ -90,10 +88,7 @@ import org.cougaar.util.annotations.Subscribe;
  * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingSender extends AnnotatedPlugin {
-
-    private UIDService uids;
-
+public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
     @Cougaar.Arg(name="target", required=true)
     public MessageAddress target;
     
@@ -102,6 +97,12 @@ public class PingSender extends AnnotatedPlugin {
     
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
+    
+    private UIDService uidService;
+    
+    public void setUIDService(UIDService uidService) {
+        this.uidService=uidService;
+    }
 
     /** This method is called when the agent is constructed. */
     public void setArguments(Arguments args) {
@@ -109,10 +110,6 @@ public class PingSender extends AnnotatedPlugin {
         if (target.equals(agentId)) {
             throw new IllegalArgumentException("Target matches self: " + target);
         }
-    }
-
-    public void setUIDService(UIDService uids) {
-        this.uids = uids;
     }
     
     /** This method is called when the agent starts. */
@@ -129,12 +126,10 @@ public class PingSender extends AnnotatedPlugin {
         // be called.
     }
 
-    /** Create our "myAlarm" queue and handle ADD callbacks. */
-    @Cougaar.Execute(on=Subscribe.ModType.ADD, todo="myAlarm")
-    public void executeAlarm(MyAlarm alarm) {
+    protected void doTodoItem(TodoRelay item) {
         // Send our next relay iteration to the target
-        SimpleRelay priorRelay = alarm.getPriorRelay();
-        Object content = alarm.getContent();
+        SimpleRelay priorRelay = item.getPriorRelay();
+        Object content = item.getContent();
         sendNow(priorRelay, content);
     }
     
@@ -165,7 +160,6 @@ public class PingSender extends AnnotatedPlugin {
     public boolean isMyRelay(SimpleRelay relay) {
         return agentId.equals(relay.getSource()) && target.equals(relay.getTarget());
     }
-    
 
     /** Get our initial ping iteration counter value */
     private int getInitialCounter() {
@@ -174,8 +168,8 @@ public class PingSender extends AnnotatedPlugin {
         int ret = 0;
         if (blackboard.didRehydrate()) {
             // Get the counter from our sent ping, if any, then remove it
-            Subscription sub = getSubscription("isMyRelay");
-            for (Object o: (IncrementalSubscription) sub) {
+            IncrementalSubscription sub = (IncrementalSubscription) getSubscription("isMyRelay");
+            for (Object o: sub) {
                 SimpleRelay relay = (SimpleRelay) o;
                 ret = ((Integer) relay.getQuery()).intValue();
                 blackboard.publishRemove(relay);
@@ -196,7 +190,7 @@ public class PingSender extends AnnotatedPlugin {
         }
 
         // Send a new relay to the target
-        SimpleRelay relay = new SimpleRelaySource(uids.nextUID(), agentId, target, content);
+        SimpleRelay relay = new SimpleRelaySource(uidService.nextUID(), agentId, target, content);
         if (verbose && log.isShoutEnabled()) {
             log.shout("Sending ping " + content + " to " + target);
         }
@@ -220,17 +214,17 @@ public class PingSender extends AnnotatedPlugin {
                     + " seconds");
         }
         long futureTime = System.currentTimeMillis() + delayMillis;
-        Alarm alarm = new MyAlarm(priorRelay, content, futureTime);
+        TodoRelay newItem = new TodoRelay(priorRelay, content);
+        Alarm alarm = new TodoAlarm(newItem, futureTime);
         getAlarmService().addRealTimeAlarm(alarm);
     }
 
     /** An alarm that we use to wake us up after the delayMillis */
-    private class MyAlarm extends AlarmBase {
+    public static class TodoRelay implements TodoItem {
         private final SimpleRelay priorRelay;
         private final Object content;
 
-        public MyAlarm(SimpleRelay priorRelay, Object content, long futureTime) {
-            super(futureTime);
+        public TodoRelay(SimpleRelay priorRelay, Object content) {
             this.priorRelay = priorRelay;
             this.content = content;
         }
@@ -241,12 +235,6 @@ public class PingSender extends AnnotatedPlugin {
 
         public Object getContent() {
             return content;
-        }
-
-        // Put this alarm on the "myAlarms" queue and request an "execute()"
-        public void onExpire() {
-            TodoSubscription expiredAlarms = (TodoSubscription) getSubscription("myAlarm");
-            expiredAlarms.add(this);
         }
     }
 }
