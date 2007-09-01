@@ -27,9 +27,9 @@
 package org.cougaar.demo.ping;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.TodoItem;
-import org.cougaar.core.blackboard.TodoPlugin;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.plugin.TodoItem;
+import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.util.Arguments;
