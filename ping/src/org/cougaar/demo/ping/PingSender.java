@@ -157,7 +157,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         int ret = 0;
         if (blackboard.didRehydrate()) {
             // Get the counter from our sent ping, if any, then remove it
-            IncrementalSubscription sub = (IncrementalSubscription) getSubscription("isMyRelay");
+            IncrementalSubscription sub = getSubscription("isMyRelay");
             for (Object o: sub) {
                 SimpleRelay relay = (SimpleRelay) o;
                 ret = ((Integer) relay.getQuery()).intValue();
@@ -209,7 +209,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
     /**
      * These are the items on the TodoSubscription.
      */
-    private class TodoRelay implements TodoItem {
+    public class TodoRelay implements TodoItem {
         private final SimpleRelay priorRelay;
         private final Object content;
 
