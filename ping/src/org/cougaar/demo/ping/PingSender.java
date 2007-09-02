@@ -27,6 +27,7 @@
 package org.cougaar.demo.ping;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
+import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.TodoItem;
 import org.cougaar.core.plugin.TodoPlugin;
@@ -97,9 +98,10 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
     
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
+    
+    @Cougaar.Todo(id=TODO_ID)
+    public TodoSubscription todo;
 
-    /** This method is called when the agent is constructed. */
-    @Cougaar.Lifecycle()
     public void setArguments(Arguments args) {
         super.setArguments(args);
         if (target.equals(agentId)) {
@@ -107,7 +109,6 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         }
     }
     
-    @Cougaar.Lifecycle()
     protected void setupSubscriptions() {
         super.setupSubscriptions();
         // Get our initial counter value, which is zero unless we're restarting
@@ -121,14 +122,6 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
         // be called.
     }
 
-    @Cougaar.Execute(on=Subscribe.ModType.ADD, todo=TODO_ID)
-    public void executeToDoItem(TodoRelay item) {
-        // Send our next relay iteration to the target
-        SimpleRelay priorRelay = item.getPriorRelay();
-        Object content = item.getContent();
-        sendNow(priorRelay, content);
-    }
-    
     /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyRelay")
     public void executeRelay(SimpleRelay relay) {
@@ -216,7 +209,7 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
     /**
      * These are the items on the TodoSubscription.
      */
-    private static class TodoRelay implements TodoItem {
+    private class TodoRelay implements TodoItem {
         private final SimpleRelay priorRelay;
         private final Object content;
 
@@ -225,12 +218,8 @@ public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
             this.content = content;
         }
 
-        public SimpleRelay getPriorRelay() {
-            return priorRelay;
-        }
-
-        public Object getContent() {
-            return content;
+        public void doWork() {
+            sendNow(priorRelay, content);
         }
     }
 }
