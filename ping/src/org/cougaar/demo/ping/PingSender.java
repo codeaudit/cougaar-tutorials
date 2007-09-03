@@ -87,7 +87,7 @@ import org.cougaar.util.annotations.Subscribe;
  * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingSender extends TodoPlugin<PingSender.TodoRelay> {
+public class PingSender extends TodoPlugin {
     private static final String TODO_ID = "ping";
 
     @Cougaar.Arg(name="target", required=true)
