@@ -137,17 +137,16 @@ public class PingSender extends TodoPlugin {
         final Integer newContent = new Integer(++oldContent);
         
         if (delayMillis > 0) {
-            // Set an alarm to call our "execute()" method in the future
+            // Run sendNow later, still in the blackboard execution context.
             if (verbose && log.isShoutEnabled()) {
-                log.shout("Will send ping " + newContent + " to " + target + " in " + delayMillis / 1000
-                        + " seconds");
+                log.shout("Will send ping " + newContent + " to " + target + 
+                          " in " + delayMillis / 1000 + " seconds");
             }
-            todo.add(new TodoItem() {
+            todo.add(delayMillis, new TodoItem() {
                 public void execute() {
                     sendNow(relay, newContent);
                 }
-                
-            }, delayMillis);
+            });
         } else {
             // Send our relay now
             sendNow(relay, newContent);
