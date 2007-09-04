@@ -28,8 +28,6 @@ package org.cougaar.demo.ping;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.DeferrableTodoSubscription;
-import org.cougaar.core.plugin.TodoItem;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
@@ -88,8 +86,6 @@ import org.cougaar.util.annotations.Subscribe;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingSender extends TodoPlugin {
-    private static final String TODO_ID = "ping";
-
     @Cougaar.Arg(name="target", required=true)
     public MessageAddress target;
     
@@ -99,9 +95,6 @@ public class PingSender extends TodoPlugin {
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
     
-    @Cougaar.Todo(id=TODO_ID)
-    public DeferrableTodoSubscription todo;
-
     public void setArguments(Arguments args) {
         super.setArguments(args);
         if (target.equals(agentId)) {
@@ -142,11 +135,17 @@ public class PingSender extends TodoPlugin {
                 log.shout("Will send ping " + newContent + " to " + target + 
                           " in " + delayMillis / 1000 + " seconds");
             }
-            todo.add(delayMillis, new TodoItem() {
-                public void execute() {
+            executeLater(delayMillis, new Runnable() {
+                public void run() {
                     sendNow(relay, newContent);
                 }
             });
+            
+            
+//            invokeLater(delayMillis, new Runnable() {
+//              public void run() { sendNow(relay, newContent); }
+//            });
+            
         } else {
             // Send our relay now
             sendNow(relay, newContent);
