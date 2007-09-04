@@ -27,8 +27,8 @@
 package org.cougaar.demo.ping;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
+import org.cougaar.core.plugin.DeferrableTodoSubscription;
 import org.cougaar.core.plugin.TodoItem;
 import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.core.relay.SimpleRelay;
@@ -100,7 +100,7 @@ public class PingSender extends TodoPlugin {
     public boolean verbose;
     
     @Cougaar.Todo(id=TODO_ID)
-    public TodoSubscription todo;
+    public DeferrableTodoSubscription todo;
 
     public void setArguments(Arguments args) {
         super.setArguments(args);
@@ -124,7 +124,7 @@ public class PingSender extends TodoPlugin {
 
     /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
     @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyRelay")
-    public void executeRelay(SimpleRelay relay) {
+    public void executeRelay(final SimpleRelay relay) {
         // Print the target's response
         if (verbose && log.isShoutEnabled()) {
             log.shout("Received response " + relay.getReply() + " from " + target);
@@ -133,15 +133,24 @@ public class PingSender extends TodoPlugin {
         // Figure out our next content value
         //
         // For scalability testing we could make this a large byte array.
-        Integer old_content = (Integer) relay.getQuery();
-        Integer new_content = new Integer(old_content.intValue() + 1);
+        int oldContent = (Integer) relay.getQuery();
+        final Integer newContent = new Integer(++oldContent);
         
         if (delayMillis > 0) {
             // Set an alarm to call our "execute()" method in the future
-            sendLater(relay, new_content);
+            if (verbose && log.isShoutEnabled()) {
+                log.shout("Will send ping " + newContent + " to " + target + " in " + delayMillis / 1000
+                        + " seconds");
+            }
+            todo.add(new TodoItem() {
+                public void execute() {
+                    sendNow(relay, newContent);
+                }
+                
+            }, delayMillis);
         } else {
             // Send our relay now
-            sendNow(relay, new_content);
+            sendNow(relay, newContent);
         }
     }
     
@@ -184,42 +193,5 @@ public class PingSender extends TodoPlugin {
             log.shout("Sending ping " + content + " to " + target);
         }
         blackboard.publishAdd(relay);
-    }
-
-    /** Send our next relay iteration after the non-zero delayMillis */
-    private void sendLater(SimpleRelay priorRelay, Object content) {
-        // Set an alarm to call our "execute()" method in the future.
-        //
-        // An asynchronous alarm is more efficient and scalable than calling
-        // a blocking "Thread.sleep(delayMillis)", since it doesn't tie up a
-        // pooled Cougaar thread. By default, a Cougaar Node (JVM) is
-        // configured to have a limit of 30 pooled threads.
-        //
-        // Instead of removing the relay now, we hold onto it until the alarm
-        // is due. This allows the PingServlet to see the old relay on
-        // blackboard during our delay time.
-        if (verbose && log.isShoutEnabled()) {
-            log.shout("Will send ping " + content + " to " + target + " in " + delayMillis / 1000
-                    + " seconds");
-        }
-        TodoRelay newItem = new TodoRelay(priorRelay, content);
-        addTodoItem(delayMillis, newItem, TODO_ID);
-    }
-
-    /**
-     * These are the items on the TodoSubscription.
-     */
-    public class TodoRelay implements TodoItem {
-        private final SimpleRelay priorRelay;
-        private final Object content;
-
-        public TodoRelay(SimpleRelay priorRelay, Object content) {
-            this.priorRelay = priorRelay;
-            this.content = content;
-        }
-
-        public void doWork() {
-            sendNow(priorRelay, content);
-        }
     }
 }
