@@ -55,7 +55,7 @@ public class PingReceiver extends AnnotatedSubscriptionsPlugin {
     @Cougaar.Arg(name="verbose", defaultValue="true")
     public boolean verbose;
 
-    @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isMyRelay")
+    @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRelayForAgent")
     public void executeRelay(SimpleRelay relay) {
         // Send back the same content as our response
         Object content = relay.getQuery();
@@ -67,7 +67,6 @@ public class PingReceiver extends AnnotatedSubscriptionsPlugin {
         blackboard.publishChange(relay);
     }
     
-    @Cougaar.Predicate(when="isMyRelay")
     public boolean isRelayForAgent(SimpleRelay relay) {
         return agentId.equals(relay.getTarget());
     }

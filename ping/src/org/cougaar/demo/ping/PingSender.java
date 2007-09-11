@@ -116,7 +116,7 @@ public class PingSender extends TodoPlugin {
     }
 
     /** Create our "isMyRelay" subscription and handle CHANGE callbacks */
-    @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isMyRelay")
+    @Cougaar.Execute(on=Subscribe.ModType.CHANGE, when="isRelayForAgent")
     public void executeRelay(final SimpleRelay relay) {
         // Print the target's response
         if (verbose && log.isShoutEnabled()) {
@@ -152,7 +152,6 @@ public class PingSender extends TodoPlugin {
         }
     }
     
-    @Cougaar.Predicate(when="isMyRelay")
     public boolean isRelayForAgent(SimpleRelay relay) {
         return agentId.equals(relay.getSource()) && target.equals(relay.getTarget());
     }
