@@ -86,6 +86,28 @@ Two-node "ping" society definition.
         <argument name="path" value="/ping"/>
       </component>
     </agent>
+    
+     <agent name="I">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="J">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="K">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="L">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    
   </node>
 
   <node name="Node2">
@@ -121,26 +143,6 @@ Two-node "ping" society definition.
       </component>
     </agent>
     <agent name="H">
-      <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="false"/> <!-- quiet -->
-      </component>
-    </agent>
-    <agent name="I">
-      <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="false"/> <!-- quiet -->
-      </component>
-    </agent>
-    <agent name="J">
-      <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="false"/> <!-- quiet -->
-      </component>
-    </agent>
-    <agent name="K">
-      <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="false"/> <!-- quiet -->
-      </component>
-    </agent>
-    <agent name="L">
       <component class="org.cougaar.demo.ping.PingReceiver">
         <argument name="verbose" value="false"/> <!-- quiet -->
       </component>
