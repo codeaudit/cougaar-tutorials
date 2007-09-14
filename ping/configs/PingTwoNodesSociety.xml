@@ -6,6 +6,18 @@ Two-node "ping" society definition.
 <society>
 
   <node name="Node1">
+  		<!-- Society monitor servlet based on framesets-->
+		<component class='org.cougaar.core.qos.frame.topology.TopologyFrameUpdaterPlugin'>
+			<argument name="frame-set-files"
+				value="org/cougaar/core/qos/frame/topology/cougaar-topology-protos.xml" />
+			<argument name="frame-set" value="societyTopology" />
+		</component>
+		<component class='org.cougaar.core.qos.frame.topology.MonitorServletPlugin'/>
+		<component class='org.cougaar.core.qos.frame.FrameSetServicePlugin'/>
+		<component class='org.cougaar.core.qos.frame.FrameViewerServlet'>
+			<argument> /frames </argument>
+		</component>
+  
 
     <agent name="NameServer">
       <!-- Act as a naming service agent for the society -->
@@ -15,9 +27,61 @@ Two-node "ping" society definition.
     <agent name="A">
       <component class="org.cougaar.demo.ping.PingSender">
         <argument name="target" value="B"/>
-        <argument name="delayMillis" value="5000"/>
+        <argument name="delayMillis" value="0"/>
+        <argument name="verbose" value="false"/> <!-- quiet -->
         <argument name="verbose" value="true"/>
       </component>
+           <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="C"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+     <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="D"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+     <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="E"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="F"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="G"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="H"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="I"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="J"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="K"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      <component class="org.cougaar.demo.ping.PingSender">
+        <argument name="target" value="L"/>
+        <argument name="delayMillis" value="0"/> <!-- as fast as possible -->
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+      
       <component class="org.cougaar.demo.ping.PingServlet">
         <argument name="path" value="/ping"/>
       </component>
@@ -27,9 +91,61 @@ Two-node "ping" society definition.
   <node name="Node2">
     <agent name="B">
       <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="true"/>
+        <argument name="verbose" value="false"/>
       </component>
     </agent>
+      <agent name="C">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="D">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+
+    <agent name="E">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="F">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="G">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="H">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="I">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="J">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="K">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    <agent name="L">
+      <component class="org.cougaar.demo.ping.PingReceiver">
+        <argument name="verbose" value="false"/> <!-- quiet -->
+      </component>
+    </agent>
+    
   </node>
 
 </society>
