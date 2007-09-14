@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/mtsstd"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qos"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/util"/>
+	<classpathentry kind="lib" path="/jars/lib/servlet.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
