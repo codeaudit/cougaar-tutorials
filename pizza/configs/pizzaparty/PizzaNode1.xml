@@ -139,7 +139,7 @@
           insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 	  <!-- How long to wait for answers, in milliseconds -->
           <argument>
-            WAIT_FOR_RSVP_DURATION:60000
+            WAIT_FOR_RSVP_DURATION=60000
           </argument>
         </component>
 	<!-- Create the Pizza Prototype assets -->
