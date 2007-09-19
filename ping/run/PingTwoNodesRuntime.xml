@@ -5,17 +5,17 @@ Two-node "ping" runtime System Properties.
 -->
 <runtime>
 
-  <!-- Set infrastructure to multi-host, see doc/OnlineManual/Templates.html -->
-  <vm_parameter
-    name="-Dorg.cougaar.society.xsl.param.template"
-    value="lan"/>
-
   <!--
   Make agent "NameServer" on Node1 be our shared naming service server.
 
   If running multi-host, change "localhost" to the host that will run "Node1".
   -->
   <vm_parameter name="-Dorg.cougaar.name.server" value="NameServer@localhost:8888"/>
+
+  <!-- Set infrastructure to multi-host, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="lan"/>
 
   <!-- Optional tuning to reduce naming service startup time -->
   <vm_parameter name="-Dorg.cougaar.core.wp.server.successTTD" value="30000"/>

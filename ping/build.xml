@@ -43,7 +43,8 @@ The zip already contains a "lib/ping.jar", so this is optional.
 
   <target name="prepare" depends="init" description="Prepares for building, creates required directories">
     <tstamp />
-    <mkdir dir="${build.dir}" description="Creates the build directory for class files" />
+    <mkdir dir="${build.dir}" description="Creates the build directory" />
+    <mkdir dir="${classes.dir}" description="Creates the classes directory" />
   </target>
 
   <target name="compile" depends="prepare" description="Compiles all source files .">

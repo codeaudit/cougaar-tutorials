@@ -5,7 +5,7 @@
 <p>
 This module contains the Cougaar "ping" demos.
 <p>
-There are five demos:
+There are six demos:
 <ol>
   <li>A basic "ping" test, where agent "A" sends a ping message to agent "B"
   once every 5 seconds.</li><p>
@@ -23,6 +23,9 @@ There are five demos:
   <li>A two-node "ping" profiled benchmark, where detailed performance metrics
   are logged every 10 seconds.  Logged metrics include the throughput,
   inter-agent traffic matrix, and cpu load</li><p>
+
+  <li>A two-node "ping" where agent "A" sends to 11 other agents (i.e. a
+  "fan-out" pattern)</li><p>
 
 </ol>
 <p>
@@ -91,7 +94,7 @@ and in the "cougaar-hello.zip" produced by the nightly build:<br>
 <a name="usage">
 <h2>Usage:</h2>
 
-There are five demos:
+There are six demos:
 <ol>
 
   <li><b>A basic "ping" test</b>:
@@ -264,6 +267,15 @@ There are five demos:
     </li><p>
   </ol>
   </li><p>
+
+  <li><b>A two-node "ping" fan</b>:
+  <ol>
+    <li>Run the PingFanSociety.xml and PingFanRuntime.xml files, as noted in the above
+    two-node tests.  Examine the "/$A/ping" servlet to view the society progress.
+    </li><p>
+  </ol>
+  </li><p>
+
 </ol>
 <p>
 

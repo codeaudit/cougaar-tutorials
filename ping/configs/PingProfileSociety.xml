@@ -75,8 +75,6 @@ Two-node "ping" society definition with profiling enabled.
       <!-- This plugin sends the ping to agent "B" -->
       <component class="org.cougaar.demo.ping.PingSender">
         <argument name="target" value="B"/>
-        <argument name="delayMillis" value="0"/>
-        <argument name="verbose" value="false"/>
       </component>
       <!-- Our servlet to view the blackboard -->
       <component class="org.cougaar.demo.ping.PingServlet">
@@ -89,14 +87,12 @@ Two-node "ping" society definition with profiling enabled.
     <!-- 
     This can be an exact copy of the above Node1 components.
 
-    For contrast, here we disable profiling.
+    For contrast, here we disable profiling on Node2.
     -->
 
     <agent name="B">
       <!-- This plugin replies to pings from any sender -->
-      <component class="org.cougaar.demo.ping.PingReceiver">
-        <argument name="verbose" value="false"/>
-      </component>
+      <component class="org.cougaar.demo.ping.PingReceiver"/>
     </agent>
   </node>
 
