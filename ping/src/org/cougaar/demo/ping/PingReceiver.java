@@ -42,9 +42,9 @@ import org.cougaar.util.annotations.Subscribe;
  * {@link PingSender} relays. For simplicity, it's easiest to load a copy of
  * this plugin into every agent.
  * 
- * @property org.cougaar.demo.ping.PingReceiver.verbose=true PingReceiver should
- *           output SHOUT-level logging messages, if not set as a plugin
- *           parameter.
+ * @property org.cougaar.demo.ping.PingReceiver.verbose=true
+ *   PingReceiver should output SHOUT-level logging messages, if not set as a
+ *   plugin parameter.
  * 
  * @see PingSender Remote plugin that sends the ping relays to this plugin
  * 
@@ -52,22 +52,22 @@ import org.cougaar.util.annotations.Subscribe;
  */
 public class PingReceiver extends AnnotatedSubscriptionsPlugin {
 
-    @Cougaar.Arg(name="verbose", defaultValue="true")
-    public boolean verbose;
+  @Cougaar.Arg(name="verbose", defaultValue="true")
+  public boolean verbose;
 
-    @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRelayForAgent")
-    public void executeRelay(SimpleRelay relay) {
-        // Send back the same content as our response
-        Object content = relay.getQuery();
-        Object response = content;
-        relay.setReply(response);
-        if (verbose && log.isShoutEnabled()) {
-            log.shout("Responding to ping " + response + " from " + relay.getSource());
-        }
-        blackboard.publishChange(relay);
+  @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRelayForAgent")
+  public void executeRelay(SimpleRelay relay) {
+    // Send back the same content as our response
+    Object content = relay.getQuery();
+    Object response = content;
+    relay.setReply(response);
+    if (verbose && log.isShoutEnabled()) {
+      log.shout("Responding to ping " + response + " from " + relay.getSource());
     }
-    
-    public boolean isRelayForAgent(SimpleRelay relay) {
-        return agentId.equals(relay.getTarget());
-    }
+    blackboard.publishChange(relay);
+  }
+
+  public boolean isRelayForAgent(SimpleRelay relay) {
+    return agentId.equals(relay.getTarget());
+  }
 }
