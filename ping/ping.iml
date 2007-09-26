@@ -14,9 +14,12 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="module" module-name="mtsstd" />
+    <orderEntry type="module" module-name="mtslinks" />
+    <orderEntry type="module" module-name="qrs" />
     <orderEntry type="module" module-name="qos" />
     <orderEntry type="module" module-name="webserver" />
     <orderEntry type="module" module-name="webtomcat" />
+    <orderEntry type="module" module-name="webmicro" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -26,8 +29,15 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="mtslinks" />
-    <orderEntry type="module" module-name="webmicro" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../jars/lib/tomcat_40.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntryProperties />
   </component>
 </module>
