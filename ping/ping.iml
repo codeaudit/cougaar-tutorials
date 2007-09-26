@@ -26,6 +26,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="mtslinks" />
+    <orderEntry type="module" module-name="webmicro" />
     <orderEntryProperties />
   </component>
 </module>
