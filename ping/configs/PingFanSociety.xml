@@ -17,6 +17,11 @@ A large-scale two-node test where agent "A" sends pings to 11 agents "B..L".
     <component class='org.cougaar.core.qos.frame.FrameViewerServlet'>
       <argument> /frames </argument>
     </component>
+    
+    <!-- Traffic matrix collector -->
+    <component class='org.cougaar.core.qos.tmatrix.AgentFlowAspect' 
+          insertionpoint='Node.AgentManager.Agent.MessageTransport.Aspect'/>
+    <component class='org.cougaar.core.qos.tmatrix.AgentFlowServletPlugin'/>      
 
     <agent name="NameServer">
       <!-- Act as a naming service agent for the society -->
@@ -81,6 +86,12 @@ A large-scale two-node test where agent "A" sends pings to 11 agents "B..L".
 
   <!-- Agents "B..H" are on remote node "Node2" -->
   <node name="Node2">
+  
+    <!-- Traffic matrix collector -->
+    <component class='org.cougaar.core.qos.tmatrix.AgentFlowAspect' 
+          insertionpoint='Node.AgentManager.Agent.MessageTransport.Aspect'/>
+    <component class='org.cougaar.core.qos.tmatrix.AgentFlowServletPlugin'/>      
+  
     <agent name="B">
       <component class="org.cougaar.demo.ping.PingReceiver"/>
     </agent>
