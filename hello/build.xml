@@ -9,11 +9,10 @@ The zip already contains a "lib/hello.jar", so this is optional.
 
   <property environment="env"/>
   <property name="cougaar.install.path" value="${env.COUGAAR_INSTALL_PATH}" />
-  <property name="cougaar.home" value="${env.COUGAAR_HOME}" />
 
   <!--- Configure all required paths -->
   <property name="src.dir" value="${basedir}/src" description="Java source files" />
-  <property name="build.dir" value="${basedir}/tmp" description="Class files" />
+  <property name="build.dir" value="${basedir}/tmp/classes" description="Class files" />
   <property name="dist.dir" value="${basedir}/lib" description="Generated jars" />
 
   <property name="cip.lib" value="${cougaar.install.path}/lib"/>
