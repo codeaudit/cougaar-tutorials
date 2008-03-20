@@ -6,10 +6,10 @@
   <body>
     <h2>Introduction</h2>
     <p>
-      This COUGAAR demo has been set up so that it can easily be run
+      This Cougaar demo has been set up so that it can easily be run
       in Eclipse, either in a new workspace created for that purpose,
       or in existing workspace if you already have one for
-      COUGAAR-related work.
+      Cougaar-related work.
     </p>
     <p> 
       We assume the reader is already familiar with Eclipse, and we
@@ -20,8 +20,8 @@
     <p>
       Regardless of whether you create a new workspace or use an
       existing one, the first step is to create an Eclipse User
-      Library containing the COUGAAR jars.  You may also find this
-      User Library useful for your own COUGAAR work.
+      Library containing the Cougaar jars.  You may also find this
+      User Library useful for your own Cougaar work.
     </p>
 
     <p>
@@ -39,12 +39,12 @@
         from <code>$COUGAAR_INSTALL_PATH/lib</code></li>
 
         <li>Select the library again, click <i>Add Jars...</i> and add all
-        the jars (and only jar files)
+        the jars (and only jar files, e.g. not index.html)
         from <code>$COUGAAR_INSTALL_PATH/sys</code></li>
       </ol>
     </p>
-    <p>Any projects that depend on COUGAAR, include HelloWorld, can
-    get at the COUGAAR jars simply by including the "cougaar"
+    <p>Any projects that depend on Cougaar, include HelloWorld, can
+    get at the Cougaar jars simply by including the "cougaar"
     User Library on the project's build path.
     </p>
 
@@ -71,7 +71,7 @@
 
     <h2>Adding Hello World to your existing workspace</h2>
     <p>
-      You may find it convenient to repeat the steps above in order to     HelloWorld</h3>
+      You may find it convenient to repeat the steps above in order to
     <a name="import"/>
     <p>
       To import the Hello World project into any Eclipse workspace, do
@@ -95,8 +95,8 @@
       </ol>
     </p>
 
-    <h2>Running your own COUGAAR society</h2>
-    <p> Once you have the "hello" in your own COUGAAR workspace you
+    <h2>Running your own Cougaar society</h2>
+    <p> Once you have the "hello" in your own Cougaar workspace you
     can easily run your societies in Eclipse by cloning the "hello"
     example and making a few modifications.  To make a clone, simply
     open <i>Open Run Dialog</i>, select "hello", and click the duplicate
@@ -124,6 +124,90 @@
     </p>
 
     <ul>
+    
+      <li> Some values are society-specific and must be adjusted to
+      match your project.  These include:
+
+        <dl>
+           <dt><b>-Dorg.cougaar.society.path=${project_loc:hello}</b></dt>
+           <dd>
+             Replace the value with location of your project root.
+           </dd>
+
+           <dt><b>-Dorg.cougaar.runtime.path=${project_loc:hello}/run</b></dt>
+           <dd>
+             Replace value with the run (working) directory in your project root.
+           </dd>
+
+           <dt><b>-Dorg.cougaar.society.file=${project_loc:hello}/configs/HelloSociety.xml</b></dt>
+           <dd>
+             Replace the value with a path to your society xml.
+             Typically this would be a 'configs' directory under the
+             project root.
+           </dd>
+
+           <dt><b>-Dorg.cougaar.runtime.file=SingleNodeRuntime.xml</b></dt>
+           <dd>
+             Replace the value with the path to your society runtime
+             xml, relative to the run (working) directory you set above.
+           </dd>
+
+           <dt><b>-Dorg.cougaar.node.name=Node1</b></dt>
+           <dd>
+             Replace the value with name of the node from the society xml file you want to run.
+           </dd>
+
+        </dl>
+      </li>
+ 
+      <li> Other values define the runtime environment,
+      but you might need to adjust them.  These include:
+        <dl>
+          <dt><b>-Dorg.cougaar.name.server=NameServer@localhost:8888</b></dt>
+          <dd>
+            If your society includes multiple nodes running on
+            multiple hosts, replace 'localhost' with the fully
+            qualified domain name of the host running the node that
+            contains the NameServer agent.
+          </dd>
+
+          <dt><b>-Dorg.cougaar.society.xsl.param.template=single_node</b></dt>
+          <dd>
+            Adjust this if you want to run your society in an environment other than a
+            stand alone node. (see 
+            <a href="http://cougaar.cougaar.org/software/latest/doc/OnlineManual/Templates.html">
+            templates</a>)
+            
+          </dd>
+
+          <dt><b>-Dorg.cougaar.society.xsl.param.planning=false</b></dt>
+          <dd>
+            Set to true, if you want to use the task servlet to inspect objects on the blackboard
+          </dd>
+
+          <dt><b>-Dorg.cougaar.core.agent.quiet=true</b></dt>
+          <dd>
+            Set to false, if you want to see +/- printed on the console 
+            for each message sent and received.
+          </dd>
+
+          <dt><b>-Dorg.cougaar.core.agent.heartbeat=false</b></dt>
+          <dd>
+            Set to true, if you want a "." printed on the console every 5 seconds.
+          </dd>
+
+          <dt><b>-Dorg.cougaar.core.logging.config.filename=logging.props</b></dt>
+          <dd>
+            If you want to use your own log4j properties file, put
+            the path to that file here.
+          </dd>
+
+ 
+        </dl>
+
+      </li>
+
+
       <li> Some values are fixed for all societies.  These include:
         <dl>
           <dt><b>-Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser</b></dt>
@@ -143,50 +227,7 @@
 
           <dt><b>-Dorg.cougaar.core.persistence.verifyJavaIOPatch=false</b></dt>
           <dd/>
-
-        </dl>
-        <p>
-      </li>
-
-      <li> Other values are typical and can generally be left alone,
-      but you might prefer to adjust them.  These include:
-        <dl>
-          <dt><b>-Dorg.cougaar.name.server=NameServer@localhost:8888</b></dt>
-          <dd>
-            If your society includes multiple nodes running on
-            multiple hosts, replace 'localhost' with the fully
-            qualified domain name of the host running the node that
-            include the Name Server.
-          </dd>
-
-          <dt><b>-Dorg.cougaar.society.xsl.param.template=single_node</b></dt>
-          <dd>
-            Adjust this if your society is something other than a
-            single standalone node.
-          </dd>
-
-          <dt><b>-Dorg.cougaar.society.xsl.param.planning=false</b></dt>
-          <dd>
-            Set to true if you need COUGAAR planning components.
-          </dd>
-
-          <dt><b>-Dorg.cougaar.core.agent.quiet=true</b></dt>
-          <dd>
-            Set to false if you want to see more details on standard out.
-          </dd>
-
-          <dt><b>-Dorg.cougaar.core.agent.heartbeat=false</b></dt>
-          <dd>
-            Set to true if [what is this for?]
-          </dd>
-
-          <dt><b>-Dorg.cougaar.core.logging.config.filename=logging.props</b></dt>
-          <dd>
-            If you want to use your own log4j properties file, put
-            the path to that file here.
-          </dd>
-
-          <dt><b>-Xms1m</b></dt>
+         <dt><b>-Xms1m</b></dt>
           <dd>
             Adjust this if you expect your societies memory
             requirements to be different.
@@ -204,45 +245,10 @@
             requirements to be different.
           </dd>
 
-
         </dl>
-
+        <p>
       </li>
-
-      <li> Other values are society-specific and must be adjusted to
-      match yours.  These include:
-
-        <dl>
-           <dt><b>-Dorg.cougaar.society.path=${project_loc:hello}</b></dt>
-           <dd>
-             Replace the value with location of your project root.
-           </dd>
-
-           <dt><b>-Dorg.cougaar.runtime.path=${project_loc:hello}/run</b></dt>
-           <dd>
-             Replace value with the run directory in your project root.
-           </dd>
-
-           <dt><b>-Dorg.cougaar.society.file=${project_loc:hello}/configs/HelloSociety.xml</b></dt>
-           <dd>
-             Replace the value with a path to your society xml.
-             Typically this would be a 'configs' directory under the
-             project root.
-           </dd>
-
-           <dt><b>-Dorg.cougaar.runtime.file=SingleNodeRuntime.xml</b></dt>
-           <dd>
-             Replace the value with the path to your society runtime
-             xml, relative to the working directory you set above.
-           </dd>
-
-           <dt><b>-Dorg.cougaar.node.name=Node1</b></dt>
-           <dd>
-             Replace the value with name of the node you want to run.
-           </dd>
-
-        </dl>
-      </li>
+      
 
     </ul>
 
