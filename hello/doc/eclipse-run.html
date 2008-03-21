@@ -13,10 +13,13 @@
     </p>
     <p> 
       We assume the reader is already familiar with Eclipse, and we
-      recommend using Eclipse 3.3.2 or later.
+      recommend using Eclipse 3.3 or later.  Some sections also assume
+      you already have a Cougaar society of your own for which some
+      portion of the code is already in an Eclipse workspace.
     </p>
 
     <h2>Defining the "cougaar" User Library</h2>
+    <a name="user-lib"/>
     <p>
       Regardless of whether you create a new workspace or use an
       existing one, the first step is to create an Eclipse User
@@ -28,8 +31,10 @@
       To create a User Library in Eclipse, do the following:
 
       <ol>
-        <li>open Preferences and navigate to <i>Java -> Build Path ->
-      User Libraries</i>.</li>
+        <li>Open the Preferences and navigate to <i>Java -> Build Path ->
+      User Libraries</i>.  In Windows and Linux the Preferences are
+      accesible from the <i>Window</i> menu.  In MacOSX they're
+      accessible from the <i>Eclipse</i> menu.</li>
 
         <li>Click <i>New</i> to create a new library.  Give it the
         name "cougaar".</li>
@@ -39,7 +44,7 @@
         from <code>$COUGAAR_INSTALL_PATH/lib</code></li>
 
         <li>Select the library again, click <i>Add Jars...</i> and add all
-        the jars (and only jar files, e.g. not index.html)
+        the jars (and only jar files and not, say, index.html)
         from <code>$COUGAAR_INSTALL_PATH/sys</code></li>
       </ol>
     </p>
@@ -69,39 +74,32 @@
 
     </p>
 
-    <h2>Adding Hello World to your existing workspace</h2>
+    <h2>Extending an existing Eclipse workspace</h2>
     <p>
-      You may find it convenient to repeat the steps above in order to
-    <a name="import"/>
-    <p>
-      To import the Hello World project into any Eclipse workspace, do
-      the following:
-      <ol>
-        <li>From the <i>File</i> menu select <i>Import...</i>.</li>
-
-        <li>In the <i>Import Projects</i> dialog that pops up,
-        open <i>General</i> and select <i>Existing Projects into
-        Workspace</i> and click <i>Next</i></li>
-        
-        <li>Select <i>Select root directory</i>, click the
-        adjacent <i>Browse...</i> button and in the file browser that
-        pops up, navigate to the parent directory of "hello" and click
-        the <i>Choose</i> button.</li>
-
-        <li> The "hello" project should now be listed and checked
-        in the <i>Import Projects</i> dialog.  Click the <i>Finish</i>
-        button and you're done. </li>
-        
-      </ol>
+       If you already have an Eclipse workspace configured to develop
+      software for a Cougaar society, you may find it convenient to
+      import the "hello" society in order to have 'template' run
+      configuration.  You may also find it useful to reuse the
+      "cougaar" User Library in your own projects.
     </p>
 
-    <h2>Running your own Cougaar society</h2>
+
+    <h3>Adding Hello World to your existing workspace</h3>
+    <p>
+      The steps for this have already been described:  
+      <a href="#user-lib">create the "cougaar" User Library</a> and
+      <a href="#import">import the "hello" project</a>.  In this case
+      the import is being done not to run the demo but to give you
+      access to a working Eclipse run config.
+    </p>
+    
+    <h3>Running your own Cougaar society</h3>
     <p> Once you have the "hello" in your own Cougaar workspace you
     can easily run your societies in Eclipse by cloning the "hello"
     example and making a few modifications.  To make a clone, simply
     open <i>Open Run Dialog</i>, select "hello", and click the duplicate
-    button in the toolbar (second from left).  Now change its name to
-    something more meaningful, change the project to be your project
+    button in the toolbar (second from left).  Now change the clone's name to
+    something more meaningful, change its project to be your project
     and click <i>Apply</i> to save the changes so far.
     </p>
 
@@ -182,18 +180,26 @@
 
           <dt><b>-Dorg.cougaar.society.xsl.param.planning=false</b></dt>
           <dd>
-            Set to true if you want to use the task servlet to inspect objects on the blackboard
+            Set to true if you want to use the task servlet to inspect objects on the blackboard.
           </dd>
 
           <dt><b>-Dorg.cougaar.core.agent.quiet=true</b></dt>
           <dd>
             Set to false if you want to see +/- printed on the console 
             for each message sent/received.
+            See <a href="
+            http://cougaar.org/docman/view.php/17/55/FAQ.html#dots">
+              the Cougaar FAQ.
+            </a>
           </dd>
 
           <dt><b>-Dorg.cougaar.core.agent.heartbeat=false</b></dt>
           <dd>
             Set to true if you want a "." printed on the console every 5 seconds.
+            See <a href="
+            http://cougaar.org/docman/view.php/17/55/FAQ.html#dots">
+              the Cougaar FAQ.
+            </a>
           </dd>
 
           <dt><b>-Dorg.cougaar.core.logging.config.filename=logging.props</b></dt>
@@ -242,6 +248,80 @@
       
 
     </ul>
+
+    <h2>Importing a project</h2>
+    <a name="import"/>
+    <p>
+      To import the Hello World project into any Eclipse workspace, do
+      the following:
+      <ol>
+        <li>From the <i>File</i> menu select <i>Import...</i>.</li>
+
+        <li>In the <i>Import Projects</i> dialog that pops up,
+        open <i>General</i> and select <i>Existing Projects into
+        Workspace</i> and click <i>Next</i></li>
+        
+        <li>Select <i>Select root directory</i>, click the
+        adjacent <i>Browse...</i> button and in the file browser that
+        pops up, navigate to the parent directory of "hello" and click
+        the <i>Choose</i> button.</li>
+
+        <li> The "hello" project should now be listed and checked
+        in the <i>Import Projects</i> dialog.  Click the <i>Finish</i>
+        button and you're done. </li>
+        
+      </ol>
+    </p>
+
+    <h2>Complete sequence of operations for running the demo in a new
+    workspace</h2>
+    <p> 
+      For reference, here is a complete sequence of operations for
+      running the "hello" demo in Eclipse, starting from scratch.
+    </p>
+    <ol>
+      <li>Install cougaar:  download and unzip cougaar, cougaar-support, demo-hello</li>
+      <li><a href="http://eclipse.org">Install Eclipse</a></li>
+      <li>Start Eclipse</li>
+      <li>"select a workspace" to an empty directory</li>
+      <li>Switch to the "Workbench"</li>
+      <li>Define the "cougaar" User Library:
+        <ol>
+          <li>menu Window -> Preferences</li>
+          <li>select Java -> Build Path ->  User Libraries</li>
+          <li>click New, name it "cougaar", click OK</li>
+          <li>click "Add JARs", select lib/*.jar, click OK</li>
+          <li>click "Add JARs", select sys/*.jar, click OK</li>
+          <li>click OK</li>
+        </ol>
+      </li>
+      <li>Import the "hello" project.
+        <ol>
+          <li>menu File -> Import</li>
+          <li>select General -> Existing Application, click Next</li>
+          <li>click Browse, click on the "hello" dir, click OK</li>
+          <li>verify that "hello" is checked</li>
+          <li>click Finish</li>
+        </ol>
+      </li>
+      <li>Run the demo.
+        <ol>
+          <li>menu Run -> Run</li>
+          <li>select Java-> Java Application -> hello</li>
+          <li>click Run</li>
+        </ol>
+      </li>
+      <li>Observe the output
+        <ul>
+          <li>Console prints "A: Hello, world!"</li>
+        </ul>
+      </li>
+      <li>Stop the run.
+        <ul>
+          <li>click on the red square "stop button"</li>
+        </ul>
+      </li>
+    </ol>
 
   </body>
 </html>
