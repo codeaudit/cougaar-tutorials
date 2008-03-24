@@ -48,7 +48,7 @@
         from <code>$COUGAAR_INSTALL_PATH/sys</code></li>
       </ol>
     </p>
-    <p>Any projects that depend on Cougaar, include HelloWorld, can
+    <p>Any projects that depend on Cougaar, including HelloWorld, can
     get at the Cougaar jars simply by including the "cougaar"
     User Library on the project's build path.
     </p>
@@ -78,41 +78,82 @@
     <p>
        If you already have an Eclipse workspace configured to develop
       software for a Cougaar society, you may find it convenient to
-      import the "hello" society in order to have 'template' run
-      configuration.  You may also find it useful to reuse the
-      "cougaar" User Library in your own projects.
+      import the "hello" society in order to have a 'template' run
+      configuration. 
     </p>
-
 
     <h3>Adding Hello World to your existing workspace</h3>
     <p>
-      The steps for this have already been described:  
+      The first two steps for this have already been described:  
       <a href="#user-lib">create the "cougaar" User Library</a> and
       <a href="#import">import the "hello" project</a>.  In this case
       the import is being done not to run the demo but to give you
       access to a working Eclipse run config.
     </p>
+    <p>
+      Now you should add the "cougaar" User Library as a dependency in
+      your own project's build path.  If your project already had
+      explicit dependencies on Cougaar jars, those should be removed.
+      If you don't know how to edit the Build Path, the procedure is
+      described in detail below. Otherwise, feel free to skip this
+      section.
     
+      <h4>Adding "cougaar" to your Build Path</h4>
+      <a name="buildpath"/>
+    <p>
+      To edit your project's Build Path:
+
+      <ol>
+        <li>Right-click the project's name in the Package Explorer and
+          select <i>Build Path -> Configure Build Path</i> from the
+          menu.</li>
+
+        <li>Select the <i>Libraries</i> tab.</li>
+
+        <li>Click <i>Add Library</i>.</li>
+
+        <li>Click <i>User Library</i> in the dialog that appears,
+        then click the <i>Next</i> button.</li>
+
+        <li> Check the box next to "cougaar" and click <i>Finish</i>.</li>
+
+        <li>Since the "cougaar" User Library includes all the Cougaar
+        jars, you should remove any explicit dependencies your own
+        project might have already had on specific ones, for example
+        core.jar.  Select all such jars that appear in
+        the <i>Libraries</i> tab of the Build Path dialog, then click
+        the <i>Remove</i> button in the right button panel.</li>
+
+        <li>
+          Click the <i>OK</i> button at the bottom to save your
+          changes and exit the dialog.
+        </li>
+      </ol>
+
+
     <h3>Running your own Cougaar society</h3>
-    <p> Once you have the "hello" in your own Cougaar workspace you
-    can easily run your societies in Eclipse by cloning the "hello"
-    example and making a few modifications.  To make a clone, simply
-    open <i>Open Run Dialog</i>, select "hello", and click the duplicate
-    button in the toolbar (second from left).  Now change the clone's name to
-    something more meaningful, change its project to be your project
-    and click <i>Apply</i> to save the changes so far.
+    <p> Once you have the "hello" project in your own Cougaar workspace you
+      can easily run your societies in Eclipse by cloning the "hello"
+      run configuration and making a few modifications.  To make a clone, simply
+      open <i>Open Run Dialog</i>, select "hello", and click the
+      duplicate button in the toolbar (second from left).  Now change
+      the clone's name to something more meaningful, change its
+      project to be your project and click <i>Apply</i> to save the
+      changes so far.  Leave the <i>Main Class</i> set to
+      "org.cougaar.bootstrap.bootstrapper".
     </p>
 
     <p>
       At this point switch from the <i>Main</i> tab to
-      the <i>Arguments</i> tab.  Change the <i>Working directory</i>
-      to something meaningful for your project, typically the
-      directory that contains the society runtime xml and webtomcat if
-      you use servlets.  For portability it's best to make this
-      relative to the project root if it all possible, which will
-      allow you to use the Eclipse reference ${project_loc:xxx}, where
-      xxx is the project name.  The "hello" configuration is set up
-      this way.
+      the <i>Arguments</i> tab. Change the <i>Working directory</i> to
+      something meaningful for your project, typically the directory
+      that contains the society runtime xml and webtomcat if you use
+      servlets.  For portability it's convenient to make this relative
+      to the project root, since this will allow you to use the
+      Eclipse reference ${project_loc:xxx}, where xxx is the project
+      name.  The "hello" configuration is like this. A run
+      configuration set up in this relative way can be checked in and
+      shared with other users.
     </p>
 
     <p>
@@ -275,9 +316,10 @@
 
     <h2>Complete sequence of operations for running the demo in a new
     workspace</h2>
-    <p> 
-      For reference, here is a complete sequence of operations for
+    <p> For reference, here is a complete sequence of operations for
       running the "hello" demo in Eclipse, starting from scratch.
+      Feel free to ignore this section unless you had difficulties
+      earlier on.
     </p>
     <ol>
       <li>Install cougaar:  download and unzip cougaar, cougaar-support, demo-hello</li>
