@@ -1,0 +1,17 @@
+<?xml version='1.0'?>
+
+<!--
+Two-node "ping" runtime System Properties.
+-->
+<runtime>
+
+  <!-- Set infrastructure to legacy (default) to get community component loaded, see doc/OnlineManual/Templates.html -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="legacy"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+     name="-Dorg.cougaar.core.logging.config.filename"
+     value="logging.props"/>
+</runtime>

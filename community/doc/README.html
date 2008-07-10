@@ -1,0 +1,161 @@
+<html>
+<head><title>Cougaar "White Pages" Demos</title></head>
+<body>
+<h1>Cougaar "Community" Demos</h1>
+<p>
+This module contains the Cougaar "community" demos. 
+The purpose of this demo is to show how to configure communities and how to use them to send relays to some community members without knowing them. <br><br>This demo also demonstrates another design pattern, compared to the basic ping demo. Here, both sender and receiver use a relay to talk to each other, they don't use the reply feature of relays. Thanks to this pattern, they create only one relay. </p>      1. The sender publishAdd's a new relay &quot;r1&quot;
+   <br>2. The receiver publishAdd's its response in a new relay &quot;r2&quot;
+   <br>3. The sender publishChange's relay &quot;r1&quot; in response to &quot;r2&quot;
+   <br>4. The receiver publishChange's relay &quot;r2&quot; in response to &quot;r1&quot;
+   <br>5. goto (3)
+<br><br>In this pattern the two relays, &quot;r1&quot; and &quot;r2&quot;, acts as content &quot;channels&quot;. 
+There is no memory leak because we only publishAdd these two relays.<p>
+There are two demos:
+<ol>
+  <li>A  single node ping community demo. We define a NodeA with Agent-1, Agent-2, ..., Agent-5.  Agent-1 is the sender and all other agents have a PingReceiver component. But Agent-1 only sends the ping to members of CommunityA having the role PingReceiver. Only Agent-4 and Agent-5 meets these two requirements.</li><p><li>A five nodes community demo. This is exactly the same as the previous one, but all agents are started from a different nodes.</li></ol>
+<p>
+For additional information, please see the Cougaar Tutorial.
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#contents">Contents</a></li><p>
+  <li><a href="#installation">Installation</a></li><p>
+  <li><a href="#usage">Usage</a></li><p>
+  <li><a href="#support">Support</a></li><p>
+</ul>
+
+<p>
+<hr>
+<p>
+
+<a name="contents">
+<h2>Contents:</h2>
+
+<ol>
+  <li><a href="../configs/">configs/*.xml</a>:<br>
+  The society files.
+  </li><p>
+
+  <li><a href="../run/">run/*.xml</a>:<br>
+  The runtime files.
+  </li><p>
+
+  <li><a href="../run/logging.props">run/logging.props</a>:<br>
+  The Log4j logging configuration file.
+  You can uncomment the debug option to get more details about the communication.</li><p>
+
+  <li><a href="../src/org/cougaar/demo/ping">src/org/cougaar/demo/community/*.java</a>:<br>
+  The Java source code consists of:<ul>
+    <li>A "ping sender"
+        (<a href="api/org/cougaar/demo/ping/PingSender.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/ping/PingSender.java">code</a>)</li>
+    <li>A "ping receiver"
+        (<a href="api/org/cougaar/demo/ping/PingReceiver.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/ping/PingReceiver.java">code</a>)</li>
+    <li>A "ping servlet"
+        (<a href="api/org/cougaar/demo/ping/PingServlet.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/ping/PingServlet.java">code</a>)</li>
+  </ul>
+  </li><p>
+</ol>
+<p>
+
+<a name="installation">
+<h2>Installation:</h2>
+
+Please follow the same installation steps as in the "Hello World" example,
+substituting "community" for "hello".
+You can also use setEnv at the root of the demo to set env variables.<p>
+The "Hello World" README is available online at:<br>
+&nbsp;&nbsp; <a href=
+  "http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation"
+  >http://cougaar.org/cgi-bin/viewcvs.cgi/*checkout*/hello/doc/README.html?rev=1.1.1.1&cvsroot=tutorials#installation</a><br>
+and in the "cougaar-hello.zip" produced by the nightly build:<br>
+&nbsp;&nbsp; <a href=
+  "http://build.cougaar.org/auto/HEAD/latest_success/"
+  >http://build.cougaar.org/auto/HEAD/latest_success/</a><br>
+
+<a name="usage">
+<h2>Usage:</h2>
+
+There are two  demos:
+<ol>
+
+  <li><b>A single node  "community" test</b>:
+  <ol>
+    <li>Run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar 
+      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> NodeA
+    </code><br>
+    This should print:<br>
+    &nbsp;&nbsp;<code>[PingSender] - Agent-1: Sending ping 1 to #&lt;ABA 'CommunityA' Role=PingReceiver&gt;</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - Agent-1: Will send ping 2 to #&lt;ABA 'CommunityA' Role=PingReceiver&gt; in 5 seconds</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - ++--+-++++-+----+-++++----++++----++++----++--</code><br>
+    &nbsp;&nbsp;<code>[PingReceiver] - Agent-5: Responding to ping 1 from Agent-1</code><br>
+    &nbsp;&nbsp;<code>[PingReceiver] - Agent-4: Responding to ping 1 from Agent-1</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - ++-</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - Agent-1: Received response 1 from Agent-4</code><br>
+    &nbsp;&nbsp;<code>[DOTS] - -</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - Agent-1: Received response 1 from Agent-5</code><br>
+    &nbsp;&nbsp;<code>[PingSender] - Agent-1: Sending ping 2 to #&lt;ABA 'CommunityA' Role=PingReceiver&gt;</code><br>
+    &nbsp;&nbsp;...<br>
+    </li><p>
+
+    <li>Optionally view the servlets at<br>
+    &nbsp;&nbsp;Details about ping: <a href="http://localhost:8800/$Agent-1/ping">http://localhost:8800/$Agent-1/ping</a>
+    <p>
+    &nbsp;&nbsp;Details about community: <a href="http://localhost:8800/$Agent-1/communityViewer">http://localhost:8800/$Agent-1/communityViewer</a>
+    <p>
+    &nbsp;&nbsp;Details about white pages content: <a href="http://localhost:8800/$Agent-1/wpc">http://localhost:8800/$Agent-1/wpc</a>
+    </li><p>
+    
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A multi-node "community" test</b>:
+  <ol>
+    <li>In one console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      NodeA</code>
+    </li><p>
+
+    <li>In a second console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      NodeB</code>
+    </li><p>
+
+    <li>Repeat the same process to NodeE containing Agent-5.
+    </li><p>
+
+    <li>The output should match the output of the single-node community test.  There may
+    be a startup delay of up to a minute, due to the naming service.
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <p>
+
+</ol>
+<p>
+
+<a name="support">
+<h2>Support:</h2>
+If you have any questions or comments, please:<ol>
+  <li>Subscribe to the cougaar-developers mailing list:<br>
+       &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
+  <li>Then send email to:<br>
+       &nbsp;&nbsp;<a href="mailto:cougaar-developers@cougaar.org">cougaar-developers@cougaar.org</a>
+</ol>
+</body>

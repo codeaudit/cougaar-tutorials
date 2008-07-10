@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Sample build script for the Cougaar "SD" application.
+-->
+<project name="demo-community" basedir="." default="jar">
+
+  <property environment="env"/>
+  <property name="TARGETBASE" value="${env.COUGAAR_INSTALL_PATH}" />
+	
+  <!--- Configure all required paths -->
+  <property name="src.dir" value="${basedir}/src" description="Java source files" />
+  <property name="build.dir" value="${basedir}/tmp" description="Build base " />
+  <property name="classes.dir" value="${build.dir}/classes" description="Class files" />
+  <property name="lib.dir" value="${basedir}/lib" description="Lib folder" />
+  
+  <property name="cip.lib" value="${TARGETBASE}/lib"/>
+  <property name="cip.sys" value="${TARGETBASE}/sys"/>
+
+  <!-- Single module Javadocs go in doc/api.  Not used if is.unified.javadoc -->
+  <property name="javadoc.target" value="${basedir}/doc/api" />
+	
+  <!-- javadoc package spec for building javadocs -->
+  <property name="javadoc.packages" value="org.cougaar.demo.community"/>
+	
+  <!-- clib is for cougaar compile-time jars (codegen, etc) -->
+  <property name="target.clib" value="${TARGETBASE}/clib" />
+	
+  <!--- Compiler properties -->
+  <property name="compile.deprecation" value="true" />
+  <property name="compile.debug" value="on" />
+  <property name="compile.optimize" value="off" />
+
+  <path id="compile.classpath">
+    <pathelement location="${cip.lib}/bootstrap.jar" />
+    <pathelement location="${cip.lib}/util.jar" />
+    <pathelement location="${cip.lib}/core.jar" />
+    <pathelement location="${cip.sys}/servlet.jar" />
+  </path>
+
+  <patternset id="ps.jar.extras">
+    <include name="**/*.xml"/>
+    <include name="**/*.dtd"/>
+    <include name="**/*.properties"/>
+    <include name="**/*.png"/>
+  </patternset>
+
+    <!-- ============================================================= -->
+    <!-- Initialize the build env.           		               	   -->
+    <!-- ============================================================= -->	
+  <target name="init" description="Initialize the build env.  Check for required properties">
+    
+  </target>
+
+    <!-- ============================================================= -->
+    <!-- Prepares all the build directories		               	   -->
+    <!-- ============================================================= -->
+  <target name="prepare" depends="init" description="Prepares for building, creates required directories">
+    <tstamp />
+  	<available property="has.src" file="${basedir}/src"/>
+    <mkdir dir="${build.dir}" description="Creates the build directory" />
+    <mkdir dir="${classes.dir}" description="Creates the classes directory" />
+  </target>
+
+    <!-- ========================================================== -->
+    <!-- Compile EVERYTHING			                -->
+    <!-- ========================================================== -->	
+  <target name="compile" depends="prepare" description="Compiles all source files .">
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="ISO-8859-1" includeantruntime="no">
+      <classpath>
+	<path refid="compile.classpath" />
+      </classpath>
+    </javac>
+    <copy todir="${classes.dir}" >
+      <fileset dir="${src.dir}">
+        <patternset refid="ps.jar.extras"/>
+      </fileset>
+    </copy>
+  </target>
+
+    <!-- ====================================================================== -->
+    <!-- Create a Jar for the module     				          -->
+    <!-- ====================================================================== -->	
+  <target name="jar" depends="compile" description="Creates a jar file for this module.">
+    <jar jarfile="${build.dir}/${ant.project.name}.jar" casesensitive="yes">
+      <manifest>
+        <attribute name="Application-Title" value="Cougaar - ${ant.project.name}" />
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Build-Date" value="${TODAY}" />
+        <attribute name="Implementation-Version" value="1" />
+      </manifest>
+      <fileset dir="${classes.dir}" />
+    </jar>
+    <copy file="${build.dir}/${ant.project.name}.jar" todir="${lib.dir}"/>
+  </target>
+
+    <!-- ========================================================== -->
+    <!-- Install the Jar file in the target lib directory -->	
+    <!-- ========================================================== -->
+  <target name="install" depends="jar" description="Creates jar and copies it and sys jars to $CIP">
+    <copy file="${build.dir}/${ant.project.name}.jar" todir="${cip.sys}"/>
+  </target>
+
+    <!-- ========================================================== -->
+    <!-- Clean up all built code                    	-->
+    <!-- ========================================================== -->
+  <target name="clean" depends="" description="Deletes all class files and all module generated jars">
+    <delete dir="${build.dir}" />
+  </target>
+	
+    <!-- ====================================================================== -->
+    <!-- Clean up the JavaDocs for the module			          -->
+    <!-- ====================================================================== -->	
+    <target name="clean-docs" description="Delete javadocs">
+      <delete dir="${javadoc.target}" />
+    </target>
+    
+    <!-- ====================================================================== -->
+    <!-- Generates the JavaDocs for the one module			          -->
+    <!-- ====================================================================== -->	
+    <!-- FIXME: Handle unified javadoc -->
+    <target name="javadocs" depends="prepare, clean-docs" description="Create javadocs for this module" if="has.src">
+      <mkdir dir="${javadoc.target}"/>
+      <!-- Note that we should go to breakiterator="true" when we
+      assume Ant1.6 -->
+      <javadoc packagenames="${javadoc.packages}"
+	       sourcepath="${src.dir}"
+	       destdir="${javadoc.target}"
+	       author="true"
+	       version="true"
+	       use="true"
+	       doclet="org.cougaar.tools.javadoc.CougaarDoclet"
+	       docletpath="${target.clib}/build.jar"
+	       source="1.5"
+	       additionalparam="-breakiterator"
+	       windowtitle="${ant.project.name} API"
+	       doctitle="${ant.project.name} API"
+	       bottom="Copyright &#169; 2004 by BBNT Solutions LLC, all rights reserved.">
+	<classpath refid="compile.classpath" />
+	<taglet name="org.cougaar.tools.javadoc.PropertyTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.NoteTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.ToDoTaglet"
+	       path="${target.clib}/build.jar" />
+	<taglet name="org.cougaar.tools.javadoc.GeneratedTaglet"
+	       path="${target.clib}/build.jar" />
+      </javadoc>
+    </target>
+	
+</project>
