@@ -1,0 +1,27 @@
+<!--
+Community AttributeBasedAddress (ABA) Example.
+
+Agent "A" sends a relay to all members of community "foo".
+Agent "B" joins community "foo" and receives the above relay.
+-->
+<node name="MyNode">
+
+  <!-- Agent "A" sends a relay to all members of community "foo". -->
+  <agent name="A">
+  	<!-- Sending plugin (because target is specified, see source code) -->
+    <component class="org.cougaar.demo.community.TestABA">
+      <argument name="target" value="foo"/>
+    </component>
+  </agent>
+
+  <!-- Agent "B" joins community "foo" and receives the above relay. -->
+  <agent name="B">
+  	<!-- Component to join community foo -->
+    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
+      <argument name="community" value="foo"/>
+    </component>
+  	<!-- Same class as sending component, but does nothing but subscribing to relays and logging info (because target is not specified, see source code) -->
+    <component class="org.cougaar.demo.community.TestABA"/>
+  </agent>
+
+</node> 

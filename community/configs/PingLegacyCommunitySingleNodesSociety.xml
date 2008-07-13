@@ -1,0 +1,163 @@
+<?xml version='1.0'?>
+
+<!--
+A single node "ping" demo using legacy communities to find the receiver
+-->
+<society>
+
+  <node name="NodeA">
+
+    <agent name="Agent-1">
+      <component class="org.cougaar.demo.community.PingSender">
+  		 <!-- we defined an attribute-based target using this role name among the community -->
+          <argument name="target-role" value="PingReceiver"/>
+      </component>
+      <component class="org.cougaar.demo.community.PingServlet">
+        <argument name="path" value="/ping"/>
+      </component>
+
+	<!-- Community members need the CommunityPlugin -->
+        <component
+          name='org.cougaar.community.CommunityPlugin()'
+          class='org.cougaar.community.CommunityPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+        
+	<!-- Helper servlet to see community activity -->
+        <component
+          name='org.cougaar.community.util.CommunityViewerServlet()'
+          class='org.cougaar.community.util.CommunityViewerServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+	<!-- Helper servlet to see white pages content -->
+		<component class="org.cougaar.core.wp.WhitePagesServlet">
+			<argument>/wpc</argument>
+	  	</component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+		
+    </agent>
+  
+	<!-- First receiver -->  
+    <agent name="Agent-2">
+      <component class="org.cougaar.demo.community.PingReceiver"/>
+	<!-- Community members need the CommunityPlugin -->
+        <component
+          name='org.cougaar.community.CommunityPlugin()'
+          class='org.cougaar.community.CommunityPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+	<!-- Helper servlet to see community activity -->
+        <component
+          name='org.cougaar.community.util.CommunityViewerServlet()'
+          class='org.cougaar.community.util.CommunityViewerServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+   </agent>
+
+	<!-- Another receiver -->
+    <agent name="Agent-3">
+      <component class='org.cougaar.demo.community.PingReceiver'/>
+	<!-- Community members need the CommunityPlugin -->
+        <component
+          name='org.cougaar.community.CommunityPlugin()'
+          class='org.cougaar.community.CommunityPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+	<!-- Helper servlet to see community activity -->
+        <component
+          name='org.cougaar.community.util.CommunityViewerServlet()'
+          class='org.cougaar.community.util.CommunityViewerServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+    </agent>
+
+	<!-- Another receiver -->
+    <agent name="Agent-4">
+      <component class='org.cougaar.demo.community.PingReceiver'/>
+	<!-- Community members need the CommunityPlugin -->
+        <component
+          name='org.cougaar.community.CommunityPlugin()'
+          class='org.cougaar.community.CommunityPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+	<!-- Helper servlet to see community activity -->
+        <component
+          name='org.cougaar.community.util.CommunityViewerServlet()'
+          class='org.cougaar.community.util.CommunityViewerServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+    </agent>
+
+	<!-- Another receiver -->
+    <agent name="Agent-5">
+      <component class='org.cougaar.demo.community.PingReceiver'/>
+	<!-- Community members need the CommunityPlugin -->
+        <component
+          name='org.cougaar.community.CommunityPlugin()'
+          class='org.cougaar.community.CommunityPlugin'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+	<!-- Helper servlet to see community activity -->
+        <component
+          name='org.cougaar.community.util.CommunityViewerServlet()'
+          class='org.cougaar.community.util.CommunityViewerServlet'
+          priority='COMPONENT'
+          insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
+        </component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
+    </agent>
+  </node>
+  
+</society>
