@@ -1,0 +1,25 @@
+<!--
+Community AttributeBasedAddress (ABA) Example.
+
+Agent "A" sends a relay to all members of community "foo".
+Agent "B" joins community "foo" and receives the above relay.
+-->
+<runtime>
+
+  <!-- Specify single_node template for performance -->
+  <!-- By default, no community service is available with this template (see http://cougaar.cougaar.org/software/latest/OnlineManual/Templates.html) -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.template"
+    value="single_node"/>
+    
+  <!-- turn on explicitly the new community service -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.communities"
+    value="true"/>
+
+  <!-- Optional log4j config file -->
+  <vm_parameter
+     name="-Dorg.cougaar.core.logging.config.filename"
+     value="logging.props"/>
+
+</runtime>
