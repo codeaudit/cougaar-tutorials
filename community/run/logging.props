@@ -18,6 +18,12 @@ log4j.appender.A1=org.apache.log4j.ConsoleAppender
 #log4j.category.org.cougaar.core=INFO
 #log4j.category.org.cougaar.mts=INFO
 #log4j.category.org.cougaar=DEBUG
-#log4j.category.org.cougaar.demo.community=DEBUG
 
+# will debug the legacy implementation
+log4j.category.org.cougaar.community=DEBUG
 
+# will debug the new community implementation
+log4j.category.org.cougaar.core.agent.service.community=DEBUG
+
+# debug our demos
+log4j.category.org.cougaar.demo.community=DEBUG

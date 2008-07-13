@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Community definition for the legacy version (org.cougaar.community) 
+ 	For the new implementation of communities (org.cougaar.core.agent.service.community), 
+ 	the definition is in the society description file -->
+
 <Communities>
 	<Community Name="CommunityA">
 		<!-- no CommunityManager is specified explicitly, one is selected among the possible ones -->
