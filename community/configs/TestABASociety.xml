@@ -12,6 +12,22 @@ Agent "B" joins community "foo" and receives the above relay.
     <component class="org.cougaar.demo.community.TestABA">
       <argument name="target" value="foo"/>
     </component>
+
+	<!-- Helper servlet to see community activity -->
+	<!-- ??? -->
+	<!-- Helper servlet to see white pages content -->
+		<component class="org.cougaar.core.wp.WhitePagesServlet">
+			<argument>/wpc</argument>
+	  	</component>
+    <!-- Helper servlet to see blackboard content -->
+        <component
+          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+          class="org.cougaar.core.servlet.SimpleServletComponent"
+          priority="COMPONENT"
+          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
+          <argument>/tasks</argument>
+        </component>
   </agent>
 
   <!-- Agent "B" joins community "foo" and receives the above relay. -->

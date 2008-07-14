@@ -4,16 +4,28 @@
 <h1>Cougaar "Community" Demos</h1>
 <p>
 This module contains the Cougaar "community" demos. 
-The purpose of this demo is to show how to configure communities and how to use them to send relays to some community members without knowing them. <br><br>This demo also demonstrates another design pattern, compared to the basic ping demo. Here, both sender and receiver use a relay to talk to each other, they don't use the reply feature of relays. Thanks to this pattern, they create only one relay. </p>      1. The sender publishAdd's a new relay &quot;r1&quot;
+The purpose of this demo is to show how to configure communities and how to use them to send relays to some community members without knowing them. <br><br>There are two community service implementations. One called legacy from the lib/community.jar  (org.cougaar.community) package and one from the new org/cougaar/core/service/community.  <br>The new community service implementation is backed by the WP.  It
+  only only supports ABA relays and simple membership options, but is much
+  easier to configure (via a &quot;join&quot; plugin) and appears to be more
+  robust &amp; scalable than the old implementation.  <br>This demo contains examples for both implementations. <br><br>This demo also demonstrates another design pattern, compared to the basic ping demo. Here, both sender and receiver use a relay to talk to each other, they don't use the reply feature of relays. Thanks to this pattern, they create only one relay. </p>      1. The sender publishAdd's a new relay &quot;r1&quot;
    <br>2. The receiver publishAdd's its response in a new relay &quot;r2&quot;
    <br>3. The sender publishChange's relay &quot;r1&quot; in response to &quot;r2&quot;
    <br>4. The receiver publishChange's relay &quot;r2&quot; in response to &quot;r1&quot;
    <br>5. goto (3)
 <br><br>In this pattern the two relays, &quot;r1&quot; and &quot;r2&quot;, acts as content &quot;channels&quot;. 
 There is no memory leak because we only publishAdd these two relays.<p>
-There are two demos:
+There are five demos:
 <ol>
-  <li>A  single node ping community demo. We define a NodeA with Agent-1, Agent-2, ..., Agent-5.  Agent-1 is the sender and all other agents have a PingReceiver component. But Agent-1 only sends the ping to members of CommunityA having the role PingReceiver. Only Agent-4 and Agent-5 meets these two requirements.</li><p><li>A five nodes community demo. This is exactly the same as the previous one, but all agents are started from a different nodes.</li></ol>
+  <li>Legacy demo. SingleNodeCommunity : a  single node ping community demo. We define a NodeA with Agent-1, Agent-2, ..., Agent-5.  Agent-1 is the sender and all other agents have a PingReceiver component. But Agent-1 only sends the ping to members of CommunityA having the role PingReceiver. Only Agent-4 and Agent-5 meets these two requirements.</li>
+  <p>
+  <li>Legacy demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the previous one, but all agents are started from a different nodes.</li>
+  <p>
+  <li>New community demo. TestABA : a basic community demo. This example was is org/cougaar/core/agent/service/community. It has been copied to this demo package.</li>
+  <p>
+  <li>New community demo. SingleNodeCommunity : a single node community demo. This is exactly the same as the legacy version (no change to source code), but using the new community service implementation.</li>
+  <p>
+  <li>New community demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the legacy version (no change to source code), but using the new community service implementation.</li>
+  </ol>
 <p>
 For additional information, please see the Cougaar Tutorial.
 <p>
@@ -79,15 +91,15 @@ and in the "cougaar-hello.zip" produced by the nightly build:<br>
 <a name="usage">
 <h2>Usage:</h2>
 
-There are two  demos:
+There are five   demos:
 <ol>
 
-  <li><b>A single node  "community" test</b>:
+  <li><b>A single node  "legacy community" test</b>:
   <ol>
     <li>Run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar 
-      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> NodeA
+      <a href="../configs/PingLegacyCommunitySingleNodeSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingLegacyCommunitySingleNodeSociety.xml </a><a href="PingLegacyCommunityRuntime.xml">PingLegacyCommunityRuntime.xml</a> NodeA
     </code><br>
     This should print:<br>
     &nbsp;&nbsp;<code>[PingSender] - Agent-1: Sending ping 1 to #&lt;ABA 'CommunityA' Role=PingReceiver&gt;</code><br>
@@ -117,19 +129,19 @@ There are two  demos:
   </ol>
   </li><p>
 
-  <li><b>A multi-node "community" test</b>:
+  <li><b>A multi-node "legacy community" test</b>:
   <ol>
     <li>In one console window, run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      <a href="../configs/PingLegacyCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingLegacyCommunityMultiNodesSociety.xml </a><a href="PingLegacyCommunityRuntime.xml">PingLegacyCommunityRuntime.xml</a> 
       NodeA</code>
     </li><p>
 
     <li>In a second console window, run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="../configs/PingCommunitySingleNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      <a href="../configs/PingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunityMultiNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
       NodeB</code>
     </li><p>
 
@@ -145,6 +157,86 @@ There are two  demos:
   </ol>
   </li><p>
 
+  <li><b>A basic  "new  community" test</b>:
+  <ol>
+    <li>In a console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/TestABASociety.xml">$COUGAAR_SOCIETY_PATH/configs/TestABASociety.xml </a><a href="TestABARuntime.xml">TestABARuntime.xml</a> NodeA</code>
+    </li><p>
+
+    This should print:<br>
+    &nbsp;&nbsp;<code>INFO  [JoinCommunity] - B: Joining community foo</code><br>
+    &nbsp;&nbsp;<code>DEBUG [CommunityServiceProvider] - MyNode: Adding agent B to community foo</code><br>
+    &nbsp;&nbsp;<code>DEBUG [CommunityServiceProvider] - MyNode: Added agent B to community foo</code><br>
+    &nbsp;&nbsp;<code>INFO  [JoinCommunity] - B: Join response for community foo is SUCCESS</code><br>
+    &nbsp;&nbsp;<code>INFO  [TestABA] - A: Sending ABA Relay to foo</code><br>
+    &nbsp;&nbsp;<code>DEBUG [CommunityServiceProvider] - MyNode: Add listener (listener for community *)</code><br>
+    &nbsp;&nbsp;<code>DEBUG [CommunityServiceProvider] - MyNode: Looking up foo</code><br>
+    &nbsp;&nbsp;<code>DEBUG [CommunityServiceProvider] - MyNode: Lookup for foo found initial membership list[1]:<br>
+    &nbsp;&nbsp;[B]<br>
+    &nbsp;&nbsp;Telling 1 listener</code><br>
+    &nbsp;&nbsp;<code>SHOUT [DOTS] - +-</code><br>
+    &nbsp;&nbsp;<code>INFO  [TestABA] - B: Observed add[1]:[(SimpleRelay uid=A/1216029725126 source=A target=#&lt;ABA 'foo' Role=Member&gt; query=(Test from "A" to "foo") reply=null)]</code><br>
+    &nbsp;&nbsp;<code>INFO  [TestABA] - A: Observed add[1]:[(SimpleRelay uid=A/1216029725126 source=A target=#&lt;ABA 'foo' Role=Member&gt; query=(Test from "A" to "foo") reply=null)]</code><br>
+    &nbsp;&nbsp;<code>SHOUT [DOTS] - ..</code><br>
+    &nbsp;&nbsp;...<br>
+    <p>
+
+    <li>Optionally view the servlets at<br>
+    &nbsp;&nbsp;Details about community: <a href="http://localhost:8800/$Agent-1/???">http://localhost:8800/$Agent-1/???</a>
+    <p>
+    &nbsp;&nbsp;Details about white pages content: <a href="http://localhost:8800/$A/wpc">http://localhost:8800/$A/wpc</a>
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A single-node "new community" test</b>:
+  <ol>
+    <li>In one console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingCommunitySingleNodeSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunitySingleNodeSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      NodeA</code>
+    </li><p>
+
+    <li>The output should match the output of the legacy single-node community test.  
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
+
+  <li><b>A multi-node "new community" test</b>:
+  <ol>
+    <li>In one console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunityMultiNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      NodeA</code>
+    </li><p>
+
+    <li>In a second console window, run:<br>
+    &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
+    &nbsp;&nbsp;<code>cougaar
+      <a href="../configs/PingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunityMultiNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      NodeB</code>
+    </li><p>
+
+    <li>Repeat the same process to NodeE containing Agent-5.
+    </li><p>
+
+    <li>The output should match the output of the multi-nodes community test.
+    </li><p>
+
+    <li>Press CTRL-C to stop the run.
+    </li><p>
+  </ol>
+  </li><p>
   <p>
 
 </ol>
