@@ -5,7 +5,7 @@
 <p>
 This module contains the Cougaar "community" demos. 
 The purpose of this demo is to show how to configure communities and how to use them to send relays to some community members without knowing them. <br><br>There are two community service implementations. One called legacy from the lib/community.jar  (org.cougaar.community) package and one from the new org/cougaar/core/service/community.  <br>The new community service implementation is backed by the WP.  It
-  only only supports ABA relays and simple membership options, but is much
+  only only supports ABA relays and simple membership options (no attributes or extra roles), but is much
   easier to configure (via a &quot;join&quot; plugin) and appears to be more
   robust &amp; scalable than the old implementation.  <br>This demo contains examples for both implementations. <br><br>This demo also demonstrates another design pattern, compared to the basic ping demo. Here, both sender and receiver use a relay to talk to each other, they don't use the reply feature of relays. Thanks to this pattern, they create only one relay. </p>      1. The sender publishAdd's a new relay &quot;r1&quot;
    <br>2. The receiver publishAdd's its response in a new relay &quot;r2&quot;
@@ -16,15 +16,15 @@ The purpose of this demo is to show how to configure communities and how to use 
 There is no memory leak because we only publishAdd these two relays.<p>
 There are five demos:
 <ol>
-  <li>Legacy demo. SingleNodeCommunity : a  single node ping community demo. We define a NodeA with Agent-1, Agent-2, ..., Agent-5.  Agent-1 is the sender and all other agents have a PingReceiver component. But Agent-1 only sends the ping to members of CommunityA having the role PingReceiver. Only Agent-4 and Agent-5 meets these two requirements.</li>
+  <li>Legacy demo. SingleNodeCommunity : a  single node ping community demo. We define a NodeA with Agent-1, Agent-2, ..., Agent-5.  Agent-1 is the sender  with LegacyPingSender and all other agents have a LegacyPingReceiver component. <br><br>Agent-1 only sends the ping to members of CommunityA having the role PingReceiver. Only Agent-4 and Agent-5 meets these two requirements. Only the legacy implementation allows to make such role/attribute based relay.</li>
   <p>
-  <li>Legacy demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the previous one, but all agents are started from a different nodes.</li>
+  <li>Legacy demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the previous one, but all agents are started from a different node.</li>
   <p>
-  <li>New community demo. TestABA : a basic community demo. This example was is org/cougaar/core/agent/service/community. It has been copied to this demo package.</li>
+  <li>New community demo. TestABA : a basic community demo. This example was in org/cougaar/core/agent/service/community. It has been copied to this demo package.</li>
   <p>
-  <li>New community demo. SingleNodeCommunity : a single node community demo. This is exactly the same as the legacy version (no change to source code), but using the new community service implementation.</li>
+  <li>New community demo. SingleNodeCommunity : a single node community demo. This example is similar to the legacy version, but  as there is no attribute/role in the new community service implementation,  the destination for relays is just selected based on the community name.</li>
   <p>
-  <li>New community demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the legacy version (no change to source code), but using the new community service implementation.</li>
+  <li>New community demo. MultiNodesCommunity : a five nodes community demo. This is exactly the same as the single node version, but all agents are started from a different node.</li>
   </ol>
 <p>
 For additional information, please see the Cougaar Tutorial.
@@ -57,17 +57,26 @@ For additional information, please see the Cougaar Tutorial.
   The Log4j logging configuration file.
   You can uncomment the debug option to get more details about the communication.</li><p>
 
-  <li><a href="../src/org/cougaar/demo/ping">src/org/cougaar/demo/community/*.java</a>:<br>
+  <li><a href="../src/org/cougaar/demo/community">src/org/cougaar/demo/community/*.java</a>:<br>
   The Java source code consists of:<ul>
+    <li>A "legacy ping sender"
+        (<a href="api/org/cougaar/demo/community/LegacyPingSender.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/LegacyPingSender.java">code</a>)</li>
+    <li>A "legacy ping receiver"
+        (<a href="api/org/cougaar/demo/community/LegacyPingReceiver.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/LegacyPingReceiver.java">code</a>)</li>
+    <li>A "basic ABA Test"
+        (<a href="api/org/cougaar/demo/community/TestABA.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/TestABA.java">code</a>)</li>
     <li>A "ping sender"
-        (<a href="api/org/cougaar/demo/ping/PingSender.html">javadoc</a>,
-         <a href="../src/org/cougaar/demo/ping/PingSender.java">code</a>)</li>
+        (<a href="api/org/cougaar/demo/community/PingSender.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/PingSender.java">code</a>)</li>
     <li>A "ping receiver"
-        (<a href="api/org/cougaar/demo/ping/PingReceiver.html">javadoc</a>,
-         <a href="../src/org/cougaar/demo/ping/PingReceiver.java">code</a>)</li>
+        (<a href="api/org/cougaar/demo/community/PingReceiver.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/PingReceiver.java">code</a>)</li>
     <li>A "ping servlet"
-        (<a href="api/org/cougaar/demo/ping/PingServlet.html">javadoc</a>,
-         <a href="../src/org/cougaar/demo/ping/PingServlet.java">code</a>)</li>
+        (<a href="api/org/cougaar/demo/community/PingServlet.html">javadoc</a>,
+         <a href="../src/org/cougaar/demo/community/PingServlet.java">code</a>)</li>
   </ul>
   </li><p>
 </ol>
@@ -99,7 +108,7 @@ There are five   demos:
     <li>Run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar 
-      <a href="../configs/PingLegacyCommunitySingleNodeSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingLegacyCommunitySingleNodeSociety.xml </a><a href="PingLegacyCommunityRuntime.xml">PingLegacyCommunityRuntime.xml</a> NodeA
+      <a href="../configs/LegacyPingCommunitySingleNodeSociety.xml">$COUGAAR_SOCIETY_PATH/configs/LegacyPingCommunitySingleNodeSociety.xml </a><a href="LegacyPingCommunityRuntime.xml">LegacyPingCommunityRuntime.xml</a> NodeA
     </code><br>
     This should print:<br>
     &nbsp;&nbsp;<code>[PingSender] - Agent-1: Sending ping 1 to #&lt;ABA 'CommunityA' Role=PingReceiver&gt;</code><br>
@@ -134,14 +143,14 @@ There are five   demos:
     <li>In one console window, run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="../configs/PingLegacyCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingLegacyCommunityMultiNodesSociety.xml </a><a href="PingLegacyCommunityRuntime.xml">PingLegacyCommunityRuntime.xml</a> 
+      <a href="../configs/LegacyPingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/LegacyPingCommunityMultiNodesSociety.xml </a><a href="LegacyPingCommunityRuntime.xml">LegacyPingCommunityRuntime.xml</a> 
       NodeA</code>
     </li><p>
 
     <li>In a second console window, run:<br>
     &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
     &nbsp;&nbsp;<code>cougaar
-      <a href="../configs/PingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/PingCommunityMultiNodesSociety.xml </a><a href="PingCommunityRuntime.xml">PingCommunityRuntime.xml</a> 
+      <a href="../configs/LegacyPingCommunityMultiNodesSociety.xml">$COUGAAR_SOCIETY_PATH/configs/LegacyPingCommunityMultiNodesSociety.xml </a><a href="LegacyPingCommunityRuntime.xml">LegacyPingCommunityRuntime.xml</a> 
       NodeB</code>
     </li><p>
 
@@ -184,9 +193,7 @@ There are five   demos:
     <p>
 
     <li>Optionally view the servlets at<br>
-    &nbsp;&nbsp;Details about community: <a href="http://localhost:8800/$Agent-1/???">http://localhost:8800/$Agent-1/???</a>
-    <p>
-    &nbsp;&nbsp;Details about white pages content: <a href="http://localhost:8800/$A/wpc">http://localhost:8800/$A/wpc</a>
+    &nbsp;&nbsp;Details about white pages and community content: <a href="http://localhost:8800/$A/wpc">http://localhost:8800/$A/wpc</a>
     </li><p>
 
     <li>Press CTRL-C to stop the run.

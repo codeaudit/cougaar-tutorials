@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 
 <!--
-	A single node "ping" demo using legacy communities to find the receiver
+	A single node "ping" demo using the new community service to find the receiver
 -->
 <society>
 
@@ -9,10 +9,10 @@
 
 		<agent name="Agent-1">
 			<component class="org.cougaar.demo.community.PingSender">
-				<!-- we defined an attribute-based target using this role name among the community -->
+				<!-- we define the target using the community name -->
 				<argument name="community-name" value="CPingReceivers" />
 			</component>
-			
+
 			<component class="org.cougaar.demo.community.PingServlet">
 				<argument name="path" value="/ping" />
 			</component>

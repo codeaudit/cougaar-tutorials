@@ -86,7 +86,7 @@
 				class='org.cougaar.community.CommunityPlugin' priority='COMPONENT'
 				insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 			</component>
-			
+
 			<!-- Helper servlet to see community activity -->
 			<component
 				name='org.cougaar.community.util.CommunityViewerServlet()'
@@ -145,7 +145,7 @@
 				class='org.cougaar.community.CommunityPlugin' priority='COMPONENT'
 				insertionpoint='Node.AgentManager.Agent.PluginManager.Plugin'>
 			</component>
-			
+
 			<!-- Helper servlet to see community activity -->
 			<component
 				name='org.cougaar.community.util.CommunityViewerServlet()'

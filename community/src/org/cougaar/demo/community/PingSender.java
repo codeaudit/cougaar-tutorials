@@ -45,16 +45,15 @@ import org.cougaar.util.Arguments;
 import org.cougaar.util.UnaryPredicate;
 
 /**
- * This plugin is an example ping source that sends relays to a remote community (CommunityA) based 
- * on attributes in the community (only possible in the legacy implementation of the community service).
+ * This plugin is an example ping source that sends relays to remote agents based on a community name.
  * <p>
  * There can be multiple copies of this plugin in a single agent, but
- * every {@link LegacyPingSender} must have a unique target.  The target is
+ * every {@link PingSender} must have a unique community target name.  The target is
  * specified as a plugin parameter:
  * <dl>
- *   <dt>target-role=<i>String</i></dt>
- *   <dd>Required remote agent role.  If the agent doesn't exist then we
- *       don't wait forever -- we just resend every delayMillis seconds.</dd></p>
+ *   <dt>community-name=<i>String</i></dt>
+ *   <dd>Required community name.  If the community doesn't exist then there is 
+ *   	no problem, the message is sent to no agent.</dd></p>
  *
  *   <dt>delayMillis=<i>long</i></dt>
  *   <dd>Delay milliseconds between relay iterations.  Set the delay to zero
@@ -63,8 +62,8 @@ import org.cougaar.util.UnaryPredicate;
  *   <dt>verbose=<i>boolean</i></dt>
  *   <dd>Output SHOUT-level logging messages.  This can also be disabled
  *       by modifying the Cougaar logging configuration to set:<pre>
- *         log4j.category.org.cougaar.demo.community.LegacyPingSender=FATAL
- *         log4j.category.org.cougaar.demo.community.LegacyPingReceiver=FATAL
+ *         log4j.category.org.cougaar.demo.community.PingSender=FATAL
+ *         log4j.category.org.cougaar.demo.community.PingReceiver=FATAL
  *       </pre>
  *       For simplicity we support this as a plugin parameter, so new users
  *       don't need to configure the logging service.  If enabled, also
@@ -74,28 +73,28 @@ import org.cougaar.util.UnaryPredicate;
  *       </pre></dd><p>
  * </dl>
  *
- * @property org.cougaar.demo.community.LegacyPingSender.delayMillis=5000
+ * @property org.cougaar.demo.community.delayMillis=5000
  *   PingSender delay between ping iterations, if not set as a plugin
  *   parameter.
  *
- * @property org.cougaar.demo.community.LegacyPingSender.verbose=true
+ * @property org.cougaar.demo.community.verbose=true
  *   PingSender should output SHOUT-level logging messages, if not set as
  *   a plugin parameter.
  *
- * @see LegacyPingReceiver Required plugin for every agent that will receive
+ * @see PingReceiver Required plugin for every agent that will receive
  *   ping relays.
  *
  * @see PingServlet Optional browser-based GUI.
  */
-public class LegacyPingSender extends ComponentPlugin {
+public class PingSender extends ComponentPlugin {
 
   private static final long DEFAULT_DELAY_MILLIS =
     SystemProperties.getLong(
-        "org.cougaar.demo.community.LegacyPingSender.delayMillis", 5000);
+        "org.cougaar.demo.community.PingSender.delayMillis", 5000);
 
   private static final boolean DEFAULT_VERBOSE =
     SystemProperties.getBoolean(
-        "org.cougaar.demo.community.LegacyPingSender.verbose", true);
+        "org.cougaar.demo.community.PingSender.verbose", true);
 
   private LoggingService 			log;
   private UIDService 				uids;
@@ -123,10 +122,10 @@ public class LegacyPingSender extends ComponentPlugin {
 
     // Parse our plugin parameters
     Arguments 	args 		= new Arguments(getParameters());
-    String 		target_role = args.getString("target-role", null);
+    String 		community_name = args.getString("community-name", null);
 	
 	// using the attribute role to specify the target
-	target = AttributeBasedAddress.getAttributeBasedAddress("CommunityA", "Role", target_role);
+	target = AttributeBasedAddress.getAttributeBasedAddress(community_name, "Role", "Member");
     if (target == null) {
       throw new IllegalArgumentException("Must specify a target");
     } else if (target.equals(agentId)) {

@@ -1,5 +1,5 @@
 <!--
-Community AttributeBasedAddress (ABA) Example.
+Basic Community AttributeBasedAddress (ABA) Example.
 
 Agent "A" sends a relay to all members of community "foo".
 Agent "B" joins community "foo" and receives the above relay.

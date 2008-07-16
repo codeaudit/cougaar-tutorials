@@ -1,164 +1,148 @@
 <?xml version='1.0'?>
 
 <!--
-A single node "ping" demo using legacy communities to find the receiver
+	A single node "ping" demo using the new community service to find the receiver
 -->
 <society>
 
-  <node name="NodeA">
+	<node name="NodeA">
 
-    <agent name="Agent-1">
-        <component class="org.cougaar.demo.community.PingSender">
-  		 <!-- we defined an attribute-based target using this role name among the community -->
-          <argument name="target-role" value="PingReceiver"/>
-        </component>
-        <component class="org.cougaar.demo.community.PingServlet">
-          <argument name="path" value="/ping"/>
-        </component>
-      
-  	<!-- Component to join communities -->
-    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
-      <argument name="community" value="CommunityA, CommunityC, CommunityD"/>
-      <!-- ??? canBeManager of CommunityA, CommunityC and CommunityD - ??? how to specify -->
-	  <!-- ??? extra application attribute only for CommunityA ??? -->
-      <argument name="myAttribute" value="false"/>
-    </component>
-        
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? Is there a servlet to view the community ??? -->
+		<agent name="Agent-1">
+			<component class="org.cougaar.demo.community.PingSender">
+				<!-- we define the target using the community name -->
+				<argument name="community-name" value="CPingReceivers" />
+			</component>
+			
+			<component class="org.cougaar.demo.community.PingServlet">
+				<argument name="path" value="/ping" />
+			</component>
 
-	<!-- Helper servlet to see white pages content -->
-		<component class="org.cougaar.core.wp.WhitePagesServlet">
-			<argument>/wpc</argument>
-	  	</component>
-    <!-- Helper servlet to see blackboard content -->
-        <component
-          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-          class="org.cougaar.core.servlet.SimpleServletComponent"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-          <argument>/tasks</argument>
-        </component>		
-    </agent>
-  </node>
-  
-  <node name="NodeB">
-	<!-- First receiver -->  
-    <agent name="Agent-2">
-      	<component class="org.cougaar.demo.community.PingReceiver"/>
-      
-  	<!-- Component to join communities -->
-    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
-      <argument name="community" value="CommunityA, CommunityB, CommunityD"/>
-      <!-- ??? how to set it can be manager for CommunityA, CommunityB, CommunityD ??? -->
-      <!-- ??? how to specify parameter only for CommunityB ??? -->
-      <argument name="Good-receiver" value="false" />
-      <!-- ??? how to specify parameter only for CommunityD ??? -->
-      <argument name="Good-receiver" value="true" />
-    </component>
+			<!-- Component to join communities -->
+			<component
+				class="org.cougaar.core.agent.service.community.JoinCommunity">
+				<argument name="community"
+					value="CommunityA, CommunityC, CommunityD" />
+			</component>
 
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? -->
-	
-    <!-- Helper servlet to see blackboard content -->
-        <component
-          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-          class="org.cougaar.core.servlet.SimpleServletComponent"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-          <argument>/tasks</argument>
-        </component>
-  </agent>
-  </node>
-  
-  <node name="NodeC">
-	<!-- Another receiver -->
-    <agent name="Agent-3">
-      <component class='org.cougaar.demo.community.PingReceiver'/>
-      
-  	<!-- Component to join communities -->
-    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
-      <argument name="community" value="CommunityA, CommunityB"/>
-      <!-- ??? how to set it can't be manager for CommunityA, but it can for CommunityB ??? -->
-      <!-- ??? how to specify parameter only for CommunityB ??? -->
-      <argument name="Good-receiver" value="false" />
-    </component>
+			<!-- Helper servlet to see white pages content -->
+			<component class="org.cougaar.core.wp.WhitePagesServlet">
+				<argument>/wpc</argument>
+			</component>
+			<!-- Helper servlet to see blackboard content -->
+			<component
+				name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+				class="org.cougaar.core.servlet.SimpleServletComponent"
+				priority="COMPONENT"
+				insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+				<argument>
+					org.cougaar.planning.servlet.PlanViewServlet
+				</argument>
+				<argument>/tasks</argument>
+			</component>
+		</agent>
+	</node>
 
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? -->
-	
-    <!-- Helper servlet to see blackboard content -->
-        <component
-          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-          class="org.cougaar.core.servlet.SimpleServletComponent"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-          <argument>/tasks</argument>
-        </component>
-    </agent>
-  </node>
-  
-  <node name="NodeD">
-	<!-- Another receiver -->
-    <agent name="Agent-4">
-	    <component class='org.cougaar.demo.community.PingReceiver'/>
-	    
-  	<!-- Component to join communities -->
-    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
-      <argument name="community" value="CommunityA, CommunityC"/>
-      <!-- ??? how to set it can't be manager for CommunityA, but it can for CommunityC ??? -->
-      <!-- ??? how to specify parameter for CommunityA and CommunityC ??? -->
-      <argument name="Good-receiver" value="true" />
-      <!-- ??? how to specify parameter for CommunityA only ??? -->
-      <argument name="Role" value="PingReceiver"/>
-    </component>
-	
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? -->
-	
-    <!-- Helper servlet to see blackboard content -->
-        <component
-          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-          class="org.cougaar.core.servlet.SimpleServletComponent"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-          <argument>/tasks</argument>
-        </component>
-    </agent>
-  </node>
+	<node name="NodeB">
+		<!-- First receiver -->
+		<agent name="Agent-2">
+			<component class="org.cougaar.demo.community.PingReceiver" />
 
-  <node name="NodeE">
-	<!-- Another receiver -->
-    <agent name="Agent-5">
-	    <component class='org.cougaar.demo.community.PingReceiver'/>
-	    
-  	<!-- Component to join communities -->
-    <component class="org.cougaar.core.agent.service.community.JoinCommunity">
-      <argument name="community" value="CommunityA"/>
-      <!-- ??? how to set it can be manager for CommunityA ??? -->
-      <!-- ??? how to specify parameter for CommunityA only ??? -->
-      <argument name="Role" value="PingReceiver"/>
-      <argument name="Good-receiver" value="true" />
-      <argument name="Champion" value="true"/>
-    </component>
-	
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? -->
+			<!-- Component to join communities -->
+			<component
+				class="org.cougaar.core.agent.service.community.JoinCommunity">
+				<argument name="community"
+					value="CommunityA, CommunityB, CommunityD, CPingReceivers" />
+			</component>
 
-    <!-- Helper servlet to see blackboard content -->
-        <component
-          name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
-          class="org.cougaar.core.servlet.SimpleServletComponent"
-          priority="COMPONENT"
-          insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
-          <argument>org.cougaar.planning.servlet.PlanViewServlet</argument>
-          <argument>/tasks</argument>
-        </component>
-   </agent>
-  </node>
-  
+			<!-- Helper servlet to see blackboard content -->
+			<component
+				name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+				class="org.cougaar.core.servlet.SimpleServletComponent"
+				priority="COMPONENT"
+				insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+				<argument>
+					org.cougaar.planning.servlet.PlanViewServlet
+				</argument>
+				<argument>/tasks</argument>
+			</component>
+		</agent>
+	</node>
+
+	<node name="NodeC">
+		<!-- Another receiver -->
+		<agent name="Agent-3">
+			<component class='org.cougaar.demo.community.PingReceiver' />
+
+			<!-- Component to join communities -->
+			<component
+				class="org.cougaar.core.agent.service.community.JoinCommunity">
+				<argument name="community"
+					value="CommunityA, CommunityB" />
+			</component>
+
+			<!-- Helper servlet to see blackboard content -->
+			<component
+				name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+				class="org.cougaar.core.servlet.SimpleServletComponent"
+				priority="COMPONENT"
+				insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+				<argument>
+					org.cougaar.planning.servlet.PlanViewServlet
+				</argument>
+				<argument>/tasks</argument>
+			</component>
+		</agent>
+	</node>
+
+	<node name="NodeD">
+		<!-- Another receiver -->
+		<agent name="Agent-4">
+			<component class='org.cougaar.demo.community.PingReceiver' />
+
+			<!-- Component to join communities -->
+			<component
+				class="org.cougaar.core.agent.service.community.JoinCommunity">
+				<argument name="community"
+					value="CommunityA, CommunityC, CPingReceivers" />
+			</component>
+
+			<!-- Helper servlet to see blackboard content -->
+			<component
+				name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+				class="org.cougaar.core.servlet.SimpleServletComponent"
+				priority="COMPONENT"
+				insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+				<argument>
+					org.cougaar.planning.servlet.PlanViewServlet
+				</argument>
+				<argument>/tasks</argument>
+			</component>
+		</agent>
+	</node>
+
+	<node name="NodeE">
+		<!-- Another receiver -->
+		<agent name="Agent-5">
+			<component class='org.cougaar.demo.community.PingReceiver' />
+
+			<!-- Component to join communities -->
+			<component
+				class="org.cougaar.core.agent.service.community.JoinCommunity">
+				<argument name="community" value="CommunityA" />
+			</component>
+
+			<!-- Helper servlet to see blackboard content -->
+			<component
+				name="org.cougaar.core.servlet.SimpleServletComponent(org.cougaar.planning.servlet.PlanViewServlet, /tasks)"
+				class="org.cougaar.core.servlet.SimpleServletComponent"
+				priority="COMPONENT"
+				insertionpoint="Node.AgentManager.Agent.PluginManager.Plugin">
+				<argument>
+					org.cougaar.planning.servlet.PlanViewServlet
+				</argument>
+				<argument>/tasks</argument>
+			</component>
+		</agent>
+	</node>
+
 </society>

@@ -1,9 +1,9 @@
 <?xml version='1.0'?>
 
 <!--
-Two-node "ping" runtime System Properties.
+"ping" runtime System Properties.
 This runtime will use the legacy template, but specify explicitly the new community implementation.
-Thus, the configuration for the community will be taken from the society file
+Thus, the configuration for the community will be taken from the society file.
 -->
 <runtime>
 

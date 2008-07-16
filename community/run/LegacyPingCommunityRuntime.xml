@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
 
 <!--
-Two-node "ping" runtime System Properties.
-This runtime will use the legacy template, which implies the legacy community implementation (from lib/community.jar) by default if not specified explicitly.
+"LegacyPing" runtime System Properties.
+This runtime will use the legacy template with the old legacy community implementation (from lib/community.jar).
 Thus, the configuration for the community will be taken from communities.xml
 -->
 <runtime>
@@ -10,6 +10,11 @@ Thus, the configuration for the community will be taken from communities.xml
   <!-- Set infrastructure template to legacy (default) to get legacy community component loaded (default for legacy), see doc/OnlineManual/Templates.html -->
   <vm_parameter
     name="-Dorg.cougaar.society.xsl.param.template"
+    value="legacy"/>
+
+  <!--  We set explicitly we want to use the old communities implementation (from org/cougaar/community - community.jar) -->
+  <vm_parameter
+    name="-Dorg.cougaar.society.xsl.param.communities"
     value="legacy"/>
 
   <!-- Optional log4j config file -->

@@ -1,5 +1,5 @@
 <!--
-Community AttributeBasedAddress (ABA) Example.
+Basic Community AttributeBasedAddress (ABA) Example.
 
 Agent "A" sends a relay to all members of community "foo".
 Agent "B" joins community "foo" and receives the above relay.
@@ -13,9 +13,7 @@ Agent "B" joins community "foo" and receives the above relay.
       <argument name="target" value="foo"/>
     </component>
 
-	<!-- Helper servlet to see community activity -->
-	<!-- ??? -->
-	<!-- Helper servlet to see white pages content -->
+	<!-- Helper servlet to see white pages content and community members -->
 		<component class="org.cougaar.core.wp.WhitePagesServlet">
 			<argument>/wpc</argument>
 	  	</component>
