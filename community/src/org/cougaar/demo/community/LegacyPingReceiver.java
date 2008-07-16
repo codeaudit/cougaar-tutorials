@@ -44,21 +44,21 @@ import org.cougaar.core.service.UIDService;
  * back a reply.
  * <p>
  * A "verbose=<i>boolean</i>" plugin parameter and System property is
- * supported, exactly as documented in {@link PingSender}.
+ * supported, exactly as documented in {@link LegacyPingSender}.
  * <p>
  * There must be one instance of this plugin in every agent that will
- * receive {@link PingSender} relays.  For simplicity, it's easiest to load
+ * receive {@link LegacyPingSender} relays.  For simplicity, it's easiest to load
  * a copy of this plugin into every agent.
  *
  * @property org.cougaar.demo.ping.PingReceiver.verbose=true
  *   PingReceiver should output SHOUT-level logging messages, if not set as
  *   a plugin parameter.
  *
- * @see PingSender Remote plugin that sends the ping relays to this plugin
+ * @see LegacyPingSender Remote plugin that sends the ping relays to this plugin
  *
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingReceiver extends ComponentPlugin {
+public class LegacyPingReceiver extends ComponentPlugin {
 
   private LoggingService log;
   private UIDService 	uids;

@@ -48,7 +48,7 @@ import org.cougaar.util.UnaryPredicate;
  * This plugin is an example ping source that sends relays to a remote agent.
  * <p>
  * There can be multiple copies of this plugin in a single agent, but
- * every {@link PingSender} must have a unique target.  The target is
+ * every {@link LegacyPingSender} must have a unique target.  The target is
  * specified as a plugin parameter:
  * <dl>
  *   <dt>target=<i>String</i></dt>
@@ -82,12 +82,12 @@ import org.cougaar.util.UnaryPredicate;
  *   PingSender should output SHOUT-level logging messages, if not set as
  *   a plugin parameter.
  *
- * @see PingReceiver Required plugin for every agent that will receive
+ * @see LegacyPingReceiver Required plugin for every agent that will receive
  *   ping relays.
  *
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingSender extends ComponentPlugin {
+public class LegacyPingSender extends ComponentPlugin {
 
   private static final long DEFAULT_DELAY_MILLIS =
     SystemProperties.getLong(
