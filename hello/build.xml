@@ -4,6 +4,8 @@
 Sample build script for the Cougaar "hello world" application.
 
 The zip already contains a "lib/hello.jar", so this is optional.
+
+The "applet" target creates a stand-alone Applet directory.
 -->
 <project name="hello" basedir="." default="dist">
 
@@ -14,6 +16,8 @@ The zip already contains a "lib/hello.jar", so this is optional.
   <property name="src.dir" value="${basedir}/src" description="Java source files" />
   <property name="build.dir" value="${basedir}/tmp/classes" description="Class files" />
   <property name="dist.dir" value="${basedir}/lib" description="Generated jars" />
+
+  <property name="applet.dir" value="${basedir}/applet" description="The applet path" />
 
   <property name="cip.lib" value="${cougaar.install.path}/lib"/>
   <property name="cip.sys" value="${cougaar.install.path}/sys"/>
@@ -104,5 +108,58 @@ The zip already contains a "lib/hello.jar", so this is optional.
   <target name="clean" depends="" description="Deletes all class files and all module generated jars">
     <delete dir="${build.dir}" />
     <delete file="${dist.dir}/${ant.project.name}.jar" />
+  </target>
+
+  <!-- Create the local equivalent of http://cougaar.cougaar.org/applet/cougaar.html -->
+  <target name="applet" description="Creates a simple applet example">
+    <delete dir="${applet.dir}" />
+    <mkdir dir="${applet.dir}"/>
+    <delete file="${applet.dir}/cougaar.html"/>
+    <echo file="${applet.dir}/cougaar.html"><![CDATA[
+<html>
+<head><title>Cougaar Applet</title></head>
+<body>
+  <applet code=org.cougaar.core.node.NodeApplet.class 
+      archive="lib/bootstrap.jar,lib/core.jar,lib/util.jar,lib/hello.jar,sys/log4j.jar" width=400 height=400>
+    <param name="properties" value="
+       -Dorg.cougaar.node.name=Node1
+       -Dorg.cougaar.society.file=Hello.xml
+       -Dorg.cougaar.config.path=\$CIP/configs/common;\$CIP/configs/hello
+       "/>
+       Unable to load Applet.
+  </applet>
+</body>
+</html>
+]]></echo>
+    <mkdir dir="${applet.dir}/configs"/>
+    <mkdir dir="${applet.dir}/configs/common"/>
+    <copy todir="${applet.dir}/configs/common">
+      <fileset dir="${cougaar.install.path}/configs/common">
+        <include name="**/*.xsl"/>
+      </fileset>
+    </copy>
+    <mkdir dir="${applet.dir}/configs/hello"/>
+    <copy file="${basedir}/configs/HelloSociety.xml" tofile="${applet.dir}/configs/hello/Hello.xml"/>
+    <mkdir dir="${applet.dir}/lib"/>
+    <copy todir="${applet.dir}/lib">
+      <fileset file="${cip.lib}/bootstrap.jar"/>
+      <fileset file="${cip.lib}/core.jar"/>
+      <fileset file="${cip.lib}/util.jar"/>
+      <fileset file="${dist.dir}/${ant.project.name}.jar"/>
+    </copy>
+    <mkdir dir="${applet.dir}/sys"/>
+    <copy todir="${applet.dir}/sys">
+      <fileset file="${cip.sys}/log4j.jar"/>
+      <fileset file="${cip.sys}/servlet.jar"/>
+    </copy>
+
+    <echo>
+You can now point your browser to:
+  file://${applet.dir}/cougaar.html
+The applet window should print:
+  Cougaar is Running
+and the browser's Java Console should print:
+  [HelloPlugin] - A: Hello, world!
+    </echo>
   </target>
 </project>

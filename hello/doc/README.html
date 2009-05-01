@@ -206,6 +206,39 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
   &nbsp;&nbsp; <code>org.cougaar.bootstrap.Bootstrapper<code><br>
 </li></p>
 
+  <li><b>From a browser:</b>
+  <p>
+  Run:<br>
+  &nbsp;&nbsp;<code>ant applet</code><br>
+  <p>
+  This will create an "applet" directory with the minimal set of jars required
+  to run the Cougaar Node within your browser:<pre>
+    cougaar.html
+    sys/servlet.jar
+    sys/log4j.jar
+    configs/hello/Hello.xml
+    configs/common/util.xsl
+    configs/common/NodeAgent.xsl
+    configs/common/SimpleAgent.xsl
+    configs/common/make_society.xsl
+    configs/common/society.xsl
+    lib/bootstrap.jar
+    lib/hello.jar
+    lib/core.jar
+    lib/util.jar
+  </pre>
+  <p>
+  Point your browser to:<br>
+  &nbsp;&nbsp;<code>file:///  <i>your_cougaar_path</i>  /hello/applet/cougaar.html</code><br>
+  The applet window should print:<br>
+  &nbsp;&nbsp;<code>Cougaar is Running</code></br>
+  and the browser's Java console should print:<br>
+  &nbsp;&nbsp;<code>[HelloPlugin] - A: Hello, world!</code><br>
+  <p>
+  The "applet" directory can also be copied to any webserver and run by pointing
+  your browser to the remote "http://" url.
+  </li></p>
+
 </ul>
 
 <h2>Support:</h2>
