@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+
+<!-- This file contains the "hello world" society definition. -->
+<society>
+	<node name="Node1">
+		<component class="org.cougaar.demo.node.InactiveShutdownPlugin">
+			<argument name="MaxInactiveTime" value="2000" />
+		</component>
+		<agent name="AgentA">
+			<component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
+				<argument name="message" value="HELLO" />
+			</component>
+		</agent>
+	</node>
+</society>

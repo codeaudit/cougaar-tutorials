@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+
+<!-- This file contains the "hello world" society definition. -->
+<society>
+	<node name="Node1">
+		<agent name="AgentA">
+			<component class="org.cougaar.demo.hello.HelloTimerPlugin">
+				<argument name="periodMillis" value="5000" />
+				<argument name="message" value="HELLO" />
+			</component>
+			<component class="org.cougaar.demo.hello.HelloServiceClientPlugin">
+				<argument name="periodMillis" value="7000" />
+				<argument name="message" value="hello" />
+			</component>
+			<component class="org.cougaar.demo.hello.HelloPublishAddPlugin">
+				<argument name="message" value="_Hello_" />
+			</component>
+			<component class="org.cougaar.demo.hello.HelloSubscribePlugin" />
+			<component class="org.cougaar.demo.hello.HelloServicePlugin" />
+		</agent>
+	</node>
+</society>
