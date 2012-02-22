@@ -17,16 +17,86 @@
       you already have a Cougaar society of your own for which some
       portion of the code is already in an Eclipse workspace.
     </p>
+    
+   <h2> CVS checkout of Cougaar Tutorial Modules in Eclipse </h2>
+    <p> For reference, here is a complete sequence of operations for
+      running the "hello" demo in Eclipse, starting from scratch.
+      Following sections go into the steps in more detail.
+    </p>
+    <ol>
+      <li><a href="http://eclipse.org">Install Eclipse</a></li>
+      <li>Start Eclipse</li>
+      <li>"select a workspace" to an empty directory</li>
+      <li>Switch to the "Workbench"</li>
+      <li>Add Cougaar Tutorials CVS repository >
+        <ol>
+          <li>Enter CVS prospective menu: Window -> Open Prosective -> others -> CVS</li>
+          <li>Select "add CVS Repository" button</li>
+          <li>Add Cougaar tutorial repository information:
+             <ol>
+          		<li>Host => cougaar.org</li>
+         		<li>Repository Path => /cvsroot/tutorials</li>
+         		<li>Connection Type => ext</li>
+         		<li>Click Finish</li>
+        	</ol>
+        </ol>
+      </li>
+      <li>Checkout TrimCougaar project:
+       <ol>
+        <li>Expand :ext:cougaar.org:/cvsroot/tutorials" </li>
+        <li>Expand HEAD </li>
+        <li>Right Click TrimCougaar -> Checkout</li>
+       </ol>
+      <li>Checkout the "hello" project:
+        <ol> 
+          <li>Expand :ext:cougaar.org:/cvsroot/tutorials </li>
+          <li>Expand HEAD </li>
+          <li>Right Click hello -> Checkout</li>
+        </ol>
+      </li>
+      <li>Run the demo:
+        <ol>
+          <li>menu Run -> Run</li>
+          <li>select Java-> Java Application -> hello</li>
+          <li>click Run</li>
+        </ol>
+      </li>
+      <li>Observe the output in Console tab
+        <ul>
+          <li>Console prints "A: Hello, Load!" </li>
+          <li>Console prints "..." </li>
+          <li>Console prints "A: Bye: Crashing Node Now!"</li>
+        </ul>
+      </li>
+    </ol>
+    
+    <h2>TrimCougaar project</h2>
+    <p>
+    The TrimCougaar project can be used as the Cougaar Installation for both eclipse and 
+    file-based installation. TrimCougaar has the same structure, 
+    but has only the essential jar and configuration files. COUGAAR-INSTALL-PATH can be set 
+    to TrimCougaar directory. A file based installation may look like:
+    <ol><code>
+    <br>mkdir /usr/local/cougaar 
+    <br>cd /usr/local/cougaar
+    <br>cvs -d :ext:cougaar.org:/cvsroot/tutorials co TrimCougaar
+    <br>export COUGAAR_INSTALL_PATH=/usr/local/cougaar/TrimCougaar
+    </code></ol>
+    </p>
+    
 
     <h2>Defining the "cougaar" User Library</h2>
     <a name="user-lib"/>
     <p>
-      Regardless of whether you create a new workspace or use an
-      existing one, the first step is to create an Eclipse User
-      Library containing the Cougaar jars.  You may also find this
-      User Library useful for your own Cougaar work.
+      If Cougaar is installed external to your eclipse workspace, then you
+      should create an Eclipse User Library containing the Cougaar jars. 
+      This is a generic method for importing Cougaar jars, without using the TrimCougaar module.
     </p>
-
+    <p>
+    Any projects that depend on Cougaar, including HelloWorld, can
+    get at the Cougaar jars simply by including the "cougaar"
+    User Library on the project's build path.
+    </p>
     <p>
       To create a User Library in Eclipse, do the following:
 
@@ -48,18 +118,16 @@
         from <code>$COUGAAR_INSTALL_PATH/sys</code></li>
       </ol>
     </p>
-    <p>Any projects that depend on Cougaar, including HelloWorld, can
-    get at the Cougaar jars simply by including the "cougaar"
-    User Library on the project's build path.
-    </p>
-
+ 
     <h2>Running the Hello World demo in a new workspace</h2>
     <p>
+    The Hello world eclipse project depends on both the TrimCougaar project and the "cougaar" User Library.
+    So either method should setup the hello project environment.
       <ol>
         
         <li>Create a new Eclipse workspace.</li>
 
-        <li>Define the "cougaar" User Library as described
+        <li>Define the "cougaar" User Library or checkout CougaarTrim project as described
         above.</li>
 
         <li>Import the HelloWorld project (see <a href="#import">below</a>
@@ -178,7 +246,7 @@
              Replace value with the run (working) directory in your project root.
            </dd>
 
-           <dt><b>-Dorg.cougaar.society.file=${project_loc:hello}/configs/HelloSociety.xml</b></dt>
+           <dt><b>-Dorg.cougaar.society.file=${project_loc:hello}/configs/HelloWorldSociety.xml</b></dt>
            <dd>
              Replace the value with a path to your society xml.
              Typically this would be a 'configs' directory under the
@@ -290,7 +358,7 @@
 
     </ul>
 
-    <h2>Importing a project</h2>
+    <h2>Importing a project from untarred demo-hello.jar</h2>
     <a name="import"/>
     <p>
       To import the Hello World project into any Eclipse workspace, do
@@ -314,56 +382,6 @@
       </ol>
     </p>
 
-    <h2>Complete sequence of operations for running the demo in a new
-    workspace</h2>
-    <p> For reference, here is a complete sequence of operations for
-      running the "hello" demo in Eclipse, starting from scratch.
-      Feel free to ignore this section unless you had difficulties
-      earlier on.
-    </p>
-    <ol>
-      <li>Install cougaar:  download and unzip cougaar, cougaar-support, demo-hello</li>
-      <li><a href="http://eclipse.org">Install Eclipse</a></li>
-      <li>Start Eclipse</li>
-      <li>"select a workspace" to an empty directory</li>
-      <li>Switch to the "Workbench"</li>
-      <li>Define the "cougaar" User Library:
-        <ol>
-          <li>menu Window -> Preferences</li>
-          <li>select Java -> Build Path ->  User Libraries</li>
-          <li>click New, name it "cougaar", click OK</li>
-          <li>click "Add JARs", select lib/*.jar, click OK</li>
-          <li>click "Add JARs", select sys/*.jar, click OK</li>
-          <li>click OK</li>
-        </ol>
-      </li>
-      <li>Import the "hello" project.
-        <ol>
-          <li>menu File -> Import</li>
-          <li>select General -> Existing Application, click Next</li>
-          <li>click Browse, click on the "hello" dir, click OK</li>
-          <li>verify that "hello" is checked</li>
-          <li>click Finish</li>
-        </ol>
-      </li>
-      <li>Run the demo.
-        <ol>
-          <li>menu Run -> Run</li>
-          <li>select Java-> Java Application -> hello</li>
-          <li>click Run</li>
-        </ol>
-      </li>
-      <li>Observe the output
-        <ul>
-          <li>Console prints "A: Hello, world!"</li>
-        </ul>
-      </li>
-      <li>Stop the run.
-        <ul>
-          <li>click on the red square "stop button"</li>
-        </ul>
-      </li>
-    </ol>
 
   </body>
 </html>

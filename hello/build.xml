@@ -1,165 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Sample build script for the Cougaar "hello world" application.
-
-The zip already contains a "lib/hello.jar", so this is optional.
-
-The "applet" target creates a stand-alone Applet directory.
+Sample build script for Cougaar application using predefined Ant targets
 -->
 <project name="hello" basedir="." default="dist">
+	<!-- Find Cougaar Installed Code  -->
+    <property environment="env"/>
+    <property name="trimCougaar.path" value="${basedir}/../TrimCougaar" />
+    <condition property="cougaar.install.path" value="${trimCougaar.path}" else="${env.COUGAAR_INSTALL_PATH}">
+			<available file="${trimCougaar.path}"/>
+	</condition>
+    <!-- Project specific dependencies -->    
+	<path id="project.dependencies">
+		<!-- By convention, application external jars are in sys  -->
+		<fileset dir="${basedir}" includes="sys" />
+	</path>
+	<!--Load predefined Cougaar Ant Targets  -->
+    <import file="${cougaar.install.path}/build/data/cougaar-app-project-import.xml"/>
+	
+	<!--Run Hello using Ant, good for nightly builds  -->
+	
+	
+	<target name="helloWorld" depends="dist">
+		<antcall target="cougaar-run">
+			<param name="cougaar.society.file.name" value="HelloWorldSociety.xml"/>
+			<param name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+			<param name="cougaar.society.template" value="single_node"/>
+			<param name="cougaar.node.name" value="Node1"/>
+		</antcall>
+	</target>
 
-  <property environment="env"/>
-  <property name="cougaar.install.path" value="${env.COUGAAR_INSTALL_PATH}" />
+	
+	<target name="helloLifeCycle" depends="dist">
+		<antcall target="cougaar-run">
+			<param name="cougaar.society.file.name" value="HelloLifeCycleSociety.xml"/>
+			<param name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+			<param name="cougaar.society.template" value="single_node"/>
+			<param name="cougaar.node.name" value="Node1"/>
+		</antcall>
+	</target>
+	
+	<target name="helloPubSub" depends="dist">
+		<antcall target="cougaar-run">
+			<param name="cougaar.society.file.name" value="HelloPublishSubscribeSociety.xml"/>
+			<param name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+			<param name="cougaar.society.template" value="single_node"/>
+			<param name="cougaar.node.name" value="Node1"/>
+		</antcall>
+	</target>
+	
+	<target name="helloTimer" depends="dist">
+		<antcall target="cougaar-run">
+			<param name="cougaar.society.file.name" value="HelloTimerSociety.xml"/>
+			<param name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+			<param name="cougaar.society.template" value="single_node"/>
+			<param name="cougaar.node.name" value="Node1"/>
+		</antcall>
+	</target>
+	
+	<target name="helloService" depends="dist">
+		<antcall target="cougaar-run">
+			<param name="cougaar.society.file.name" value="HelloServiceSociety.xml"/>
+			<param name="cougaar.runtime.file.name" value="SingleNodeRuntime.xml"/>
+			<param name="cougaar.society.template" value="single_node"/>
+			<param name="cougaar.node.name" value="Node1"/>
+		</antcall>
+	</target>
 
-  <!--- Configure all required paths -->
-  <property name="src.dir" value="${basedir}/src" description="Java source files" />
-  <property name="build.dir" value="${basedir}/tmp/classes" description="Class files" />
-  <property name="dist.dir" value="${basedir}/lib" description="Generated jars" />
 
-  <property name="applet.dir" value="${basedir}/applet" description="The applet path" />
 
-  <property name="cip.lib" value="${cougaar.install.path}/lib"/>
-  <property name="cip.sys" value="${cougaar.install.path}/sys"/>
-  <property name="local.lib" value="sys"/>
 
-  <!--- Compiler properties -->
-  <property name="compile.deprecation" value="true" />
-  <property name="compile.debug" value="on" />
-  <property name="compile.optimize" value="off" />
 
-  <path id="sys.classpath">
-    <!-- none from ${local.lib} -->
-  </path>
-  <path id="cougaar.lib.classpath">
-    <pathelement location="${cip.lib}/util.jar" />
-    <pathelement location="${cip.lib}/core.jar" />
-  </path>
-  <path id="cougaar.sys.classpath">
-    <!-- none from ${cip.sys} -->
-  </path>
-
-  <path id="compile.classpath">
-    <path refid="sys.classpath" />
-    <path refid="cougaar.lib.classpath" />
-    <path refid="cougaar.sys.classpath" />
-  </path>
-
-  <!-- Load user defaults -->
-  <property file="${user.home}/.${ant.project.name}-build.properties" />
-  <property file="${user.home}/.build.properties" />	
-
-  <patternset id="ps.jar.extras">
-    <include name="**/*.xml"/>
-    <include name="**/*.dtd"/>
-    <include name="**/*.properties"/>
-    <include name="**/*.png"/>
-  </patternset>
-
-  <target name="init" description="Initialize the build env.  Check for required properties">
-    <fail unless="cougaar.install.path">		
-      You must define a 'cougaar.install.path' property.  
-      Create a '.build.properties' file in your home dir with the property.
-      Line format ==> cougaar.install.path=[your path]		
-    </fail>
-
-    <echo message="Using COUGAAR_INSTALL_PATH: ${cougaar.install.path}"/>
-  </target>
-
-  <target name="prepare" depends="init" description="Prepares for building, creates required directories">
-    <tstamp />
-
-    <mkdir dir="${build.dir}" description="Creates the build directory for class files" />
-    <mkdir dir="${dist.dir}" description="Creates the dist directory for jar files" />
-  </target>
-
-  <target name="compile" depends="prepare" description="Compiles all source files.">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="ISO-8859-1" includeantruntime="no">
-      <classpath>
-	<path refid="compile.classpath" />
-      </classpath>
-    </javac>
-    <copy todir="${build.dir}" >
-      <fileset dir="${src.dir}">
-        <patternset refid="ps.jar.extras"/>
-      </fileset>
-    </copy>
-  </target>
-
-  <target name="dist" depends="compile" description="Creates a jar file for this module.">
-    <jar jarfile="${dist.dir}/${ant.project.name}.jar" casesensitive="yes">
-      <manifest>
-        <attribute name="Application-Title" value="Cougaar - ${ant.project.name}" />
-        <attribute name="Built-By" value="${user.name}" />
-        <attribute name="Build-Date" value="${TODAY}" />
-        <attribute name="Implementation-Version" value="1" />
-      </manifest>
-      <fileset dir="${build.dir}" />
-    </jar>
-  </target>
-
-  <target name="install" depends="dist" description="Creates jar and copies it and sys jars to $CIP">
-    <copy todir="${cip.sys}">
-      <fileset dir="${local.lib}"/>
-    </copy>
-    <copy file="${dist.dir}/${ant.project.name}.jar" todir="${cip.lib}"/>
-  </target>
-
-  <target name="clean" depends="" description="Deletes all class files and all module generated jars">
-    <delete dir="${build.dir}" />
-    <delete file="${dist.dir}/${ant.project.name}.jar" />
-  </target>
-
-  <!-- Create the local equivalent of http://cougaar.cougaar.org/applet/cougaar.html -->
-  <target name="applet" description="Creates a simple applet example">
-    <delete dir="${applet.dir}" />
-    <mkdir dir="${applet.dir}"/>
-    <delete file="${applet.dir}/cougaar.html"/>
-    <echo file="${applet.dir}/cougaar.html"><![CDATA[
-<html>
-<head><title>Cougaar Applet</title></head>
-<body>
-  <applet code=org.cougaar.core.node.NodeApplet.class 
-      archive="lib/bootstrap.jar,lib/core.jar,lib/util.jar,lib/hello.jar,sys/log4j.jar" width=400 height=400>
-    <param name="properties" value="
-       -Dorg.cougaar.node.name=Node1
-       -Dorg.cougaar.society.file=Hello.xml
-       -Dorg.cougaar.config.path=\$CIP/configs/common;\$CIP/configs/hello
-       "/>
-       Unable to load Applet.
-  </applet>
-</body>
-</html>
-]]></echo>
-    <mkdir dir="${applet.dir}/configs"/>
-    <mkdir dir="${applet.dir}/configs/common"/>
-    <copy todir="${applet.dir}/configs/common">
-      <fileset dir="${cougaar.install.path}/configs/common">
-        <include name="**/*.xsl"/>
-      </fileset>
-    </copy>
-    <mkdir dir="${applet.dir}/configs/hello"/>
-    <copy file="${basedir}/configs/HelloSociety.xml" tofile="${applet.dir}/configs/hello/Hello.xml"/>
-    <mkdir dir="${applet.dir}/lib"/>
-    <copy todir="${applet.dir}/lib">
-      <fileset file="${cip.lib}/bootstrap.jar"/>
-      <fileset file="${cip.lib}/core.jar"/>
-      <fileset file="${cip.lib}/util.jar"/>
-      <fileset file="${dist.dir}/${ant.project.name}.jar"/>
-    </copy>
-    <mkdir dir="${applet.dir}/sys"/>
-    <copy todir="${applet.dir}/sys">
-      <fileset file="${cip.sys}/log4j.jar"/>
-      <fileset file="${cip.sys}/servlet.jar"/>
-    </copy>
-
-    <echo>
-You can now point your browser to:
-  file://${applet.dir}/cougaar.html
-The applet window should print:
-  Cougaar is Running
-and the browser's Java Console should print:
-  [HelloPlugin] - A: Hello, world!
-    </echo>
-  </target>
 </project>

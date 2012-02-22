@@ -8,7 +8,7 @@ This module contains the Cougaar "Hello World" demo.
 This is a bare-minimum Cougaar demo.  A single plugin simply prints "Hello, world!".
 <p>
 For additional information and demos, please see the Cougaar Overview Slides:<br>
-&nbsp;&nbsp;<a href="http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt">http://cougaar.org/docman/view.php/17/196/CougaarOverview.ppt</a>
+&nbsp;&nbsp;<a href="http://cougaar.org/twiki/pub/Main/CougaarOverview/CougaarOverview.ppt">http://cougaar.org/twiki/pub/Main/CougaarOverview/CougaarOverview.ppt</a>
 <p>
 <h2>Index:</h2>
 <ul>
@@ -22,10 +22,10 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
 <hr>
 <p>
 
-<h2>Contents:</h2>
+<h2>Contents:<a name="contents"></a></h2>
 
 <ol>
-  <li><a href="../configs/HelloSociety.xml">configs/HelloSociety.xml</a>:<br>
+  <li><a href="../configs/HelloWorldSociety.xml">configs/HelloWorldSociety.xml</a>:<br>
   The society configuration file.
   </li><p>
 
@@ -51,7 +51,7 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
 </ol>
 <p>
 
-<h2>Installation:</h2>
+<h2>Installation:<a name="installation"></a></h2>
 
 <ol>
   <li>Verify that Java 1.5 or 1.6 is installed and is on the PATH:<br>
@@ -66,14 +66,15 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
   This directory can optionally be shared and read-only.<br>
   </li><p>
 
-  <li>Download Cougaar 12.2 or later.  The 12.2 release can be found at:<br>
-  &nbsp;&nbsp;<a href="http://cougaar.org/frs/?group_id=17&release_id=132"
-    >http://cougaar.org/frs/?group_id=17&release_id=132</a><br>
-  Or download the latest nightly build from:<br>
-  &nbsp;&nbsp;<a href="http://build.cougaar.org/auto/HEAD/latest_success/"
-    >http://build.cougaar.org/auto/HEAD/latest_success/</a>
+  <li>Download Cougaar 12.2 or later.  <br>
+  The 12.4 release can be found at:<br>
+  &nbsp;&nbsp;<a href="http://cougaar.org/twiki/bin/view/Main/CougaarReleases"
+    >http://cougaar.org/twiki/bin/view/Main/CougaarReleases</a><br>
+    <p>
+  Or a trim version of the latest Cougaar HEAD version using the CVS command<br>
+  &nbsp;&nbsp;<code>cvs -d :ext:cougaar.org:/cvsroot/tutorials co TrimCougaar</code><br>
   </li><p>
-
+  
   <li>Unzip the "cougaar.zip" and "cougaar-support.zip" into the 
   COUGAAR_INSTALL_PATH.
   </li><p>
@@ -99,13 +100,11 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
 
   <li>Move the "hello/" directory into your Cougaar "user" directory.
   <p>
-  If you're using the "demo-hello.zip", then unzip this zip into your
-  Cougaar "user" directory.  The "demo-hello.zip" is created by the nightly
-  build:<br>
-  &nbsp;&nbsp;<a href="http://build.cougaar.org/auto/HEAD/latest_success/"
-    >http://build.cougaar.org/auto/HEAD/latest_success/</a>
+  If you're using the "demo-hello.zip" from 12.4 release, then unzip this zip into your
+  Cougaar "user" directory. 
+ 
   <p>
-  If you're using CSV, then checkout the "hello" module into your 
+  If you're using CSV, then checkout the HEAD version of the "hello" module into your 
   Cougaar "user" directory:<br>
   &nbsp;&nbsp;<code>cvs -d :ext:cougaar.org:/cvsroot/tutorials co hello</code><br>
   </li><p>
@@ -140,7 +139,7 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
 
 </ol>
 
-<h2>Usage:</h2>
+<h2>Usage:<a name="usage"></a></h2>
 
 <ul>
 
@@ -150,7 +149,7 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
   &nbsp;&nbsp;<code>cd $COUGAAR_RUNTIME_PATH</code><br>
   &nbsp;&nbsp;<code>cougaar 
     -v 
-    <a href="../configs/HelloSociety.xml">$COUGAAR_SOCIETY_PATH/configs/HelloSociety.xml</a> 
+    <a href="../configs/HelloWorldSociety.xml">$COUGAAR_SOCIETY_PATH/configs/HelloWorldSociety.xml</a> 
     <a href="../run/SingleNodeRuntime.xml">SingleNodeRuntime.xml</a>
   </code>
   <p>
@@ -179,10 +178,10 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
   <p>
   <code>java<code><br>
   &nbsp;&nbsp; <i># specified on the command line:</i><br>
-  &nbsp;&nbsp; <code>-Dorg.cougaar.society.file=$COUGAAR_SOCIETY_PATH/configs/HelloSociety.xml<code><br>
+  &nbsp;&nbsp; <code>-Dorg.cougaar.society.file=$COUGAAR_SOCIETY_PATH/configs/HelloWorldSociety.xml<code><br>
   &nbsp;&nbsp; <code>-Dorg.cougaar.runtime.file=SingleNodeRuntime.xml<code><br>
   &nbsp;&nbsp; <br>
-  &nbsp;&nbsp; <i># the first node specified in <a href="../configs/HelloSociety.xml">HelloSociety.xml</a></i><br>
+  &nbsp;&nbsp; <i># the first node specified in <a href="../configs/HelloWorldSociety.xml">HelloWorldSociety.xml</a></i><br>
   &nbsp;&nbsp; <code>-Dorg.cougaar.node.name=Node1<code><br>
   &nbsp;&nbsp; <br>
   &nbsp;&nbsp; <i># extracted from <a href="../run/SingleNodeRuntime.xml">SingleNodeRuntime.xml</a></i><br>
@@ -241,7 +240,7 @@ For additional information and demos, please see the Cougaar Overview Slides:<br
 
 </ul>
 
-<h2>Support:</h2>
+<h2>Support:<a name="support"></a></h2>
 If you have any questions or comments, please:<ol>
   <li>Subscribe to the cougaar-developers mailing list:<br>
        &nbsp;&nbsp;<a href="http://cougaar.org/mailman/listinfo/cougaar-developers">http://cougaar.org/mailman/listinfo/cougaar-developers</a></li>
