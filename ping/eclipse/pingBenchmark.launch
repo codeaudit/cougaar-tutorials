@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/ping"/>
+<listEntry value="/TrimCougaar/lib/bootstrap.jar"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
-<listEntry value="4"/>
+<listEntry value="1"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
-<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.cougaar.bootstrap.Bootstrapper"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ping"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=../configs/PingBasicSociety.xml -Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1 -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=${project_loc:ping}/run/logging.props -Dorg.cougaar.install.path=${env_var:COUGAAR_INSTALL_PATH} -Dorg.cougaar.society.path=${project_loc:ping} -Dorg.cougaar.runtime.path=${project_loc:ping}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.persistence.verifyJavaIOPatch=false -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot;  -Xmx256m -XX:ThreadStackSize=256"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.file=../configs/PingBasicSociety.xml -Dorg.cougaar.runtime.file=PingBenchmarkRuntime.xml -Dorg.cougaar.node.name=Node1 -Dorg.cougaar.society.xsl.param.template=single_debug -Dorg.cougaar.core.logging.config.filename=${project_loc:ping}/run/logging.props -Dorg.cougaar.install.path=${project_loc:TrimCougaar} -Dorg.cougaar.society.path=${project_loc:ping} -Dorg.cougaar.runtime.path=${project_loc:ping}/run -Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node -Dorg.cougaar.core.node.InitializationComponent=XML -Dorg.cougaar.core.persistence.verifyJavaIOPatch=false -Dorg.cougaar.core.agent.quiet=true -Dorg.cougaar.core.agent.heartbeat=false -Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser -Dcom.apple.mrj.application.apple.menu.about.name=&quot;PingBenchmark&quot;"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${project_loc:ping}/run"/>
 </launchConfiguration>
