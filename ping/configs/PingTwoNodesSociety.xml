@@ -15,6 +15,8 @@ Two-node "ping" society definition.
     <agent name="A">
       <component class="org.cougaar.demo.ping.PingSender">
         <argument name="target" value="B"/>
+        <argument name="delayMillis" value="1000"/>
+        <argument name="verbose" value="true"/>
       </component>
       <component class="org.cougaar.demo.ping.PingServlet">
         <argument name="path" value="/ping"/>
