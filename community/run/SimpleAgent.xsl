@@ -309,7 +309,7 @@ section titled "XSL Agent Templates".
       priority="HIGH"
       insertionpoint="Node.AgentManager.Agent.Component"/>
 
-    <!-- persistence, which requires the "lib/javaiopatch.jar" -->
+    <!-- persistence -->
     <component
       name="org.cougaar.core.persist.PersistenceServiceComponent()"
       class="org.cougaar.core.persist.PersistenceServiceComponent"

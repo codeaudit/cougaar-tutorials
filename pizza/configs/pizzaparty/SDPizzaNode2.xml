@@ -57,8 +57,6 @@
       <vm_parameter>-Dorg.cougaar.core.logging.config.filename="loggingConfig.conf"</vm_parameter>
       <!-- The workspace is where Agents write output -->
       <vm_parameter>-Dorg.cougaar.workspace=$COUGAAR_INSTALL_PATH/workspace</vm_parameter>
-      <!-- Use our JDK over-rides for persistence -->
-      <vm_parameter>-Xbootclasspath/p:"$COUGAAR_INSTALL_PATH/lib/javaiopatch.jar"</vm_parameter>
 
       <!-- Give the VM enough memory -->
       <vm_parameter>-Xms100m</vm_parameter>

@@ -133,7 +133,6 @@ fi
 
 COMMAND="\
 java \
-  -Xbootclasspath/p:$CIP/lib/javaiopatch.jar \
   -classpath $LIBPATHS \
   -Dorg.cougaar.install.path=$CIP \
   -Dorg.cougaar.node.name=$NODE \
