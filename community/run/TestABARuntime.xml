@@ -7,7 +7,7 @@ Agent "B" joins community "foo" and receives the above relay.
 <runtime>
 
   <!-- Specify single_node template for performance -->
-  <!-- By default, no community service is available with this template (see http://cougaar.cougaar.org/software/latest/OnlineManual/Templates.html) -->
+  <!-- By default, no community service is available with this template -->
   <vm_parameter
     name="-Dorg.cougaar.society.xsl.param.template"
     value="single_node"/>

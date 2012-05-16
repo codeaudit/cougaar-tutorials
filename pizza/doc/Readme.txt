@@ -1,6 +1,6 @@
 Pizza Party Planner Application
 ------------------------------------------------------
-http://tutorials.cougaar.org/
+http://cougaar.org/
 
 1. INTRODUCTION
 
@@ -64,18 +64,12 @@ As with all Cougaar applications, user interfaces for the Pizza Application are 
 The main interface for the Pizza Party is the "/pizza" servlet,
 available at runtime at:
 http://localhost:8800/$Alice/pizza
-(See the Javadoc at http://cougaar.cougaar.org/software/11.4/javadoc/pizza/doc/api/org/cougaar/pizza/servlet/PizzaPreferenceServlet.html,
-and a sample final output at: http://tutorials.cougaar.org/pizza/pizza-servlet-snapshot.htm.
 
 To see all the servlets associated with the party planner, Alice,
 navigate at runtime to the "/list" servlet: 
 http://localhost:8800/$Alice/list
 
 6. LEARN MORE
-There are online documents at http://tutorials.cougaar.org/pizza
-
-There are slides with pictures of the data flow, at http://cougaar.org/docman/view.php/5/169/pizza-overview.ppt
-
 Read more about the story and flow (flow.html) of the
 pizza party applcation; What is supposedly going on? What are the
 components involved?

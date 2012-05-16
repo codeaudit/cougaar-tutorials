@@ -29,8 +29,7 @@ the YP at a separate Agent, but not necessary.
 <p>
 <h2>Why are there separate classes for the Relay Target and
 Source?</h2>
-See Cougaar <a href="http://bugs.cougaar.org/show_bug.cgi?id=3726">Bug
-3726</a>. There is a bug, which we help to avoid by keeping the Target
+There is a bug, which we help to avoid by keeping the Target
 from implementing Relay.Source - which means that it does not have a
 Targets list. As a result, it avoids this bug, which could cause a
 flood of messages.
