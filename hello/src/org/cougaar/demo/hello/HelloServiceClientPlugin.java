@@ -55,7 +55,6 @@ public class HelloServiceClientPlugin extends TodoPlugin {
    public void start( ) {
 		super.start();
 		log.shout("start");
-		helloService = getServiceBroker().getService(this, HelloService.class, null);
 	    if (helloService == null) {
 	    	log.shout("no luck getting hello service");
 	      }
