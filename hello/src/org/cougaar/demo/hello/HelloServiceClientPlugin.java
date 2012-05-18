@@ -40,7 +40,6 @@ public class HelloServiceClientPlugin extends TodoPlugin {
 			description="Message to be published on blackboard") 
 			public String helloMessage;
 
-	//FIXME: ObtianService does not work on Agent Services
 	@Cougaar.ObtainService
 	public HelloService helloService;
 
