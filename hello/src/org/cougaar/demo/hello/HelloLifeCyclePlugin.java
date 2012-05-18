@@ -125,7 +125,8 @@ public class HelloLifeCyclePlugin extends ParameterizedPlugin {
 	/** SetupSubscriptions method is called when the agent starts.
 	 * Subscribe to changes in blackboard objects 
 	 */
-	protected void setupSubscriptions() {
+	@Override
+   protected void setupSubscriptions() {
 		log.shout(hello + ": Setup Subscriptions!");
 		inactiveShutdownService.stillActive(agentName, pluginName);
 	}
@@ -135,7 +136,8 @@ public class HelloLifeCyclePlugin extends ParameterizedPlugin {
 	 * Note execute() is run once at startup, 
 	 * even if nothing has changed on the blackboard 
 	 */
-	protected void execute() {
+	@Override
+   protected void execute() {
 		log.shout(hello + ": Execute!");
 		inactiveShutdownService.stillActive(agentName, pluginName);
 	}

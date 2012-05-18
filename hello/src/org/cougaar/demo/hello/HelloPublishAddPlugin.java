@@ -50,7 +50,8 @@ public class HelloPublishAddPlugin extends AnnotatedSubscriptionsPlugin {
 	 * Execute runs once during plugin startup and every time the plugin's subscription fire. So care must be taken to dispatch the desired
 	 * Execute code must check conditions for when to run its code.
 	 */
-	public void execute( ) {
+	@Override
+   public void execute( ) {
 		super.execute();
 		// Test for initial run of execute
 		if (hello == null) {

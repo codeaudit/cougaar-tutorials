@@ -51,11 +51,11 @@ public class HelloServiceClientPlugin extends TodoPlugin {
 	/** uids UID service initialized by parent ParameterizedPlugin */  
 	
 
-	public void start( ) {
+	@Override
+   public void start( ) {
 		super.start();
 		log.shout("start");
-		helloService = (HelloService) 
-	      getServiceBroker().getService(this, HelloService.class, null);
+		helloService = getServiceBroker().getService(this, HelloService.class, null);
 	    if (helloService == null) {
 	    	log.shout("no luck getting hello service");
 	      }
@@ -64,7 +64,8 @@ public class HelloServiceClientPlugin extends TodoPlugin {
 	/*
 	 * Alarms should be created only after setupSubscriptions have been initialized
 	 */
-	public void setupSubscriptions() {
+	@Override
+   public void setupSubscriptions() {
 		super.setupSubscriptions();
 		log.shout("setupSubsciptions");		
 		alarm =  executeLater(period, new CallServiceTask());

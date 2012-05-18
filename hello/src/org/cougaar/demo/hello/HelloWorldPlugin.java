@@ -31,7 +31,8 @@ import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 public class HelloWorldPlugin extends AnnotatedSubscriptionsPlugin {
 
 	/** SetupSubscription method is called once at agent startup.*/
-	public void start() {
+	@Override
+   public void start() {
 		super.start();		
 		log.shout("Hello, World!");
 	}

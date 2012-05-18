@@ -56,14 +56,16 @@ public class HelloServicePlugin extends TodoPlugin implements HelloService {
 		this.hello = hello;
 	}
 
-	public void load() {
+	@Override
+   public void load() {
 		log.shout("loaded plugin");
 		// Offer HelloService service
 		serviceProvider = new MyServiceProvider();
 		getServiceBroker().addService(HelloService.class, serviceProvider);
 		super.load();
 	}
-	public void stop() {
+	@Override
+   public void stop() {
 		log.shout("stop???");
 		if (serviceProvider != null) {
 			getServiceBroker().revokeService(HelloService.class,

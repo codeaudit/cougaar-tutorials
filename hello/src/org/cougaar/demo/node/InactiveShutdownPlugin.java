@@ -99,7 +99,8 @@ implements InactiveShutdownService {
     }
     
     
-    public void load() {
+    @Override
+   public void load() {
         super.load();
     	countBbObject= new ActivityCounter(uids.nextUID());
     	publishAddLater(countBbObject);
@@ -109,7 +110,8 @@ implements InactiveShutdownService {
         rootsb.addService(InactiveShutdownService.class, provider);
     }
 
-    public void unload() {
+    @Override
+   public void unload() {
         if (provider != null) {
             ServiceBroker rootsb = nodeControlService.getRootServiceBroker();
             rootsb.revokeService(InactiveShutdownService.class, provider);
