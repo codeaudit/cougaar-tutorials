@@ -53,20 +53,27 @@ import org.cougaar.util.IsInstanceOf;
  */
 public class PingServlet extends ComponentServlet {
 
-  private static final Comparator<SimpleRelay> RELAY_COMPARATOR =
+  /**
+    * 
+    */
+   private static final long serialVersionUID = 1L;
+
+private static final Comparator<SimpleRelay> RELAY_COMPARATOR =
     new SimpleRelayComparator();
 
   private long loadTime;
   private BlackboardQueryService blackboard;
 
   /** @return a default path if a plugin parameter is not specified */
-  protected String getPath() {
+  @Override
+protected String getPath() {
     String ret = super.getPath();
     return ret == null ? "/ping" : ret;
   }
 
   /** This method is called when the agent is created */
-  public void load() {
+  @Override
+public void load() {
     super.load();
 
     // Record our load time
@@ -78,7 +85,8 @@ public class PingServlet extends ComponentServlet {
   }
 
   /** This method is called whenever the browser loads our URL. */
-  public void doGet(
+  @Override
+public void doGet(
       HttpServletRequest request,
       HttpServletResponse response) throws IOException {
 

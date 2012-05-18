@@ -94,14 +94,16 @@ public class PingSender extends TodoPlugin {
   @Cougaar.Arg(name="verbose", defaultValue="true")
   public boolean verbose;
 
-  public void setArguments(Arguments args) {
+  @Override
+public void setArguments(Arguments args) {
     super.setArguments(args);
     if (target.equals(agentId)) {
       throw new IllegalArgumentException("Target matches self: " + target);
     }
   }
 
-  protected void setupSubscriptions() {
+  @Override
+protected void setupSubscriptions() {
     super.setupSubscriptions();
     // Get our initial counter value, which is zero unless we're restarting
     // from an agent move or persistence snapshot
