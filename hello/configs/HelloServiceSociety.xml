@@ -8,15 +8,15 @@
 				<argument name="periodMillis" value="5000" />
 				<argument name="message" value="HELLO" />
 			</component>
+			<component class="org.cougaar.demo.hello.HelloServiceClientPlugin">
+				<argument name="periodMillis" value="7000" />
+				<argument name="message" value="hello" />
+			</component>
 			<component class="org.cougaar.demo.hello.HelloPublishAddPlugin">
 				<argument name="message" value="_Hello_" />
 			</component>
 			<component class="org.cougaar.demo.hello.HelloSubscribePlugin" />
 			<component class="org.cougaar.demo.hello.HelloServicePlugin" />
-			<component class="org.cougaar.demo.hello.HelloServiceClientPlugin">
-				<argument name="periodMillis" value="7000" />
-				<argument name="message" value="hello" />
-			</component>
 		</agent>
 	</node>
 </society>
