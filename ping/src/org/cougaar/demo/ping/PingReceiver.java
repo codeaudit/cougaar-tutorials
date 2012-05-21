@@ -35,39 +35,40 @@ import org.cougaar.util.annotations.Subscribe;
  * This plugin is an example ping target that receives relays and sends back a
  * reply.
  * <p>
- * A "verbose=<i>boolean</i>" plugin parameter and System property is
- * supported, exactly as documented in {@link PingSender}.
+ * A "verbose=<i>boolean</i>" plugin parameter and System property is supported,
+ * exactly as documented in {@link PingSender}.
  * <p>
  * There must be one instance of this plugin in every agent that will receive
  * {@link PingSender} relays. For simplicity, it's easiest to load a copy of
  * this plugin into every agent.
  * 
- * @property org.cougaar.demo.ping.PingReceiver.verbose=true
- *   PingReceiver should output SHOUT-level logging messages, if not set as a
- *   plugin parameter.
+ * @property org.cougaar.demo.ping.PingReceiver.verbose=true PingReceiver should
+ *           output SHOUT-level logging messages, if not set as a plugin
+ *           parameter.
  * 
  * @see PingSender Remote plugin that sends the ping relays to this plugin
  * 
  * @see PingServlet Optional browser-based GUI.
  */
-public class PingReceiver extends AnnotatedSubscriptionsPlugin {
+public class PingReceiver
+      extends AnnotatedSubscriptionsPlugin {
 
-  @Cougaar.Arg(name="verbose", defaultValue="true")
-  public boolean verbose;
+   @Cougaar.Arg(name = "verbose", defaultValue = "true")
+   public boolean verbose;
 
-  @Cougaar.Execute(on=Subscribe.ModType.ADD, when="isRelayForAgent")
-  public void executeRelay(SimpleRelay relay) {
-    // Send back the same content as our response
-    Object content = relay.getQuery();
-    Object response = content;
-    relay.setReply(response);
-    if (verbose && log.isShoutEnabled()) {
-      log.shout("Responding to ping " + response + " from " + relay.getSource());
-    }
-    blackboard.publishChange(relay);
-  }
+   @Cougaar.Execute(on = Subscribe.ModType.ADD, when = "isRelayForAgent")
+   public void executeRelay(SimpleRelay relay) {
+      // Send back the same content as our response
+      Object content = relay.getQuery();
+      Object response = content;
+      relay.setReply(response);
+      if (verbose && log.isShoutEnabled()) {
+         log.shout("Responding to ping " + response + " from " + relay.getSource());
+      }
+      blackboard.publishChange(relay);
+   }
 
-  public boolean isRelayForAgent(SimpleRelay relay) {
-    return agentId.equals(relay.getTarget());
-  }
+   public boolean isRelayForAgent(SimpleRelay relay) {
+      return agentId.equals(relay.getTarget());
+   }
 }
