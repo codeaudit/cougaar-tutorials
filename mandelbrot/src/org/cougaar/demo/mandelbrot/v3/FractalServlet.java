@@ -3,7 +3,6 @@ package org.cougaar.demo.mandelbrot.v3;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.cougaar.core.plugin.ServletPlugin;
@@ -55,7 +54,7 @@ public class FractalServlet extends ServletPlugin {
 
   protected void doGet(
       HttpServletRequest req, HttpServletResponse res
-      ) throws ServletException, IOException {
+      ) throws IOException {	// djw: removed ServletException from the throws list
 
     // parse the URL parameters
     Arguments args = new Arguments(req.getParameterMap());
