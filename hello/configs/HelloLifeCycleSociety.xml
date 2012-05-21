@@ -2,14 +2,17 @@
 
 <!-- This file contains the "hello world" society definition. -->
 <society>
-	<node name="Node1">
-		<component class="org.cougaar.demo.node.InactiveShutdownPlugin">
-			<argument name="MaxInactiveTime" value="2000" />
-		</component>
-		<agent name="AgentA">
-			<component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
-				<argument name="message" value="HELLO" />
-			</component>
-		</agent>
-	</node>
+   <node name="Node1">
+      <component class="org.cougaar.demo.node.InactiveShutdownPlugin">
+         <argument name="MaxInactiveTime" value="2000" />
+      </component>
+      <agent name="AgentA">
+         <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
+            <argument name="message" value="HELLO" />
+         </component>
+         <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
+            <argument name="message" value="HELLO dude" />
+         </component>
+      </agent>
+   </node>
 </society>
