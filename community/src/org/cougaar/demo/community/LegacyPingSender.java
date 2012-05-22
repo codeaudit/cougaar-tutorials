@@ -116,6 +116,7 @@ public class LegacyPingSender
    private IncrementalSubscription sub;
    // sending relay change subscription
    // just used to rehydrate and get the counter
+   @SuppressWarnings("unused")
    private IncrementalSubscription sending_sub;
    private TodoSubscription expiredAlarms;
 
@@ -349,6 +350,7 @@ public class LegacyPingSender
          this.content = content;
       }
 
+      @SuppressWarnings("unused") // reflective access?
       public SimpleRelay getPriorRelay() {
          return priorRelay;
       }
