@@ -155,8 +155,7 @@ public class PingServlet
          return compare(a, b);
       }
 
-      @SuppressWarnings("unchecked")
-      private int compare(Comparable a, Comparable b) {
+      private <T extends Comparable<T>> int compare(T a, T b) {
          return a == null ? (b == null ? 0 : 1) : b == null ? -1 : a.compareTo(b);
       }
    }
