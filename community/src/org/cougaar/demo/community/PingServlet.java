@@ -49,138 +49,124 @@ import org.cougaar.util.UnaryPredicate;
  * <p>
  * Supports an optional Servlet path parameter, which defaults to "/ping".
  * <p>
- * For simplicity, it's easiest to load a copy of this servlet into every
- * agent.
+ * For simplicity, it's easiest to load a copy of this servlet into every agent.
  */
-public class PingServlet extends ComponentServlet {
+public class PingServlet
+      extends ComponentServlet {
 
-  private long loadTime;
+   private static final long serialVersionUID = 1L;
 
-  private BlackboardQueryService blackboard;
+   private long loadTime;
 
-  /** @return a default path if a plugin parameter is not specified */
-  protected String getPath() {
-    String ret = super.getPath();
-    return (ret == null ? "/ping" : ret);
-  }
+   private BlackboardQueryService blackboard;
 
-  /** This method is called when the agent is created */
-  public void load() {
-    super.load();
+   /** @return a default path if a plugin parameter is not specified */
+   @Override
+   protected String getPath() {
+      String ret = super.getPath();
+      return (ret == null ? "/ping" : ret);
+   }
 
-    // Record our load time
-    loadTime = System.currentTimeMillis();
+   /** This method is called when the agent is created */
+   @Override
+   public void load() {
+      super.load();
 
-    // Get our required Cougaar services
-    this.blackboard = (BlackboardQueryService)
-      getServiceBroker().getService(
-          this, BlackboardQueryService.class, null);
-  }
+      // Record our load time
+      loadTime = System.currentTimeMillis();
 
-  /** This method is called whenever the browser loads our URL. */
-  public void doGet(
-      HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+      // Get our required Cougaar services
+      this.blackboard = getServiceBroker().getService(this, BlackboardQueryService.class, null);
+   }
 
-    // Begin our HTML page response
-    response.setContentType("text/html");
-    PrintWriter out = response.getWriter();
-    String title = "Agent "+getEncodedAgentName();
-    out.println(
-        "<html>"+
-        "<head><title>"+title+"</title></head>"+
-        "<body><h1>"+title+"</h1>");
+   /** This method is called whenever the browser loads our URL. */
+   @Override
+   public void doGet(HttpServletRequest request, HttpServletResponse response)
+         throws IOException {
 
-    // Write how long we've been running, to make it easy for the user
-    // to calculate the ping throughput
-    long runTime = System.currentTimeMillis() - loadTime;
-    out.println(
-        "Milliseconds since agent load: "+runTime+"<p>");
+      // Begin our HTML page response
+      response.setContentType("text/html");
+      PrintWriter out = response.getWriter();
+      String title = "Agent " + getEncodedAgentName();
+      out.println("<html>" + "<head><title>" + title + "</title></head>" + "<body><h1>" + title + "</h1>");
 
-    // Query the blackboard for relays
-    UnaryPredicate pred = new UnaryPredicate() {
-      public boolean execute(Object o) {
-        return (o instanceof SimpleRelay);
+      // Write how long we've been running, to make it easy for the user
+      // to calculate the ping throughput
+      long runTime = System.currentTimeMillis() - loadTime;
+      out.println("Milliseconds since agent load: " + runTime + "<p>");
+
+      // Query the blackboard for relays
+      UnaryPredicate pred = new UnaryPredicate() {
+         private static final long serialVersionUID = 1L;
+
+         public boolean execute(Object o) {
+            return (o instanceof SimpleRelay);
+         }
+      };
+      Collection col = blackboard.query(pred);
+
+      // Sort by source then target
+      List l = sortRelays(new ArrayList(col));
+
+      // Write the relays as an HTML table
+      out.println("<table border=1>" + "<tr>" + "  <th></th>" + "  <th>UID</th>" + "  <th>Source</th>" + "  <th>Target</th>"
+            + "  <th>Content</th>" + "  <th>Response</th>" + "  <th><i>Pings Per Second</i></th>" + "</tr>");
+      DecimalFormat formatter = new DecimalFormat("0.000");
+      for (int i = 0; i < l.size(); i++) {
+         SimpleRelay relay = (SimpleRelay) l.get(i);
+
+         double throughput = Double.NaN;
+         if (relay.getQuery() instanceof Number && runTime > 0) {
+            double count = ((Number) relay.getQuery()).doubleValue();
+            double seconds = (runTime / 1000);
+            throughput = (count / seconds);
+         }
+
+         out.println("<tr align=right>" + "  <td>" + i + "</td>" + "  <td>" + relay.getUID() + "</td>" + "  <td>"
+               + relay.getSource() + "</td>" + "  <td>" + relay.getTarget() + "</td>" + "  <td>" + relay.getQuery() + "</td>"
+               + "  <td>" + relay.getReply() + "</td>" + "  <td>" + formatter.format(throughput) + "</td>" + "<tr>");
       }
-    };
-    Collection col = blackboard.query(pred);
+      out.println("</table>");
 
-    // Sort by source then target
-    List l = sortRelays(new ArrayList(col));
+      // Create a "reload" button for the user to invoke our servlet again
+      out.println("<form method=\"get\" action=\"" + request.getRequestURI() + "\">" + "  <input type=\"submit\" value=\"Reload\">"
+            + "</form>");
 
-    // Write the relays as an HTML table
-    out.println(
-        "<table border=1>"+
-        "<tr>"+
-        "  <th></th>"+
-        "  <th>UID</th>"+
-        "  <th>Source</th>"+
-        "  <th>Target</th>"+
-        "  <th>Content</th>"+
-        "  <th>Response</th>"+
-        "  <th><i>Pings Per Second</i></th>"+
-        "</tr>");
-    DecimalFormat formatter = new DecimalFormat("0.000");
-    for (int i = 0; i < l.size(); i++) {
-      SimpleRelay relay = (SimpleRelay) l.get(i);
+      // End our HTML page
+      out.println("</body></html>");
+   }
 
-      double throughput = Double.NaN;
-      if (relay.getQuery() instanceof Number && runTime > 0) {
-        double count = ((Number) relay.getQuery()).doubleValue();
-        double seconds = (runTime / 1000);
-        throughput = (count / seconds);
+   /** Sorting methods */
+   private static List sortRelays(List l) {
+      Comparator c = new Comparator() {
+         public int compare(Object o1, Object o2) {
+            return compareRelays((SimpleRelay) o1, (SimpleRelay) o2);
+         }
+      };
+      Collections.sort(l, c);
+      return l;
+   }
+
+   private static int compareRelays(SimpleRelay r1, SimpleRelay r2) {
+      int ret;
+      ret = compareAddresses(r1.getSource(), r2.getSource());
+      if (ret != 0) {
+         return ret;
       }
-
-      out.println(
-          "<tr align=right>"+
-          "  <td>"+i+"</td>"+
-          "  <td>"+relay.getUID()+"</td>"+
-          "  <td>"+relay.getSource()+"</td>"+
-          "  <td>"+relay.getTarget()+"</td>"+
-          "  <td>"+relay.getQuery()+"</td>"+
-          "  <td>"+relay.getReply()+"</td>"+
-          "  <td>"+formatter.format(throughput)+"</td>"+
-          "<tr>");
-    }
-    out.println("</table>");
-
-    // Create a "reload" button for the user to invoke our servlet again
-    out.println(
-        "<form method=\"get\" action=\""+request.getRequestURI()+"\">"+
-        "  <input type=\"submit\" value=\"Reload\">"+
-        "</form>");
-
-    // End our HTML page
-    out.println("</body></html>");
-  }
-  
-
-  /** Sorting methods */
-  private static List sortRelays(List l) {
-    Comparator c = new Comparator() {
-      public int compare(Object o1, Object o2) {
-        return compareRelays((SimpleRelay) o1, (SimpleRelay) o2);
+      ret = compareAddresses(r1.getTarget(), r2.getTarget());
+      if (ret != 0) {
+         return ret;
       }
-    };
-    Collections.sort(l, c);
-    return l;
-  }
-  private static int compareRelays(SimpleRelay r1, SimpleRelay r2) {
-    int ret;
-    ret = compareAddresses(r1.getSource(), r2.getSource());
-    if (ret != 0) return ret;
-    ret = compareAddresses(r1.getTarget(), r2.getTarget());
-    if (ret != 0) return ret;
-    return compare(r1.getUID(), r2.getUID());
-  }
-  private static int compareAddresses(MessageAddress m1, MessageAddress m2) {
-    String a = (m1 == null ? null : m1.getAddress());
-    String b = (m2 == null ? null : m2.getAddress());
-    return compare(a, b);
-  }
-  private static int compare(Comparable a, Comparable b) {
-    return 
-      (a == null ? (b == null ? 0 : 1) :
-       b == null ? -1 : a.compareTo(b));
-  }
+      return compare(r1.getUID(), r2.getUID());
+   }
+
+   private static int compareAddresses(MessageAddress m1, MessageAddress m2) {
+      String a = (m1 == null ? null : m1.getAddress());
+      String b = (m2 == null ? null : m2.getAddress());
+      return compare(a, b);
+   }
+
+   private static int compare(Comparable a, Comparable b) {
+      return (a == null ? (b == null ? 0 : 1) : b == null ? -1 : a.compareTo(b));
+   }
 }

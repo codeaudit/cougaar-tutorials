@@ -52,165 +52,140 @@ import org.cougaar.util.UnaryPredicate;
  * <p>
  * Supports an optional Servlet path parameter, which defaults to "/mesh".
  * <p>
- * For simplicity, it's easiest to load a copy of this servlet into every
- * agent.
+ * For simplicity, it's easiest to load a copy of this servlet into every agent.
  */
-public class MeshServlet extends ComponentServlet {
+public class MeshServlet
+      extends ComponentServlet {
 
-  private long loadTime;
+   private static final long serialVersionUID = 1L;
 
-  private BlackboardQueryService blackboard;
+   private long loadTime;
 
-  /** @return a default path if a plugin parameter is not specified */
-  protected String getPath() {
-    String ret = super.getPath();
-    return (ret == null ? "/mesh" : ret);
-  }
+   private BlackboardQueryService blackboard;
 
-  /** This method is called when the agent is created */
-  public void load() {
-    super.load();
+   /** @return a default path if a plugin parameter is not specified */
+   @Override
+   protected String getPath() {
+      String ret = super.getPath();
+      return (ret == null ? "/mesh" : ret);
+   }
 
-    // Record our load time
-    loadTime = System.currentTimeMillis();
+   /** This method is called when the agent is created */
+   @Override
+   public void load() {
+      super.load();
 
-    // Get our required Cougaar services
-    this.blackboard = (BlackboardQueryService)
-      getServiceBroker().getService(
-          this, BlackboardQueryService.class, null);
-  }
+      // Record our load time
+      loadTime = System.currentTimeMillis();
 
-  /** This method is called whenever the browser loads our URL. */
-  public void doGet(
-      HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
+      // Get our required Cougaar services
+      this.blackboard = getServiceBroker().getService(this, BlackboardQueryService.class, null);
+   }
 
-    // Begin our HTML page response
-    response.setContentType("text/html");
-    PrintWriter out = response.getWriter();
-    String title = "Agent "+getEncodedAgentName();
-    out.println(
-        "<html>"+
-        "<head><title>"+title+"</title></head>"+
-        "<body><h1>"+title+"</h1>");
+   /** This method is called whenever the browser loads our URL. */
+   @Override
+   public void doGet(HttpServletRequest request, HttpServletResponse response)
+         throws IOException {
 
-    // Write how long we've been running, to make it easy for the user
-    // to calculate the relay throughput
-    long runTime = System.currentTimeMillis() - loadTime;
-    out.println(
-        "Milliseconds since agent load: "+runTime+"<p>");
+      // Begin our HTML page response
+      response.setContentType("text/html");
+      PrintWriter out = response.getWriter();
+      String title = "Agent " + getEncodedAgentName();
+      out.println("<html>" + "<head><title>" + title + "</title></head>" + "<body><h1>" + title + "</h1>");
 
-    // Query the blackboard for relays
-    UnaryPredicate pred = new UnaryPredicate() {
-      public boolean execute(Object o) {
-        return (o instanceof SimpleRelay);
-      }
-    };
-    Collection col = blackboard.query(pred);
+      // Write how long we've been running, to make it easy for the user
+      // to calculate the relay throughput
+      long runTime = System.currentTimeMillis() - loadTime;
+      out.println("Milliseconds since agent load: " + runTime + "<p>");
 
-    // We expect multiple "incoming" relays from different remote targets, each
-    // with possibly different counter values, plus corresponding "outgoing"
-    // relays with identical counter values. 
-    //
-    // So, we'll split our relays into pairs based on the targets.
-    Map<String,SimpleRelay> sent =
-      new HashMap<String,SimpleRelay>(col.size() >> 1);
-    Map<String,SimpleRelay> recv =
-      new HashMap<String,SimpleRelay>(col.size() >> 1);
-    for (Object oi : col) {
-      SimpleRelay relay = (SimpleRelay) oi;
-      boolean isOutgoing = agentId.equals(relay.getSource());
-      MessageAddress addr = 
-        (isOutgoing ? relay.getTarget() : relay.getSource());
-      String key = (addr == null ? null : addr.getAddress());
-      if (key == null) {
-        key = "null";
-      }
-      if (isOutgoing) {
-        sent.put(key, relay);
-      } else {
-        recv.put(key, relay);
-      }
-    }
+      // Query the blackboard for relays
+      UnaryPredicate pred = new UnaryPredicate() {
+         private static final long serialVersionUID = 1L;
 
-    // Get a sorted set of all unique target names
-    Set<String> targetSet = new HashSet<String>(sent.keySet());
-    targetSet.addAll(recv.keySet());
-    List<String> targets = new ArrayList<String>(targetSet);
-    Collections.sort(targets);
+         public boolean execute(Object o) {
+            return (o instanceof SimpleRelay);
+         }
+      };
+      Collection col = blackboard.query(pred);
 
-    // Write the relays as an HTML table
-    out.println(
-        "<table border=1>"+
-        "<tr>"+
-        "  <th rowspan=2></th>"+
-        "  <th rowspan=2>Target</th>"+
-        "  <th colspan=5>Sent</th>"+
-        "  <th colspan=5>Received</th>"+
-        "</tr>"+
-        "<tr>"+
-        "  <th bgcolor=lightgray>&nbsp;</th>"+
-        "  <th>UID</th>"+
-        "  <th>Bloat (byte[])</th>"+
-        "  <th>Count</th>"+
-        "  <th>Throughput (relays/second)</th>"+
-        "  <th bgcolor=lightgray>&nbsp;</th>"+
-        "  <th>UID</th>"+
-        "  <th>Bloat (byte[])</th>"+
-        "  <th>Count</th>"+
-        "  <th>Throughput (relays/second)</th>"+
-        "</tr>");
-    DecimalFormat formatter = new DecimalFormat("0.000");
-    for (int i = 0; i < targets.size(); i++) {
-      String target = targets.get(i);
-
-      out.print(
-          "<tr align=right>"+
-          "  <td>"+i+"</td>"+
-          "  <td>"+target+"</td>");
-
-      for (int j = 0; j < 2; j++) {
-        SimpleRelay relay = (j == 0 ? sent.get(target) : recv.get(target));
-
-        out.print("  <td bgcolor=lightgray>&nbsp;</td>");
-
-        if (relay == null) {
-          out.print("  <td colspan=4><font color=red>null</font></td>");
-          continue;
-        }
-
-        int bloat = -1;
-        Object o = relay.getQuery();
-        if (o instanceof Payload) {
-          Payload p = (Payload) o;
-          bloat = p.getBloat();
-          o = p.getData();
-        }
-        long count = ((Long) o).longValue();
-
-        double throughput = Double.NaN;
-        if (count > 0 && runTime > 0) {
-          throughput = 1000.0 * ((double) count / runTime);
-        }
-
-        out.print(
-            "  <td>"+relay.getUID()+"</td>"+
-            "  <td>"+bloat+"</td>"+
-            "  <td>"+count+"</td>"+
-            "  <td>"+formatter.format(throughput)+"</td>");
+      // We expect multiple "incoming" relays from different remote targets,
+      // each
+      // with possibly different counter values, plus corresponding "outgoing"
+      // relays with identical counter values.
+      //
+      // So, we'll split our relays into pairs based on the targets.
+      Map<String, SimpleRelay> sent = new HashMap<String, SimpleRelay>(col.size() >> 1);
+      Map<String, SimpleRelay> recv = new HashMap<String, SimpleRelay>(col.size() >> 1);
+      for (Object oi : col) {
+         SimpleRelay relay = (SimpleRelay) oi;
+         boolean isOutgoing = agentId.equals(relay.getSource());
+         MessageAddress addr = (isOutgoing ? relay.getTarget() : relay.getSource());
+         String key = (addr == null ? null : addr.getAddress());
+         if (key == null) {
+            key = "null";
+         }
+         if (isOutgoing) {
+            sent.put(key, relay);
+         } else {
+            recv.put(key, relay);
+         }
       }
 
-      out.println("<tr>");
-    }
-    out.println("</table>");
+      // Get a sorted set of all unique target names
+      Set<String> targetSet = new HashSet<String>(sent.keySet());
+      targetSet.addAll(recv.keySet());
+      List<String> targets = new ArrayList<String>(targetSet);
+      Collections.sort(targets);
 
-    // Create a "reload" button for the user to invoke our servlet again
-    out.println(
-        "<form method=\"get\" action=\""+request.getRequestURI()+"\">"+
-        "  <input type=\"submit\" value=\"Reload\">"+
-        "</form>");
+      // Write the relays as an HTML table
+      out.println("<table border=1>" + "<tr>" + "  <th rowspan=2></th>" + "  <th rowspan=2>Target</th>"
+            + "  <th colspan=5>Sent</th>" + "  <th colspan=5>Received</th>" + "</tr>" + "<tr>"
+            + "  <th bgcolor=lightgray>&nbsp;</th>" + "  <th>UID</th>" + "  <th>Bloat (byte[])</th>" + "  <th>Count</th>"
+            + "  <th>Throughput (relays/second)</th>" + "  <th bgcolor=lightgray>&nbsp;</th>" + "  <th>UID</th>"
+            + "  <th>Bloat (byte[])</th>" + "  <th>Count</th>" + "  <th>Throughput (relays/second)</th>" + "</tr>");
+      DecimalFormat formatter = new DecimalFormat("0.000");
+      for (int i = 0; i < targets.size(); i++) {
+         String target = targets.get(i);
 
-    // End our HTML page
-    out.println("</body></html>");
-  }
+         out.print("<tr align=right>" + "  <td>" + i + "</td>" + "  <td>" + target + "</td>");
+
+         for (int j = 0; j < 2; j++) {
+            SimpleRelay relay = (j == 0 ? sent.get(target) : recv.get(target));
+
+            out.print("  <td bgcolor=lightgray>&nbsp;</td>");
+
+            if (relay == null) {
+               out.print("  <td colspan=4><font color=red>null</font></td>");
+               continue;
+            }
+
+            int bloat = -1;
+            Object o = relay.getQuery();
+            if (o instanceof Payload) {
+               Payload p = (Payload) o;
+               bloat = p.getBloat();
+               o = p.getData();
+            }
+            long count = ((Long) o).longValue();
+
+            double throughput = Double.NaN;
+            if (count > 0 && runTime > 0) {
+               throughput = 1000.0 * ((double) count / runTime);
+            }
+
+            out.print("  <td>" + relay.getUID() + "</td>" + "  <td>" + bloat + "</td>" + "  <td>" + count + "</td>" + "  <td>"
+                  + formatter.format(throughput) + "</td>");
+         }
+
+         out.println("<tr>");
+      }
+      out.println("</table>");
+
+      // Create a "reload" button for the user to invoke our servlet again
+      out.println("<form method=\"get\" action=\"" + request.getRequestURI() + "\">" + "  <input type=\"submit\" value=\"Reload\">"
+            + "</form>");
+
+      // End our HTML page
+      out.println("</body></html>");
+   }
 }

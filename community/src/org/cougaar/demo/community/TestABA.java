@@ -33,6 +33,7 @@ package org.cougaar.demo.community;
  */
 
 import java.util.Collection;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.relay.Relay;
@@ -47,62 +48,63 @@ import org.cougaar.util.UnaryPredicate;
 /**
  * This plugin sends a simple ABA Relay to a target community.
  */
-public class TestABA extends ComponentPlugin {
+public class TestABA
+      extends ComponentPlugin {
 
-  private Arguments args = Arguments.EMPTY_INSTANCE;
+   private Arguments args = Arguments.EMPTY_INSTANCE;
 
-  private LoggingService log;
-  private UIDService uids;
+   private LoggingService log;
+   private UIDService uids;
 
-  private IncrementalSubscription sub;
+   private IncrementalSubscription sub;
 
-  public void setParameter(Object o) {
-    args = new Arguments(o);
-  }
+   @Override
+   public void setParameter(Object o) {
+      args = new Arguments(o);
+   }
 
-  public void setLoggingService(LoggingService log) {
-    this.log = log;
-  }
-  public void setUIDService(UIDService uids) {
-    this.uids = uids;
-  }
+   public void setLoggingService(LoggingService log) {
+      this.log = log;
+   }
 
-  protected void setupSubscriptions() {
-    sub = (IncrementalSubscription) blackboard.subscribe(
-        new UnaryPredicate() {
-          public boolean execute(Object o) {
+   public void setUIDService(UIDService uids) {
+      this.uids = uids;
+   }
+
+   @Override
+   protected void setupSubscriptions() {
+      sub = (IncrementalSubscription) blackboard.subscribe(new UnaryPredicate() {
+         private static final long serialVersionUID = 1L;
+
+         public boolean execute(Object o) {
             return (o instanceof Relay);
-          }
-        });
+         }
+      });
 
-    String community = args.getString("target");
-    if (community != null) {
-      if (log.isInfoEnabled()) {
-        log.info("Sending ABA Relay to "+community);
+      String community = args.getString("target");
+      if (community != null) {
+         if (log.isInfoEnabled()) {
+            log.info("Sending ABA Relay to " + community);
+         }
+         SimpleRelay sr =
+               new SimpleRelaySource(uids.nextUID(),
+                                     agentId,
+                                     AttributeBasedAddress.getAttributeBasedAddress(community, "Role", "Member"),
+                                     "(Test from \"" + agentId + "\" to \"" + community + "\")");
+         blackboard.publishAdd(sr);
       }
-      SimpleRelay sr = new SimpleRelaySource(
-          uids.nextUID(),
-          agentId,
-          AttributeBasedAddress.getAttributeBasedAddress(
-            community, "Role", "Member"),
-          "(Test from \""+agentId+"\" to \""+community+"\")");
-      blackboard.publishAdd(sr);
-    }
-  }
+   }
 
-  protected void execute() {
-    if (log.isInfoEnabled() && sub.hasChanged()) {
-      for (int i = 0; i < 3; i++) {
-        Collection c =
-          (i == 0 ? sub.getAddedCollection() :
-           i == 1 ? sub.getChangedCollection() :
-           sub.getRemovedCollection());
-        if (c.isEmpty()) continue;
-        log.info(
-            "Observed "+
-            (i == 0 ? "add" : i == 1 ? "change" : "remove")+
-            "["+c.size()+"]:"+c);
+   @Override
+   protected void execute() {
+      if (log.isInfoEnabled() && sub.hasChanged()) {
+         for (int i = 0; i < 3; i++) {
+            Collection c = (i == 0 ? sub.getAddedCollection() : i == 1 ? sub.getChangedCollection() : sub.getRemovedCollection());
+            if (c.isEmpty()) {
+               continue;
+            }
+            log.info("Observed " + (i == 0 ? "add" : i == 1 ? "change" : "remove") + "[" + c.size() + "]:" + c);
+         }
       }
-    }
-  }
+   }
 }

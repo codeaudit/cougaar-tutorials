@@ -30,36 +30,44 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * A {@link org.cougaar.core.relay.SimpleRelay#getQuery} content wrapper,
- * used to add "bloat" byte[] data to every message.
+ * A {@link org.cougaar.core.relay.SimpleRelay#getQuery} content wrapper, used
+ * to add "bloat" byte[] data to every message.
  */
-public class Payload implements Serializable {
-  private static final Random RANDOM = new Random();
+public class Payload
+      implements Serializable {
+   private static final long serialVersionUID = 1L;
 
-  private final Object data;
-  private final byte[] bloat;
+   private static final Random RANDOM = new Random();
 
-  public Payload(Object data) { this(data, 0); }
-  public Payload(Object data, int bloatSize) {
-    this.data = data;
-    byte[] b = null;
-    if (bloatSize > 0) {
-      b = new byte[bloatSize];
-      RANDOM.nextBytes(b);
-    }
-    this.bloat = b;
-  }
+   private final Object data;
+   private final byte[] bloat;
 
-  /** @return the query data, typically an Integer */
-  public Object getData() { return data; }
+   public Payload(Object data) {
+      this(data, 0);
+   }
 
-  /** @return the extra byte[] "bloat" length, or -1 if none */
-  public int getBloat() { return (bloat == null ? -1 : bloat.length); }
+   public Payload(Object data, int bloatSize) {
+      this.data = data;
+      byte[] b = null;
+      if (bloatSize > 0) {
+         b = new byte[bloatSize];
+         RANDOM.nextBytes(b);
+      }
+      this.bloat = b;
+   }
 
-  public String toString() {
-    return 
-      "(payload data="+data+
-      (bloat == null ? "" : " bloat["+bloat.length+"]")+
-      ")";
-  }
+   /** @return the query data, typically an Integer */
+   public Object getData() {
+      return data;
+   }
+
+   /** @return the extra byte[] "bloat" length, or -1 if none */
+   public int getBloat() {
+      return (bloat == null ? -1 : bloat.length);
+   }
+
+   @Override
+   public String toString() {
+      return "(payload data=" + data + (bloat == null ? "" : " bloat[" + bloat.length + "]") + ")";
+   }
 }
