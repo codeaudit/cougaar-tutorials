@@ -21,11 +21,11 @@ import java.util.regex.Pattern;
  * @see default_palette.map See "default_palette.map" for the default content
  */
 public class Palette
-      extends AbstractList {
+      extends AbstractList<Color> {
 
    private static final String DEFAULT_FILENAME = "resource:/org/cougaar/demo/mandelbrot/util/default_palette.map";
    private static final int CACHE_SIZE = 5;
-   private static final Map cache = new CacheLinkeddHashMap(CACHE_SIZE);
+   private static final Map<String,Color[]> cache = new CacheLinkedHashMap(CACHE_SIZE);
 
    private final Color[] colors;
 
@@ -51,7 +51,7 @@ public class Palette
    }
 
    @Override
-   public Object get(int index) {
+   public Color get(int index) {
       return colors[index];
    }
 
@@ -61,7 +61,7 @@ public class Palette
       }
       synchronized (cache) {
          String key = filename + ":" + max;
-         Color[] ret = (Color[]) cache.get(key);
+         Color[] ret = cache.get(key);
          if (ret == null) {
             ret = readPalette(filename, max);
             cache.put(key, ret);
@@ -77,7 +77,7 @@ public class Palette
          s = DEFAULT_FILENAME;
       }
 
-      List l = new ArrayList();
+      List<Color> l = new ArrayList<Color>();
       try {
          // open stream
          Reader reader;
@@ -135,28 +135,28 @@ public class Palette
       int m = (max < 0 ? l.size() - 1 : max);
       Color[] ret = new Color[m + 1];
       if ((m + 1) == n) {
-         ret = (Color[]) l.toArray(ret);
+         ret = l.toArray(ret);
       } else {
          double d = ((double) n / (m + 1));
          for (int j = 0; j <= m; j++) {
             int k = (int) (j * d);
-            ret[j] = (Color) l.get(k);
+            ret[j] = l.get(k);
          }
       }
 
       return ret;
    }
 
-   private static final class CacheLinkeddHashMap
-         extends LinkedHashMap {
+   private static final class CacheLinkedHashMap
+         extends LinkedHashMap<String,Color[]> {
       private static final long serialVersionUID = 1L;
    
-      private CacheLinkeddHashMap(int initialCapacity) {
+      private CacheLinkedHashMap(int initialCapacity) {
          super(initialCapacity);
       }
    
       @Override
-      protected boolean removeEldestEntry(Map.Entry eldest) {
+      protected boolean removeEldestEntry(Map.Entry<String, Color[]> eldest) {
          return (size() > CACHE_SIZE);
       }
    }

@@ -50,11 +50,11 @@ public abstract class CalculatorBase
          this.svc = svc;
       }
 
-      public Object getService(ServiceBroker sb, Object requestor, Class serviceClass) {
+      public Object getService(ServiceBroker sb, Object requestor, Class<?> serviceClass) {
          return svc;
       }
 
-      public void releaseService(ServiceBroker sb, Object requestor, Class serviceClass, Object service) {
+      public void releaseService(ServiceBroker sb, Object requestor, Class<?> serviceClass, Object service) {
       }
    }
 }

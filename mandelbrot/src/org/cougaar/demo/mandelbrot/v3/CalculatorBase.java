@@ -1,6 +1,6 @@
 package org.cougaar.demo.mandelbrot.v3;
 
-import java.util.Iterator;
+import java.util.Collection;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
@@ -35,8 +35,10 @@ public abstract class CalculatorBase
       if (!sub.hasChanged()) {
          return;
       }
-      for (Iterator iter = sub.getAddedCollection().iterator(); iter.hasNext();) {
-         Job job = (Job) iter.next();
+      @SuppressWarnings("unchecked") // unavoidable
+      Collection<Job> addedCollection = sub.getAddedCollection();
+      
+      for (Job job : addedCollection) {
          Arguments args = job.getArguments();
          FutureResult future = job.getFutureResult();
 

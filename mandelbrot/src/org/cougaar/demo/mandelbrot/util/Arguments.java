@@ -3,7 +3,6 @@ package org.cougaar.demo.mandelbrot.util;
 import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
  * as seen in "org.cougaar.core.qos.metrics.ParameterizedPlugin".
  */
 public final class Arguments
-      extends AbstractMap
+      extends AbstractMap<String,Object>
       implements Serializable {
 
    private static final long serialVersionUID = 1L;
@@ -34,7 +33,7 @@ public final class Arguments
 
    // a non-null, *modifiable* map of String keys to a mix of String and
    // String[] values.
-   private final Map m;
+   private final Map<String,Object> m;
 
    /** @see Arguments(Object,Set,Object) Same as Arguments(null, null, null) */
    public Arguments() {
@@ -63,9 +62,9 @@ public final class Arguments
     * @param deflt the optional default values. The supported object types are
     *        the same as in the "o" parameter.
     */
-   public Arguments(Object o, Set keys, Object deflt) {
-      Map m2 = toMap(o);
-      Map def = toMap(deflt);
+   public Arguments(Object o, Set<String> keys, Object deflt) {
+      Map<String, Object> m2 = toMap(o);
+      Map<String, Object> def = toMap(deflt);
       this.m = parse(m2, keys, def);
    }
 
@@ -191,7 +190,7 @@ public final class Arguments
     * @return a modifiable set of Map.Entry elements.
     */
    @Override
-   public Set entrySet() {
+   public Set<Map.Entry<String, Object>> entrySet() {
       // RFE wrap to ensure that modifications are String->String/String[].
       return m.entrySet();
    }
@@ -242,9 +241,7 @@ public final class Arguments
 
       boolean firstTime = false;
       StringBuffer buf = new StringBuffer();
-      for (Iterator iter = m.entrySet().iterator(); iter.hasNext();) {
-         Map.Entry me = (Map.Entry) iter.next();
-
+      for (Map.Entry<String, Object> me : m.entrySet()) {
          if (firstTime) {
             if (separator != null) {
                buf.append(separator);
@@ -253,7 +250,7 @@ public final class Arguments
             firstTime = true;
          }
 
-         String k = (String) me.getKey();
+         String k = me.getKey();
          Object o = me.getValue();
          String v0;
          String va;
@@ -310,21 +307,21 @@ public final class Arguments
    /**
     * @return null or a non-empty, modifiable, ordered map
     */
-   private static final Map toMap(Object object) {
+   private static final Map<String,Object> toMap(Object object) {
       Object o = object;
       if (o == null) {
          return null;
       }
       if (o instanceof Map) {
-         Map m2 = (Map) o;
+         @SuppressWarnings("unchecked") // unavoidable?
+         Map<String,Object> m2 = (Map<String,Object>) o;
          if (m2.isEmpty()) {
             return null;
          }
          // copy
-         Map m = new LinkedHashMap(m2);
+         Map<String,Object> m = new LinkedHashMap<String,Object>(m2);
          // validate
-         for (Iterator iter = m.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry me = (Map.Entry) iter.next();
+         for (Map.Entry<String, Object> me : m.entrySet()) {
             Object k = me.getKey();
             if (!(k instanceof String)) {
                throw new IllegalArgumentException("Expecting a Map with String keys, not "
@@ -356,8 +353,9 @@ public final class Arguments
          throw new IllegalArgumentException("Expecting a Map, String[], or List, not "
                + (o == null ? "null" : o.getClass().getName()));
       }
-      List l = (List) o;
-      Map m = null;
+      @SuppressWarnings("unchecked") // unavoidable
+      List<String> l = (List<String>) o;
+      Map<String,Object> m = null;
       for (int i = 0, n = l.size(); i < n; i++) {
          Object oi = l.get(i);
          if (!(oi instanceof String)) {
@@ -375,7 +373,7 @@ public final class Arguments
             continue;
          }
          if (m == null) {
-            m = new LinkedHashMap();
+            m = new LinkedHashMap<String,Object>();
          }
          m.put(key, value);
       }
@@ -387,19 +385,13 @@ public final class Arguments
     * @param deflt a map created by "toMap()"
     * @return a non-null, modifiable, ordered map
     */
-   private static final Map parse(Map m, Set keys, Map deflt) {
-      Map m2 = new LinkedHashMap();
+   private static final Map<String, Object> parse(Map<String,Object> m, Set<String> keys, Map<String,Object> deflt) {
+      Map<String,Object> m2 = new LinkedHashMap<String,Object>();
       if (m != null) {
          if (keys == null) {
             m2.putAll(m);
          } else {
-            for (Iterator iter = keys.iterator(); iter.hasNext();) {
-               Object o = iter.next();
-               if (!(o instanceof String)) {
-                  throw new IllegalArgumentException("Invalid keys set, expecting Strings, not "
-                        + (o == null ? "null" : (o.getClass().getName() + " " + o)));
-               }
-               String key = (String) o;
+            for (String key : keys) {
                if (!m.containsKey(key)) {
                   continue;
                }
@@ -408,9 +400,8 @@ public final class Arguments
          }
       }
       if (deflt != null) {
-         for (Iterator iter = deflt.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry me = (Map.Entry) iter.next();
-            String key = (String) me.getKey();
+         for (Map.Entry<String, Object> me : deflt.entrySet()) {
+            String key = me.getKey();
             if (m2.containsKey(key)) {
                continue;
             }

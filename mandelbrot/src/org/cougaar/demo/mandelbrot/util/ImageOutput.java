@@ -109,7 +109,7 @@ public final class ImageOutput {
             int n = col_offset + row;
             byte b = data[n];
             int i = b & 0xFF;
-            Color ci = (Color) p.get(i);
+            Color ci = p.get(i);
             g.setColor(ci);
             g.fillRect(row, col, 1, 1);
          }
