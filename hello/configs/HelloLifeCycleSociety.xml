@@ -8,11 +8,20 @@
       </component>
       <agent name="AgentA">
          <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
-            <argument name="message" value="HELLO" />
+            <argument name="message" value="HELLO a" />
          </component>
          <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
-            <argument name="message" value="HELLO dude" />
+            <argument name="message" value="HELLO dude a" />
          </component>
       </agent>
+      <agent name="AgentB">
+         <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
+            <argument name="message" value="HELLO b" />
+         </component>
+         <component class="org.cougaar.demo.hello.HelloLifeCyclePlugin">
+            <argument name="message" value="HELLO dude b" />
+         </component>
+      </agent>
+
    </node>
 </society>
