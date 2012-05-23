@@ -25,19 +25,23 @@ import org.cougaar.core.plugin.ComponentPlugin;
 /**
  * This COUGAAR Plugin publishes a Job object.
  **/
-public class ManagerPlugin extends ComponentPlugin {
+public class ManagerPlugin
+      extends ComponentPlugin {
 
-  /**
-   * setupSubscriptions is called when the Plugin is loaded.  We use
-   * it here to create and publish a Job object.
-   */
-  protected void setupSubscriptions() {
-    getBlackboardService().publishAdd(new Job("Work"));
-    System.out.println("ManagerPlugin::setupSubscriptions");
-  }
+   /**
+    * setupSubscriptions is called when the Plugin is loaded. We use it here to
+    * create and publish a Job object.
+    */
+   @Override
+   protected void setupSubscriptions() {
+      getBlackboardService().publishAdd(new Job("Work"));
+      System.out.println("ManagerPlugin::setupSubscriptions");
+   }
 
-  /**
-   * This plugin has no subscriptions so execute does nothing
-   */
-  protected void execute () {}
+   /**
+    * This plugin has no subscriptions so execute does nothing
+    */
+   @Override
+   protected void execute() {
+   }
 }

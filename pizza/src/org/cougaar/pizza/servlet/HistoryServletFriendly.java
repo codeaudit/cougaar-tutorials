@@ -26,16 +26,17 @@
 package org.cougaar.pizza.servlet;
 
 /**
- * Simple interface for Blackboard objects to supply pretty HTML descriptions 
- * of themselves, for use in servlets like the {@link HistoryServlet}.
+ * Simple interface for Blackboard objects to supply pretty HTML descriptions of
+ * themselves, for use in servlets like the {@link HistoryServlet}.
  * {@link HistoryServlet} uses this as the default for the Meaning column.
- *
+ * 
  * @see HistoryServlet
  */
 public interface HistoryServletFriendly {
-  /**
-   * @param whichState HistoryServlet.ADDED, CHANGED, or REMOVED in this transaction
-   * @return HTML-formatted description of the object for servlet display
-   */
-  public String toHTML (int whichState);
+   /**
+    * @param whichState HistoryServlet.ADDED, CHANGED, or REMOVED in this
+    *        transaction
+    * @return HTML-formatted description of the object for servlet display
+    */
+   public String toHTML(int whichState);
 }

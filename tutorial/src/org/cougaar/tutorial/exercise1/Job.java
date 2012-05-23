@@ -23,14 +23,18 @@ package org.cougaar.tutorial.exercise1;
 /**
  * This class can be published to the Blackboard and subscribed to by Plugins
  **/
-public class Job implements java.io.Serializable {
+public class Job
+      implements java.io.Serializable {
 
-  String what;
-  public Job(String what) {
-    this.what = what;
-  }
+   private static final long serialVersionUID = 1L;
+   String what;
 
-  public String toString() {
-    return what;
-  }
+   public Job(String what) {
+      this.what = what;
+   }
+
+   @Override
+   public String toString() {
+      return what;
+   }
 }

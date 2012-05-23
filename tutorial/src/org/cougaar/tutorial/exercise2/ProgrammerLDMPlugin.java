@@ -34,116 +34,129 @@ import org.cougaar.tutorial.assets.SkillsPG;
 
 /**
  * This COUGAAR Plugin creates and publishes ProgrammerAsset objects.
+ * 
  * @author ALPINE (alpine-software@bbn.com)
  * @version $Id: ProgrammerLDMPlugin.java,v 1.2 2003-12-15 17:36:02 tom Exp $
  */
-public class ProgrammerLDMPlugin extends ComponentPlugin {
+public class ProgrammerLDMPlugin
+      extends ComponentPlugin {
 
-  // The domainService acts as a provider of domain factory services
-  private DomainService domainService = null;
+   // The domainService acts as a provider of domain factory services
+   private DomainService domainService = null;
 
-  // The prototypeRegistryService acts as a provider of prototype rehistration services
-  private PrototypeRegistryService prototypeRegistryService = null;
+   // The prototypeRegistryService acts as a provider of prototype rehistration
+   // services
+   private PrototypeRegistryService prototypeRegistryService = null;
 
-  /**
-   * Used by the binding utility through reflection to set my DomainService
-   */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
-  }
+   /**
+    * Used by the binding utility through reflection to set my DomainService
+    */
+   public void setDomainService(DomainService aDomainService) {
+      domainService = aDomainService;
+   }
 
-  /**
-   * Used by the binding utility through reflection to get my DomainService
-   */
-  public DomainService getDomainService() {
-    return domainService;
-  }
+   /**
+    * Used by the binding utility through reflection to get my DomainService
+    */
+   public DomainService getDomainService() {
+      return domainService;
+   }
 
-  /**
-   * Used by the binding utility through reflection to set my PrototypeRegistryService
-   */
-  public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
-    prototypeRegistryService = aPrototypeRegistryService;
-  }
+   /**
+    * Used by the binding utility through reflection to set my
+    * PrototypeRegistryService
+    */
+   public void setPrototypeRegistryService(PrototypeRegistryService aPrototypeRegistryService) {
+      prototypeRegistryService = aPrototypeRegistryService;
+   }
 
-  /**
-   * Used by the binding utility through reflection to get my PrototypeRegistryService
-   */
-  public PrototypeRegistryService getPrototypeRegistryService() {
-    return prototypeRegistryService;
-  }
+   /**
+    * Used by the binding utility through reflection to get my
+    * PrototypeRegistryService
+    */
+   public PrototypeRegistryService getPrototypeRegistryService() {
+      return prototypeRegistryService;
+   }
 
-  /**
-   * Used for initialization to populate the Blackboard with ProgrammerAsset objects
-   */
-protected void setupSubscriptions() {
+   /**
+    * Used for initialization to populate the Blackboard with ProgrammerAsset
+    * objects
+    */
+   @Override
+   protected void setupSubscriptions() {
 
-    // Get the PlanningFactory
-    PlanningFactory factory = (PlanningFactory)getDomainService().getFactory("planning");
+      // Get the PlanningFactory
+      PlanningFactory factory = (PlanningFactory) getDomainService().getFactory("planning");
 
-    // Register our new PropertyFactory so we can refer to properties by name
-    factory.addPropertyGroupFactory(new org.cougaar.tutorial.assets.PropertyGroupFactory());
+      // Register our new PropertyFactory so we can refer to properties by name
+      factory.addPropertyGroupFactory(new org.cougaar.tutorial.assets.PropertyGroupFactory());
 
-    // Create the prototypes that will be used to create the programmer assets
-    ProgrammerAsset new_prototype = (ProgrammerAsset)factory.createPrototype
-      (org.cougaar.tutorial.assets.ProgrammerAsset.class, "programmer");
-    new_prototype.setLanguagePG(makeALanguagePG(true, false) );  // knows Java but not JavaScript
-    // Cache the prototype in the LDM : note this is not treated
-    // As an asset that is available in subscriptions, but can
-    // be used to build 'real' assets when asked for by prototype name
-    getPrototypeRegistryService().cachePrototype("programmer", new_prototype);
+      // Create the prototypes that will be used to create the programmer assets
+      ProgrammerAsset new_prototype =
+            (ProgrammerAsset) factory.createPrototype(org.cougaar.tutorial.assets.ProgrammerAsset.class, "programmer");
+      new_prototype.setLanguagePG(makeALanguagePG(true, false)); // knows Java
+                                                                 // but not
+                                                                 // JavaScript
+      // Cache the prototype in the LDM : note this is not treated
+      // As an asset that is available in subscriptions, but can
+      // be used to build 'real' assets when asked for by prototype name
+      getPrototypeRegistryService().cachePrototype("programmer", new_prototype);
 
-    // Create an asset based on an existing prototype
-    ProgrammerAsset asset = (ProgrammerAsset) factory.createInstance("programmer");
-    asset.setLanguagePG(makeALanguagePG(true, true) );  // knows Java and JavaScript
-    asset.setSkillsPG(makeASkillsPG(10, 100));    // 10 years experience, 100 SLOC/day
-    asset.setItemIdentificationPG(makeAItemIdentificationPG("Bill Gates"));
-    getBlackboardService().publishAdd(asset);
+      // Create an asset based on an existing prototype
+      ProgrammerAsset asset = (ProgrammerAsset) factory.createInstance("programmer");
+      asset.setLanguagePG(makeALanguagePG(true, true)); // knows Java and
+                                                        // JavaScript
+      asset.setSkillsPG(makeASkillsPG(10, 100)); // 10 years experience, 100
+                                                 // SLOC/day
+      asset.setItemIdentificationPG(makeAItemIdentificationPG("Bill Gates"));
+      getBlackboardService().publishAdd(asset);
 
-    // Create an asset based on an existing prototype
-    ProgrammerAsset another_asset = (ProgrammerAsset) factory.createInstance(asset);
-    another_asset.setSkillsPG(makeASkillsPG(15, 150));   // 15 years experience, 150 SLOC/day
-    another_asset.setItemIdentificationPG(makeAItemIdentificationPG("Linus Torvalds"));
-    getBlackboardService().publishAdd(another_asset);
+      // Create an asset based on an existing prototype
+      ProgrammerAsset another_asset = (ProgrammerAsset) factory.createInstance(asset);
+      another_asset.setSkillsPG(makeASkillsPG(15, 150)); // 15 years experience,
+                                                         // 150 SLOC/day
+      another_asset.setItemIdentificationPG(makeAItemIdentificationPG("Linus Torvalds"));
+      getBlackboardService().publishAdd(another_asset);
+
+   }
+
+   /**
+    * Create and populate a Language property group
+    */
+   private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
+      NewLanguagePG new_language_pg =
+            (NewLanguagePG) ((PlanningFactory) getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
+      new_language_pg.setKnowsJava(knowsJava);
+      new_language_pg.setKnowsJavaScript(knowsJavaScript);
+      return new_language_pg;
+   }
+
+   /**
+    * Create and populate a Skills property group
+    */
+   private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
+      NewSkillsPG new_skills_pg =
+            (NewSkillsPG) ((PlanningFactory) getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
+      new_skills_pg.setYearsExperience(yearsExperience);
+      new_skills_pg.setSLOCPerDay(productivity);
+      return new_skills_pg;
+   }
+
+   /**
+    * Create and populate an ItemIdentification property group
+    */
+   private ItemIdentificationPG makeAItemIdentificationPG(String name) {
+      NewItemIdentificationPG new_item_id_pg =
+            (NewItemIdentificationPG) ((PlanningFactory) getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
+      new_item_id_pg.setItemIdentification(name);
+      return new_item_id_pg;
+   }
+
+   /**
+    * No subscriptions, so this method does nothing
+    */
+   @Override
+   protected void execute() {
+   }
 
 }
-
-/**
- * Create and populate a Language property group
- */
-private LanguagePG makeALanguagePG(boolean knowsJava, boolean knowsJavaScript) {
-  NewLanguagePG new_language_pg = (NewLanguagePG)
-              ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("LanguagePG");
-  new_language_pg.setKnowsJava(knowsJava);
-  new_language_pg.setKnowsJavaScript(knowsJavaScript);
-  return new_language_pg;
-}
-
-/**
- * Create and populate a Skills property group
- */
-private SkillsPG makeASkillsPG(int yearsExperience, int productivity) {
-  NewSkillsPG new_skills_pg = (NewSkillsPG)
-          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("SkillsPG");
-  new_skills_pg.setYearsExperience(yearsExperience);
-  new_skills_pg.setSLOCPerDay(productivity);
-  return new_skills_pg;
-}
-
-/**
- * Create and populate an ItemIdentification property group
- */
-private ItemIdentificationPG makeAItemIdentificationPG(String name) {
-  NewItemIdentificationPG new_item_id_pg = (NewItemIdentificationPG)
-          ((PlanningFactory)getDomainService().getFactory("planning")).createPropertyGroup("ItemIdentificationPG");
-  new_item_id_pg.setItemIdentification(name);
-  return new_item_id_pg;
-}
-
-/**
- * No subscriptions, so this method does nothing
- */
-protected void execute () {}
-
-}
-

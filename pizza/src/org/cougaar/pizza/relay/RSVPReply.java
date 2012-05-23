@@ -29,29 +29,32 @@ package org.cougaar.pizza.relay;
 import java.io.Serializable;
 
 /**
- * The RSVP reply - just the friend's name, and their pizza preference. 
- * It must implement Serializable so it can be sent between Agents.
+ * The RSVP reply - just the friend's name, and their pizza preference. It must
+ * implement Serializable so it can be sent between Agents.
  */
-public class RSVPReply implements Serializable {
-  // Note that this must be serializable to travel between Agents
+public class RSVPReply
+      implements Serializable {
+   // Note that this must be serializable to travel between Agents
 
-  private String friend;
-  private String pizzaPreference;
+   private static final long serialVersionUID = 1L;
+   private String friend;
+   private String pizzaPreference;
 
-  public RSVPReply(String friend, String pizzaPreference) {
-    this.friend = friend;
-    this.pizzaPreference = pizzaPreference;
-  }
+   public RSVPReply(String friend, String pizzaPreference) {
+      this.friend = friend;
+      this.pizzaPreference = pizzaPreference;
+   }
 
-  public String getFriend() {
-    return friend;
-  }
+   public String getFriend() {
+      return friend;
+   }
 
-  public String getPizzaPreference() {
-    return pizzaPreference;
-  }
+   public String getPizzaPreference() {
+      return pizzaPreference;
+   }
 
-  public String toString() {
-    return "RSVPReply: " + friend + "=" + pizzaPreference;
-  }
+   @Override
+   public String toString() {
+      return "RSVPReply: " + friend + "=" + pizzaPreference;
+   }
 }

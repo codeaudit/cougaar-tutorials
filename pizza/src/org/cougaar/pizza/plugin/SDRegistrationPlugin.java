@@ -31,42 +31,45 @@ import java.net.URL;
 
 import org.cougaar.pizza.Constants;
 import org.cougaar.servicediscovery.plugin.SimpleSDRegistrationPlugin;
-
 import org.cougaar.util.Configuration;
 
 /**
  * Extension of the SimpleSDRegistrationPlugin to use the pizza serviceprofiles.
- * Registers this agent's services as specified in
- * the <agent name>-profile.owl file if any in the plugin parameter-named YP agent.
+ * Registers this agent's services as specified in the <agent name>-profile.owl
+ * file if any in the plugin parameter-named YP agent.
  * <p>
- * Remember that this version of the SDRegistration plugin is somewhat simplified 
- * -- fewer error checks for example.
- *<p>
+ * Remember that this version of the SDRegistration plugin is somewhat
+ * simplified -- fewer error checks for example.
+ * <p>
  * Note that the only change this extension has to make, is to point the plugin
  * at the correct directory for the service profiles for this application.
  * <p>
- * First plugin argument is the name of the agent hosting the YP that we will register with. 
- *
- * @property org.cougaar.servicediscovery.plugin.SimpleRegistrationGracePeriod is the 
- * number of minutes after startup, during which we ignore SD registration Warnings, 
- * to allow the YP to start up. After this we complain more loudly. Default is 5 minutes.
+ * First plugin argument is the name of the agent hosting the YP that we will
+ * register with.
+ * 
+ * @property org.cougaar.servicediscovery.plugin.SimpleRegistrationGracePeriod
+ *           is the number of minutes after startup, during which we ignore SD
+ *           registration Warnings, to allow the YP to start up. After this we
+ *           complain more loudly. Default is 5 minutes.
  **/
-public class SDRegistrationPlugin extends SimpleSDRegistrationPlugin {
-  /** 
-   * Get the URL for the service profiles directory for this application. 
-   * This is the only method we need to over-ride to customize the base class for the
-   * pizza application. 
-   *<p>
-   * Note that we use the method in {@link Constants} to find the directory contains the service profiles.
-   */
-  protected URL getServiceProfileURL() {
-    try {
-      // URLify the data path, to handle C:/... in Windows paths, for example
-      return new URL(Configuration.urlify(Constants.getDataPath()) + File.separator + "serviceprofiles" + File.separator);
-    } catch (java.net.MalformedURLException mue) {
-      log.error("Exception constructing service profile URL" , mue);
-      return null;
-    }
-  }
+public class SDRegistrationPlugin
+      extends SimpleSDRegistrationPlugin {
+   /**
+    * Get the URL for the service profiles directory for this application. This
+    * is the only method we need to over-ride to customize the base class for
+    * the pizza application.
+    * <p>
+    * Note that we use the method in {@link Constants} to find the directory
+    * contains the service profiles.
+    */
+   @Override
+   protected URL getServiceProfileURL() {
+      try {
+         // URLify the data path, to handle C:/... in Windows paths, for example
+         return new URL(Configuration.urlify(Constants.getDataPath()) + File.separator + "serviceprofiles" + File.separator);
+      } catch (java.net.MalformedURLException mue) {
+         log.error("Exception constructing service profile URL", mue);
+         return null;
+      }
+   }
 }
-

@@ -22,95 +22,91 @@ package org.cougaar.tutorial.exercise10;
 
 import java.util.Enumeration;
 
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
-
 import org.cougaar.planning.ldm.plan.Allocation;
 import org.cougaar.planning.ldm.plan.RoleSchedule;
 import org.cougaar.planning.ldm.plan.Verb;
-
 import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * This COUGAAR Plugin monitors ProgrammerAssets for conflicts between their
- * internal schedule and the tasks allocated to them.  When a conflict is
+ * internal schedule and the tasks allocated to them. When a conflict is
  * detected, the task allocation results are updated to reflect the conflict.
  **/
-public class DevelopmentAssessorPlugin extends ComponentPlugin
-{
-  // The domainService acts as a provider of domain factory services
-  private DomainService domainService = null;
+public class DevelopmentAssessorPlugin
+      extends ComponentPlugin {
+   // The domainService acts as a provider of domain factory services
+   private DomainService domainService = null;
 
-  /**
-   * Used by the binding utility through reflection to set my DomainService
-   */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
-  }
+   /**
+    * Used by the binding utility through reflection to set my DomainService
+    */
+   public void setDomainService(DomainService aDomainService) {
+      domainService = aDomainService;
+   }
 
-  /**
-   * Used by the binding utility through reflection to get my DomainService
-   */
-  public DomainService getDomainService() {
-    return domainService;
-  }
+   /**
+    * Used by the binding utility through reflection to get my DomainService
+    */
+   public DomainService getDomainService() {
+      return domainService;
+   }
 
-  // The set of programmer assets
-  private IncrementalSubscription vacationAllocs;
+   // The set of programmer assets
+   private IncrementalSubscription vacationAllocs;
 
-  /**
-   * This predicate matches all vacation allocations
-   */
-  private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
+   /**
+    * This predicate matches all vacation allocations
+    */
+   private UnaryPredicate vacationsPredicate = new UnaryPredicate() {
+      private static final long serialVersionUID = 1L;
+
       public boolean execute(Object o) {
-	return (o instanceof Allocation) &&
-	  (((Allocation) o).getTask().getVerb().equals
-	   (Verb.get ("VACATION")));
+         return (o instanceof Allocation) && (((Allocation) o).getTask().getVerb().equals(Verb.get("VACATION")));
       }
-    };
+   };
 
-  /**
-   * Establish subscription for assets
-   **/
-  public void setupSubscriptions() {
-    vacationAllocs =
-      (IncrementalSubscription)getBlackboardService().subscribe(vacationsPredicate);
-  }
+   /**
+    * Establish subscription for assets
+    **/
+   @Override
+   public void setupSubscriptions() {
+      vacationAllocs = (IncrementalSubscription) getBlackboardService().subscribe(vacationsPredicate);
+   }
 
-  /**
-   * Top level plugin execute loop.  Look at all programmers
-   * with new vacations and mark their schedules as needing replanning
-   **/
-  public void execute() {
-    System.out.println("DevelopmentAssessorPlugin::execute");
+   /**
+    * Top level plugin execute loop. Look at all programmers with new vacations
+    * and mark their schedules as needing replanning
+    **/
+   @Override
+   public void execute() {
+      System.out.println("DevelopmentAssessorPlugin::execute");
 
-    for(Enumeration e = vacationAllocs.getAddedList(); e.hasMoreElements();)
-      {
-	Allocation alloc = (Allocation) e.nextElement();
-	ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
-	validateSchedule(pa);
+      for (Enumeration e = vacationAllocs.getAddedList(); e.hasMoreElements();) {
+         Allocation alloc = (Allocation) e.nextElement();
+         ProgrammerAsset pa = (ProgrammerAsset) alloc.getAsset();
+         validateSchedule(pa);
       }
-  }
+   }
 
-  /**
-   * Remove from schedule all allocations that are not the vacation
-   * Allocator will put things back on
-   * It is easiest just to redo everything
-   */
-  private void validateSchedule(ProgrammerAsset asset) {
-    System.out.println ("Validating schedule of " +
-			asset.getItemIdentificationPG().getItemIdentification());
+   /**
+    * Remove from schedule all allocations that are not the vacation Allocator
+    * will put things back on It is easiest just to redo everything
+    */
+   private void validateSchedule(ProgrammerAsset asset) {
+      System.out.println("Validating schedule of " + asset.getItemIdentificationPG().getItemIdentification());
 
-    // if not a vacation, then remove it
-    RoleSchedule sched = asset.getRoleSchedule();
-    Enumeration en = sched.getRoleScheduleElements();
-    while (en.hasMoreElements()) {
-      Allocation alloc = (Allocation) en.nextElement();
-      if (! alloc.getTask().getVerb().equals (Verb.get ("VACATION")))
-	blackboard.publishRemove (alloc);
-    }
-  }
+      // if not a vacation, then remove it
+      RoleSchedule sched = asset.getRoleSchedule();
+      Enumeration en = sched.getRoleScheduleElements();
+      while (en.hasMoreElements()) {
+         Allocation alloc = (Allocation) en.nextElement();
+         if (!alloc.getTask().getVerb().equals(Verb.get("VACATION"))) {
+            blackboard.publishRemove(alloc);
+         }
+      }
+   }
 }

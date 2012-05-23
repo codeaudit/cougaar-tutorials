@@ -20,6 +20,12 @@
  */
 package org.cougaar.tutorial.exercise9;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.Vector;
+
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
@@ -39,231 +45,223 @@ import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.tutorial.assets.ProgrammerAsset;
 import org.cougaar.util.UnaryPredicate;
 
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.GregorianCalendar;
-import java.util.Vector;
-
-
 /**
- * This COUGAAR Plugin subscribes to tasks and allocates
- * to programmer assets.
+ * This COUGAAR Plugin subscribes to tasks and allocates to programmer assets.
+ * 
  * @author ALPINE (alpine-software@bbn.com)
- * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2004-11-29 19:44:34 mthome Exp $
+ * @version $Id: DevelopmentAllocatorPlugin.java,v 1.4 2004-11-29 19:44:34
+ *          mthome Exp $
  **/
-public class DevelopmentAllocatorPlugin extends ComponentPlugin
-{
-  // The domainService acts as a provider of domain factory services
-  private DomainService domainService = null;
+public class DevelopmentAllocatorPlugin
+      extends ComponentPlugin {
+   // The domainService acts as a provider of domain factory services
+   private DomainService domainService = null;
 
-  /**
-   * Used by the binding utility through reflection to set my DomainService
-   */
-  public void setDomainService(DomainService aDomainService) {
-    domainService = aDomainService;
-  }
+   /**
+    * Used by the binding utility through reflection to set my DomainService
+    */
+   public void setDomainService(DomainService aDomainService) {
+      domainService = aDomainService;
+   }
 
-  /**
-   * Used by the binding utility through reflection to get my DomainService
-   */
-  public DomainService getDomainService() {
-    return domainService;
-  }
+   /**
+    * Used by the binding utility through reflection to get my DomainService
+    */
+   public DomainService getDomainService() {
+      return domainService;
+   }
 
-  private IncrementalSubscription allCodeTasks;   // Tasks that I'm interested in
-  private IncrementalSubscription allProgrammers;  // Programmer assets that I allocate to
-  private IncrementalSubscription allExpansions;  // All expansions
+   private IncrementalSubscription allCodeTasks; // Tasks that I'm interested in
+   private IncrementalSubscription allProgrammers; // Programmer assets that I
+                                                   // allocate to
+   private IncrementalSubscription allExpansions; // All expansions
 
-  /**
-   * Predicate matching all ProgrammerAssets
-   */
-  private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof ProgrammerAsset;
-    }
-  };
+   /**
+    * Predicate matching all ProgrammerAssets
+    */
+   private UnaryPredicate allProgrammersPredicate = new UnaryPredicate() {
+      private static final long serialVersionUID = 1L;
 
-  /**
-   * Predicate that matches all of the tasks I'm interested in
-   */
-  private UnaryPredicate taskPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      if (o instanceof Task)
-      {
-        Task task = (Task)o;
-        Verb tVerb = task.getVerb();
-        if (   Verb.get("DESIGN").equals(tVerb) ||
-               Verb.get("DEVELOP").equals(tVerb) ||
-               Verb.get("TEST").equals(tVerb))
-          return true;
+      public boolean execute(Object o) {
+         return o instanceof ProgrammerAsset;
       }
-      return false;
-    }
-  };
+   };
 
-  /**
-   * Predicate that matches all of expansions
-   */
-  private UnaryPredicate expansionPredicate = new UnaryPredicate() {
-    public boolean execute(Object o) {
-      return o instanceof Expansion;
-    }
-  };
+   /**
+    * Predicate that matches all of the tasks I'm interested in
+    */
+   private UnaryPredicate taskPredicate = new UnaryPredicate() {
+      private static final long serialVersionUID = 1L;
 
-  /**
-   * Establish subscription for tasks and assets
-   **/
-  public void setupSubscriptions() {
-    allProgrammers =
-      (IncrementalSubscription)getBlackboardService().subscribe(allProgrammersPredicate);
-    allCodeTasks =
-      (IncrementalSubscription)getBlackboardService().subscribe(taskPredicate);
-    allExpansions =
-      (IncrementalSubscription)getBlackboardService().subscribe(expansionPredicate);
-  }
-
-  /**
-   * Top level plugin execute loop.  Handle changes to my subscriptions.
-   **/
-  public void execute() {
-    System.out.println("DevelopmentAllocatorPlugin::execute");
-
-    // process one task at a time until can't anymore
-    boolean anyLeft = true;
-    while (anyLeft) {
-      anyLeft = false;
-      Enumeration task_enum = allCodeTasks.elements();
-      while (task_enum.hasMoreElements()) {
-        Task task = (Task)task_enum.nextElement();
-        if ((task.getPlanElement() == null) &&
-            isReady (task)) {
-          anyLeft = true;
-          Task t = findConstraining (task);
-          allocateTask (task, (t == null) ? 0L :
-                   ((Allocation) t.getPlanElement()).getEndTime());
-          break;
-        }
+      public boolean execute(Object o) {
+         if (o instanceof Task) {
+            Task task = (Task) o;
+            Verb tVerb = task.getVerb();
+            if (Verb.get("DESIGN").equals(tVerb) || Verb.get("DEVELOP").equals(tVerb) || Verb.get("TEST").equals(tVerb)) {
+               return true;
+            }
+         }
+         return false;
       }
-    }
-  }
+   };
 
-  /**
-   * A task is ready to be scheduled either there is no task that
-   * needs to go before it, or if the preceeding task has already
-   * been scheduled
-   */
-  private boolean isReady (Task task) {
-    Task t = findConstraining (task);
-    return (t == null) || (t.getPlanElement() != null);
-  }
+   /**
+    * Predicate that matches all of expansions
+    */
+   private UnaryPredicate expansionPredicate = new UnaryPredicate() {
+      private static final long serialVersionUID = 1L;
 
-  /**
-   *  find the task, if any, that this task must follow
-   */
-  private Task findConstraining (Task task) {
-    Enumeration en = allExpansions.elements();
-    while (en.hasMoreElements()) {
-      Expansion exp = (Expansion) en.nextElement();
-      Enumeration enum2 = exp.getWorkflow().getTaskConstraints (task);
-      while (enum2.hasMoreElements()) {
-        Constraint c = (Constraint) enum2.nextElement();
-        if (task == c.getConstrainedTask())
-          return c.getConstrainingTask();
+      public boolean execute(Object o) {
+         return o instanceof Expansion;
       }
-    }
-    return null;
-  }
+   };
 
-  /**
-   * Find an available ProgrammerAsset for this task and allocate the
-   * the task to this asset.
-   */
-  private void allocateTask(Task task, long prevEnd) {
-    // extract from preferences
-    Preference ePref = task.getPreference(AspectType.START_TIME);
-    Preference dPref = task.getPreference(AspectType.DURATION);
-    Preference lPref = task.getPreference(AspectType.END_TIME);
-    long earliest = (long) ePref.getScoringFunction().getBest().getValue();
-    int duration = (int) dPref.getScoringFunction().getBest().getValue();
-    long latest = (long) lPref.getScoringFunction().getBest().getValue();
-    boolean possiblyAtBeginning = prevEnd <= earliest;
-    earliest = Math.max (earliest, prevEnd);
+   /**
+    * Establish subscription for tasks and assets
+    **/
+   @Override
+   public void setupSubscriptions() {
+      allProgrammers = (IncrementalSubscription) getBlackboardService().subscribe(allProgrammersPredicate);
+      allCodeTasks = (IncrementalSubscription) getBlackboardService().subscribe(taskPredicate);
+      allExpansions = (IncrementalSubscription) getBlackboardService().subscribe(expansionPredicate);
+   }
 
-    // select best available programmer
-    ProgrammerAsset bestAsset = null;
-    long bestTime = 0L;
-    Vector programmers = new Vector(allProgrammers.getCollection());
-    while (programmers.size() > 0) {
-      int stuckee = (int)Math.floor(Math.random() * programmers.size());
-      ProgrammerAsset asset = (ProgrammerAsset)programmers.elementAt(stuckee);
-      programmers.remove(asset);
-      if ((possiblyAtBeginning && asset.getRoleSchedule().isEmpty()) ||
-          ((! asset.getRoleSchedule().isEmpty()) &&
-           (asset.getRoleSchedule().getEndTime() >= earliest))) {
-        long newTime = asset.getRoleSchedule().isEmpty() ? earliest :
-                       asset.getRoleSchedule().getEndTime();
-        if ((bestAsset == null) || (newTime < bestTime)) {
-          bestAsset = asset;
-          bestTime = newTime;
-        }
+   /**
+    * Top level plugin execute loop. Handle changes to my subscriptions.
+    **/
+   @Override
+   public void execute() {
+      System.out.println("DevelopmentAllocatorPlugin::execute");
+
+      // process one task at a time until can't anymore
+      boolean anyLeft = true;
+      while (anyLeft) {
+         anyLeft = false;
+         Enumeration task_enum = allCodeTasks.elements();
+         while (task_enum.hasMoreElements()) {
+            Task task = (Task) task_enum.nextElement();
+            if ((task.getPlanElement() == null) && isReady(task)) {
+               anyLeft = true;
+               Task t = findConstraining(task);
+               allocateTask(task, (t == null) ? 0L : ((Allocation) t.getPlanElement()).getEndTime());
+               break;
+            }
+         }
       }
-    }
+   }
 
-    System.out.println("\nAllocating the following task to "
-        +bestAsset.getTypeIdentificationPG().getTypeIdentification()+": "
-        +bestAsset.getItemIdentificationPG().getItemIdentification());
-    System.out.println("Task: "+task);
+   /**
+    * A task is ready to be scheduled either there is no task that needs to go
+    * before it, or if the preceeding task has already been scheduled
+    */
+   private boolean isReady(Task task) {
+      Task t = findConstraining(task);
+      return (t == null) || (t.getPlanElement() != null);
+   }
 
-    // find the times and make the allocation result that
-    // assigns these times
-    // if can't fit, go on to next programmer
-    AspectValue[] inter = findInterval (bestAsset, earliest, latest, duration);
-    boolean success = inter != null;
-    if (! success)
-      inter = new AspectValue[] {
-        AspectValue.newAspectValue (AspectType.START_TIME, latest),
-        AspectValue.newAspectValue (AspectType.END_TIME, latest) };
-    AllocationResult estAR = new AllocationResult (1.0, success, inter);
-    Allocation allocation =
-      ((PlanningFactory)getDomainService().getFactory("planning")).
-        createAllocation (task.getPlan(), task,
-                          bestAsset, estAR, Role.ASSIGNED);
-
-    getBlackboardService().publishAdd(allocation);
-  }
-
-  /**
-   * Find the interval on asset's schedule with the properties
-   * - the interval starts at the latest of earliest and the end
-   *   time of the last task on the schedule
-   * - the interval is of duration durationMonths months
-   * - the interval ends no later than latest
-   * Return an array of aspect values indicating the time interval
-   */
-  private AspectValue[] findInterval (Asset asset, long earliest,
-                                      long latest, int durationMonths) {
-    // figure out time interal, inserting at earliest possible time
-    RoleSchedule sched = asset.getRoleSchedule();
-    long start = sched.isEmpty() ? earliest :
-                 Math.max (earliest, sched.getEndTime());
-    GregorianCalendar cal = new GregorianCalendar();
-    cal.setTime (new Date (start));
-    cal.add (GregorianCalendar.MONTH, durationMonths);
-    long end = cal.getTime().getTime();
-    String str = " start: " + new Date (start) + " end: " + new Date (end);
-
-    // check that does not violate constraint
-    if (end > latest) {
-      System.out.println (" Cannot schedule with" + str);
+   /**
+    * find the task, if any, that this task must follow
+    */
+   private Task findConstraining(Task task) {
+      Enumeration en = allExpansions.elements();
+      while (en.hasMoreElements()) {
+         Expansion exp = (Expansion) en.nextElement();
+         Enumeration enum2 = exp.getWorkflow().getTaskConstraints(task);
+         while (enum2.hasMoreElements()) {
+            Constraint c = (Constraint) enum2.nextElement();
+            if (task == c.getConstrainedTask()) {
+               return c.getConstrainingTask();
+            }
+         }
+      }
       return null;
-    }
+   }
 
-    // tell the dates chosen and return the aspect values
-    System.out.println (str);
-    return new AspectValue[] {
-      AspectValue.newAspectValue (AspectType.START_TIME, start),
-      AspectValue.newAspectValue (AspectType.END_TIME, end) };
-  }
+   /**
+    * Find an available ProgrammerAsset for this task and allocate the the task
+    * to this asset.
+    */
+   private void allocateTask(Task task, long prevEnd) {
+      // extract from preferences
+      Preference ePref = task.getPreference(AspectType.START_TIME);
+      Preference dPref = task.getPreference(AspectType.DURATION);
+      Preference lPref = task.getPreference(AspectType.END_TIME);
+      long earliest = (long) ePref.getScoringFunction().getBest().getValue();
+      int duration = (int) dPref.getScoringFunction().getBest().getValue();
+      long latest = (long) lPref.getScoringFunction().getBest().getValue();
+      boolean possiblyAtBeginning = prevEnd <= earliest;
+      earliest = Math.max(earliest, prevEnd);
+
+      // select best available programmer
+      ProgrammerAsset bestAsset = null;
+      long bestTime = 0L;
+      Vector programmers = new Vector(allProgrammers.getCollection());
+      while (programmers.size() > 0) {
+         int stuckee = (int) Math.floor(Math.random() * programmers.size());
+         ProgrammerAsset asset = (ProgrammerAsset) programmers.elementAt(stuckee);
+         programmers.remove(asset);
+         if ((possiblyAtBeginning && asset.getRoleSchedule().isEmpty())
+               || ((!asset.getRoleSchedule().isEmpty()) && (asset.getRoleSchedule().getEndTime() >= earliest))) {
+            long newTime = asset.getRoleSchedule().isEmpty() ? earliest : asset.getRoleSchedule().getEndTime();
+            if ((bestAsset == null) || (newTime < bestTime)) {
+               bestAsset = asset;
+               bestTime = newTime;
+            }
+         }
+      }
+
+      System.out.println("\nAllocating the following task to " + bestAsset.getTypeIdentificationPG().getTypeIdentification() + ": "
+            + bestAsset.getItemIdentificationPG().getItemIdentification());
+      System.out.println("Task: " + task);
+
+      // find the times and make the allocation result that
+      // assigns these times
+      // if can't fit, go on to next programmer
+      AspectValue[] inter = findInterval(bestAsset, earliest, latest, duration);
+      boolean success = inter != null;
+      if (!success) {
+         inter = new AspectValue[] {
+            AspectValue.newAspectValue(AspectType.START_TIME, latest),
+            AspectValue.newAspectValue(AspectType.END_TIME, latest)
+         };
+      }
+      AllocationResult estAR = new AllocationResult(1.0, success, inter);
+      Allocation allocation =
+            ((PlanningFactory) getDomainService().getFactory("planning")).createAllocation(task.getPlan(), task, bestAsset, estAR,
+                                                                                           Role.ASSIGNED);
+
+      getBlackboardService().publishAdd(allocation);
+   }
+
+   /**
+    * Find the interval on asset's schedule with the properties - the interval
+    * starts at the latest of earliest and the end time of the last task on the
+    * schedule - the interval is of duration durationMonths months - the
+    * interval ends no later than latest Return an array of aspect values
+    * indicating the time interval
+    */
+   private AspectValue[] findInterval(Asset asset, long earliest, long latest, int durationMonths) {
+      // figure out time interal, inserting at earliest possible time
+      RoleSchedule sched = asset.getRoleSchedule();
+      long start = sched.isEmpty() ? earliest : Math.max(earliest, sched.getEndTime());
+      GregorianCalendar cal = new GregorianCalendar();
+      cal.setTime(new Date(start));
+      cal.add(Calendar.MONTH, durationMonths);
+      long end = cal.getTime().getTime();
+      String str = " start: " + new Date(start) + " end: " + new Date(end);
+
+      // check that does not violate constraint
+      if (end > latest) {
+         System.out.println(" Cannot schedule with" + str);
+         return null;
+      }
+
+      // tell the dates chosen and return the aspect values
+      System.out.println(str);
+      return new AspectValue[] {
+         AspectValue.newAspectValue(AspectType.START_TIME, start),
+         AspectValue.newAspectValue(AspectType.END_TIME, end)
+      };
+   }
 
 }
-

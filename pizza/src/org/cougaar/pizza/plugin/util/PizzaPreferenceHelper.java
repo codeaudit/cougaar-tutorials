@@ -31,32 +31,33 @@ import org.cougaar.pizza.Constants;
 import org.cougaar.planning.ldm.asset.Entity;
 
 /**
- * Checks if entity likes meat or veg pizza by checking its role -
- * Carnivore or Vegetarian.
+ * Checks if entity likes meat or veg pizza by checking its role - Carnivore or
+ * Vegetarian.
  */
 public class PizzaPreferenceHelper {
 
-  /**
-   * Using self entity from blackboard, get its entity pg, and see if it
-   * includes a role "carnivore". Note that an Entity is _either_ a
-   * Carnivore, _or_ a Vegitarian.
-   *
-   * @return "meat" if carnivore, "veg" if herbivore
-   */
-  public static final String getPizzaPreference(LoggingService log, Entity entity) {
-    if (entity == null)
-      return "";
-    
-    boolean likeMeat = entity.getEntityPG().getRoles().contains(Constants.Roles.CARNIVORE);
-    
-    if (log != null && log.isInfoEnabled())
-      log.info("Roles for " + entity + " are " +
-	       entity.getEntityPG().getRoles());
-    
-    if (likeMeat) {
-      return Constants.MEAT_PIZZA;
-    } else {
-      return Constants.VEGGIE_PIZZA;
-    }
-  }
+   /**
+    * Using self entity from blackboard, get its entity pg, and see if it
+    * includes a role "carnivore". Note that an Entity is _either_ a Carnivore,
+    * _or_ a Vegitarian.
+    * 
+    * @return "meat" if carnivore, "veg" if herbivore
+    */
+   public static final String getPizzaPreference(LoggingService log, Entity entity) {
+      if (entity == null) {
+         return "";
+      }
+
+      boolean likeMeat = entity.getEntityPG().getRoles().contains(Constants.Roles.CARNIVORE);
+
+      if (log != null && log.isInfoEnabled()) {
+         log.info("Roles for " + entity + " are " + entity.getEntityPG().getRoles());
+      }
+
+      if (likeMeat) {
+         return Constants.MEAT_PIZZA;
+      } else {
+         return Constants.VEGGIE_PIZZA;
+      }
+   }
 }

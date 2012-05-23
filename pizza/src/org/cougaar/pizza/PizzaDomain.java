@@ -26,124 +26,124 @@
 
 package org.cougaar.pizza;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.domain.DomainAdapter;
-import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.service.AgentIdentificationService;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.pizza.asset.AssetFactory;
 import org.cougaar.planning.ldm.LDMServesPlugin;
 import org.cougaar.planning.ldm.PlanningFactory;
 import org.cougaar.planning.service.LDMService;
 
-import java.util.Collection;
-import java.util.Collections;
-
-
 /**
- * PizzaDomain definition, initializing our {@link Constants} and loading our AssetFactory. 
+ * PizzaDomain definition, initializing our {@link Constants} and loading our
+ * AssetFactory.
  * <p>
- * Required to ensure that Roles and Assets specific to the pizza
- * application are initialized correctly. The PizzaDomain does not include any
- * domain specific LogicProviders. It only initializes our {@link Constants}
- * and loads our AssetFactory.
- *<p>
- * Other applications might have custom objects to transmit between
- * agents, and therefore need their own LogicProviders. Similarly,
- * they might want their own XPlan, to have custom-tuned lookup
- * methods for objects (the Planning LogPlan for example looks up
- * PlanElements by Task UID).
+ * Required to ensure that Roles and Assets specific to the pizza application
+ * are initialized correctly. The PizzaDomain does not include any domain
+ * specific LogicProviders. It only initializes our {@link Constants} and loads
+ * our AssetFactory.
+ * <p>
+ * Other applications might have custom objects to transmit between agents, and
+ * therefore need their own LogicProviders. Similarly, they might want their own
+ * XPlan, to have custom-tuned lookup methods for objects (the Planning LogPlan
+ * for example looks up PlanElements by Task UID).
  **/
-public class PizzaDomain extends DomainAdapter {
+public class PizzaDomain
+      extends DomainAdapter {
 
-  /**
-   * Name of this Domain. 
-   * Note the <domain>_NAME variable naming pattern
-   */
-  public static final String PIZZA_NAME = "pizza";
+   /**
+    * Name of this Domain. Note the <domain>_NAME variable naming pattern
+    */
+   public static final String PIZZA_NAME = "pizza";
 
-  private DomainService domainService;
-  private LDMService ldmService;
+   private DomainService domainService;
+   private LDMService ldmService;
 
-  public String getDomainName() {
-    return PIZZA_NAME;
-  }
+   @Override
+   public String getDomainName() {
+      return PIZZA_NAME;
+   }
 
-  public PizzaDomain() {
-    super();
-  }
+   public PizzaDomain() {
+      super();
+   }
 
-  // Note the use of the introspection-based service retrieving
-  // methods. These guarantee that the component
-  // will not load if the services are not available.
+   // Note the use of the introspection-based service retrieving
+   // methods. These guarantee that the component
+   // will not load if the services are not available.
 
-  public void setDomainService(DomainService domainService) {
-    this.domainService = domainService;
-  }
+   public void setDomainService(DomainService domainService) {
+      this.domainService = domainService;
+   }
 
-  public void setLDMService(LDMService ldmService) {
-    this.ldmService = ldmService;
-  }
+   public void setLDMService(LDMService ldmService) {
+      this.ldmService = ldmService;
+   }
 
-  /**
-   * Initialize this domain, specifically our {@link Constants.Roles}
-   */
-  public void initialize() {
-    super.initialize();
+   /**
+    * Initialize this domain, specifically our {@link Constants.Roles}
+    */
+   @Override
+   public void initialize() {
+      super.initialize();
 
-    // Domain is loaded before any plugins. Call to Constants.Role.init() 
-    // creates all Roles specific to the Pizza domain before they are 
-    // accessed by application code. This insures that that the Roles and
-    // their converses are defined consistently.
-    Constants.Roles.init();    // Insure that our Role constants are initted
-  }
+      // Domain is loaded before any plugins. Call to Constants.Role.init()
+      // creates all Roles specific to the Pizza domain before they are
+      // accessed by application code. This insures that that the Roles and
+      // their converses are defined consistently.
+      Constants.Roles.init(); // Insure that our Role constants are initted
+   }
 
-  public void unload() {
-    // Unload any services we loaded earlier
-    ServiceBroker sb = getServiceBroker();
-    if (ldmService != null) {
-      sb.releaseService(
-          this, LDMService.class, ldmService);
-      ldmService = null;
-    }
-    if (domainService != null) {
-      sb.releaseService(
-          this, DomainService.class, domainService);
-      domainService = null;
-    }
-    super.unload();
-  }
+   @Override
+   public void unload() {
+      // Unload any services we loaded earlier
+      ServiceBroker sb = getServiceBroker();
+      if (ldmService != null) {
+         sb.releaseService(this, LDMService.class, ldmService);
+         ldmService = null;
+      }
+      if (domainService != null) {
+         sb.releaseService(this, DomainService.class, domainService);
+         domainService = null;
+      }
+      super.unload();
+   }
 
-  public Collection getAliases() {
-    return Collections.EMPTY_LIST;
-  }
+   public Collection getAliases() {
+      return Collections.EMPTY_LIST;
+   }
 
-  /**
-   * Load the PlanningFactory and our Domain-specify Asset and PropertyGroup Factories
-   **/
-  protected void loadFactory() {
-    LDMServesPlugin ldm = ldmService.getLDM();
-    PlanningFactory ldmf = (PlanningFactory) ldm.getFactory("planning");
-    if (ldmf == null) {
-      throw new RuntimeException("Missing \"planning\" factory!");
-    }
+   /**
+    * Load the PlanningFactory and our Domain-specify Asset and PropertyGroup
+    * Factories
+    **/
+   @Override
+   protected void loadFactory() {
+      LDMServesPlugin ldm = ldmService.getLDM();
+      PlanningFactory ldmf = (PlanningFactory) ldm.getFactory("planning");
+      if (ldmf == null) {
+         throw new RuntimeException("Missing \"planning\" factory!");
+      }
 
-    // Adding pizza specific AssetFactory and PropertyGroupFactory allows 
-    // pizza application code to use ldmf.createAsset(<asset class name>) for
-    // the assets defined in org.cougaar.pizza.asset. For example, 
-    // ldmf.createAsset("KitchenAsset")
-    ldmf.addAssetFactory(new AssetFactory());
-    ldmf.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
-  }
+      // Adding pizza specific AssetFactory and PropertyGroupFactory allows
+      // pizza application code to use ldmf.createAsset(<asset class name>) for
+      // the assets defined in org.cougaar.pizza.asset. For example,
+      // ldmf.createAsset("KitchenAsset")
+      ldmf.addAssetFactory(new AssetFactory());
+      ldmf.addPropertyGroupFactory(new org.cougaar.pizza.asset.PropertyGroupFactory());
+   }
 
-  protected void loadXPlan() {
-    // no Pizza specific XPlan
-  }
+   @Override
+   protected void loadXPlan() {
+      // no Pizza specific XPlan
+   }
 
-  protected void loadLPs() {
-    // no Pizza specific LPs
-  }
+   @Override
+   protected void loadLPs() {
+      // no Pizza specific LPs
+   }
 
 }
-
-

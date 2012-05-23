@@ -20,16 +20,6 @@
  */
 package org.cougaar.tutorial.exercise5;
 
-import org.cougaar.core.servlet.SimpleServletSupport;
-import org.cougaar.planning.ldm.plan.Allocation;
-import org.cougaar.planning.ldm.plan.RoleSchedule;
-import org.cougaar.tutorial.assets.ProgrammerAsset;
-import org.cougaar.util.UnaryPredicate;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -38,102 +28,103 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.cougaar.core.servlet.SimpleServletSupport;
+import org.cougaar.planning.ldm.plan.Allocation;
+import org.cougaar.planning.ldm.plan.RoleSchedule;
+import org.cougaar.tutorial.assets.ProgrammerAsset;
+import org.cougaar.util.UnaryPredicate;
 
-public class ScheduleServlet extends HttpServlet
-{
-	private SimpleServletSupport support;
+public class ScheduleServlet
+      extends HttpServlet {
+   private static final long serialVersionUID = 1L;
+   private SimpleServletSupport support;
 
-	public void setSimpleServletSupport(SimpleServletSupport support)
-	{
-		this.support = support;
-	}
+   public void setSimpleServletSupport(SimpleServletSupport support) {
+      this.support = support;
+   }
 
-	public void doGet(
-	        HttpServletRequest request,
-	        HttpServletResponse response) throws IOException, ServletException
-	{
-		execute(request, response);
-	}
+   @Override
+   public void doGet(HttpServletRequest request, HttpServletResponse response)
+         throws IOException, ServletException {
+      execute(request, response);
+   }
 
-	public void doPost(
-	        HttpServletRequest request,
-	        HttpServletResponse response) throws IOException, ServletException
-	{
-		execute(request, response);
-	}
+   @Override
+   public void doPost(HttpServletRequest request, HttpServletResponse response)
+         throws IOException, ServletException {
+      execute(request, response);
+   }
 
-	private void execute(
-	        HttpServletRequest request,
-	        HttpServletResponse response) throws IOException, ServletException
-	{
+   private void execute(HttpServletRequest request, HttpServletResponse response)
+         throws IOException, ServletException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
+      response.setContentType("text/html");
+      PrintWriter out = response.getWriter();
+      out.println("<html><head><title>Development Schedule</title></head><body><center><h1>Developer Schedule</h1></center>");
 
-		try
-		{
-  		  System.out.println("Servlet called." );
-          Collection programmers =  support.queryBlackboard(new ProgrammersPredicate());
-		  Iterator iter = programmers.iterator();
-		  while (iter.hasNext()) {
-		    ProgrammerAsset pa = (ProgrammerAsset)iter.next();
-		    dumpProgrammerSchedule(pa, out);
-		  }
-		}
-		catch (Exception ex)
-		{
-			out.println("Error processing servlet:"+ex.getMessage());
-			ex.printStackTrace(out);
-			System.out.println(ex);
-			out.flush();
-		}
-		out.println("</body></html>");
-	}
+      try {
+         System.out.println("Servlet called.");
+         Collection programmers = support.queryBlackboard(new ProgrammersPredicate());
+         Iterator iter = programmers.iterator();
+         while (iter.hasNext()) {
+            ProgrammerAsset pa = (ProgrammerAsset) iter.next();
+            dumpProgrammerSchedule(pa, out);
+         }
+      } catch (Exception ex) {
+         out.println("Error processing servlet:" + ex.getMessage());
+         ex.printStackTrace(out);
+         System.out.println(ex);
+         out.flush();
+      }
+      out.println("</body></html>");
+   }
 
-
-  /**
-   * Print an HTML table of this programmer's schedule to the PrintStream
-   */
-  private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
+   /**
+    * Print an HTML table of this programmer's schedule to the PrintStream
+    */
+   private void dumpProgrammerSchedule(ProgrammerAsset pa, PrintWriter out) {
       // dump classnames and count to output stream
-      out.println("<br><b>Programmer: "+pa.getItemIdentificationPG().getItemIdentification()+"<b><br>");
+      out.println("<br><b>Programmer: " + pa.getItemIdentificationPG().getItemIdentification() + "<b><br>");
       out.println("<table border=1>");
       RoleSchedule s = pa.getRoleSchedule();
       Enumeration iter = s.getAllScheduleElements();
 
       out.println("<tr><td><b>Month</b></td><td><b>Task</b></td></tr>");
       while (iter.hasMoreElements()) {
-        Object o = iter.nextElement();
-        if (o instanceof Allocation) {
-          Allocation alloc = (Allocation) o;
-          SimpleDateFormat sdf = new SimpleDateFormat ("MMM");
-          out.print ("<tr><td>");
-          out.print (sdf.format (alloc.getStartDate()));
-          out.print ("-");
-          out.print (sdf.format (new Date (alloc.getEndTime() - 1)));
-          out.print ("</td><td>");
-          out.print (alloc.getTask().getVerb());
-          out.print (" ");
-          out.print (alloc.getTask().getDirectObject().
-                       getItemIdentificationPG().getItemIdentification());
-          out.print ("</td></tr>");
-        }
+         Object o = iter.nextElement();
+         if (o instanceof Allocation) {
+            Allocation alloc = (Allocation) o;
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM");
+            out.print("<tr><td>");
+            out.print(sdf.format(alloc.getStartDate()));
+            out.print("-");
+            out.print(sdf.format(new Date(alloc.getEndTime() - 1)));
+            out.print("</td><td>");
+            out.print(alloc.getTask().getVerb());
+            out.print(" ");
+            out.print(alloc.getTask().getDirectObject().getItemIdentificationPG().getItemIdentification());
+            out.print("</td></tr>");
+         }
       }
       out.println("</table>");
       out.flush();
-  }
+   }
 
 }
 
 /**
  * This predicate matches all Programmer asset objects
  */
-class ProgrammersPredicate implements UnaryPredicate {
-  public boolean execute(Object o) {
-    return o instanceof ProgrammerAsset;
-  }
+class ProgrammersPredicate
+      implements UnaryPredicate {
+   private static final long serialVersionUID = 1L;
+
+   public boolean execute(Object o) {
+      return o instanceof ProgrammerAsset;
+   }
 }
-
-

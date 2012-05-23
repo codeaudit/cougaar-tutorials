@@ -22,46 +22,51 @@ package org.cougaar.tutorial.exercise1;
 
 import java.util.Enumeration;
 
-import org.cougaar.util.UnaryPredicate;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.util.UnaryPredicate;
 
 /**
  * This UnaryPredicate matches all Job objects
  */
-class myPredicate implements UnaryPredicate{
-  public boolean execute(Object o) {
-    return (o instanceof Job);
-  }
+class myPredicate
+      implements UnaryPredicate {
+   private static final long serialVersionUID = 1L;
+
+   public boolean execute(Object o) {
+      return (o instanceof Job);
+   }
 }
 
 /**
  * This COUGAAR Plugin subscribes to Job objects and prints them out.
  **/
-public class WorkerPlugin extends ComponentPlugin {
-  // holds my subscription for Job objects (matching predicate above)
-  private IncrementalSubscription jobs;
+public class WorkerPlugin
+      extends ComponentPlugin {
+   // holds my subscription for Job objects (matching predicate above)
+   private IncrementalSubscription jobs;
 
-  /**
-   * Called when the Plugin is loaded.  Establish the subscription for
-   * Job objects
-   */
-  protected void setupSubscriptions() {
-    jobs = (IncrementalSubscription)getBlackboardService().subscribe(new myPredicate());
-    System.out.println("WorkerPlugin");
-  }
+   /**
+    * Called when the Plugin is loaded. Establish the subscription for Job
+    * objects
+    */
+   @Override
+   protected void setupSubscriptions() {
+      jobs = (IncrementalSubscription) getBlackboardService().subscribe(new myPredicate());
+      System.out.println("WorkerPlugin");
+   }
 
-  /**
-   * Called when there is a change on my subscription(s).
-   * This plugin just prints all new jobs to stdout
-   */
-  protected void execute () {
-    Enumeration new_jobs = jobs.getAddedList();
-    while (new_jobs.hasMoreElements()) {
-      Job job = (Job)new_jobs.nextElement();
-      System.out.println("WorkerPlugin got a new Job: " + job);
-    }
-  }
+   /**
+    * Called when there is a change on my subscription(s). This plugin just
+    * prints all new jobs to stdout
+    */
+   @Override
+   protected void execute() {
+      Enumeration new_jobs = jobs.getAddedList();
+      while (new_jobs.hasMoreElements()) {
+         Job job = (Job) new_jobs.nextElement();
+         System.out.println("WorkerPlugin got a new Job: " + job);
+      }
+   }
 
 }

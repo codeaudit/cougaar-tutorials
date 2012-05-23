@@ -27,34 +27,41 @@
 package org.cougaar.pizza.plugin;
 
 import org.cougaar.pizza.Constants;
-
 import org.cougaar.servicediscovery.plugin.SimpleMatchmakerPlugin;
 
 /**
- * The Matchmaker is responsible for taking service discovery requests (MMQueryRequests)
- * from the {@link SDClientPlugin}, and issuing asynchronous queries to the YP
- * to find matching providers. When one (or more) is found, send the scored
- * results back the SDClient on the MMQueryRequest.
- *<p>
- * This version extends the SimpleMatchmakerPlugin, specifying that the Role requested 
- * will be in the pizza constants {@link org.cougaar.pizza.Constants.UDDIConstants#COMMERCIAL_SERVICE_SCHEME}.
- * As noted in the base class, it allows the YP
- * to handle walking up YP communities as necessary. It does not handle quiescence,
- * is not guaranteed to work with kills/restarts (persistence), only works
- * with a distributed YP (using communities, not a single static instance), etc.
- *
- * @property org.cougaar.servicediscovery.plugin.SimpleMatchmakerQueryGracePeriod (in minutes, default is 2) specifies 
- * how long to wait before YP query errors should be logged at ERROR instead of DEBUG.
+ * The Matchmaker is responsible for taking service discovery requests
+ * (MMQueryRequests) from the {@link SDClientPlugin}, and issuing asynchronous
+ * queries to the YP to find matching providers. When one (or more) is found,
+ * send the scored results back the SDClient on the MMQueryRequest.
+ * <p>
+ * This version extends the SimpleMatchmakerPlugin, specifying that the Role
+ * requested will be in the pizza constants
+ * {@link org.cougaar.pizza.Constants.UDDIConstants#COMMERCIAL_SERVICE_SCHEME}.
+ * As noted in the base class, it allows the YP to handle walking up YP
+ * communities as necessary. It does not handle quiescence, is not guaranteed to
+ * work with kills/restarts (persistence), only works with a distributed YP
+ * (using communities, not a single static instance), etc.
+ * 
+ * @property 
+ *           org.cougaar.servicediscovery.plugin.SimpleMatchmakerQueryGracePeriod
+ *           (in minutes, default is 2) specifies how long to wait before YP
+ *           query errors should be logged at ERROR instead of DEBUG.
  */
-public class MatchmakerPlugin extends SimpleMatchmakerPlugin {
-  /**
-   * Return the UDDI Service Scheme that contains the Roles we will look for. 
-   * In this case, that is the {@link org.cougaar.pizza.Constants.UDDIConstants#COMMERCIAL_SERVICE_SCHEME}.
-   * <p>
-   * This method is the only one we need to over-ride.
-   * @return UDDI Service Scheme to find Roles in
-   */
-  protected String getServiceSchemeForRoles() {
-    return Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME;
-  }
+public class MatchmakerPlugin
+      extends SimpleMatchmakerPlugin {
+   /**
+    * Return the UDDI Service Scheme that contains the Roles we will look for.
+    * In this case, that is the
+    * {@link org.cougaar.pizza.Constants.UDDIConstants#COMMERCIAL_SERVICE_SCHEME}
+    * .
+    * <p>
+    * This method is the only one we need to over-ride.
+    * 
+    * @return UDDI Service Scheme to find Roles in
+    */
+   @Override
+   protected String getServiceSchemeForRoles() {
+      return Constants.UDDIConstants.COMMERCIAL_SERVICE_SCHEME;
+   }
 }
