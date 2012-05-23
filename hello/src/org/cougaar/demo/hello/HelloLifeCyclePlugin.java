@@ -30,115 +30,119 @@ import org.cougaar.demo.node.InactiveShutdownService;
 import org.cougaar.util.annotations.Cougaar;
 
 /** This plugin logs "Hello" at various agent life-cycle times */
-public class HelloLifeCyclePlugin extends ParameterizedPlugin {
+public class HelloLifeCyclePlugin
+      extends ParameterizedPlugin {
 
-	@Cougaar.Arg(name = "message", defaultValue = "hello", description="Message to be logged") 
-	public String hello;
-	
-	private InactiveShutdownService inactiveShutdownService;
-	private String agentName;
-	private String pluginName;
+   @Cougaar.Arg(name = "message", defaultValue = "hello", description = "Message to be logged")
+   public String hello;
 
-	/*******
-	 *  Plugin Life-Cycle Events
-	 */
+   private InactiveShutdownService inactiveShutdownService;
+   private String agentName;
+   private String pluginName;
 
-	/** Load method is called when the agent is created. 
-	 * Node-layer services can be bound at this time*/
-	@Override
-	public void load() {
-		super.load();
-		log.shout(hello + ": Load!");
-		agentName=getAgentIdentifier().getAddress();
-		pluginName=getBlackboardClientName();
-	}
-	
+   /*******
+    * Plugin Life-Cycle Events
+    */
 
-	/** Unload method is called whenever a plugin is about to be unloaded
-	 * as part of an agent move or clean shutdown.
-	 * NodeAgents plugins should revoke Node-level services
-	 */
-	@Override
-	public void unload() {
-		super.unload();
-		log.shout(hello + ": Unload!");
-	}
+   /**
+    * Load method is called when the agent is created. Node-layer services can
+    * be bound at this time
+    */
+   @Override
+   public void load() {
+      super.load();
+      log.shout(hello + ": Load!");
+      agentName = getAgentIdentifier().getAddress();
+      pluginName = getBlackboardClientName();
+   }
 
+   /**
+    * Unload method is called whenever a plugin is about to be unloaded as part
+    * of an agent move or clean shutdown. NodeAgents plugins should revoke
+    * Node-level services
+    */
+   @Override
+   public void unload() {
+      super.unload();
+      log.shout(hello + ": Unload!");
+   }
 
-	/*******
-	 *  Agent Service-hookup Life-Cycle Events
-	 */
+   /*******
+    * Agent Service-hookup Life-Cycle Events
+    */
 
-	/** Start method is used to advertise and bind to Agent-layer services */
-	@Override
-	public void start() {
-		super.start();
-		log.shout(hello + ": Start!");
-		inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
-	}
+   /** Start method is used to advertise and bind to Agent-layer services */
+   @Override
+   public void start() {
+      super.start();
+      log.shout(hello + ": Start!");
+      inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
+   }
 
-	/** Stop method is called for a clean shutdown of the plugin 
-	 * All Agent-Layer services should be revoked
-	 */
-	@Override
-	public void stop() {
-		super.stop();
-		log.shout(hello + ": Stop!");
-	}
-	
-	/** Halt method is called for an emergency shutdown of the plugin */
-	@Override
-	public void halt() {
-		super.halt();
-		log.shout(hello + ": Halt!");
-	}
+   /**
+    * Stop method is called for a clean shutdown of the plugin All Agent-Layer
+    * services should be revoked
+    */
+   @Override
+   public void stop() {
+      super.stop();
+      log.shout(hello + ": Stop!");
+   }
 
-	/********
-	 * Mobility Life-Cycle Events
-	 */
+   /** Halt method is called for an emergency shutdown of the plugin */
+   @Override
+   public void halt() {
+      super.halt();
+      log.shout(hello + ": Halt!");
+   }
 
-	/** Suspend method is called before an agent moves. 
-	 * The plugin local state should be moved to the blackboard
-	 * and services and timers shutdown
-	 */
-	@Override
-	public void suspend() {
-		super.suspend();
-		log.shout(hello + ": Suspend!");
-	}
+   /********
+    * Mobility Life-Cycle Events
+    */
 
-	/** Resume method is call after an agent has moved.
-	 * The plugin local state should be restored from the blackboard
-	 */
-	@Override
-	public void resume() {
-		super.resume();
-		// retrieve plugin state from blackboard, agent restarted after move
-		log.shout(hello + ": Resume!");
-	}
+   /**
+    * Suspend method is called before an agent moves. The plugin local state
+    * should be moved to the blackboard and services and timers shutdown
+    */
+   @Override
+   public void suspend() {
+      super.suspend();
+      log.shout(hello + ": Suspend!");
+   }
 
+   /**
+    * Resume method is call after an agent has moved. The plugin local state
+    * should be restored from the blackboard
+    */
+   @Override
+   public void resume() {
+      super.resume();
+      // retrieve plugin state from blackboard, agent restarted after move
+      log.shout(hello + ": Resume!");
+   }
 
-	/******
-	 * Blackboard Life-Cycle Events
-	 */
+   /******
+    * Blackboard Life-Cycle Events
+    */
 
-	/** SetupSubscriptions method is called when the agent starts.
-	 * Subscribe to changes in blackboard objects 
-	 */
-	@Override
+   /**
+    * SetupSubscriptions method is called when the agent starts. Subscribe to
+    * changes in blackboard objects
+    */
+   @Override
    protected void setupSubscriptions() {
-		log.shout(hello + ": Setup Subscriptions!");
-		inactiveShutdownService.stillActive(agentName, pluginName);
-	}
+      log.shout(hello + ": Setup Subscriptions!");
+      inactiveShutdownService.stillActive(agentName, pluginName);
+   }
 
-	/** Execute method is called whenever a subscription changes. 
-	 * Check subscriptions for add-delete-modified blackboard objects.
-	 * Note execute() is run once at startup, 
-	 * even if nothing has changed on the blackboard 
-	 */
-	@Override
+   /**
+    * Execute method is called whenever a subscription changes. Check
+    * subscriptions for add-delete-modified blackboard objects. Note execute()
+    * is run once at startup, even if nothing has changed on the blackboard
+    */
+   @Override
    protected void execute() {
-		log.shout(hello + ": Execute!");
-		inactiveShutdownService.stillActive(agentName, pluginName);
-	}
+      log.shout(hello + ": Execute!");
+      inactiveShutdownService.stillActive(agentName, pluginName);
+   }
 }

@@ -30,55 +30,56 @@ import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
 /** This plugin call the HelloService periodically, forever */
-public class HelloServiceClientPlugin extends TodoPlugin {
+public class HelloServiceClientPlugin
+      extends TodoPlugin {
 
-	@Cougaar.Arg(name = "periodMillis", defaultValue = "1000", 
-			description="The millisecond period to publish a new hello message") 
-			public int period;
+   @Cougaar.Arg(name = "periodMillis", defaultValue = "1000", description = "The millisecond period to publish a new hello message")
+   public int period;
 
-	@Cougaar.Arg(name = "message", defaultValue = "Hello", 
-			description="Message to be published on blackboard") 
-			public String helloMessage;
+   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String helloMessage;
 
-	@Cougaar.ObtainService
-	public HelloService helloService;
+   @Cougaar.ObtainService
+   public HelloService helloService;
 
-	@SuppressWarnings("unused")
-	private Alarm alarm;
-	private int count=0;
-	/** log  Logging service initialized by parent ParameterizedPlugin */
-	/** uids UID service initialized by parent ParameterizedPlugin */  
-	
+   @SuppressWarnings("unused")
+   private Alarm alarm;
+   private int count = 0;
 
-	@Override
-   public void start( ) {
-		super.start();
-		log.shout("start");
-	    if (helloService == null) {
-	    	log.shout("no luck getting hello service");
-	      }
-	}
-	
-	/*
-	 * Alarms should be created only after setupSubscriptions have been initialized
-	 */
-	@Override
+   /** log Logging service initialized by parent ParameterizedPlugin */
+   /** uids UID service initialized by parent ParameterizedPlugin */
+
+   @Override
+   public void start() {
+      super.start();
+      log.shout("start");
+      if (helloService == null) {
+         log.shout("no luck getting hello service");
+      }
+   }
+
+   /*
+    * Alarms should be created only after setupSubscriptions have been
+    * initialized
+    */
+   @Override
    public void setupSubscriptions() {
-		super.setupSubscriptions();
-		log.shout("setupSubsciptions");		
-		alarm =  executeLater(period, new CallServiceTask());
-	}
+      super.setupSubscriptions();
+      log.shout("setupSubsciptions");
+      alarm = executeLater(period, new CallServiceTask());
+   }
 
-	
-	/* Timer task calls the hello service , then restarts the timer.
-	 */
-	private final class CallServiceTask implements Runnable {
-		public void run() {
-			log.shout("alarm fired");
-			if (helloService != null) {
-				helloService.changeMessage(helloMessage +"_"+ count++);
-			}
-			alarm = executeLater(period, new CallServiceTask());
-		}
-	}
+   /*
+    * Timer task calls the hello service , then restarts the timer.
+    */
+   private final class CallServiceTask
+         implements Runnable {
+      public void run() {
+         log.shout("alarm fired");
+         if (helloService != null) {
+            helloService.changeMessage(helloMessage + "_" + count++);
+         }
+         alarm = executeLater(period, new CallServiceTask());
+      }
+   }
 }

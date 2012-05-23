@@ -25,7 +25,7 @@ public class Palette
 
    private static final String DEFAULT_FILENAME = "resource:/org/cougaar/demo/mandelbrot/util/default_palette.map";
    private static final int CACHE_SIZE = 5;
-   private static final Map<String,Color[]> cache = new CacheLinkedHashMap(CACHE_SIZE);
+   private static final Map<String, Color[]> cache = new CacheLinkedHashMap(CACHE_SIZE);
 
    private final Color[] colors;
 
@@ -148,13 +148,13 @@ public class Palette
    }
 
    private static final class CacheLinkedHashMap
-         extends LinkedHashMap<String,Color[]> {
+         extends LinkedHashMap<String, Color[]> {
       private static final long serialVersionUID = 1L;
-   
+
       private CacheLinkedHashMap(int initialCapacity) {
          super(initialCapacity);
       }
-   
+
       @Override
       protected boolean removeEldestEntry(Map.Entry<String, Color[]> eldest) {
          return (size() > CACHE_SIZE);

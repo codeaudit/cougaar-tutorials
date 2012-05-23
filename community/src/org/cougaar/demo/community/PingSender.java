@@ -347,7 +347,8 @@ public class PingSender
          this.content = content;
       }
 
-      @SuppressWarnings("unused") // reflective access?
+      @SuppressWarnings("unused")
+      // reflective access?
       public SimpleRelay getPriorRelay() {
          return priorRelay;
       }

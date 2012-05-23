@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * as seen in "org.cougaar.core.qos.metrics.ParameterizedPlugin".
  */
 public final class Arguments
-      extends AbstractMap<String,Object>
+      extends AbstractMap<String, Object>
       implements Serializable {
 
    private static final long serialVersionUID = 1L;
@@ -33,7 +33,7 @@ public final class Arguments
 
    // a non-null, *modifiable* map of String keys to a mix of String and
    // String[] values.
-   private final Map<String,Object> m;
+   private final Map<String, Object> m;
 
    /** @see Arguments(Object,Set,Object) Same as Arguments(null, null, null) */
    public Arguments() {
@@ -307,19 +307,20 @@ public final class Arguments
    /**
     * @return null or a non-empty, modifiable, ordered map
     */
-   private static final Map<String,Object> toMap(Object object) {
+   private static final Map<String, Object> toMap(Object object) {
       Object o = object;
       if (o == null) {
          return null;
       }
       if (o instanceof Map) {
-         @SuppressWarnings("unchecked") // unavoidable?
-         Map<String,Object> m2 = (Map<String,Object>) o;
+         @SuppressWarnings("unchecked")
+         // unavoidable?
+         Map<String, Object> m2 = (Map<String, Object>) o;
          if (m2.isEmpty()) {
             return null;
          }
          // copy
-         Map<String,Object> m = new LinkedHashMap<String,Object>(m2);
+         Map<String, Object> m = new LinkedHashMap<String, Object>(m2);
          // validate
          for (Map.Entry<String, Object> me : m.entrySet()) {
             Object k = me.getKey();
@@ -353,9 +354,10 @@ public final class Arguments
          throw new IllegalArgumentException("Expecting a Map, String[], or List, not "
                + (o == null ? "null" : o.getClass().getName()));
       }
-      @SuppressWarnings("unchecked") // unavoidable
+      @SuppressWarnings("unchecked")
+      // unavoidable
       List<String> l = (List<String>) o;
-      Map<String,Object> m = null;
+      Map<String, Object> m = null;
       for (int i = 0, n = l.size(); i < n; i++) {
          Object oi = l.get(i);
          if (!(oi instanceof String)) {
@@ -373,7 +375,7 @@ public final class Arguments
             continue;
          }
          if (m == null) {
-            m = new LinkedHashMap<String,Object>();
+            m = new LinkedHashMap<String, Object>();
          }
          m.put(key, value);
       }
@@ -385,8 +387,8 @@ public final class Arguments
     * @param deflt a map created by "toMap()"
     * @return a non-null, modifiable, ordered map
     */
-   private static final Map<String, Object> parse(Map<String,Object> m, Set<String> keys, Map<String,Object> deflt) {
-      Map<String,Object> m2 = new LinkedHashMap<String,Object>();
+   private static final Map<String, Object> parse(Map<String, Object> m, Set<String> keys, Map<String, Object> deflt) {
+      Map<String, Object> m2 = new LinkedHashMap<String, Object>();
       if (m != null) {
          if (keys == null) {
             m2.putAll(m);

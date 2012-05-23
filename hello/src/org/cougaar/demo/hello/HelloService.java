@@ -27,13 +27,15 @@ package org.cougaar.demo.hello;
 
 import org.cougaar.core.component.Service;
 
-/** The Hello service changes the HelloObject on the blackboard
- * This service illustrates the decoupling that is necessary for
- *  external events to trigger blackboard changes
+/**
+ * The Hello service changes the HelloObject on the blackboard This service
+ * illustrates the decoupling that is necessary for external events to trigger
+ * blackboard changes
  */
-public interface HelloService extends Service {
-	/**
-	 * Change the message of the HelloObject on the blackboard
-	 */
-	void changeMessage(String message);
+public interface HelloService
+      extends Service {
+   /**
+    * Change the message of the HelloObject on the blackboard
+    */
+   void changeMessage(String message);
 }

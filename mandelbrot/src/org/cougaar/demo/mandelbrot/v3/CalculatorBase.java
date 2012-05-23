@@ -35,9 +35,10 @@ public abstract class CalculatorBase
       if (!sub.hasChanged()) {
          return;
       }
-      @SuppressWarnings("unchecked") // unavoidable
+      @SuppressWarnings("unchecked")
+      // unavoidable
       Collection<Job> addedCollection = sub.getAddedCollection();
-      
+
       for (Job job : addedCollection) {
          Arguments args = job.getArguments();
          FutureResult future = job.getFutureResult();

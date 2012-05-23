@@ -31,42 +31,44 @@ import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
 /** This plugin publishes a change to a HelloObject periodically, forever */
-public class HelloTimerPlugin extends TodoPlugin {
+public class HelloTimerPlugin
+      extends TodoPlugin {
 
-    @Cougaar.Arg(name = "periodMillis", defaultValue = "1000", 
-                 description="The millisecond period to publish a new hello message") 
-    public int period;
-    
-	@Cougaar.Arg(name = "message", defaultValue = "Hello", 
-			description="Message to be published on blackboard") 
-	public String helloMessage;
-    
-    @SuppressWarnings("unused")
-	private Alarm alarm;
-    private HelloObject hello;
-	/** log  Logging service initialized by parent ParameterizedPlugin */
-    /** uids UID service initialized by parent ParameterizedPlugin */  
-    
-    /** 
-     * Get the HelloObject from the blackboard
-     */
-	@Cougaar.Execute(on = Subscribe.ModType.ADD)
-	public void executeGetHello(HelloObject hello) {
-    		this.hello= hello;
-    		// Create a timer task that periodically updates the HelloObject
-    		alarm =  executeLater(period, new UpdateHelloTask());
-    }
+   @Cougaar.Arg(name = "periodMillis", defaultValue = "1000", description = "The millisecond period to publish a new hello message")
+   public int period;
 
-    /* Timer task updates the hello message, then restarts the timer.
-     * executeLater runs the task in the execute transaction,
-     * so blackboard objects can be modified during the task.
-     * */
-    private final class UpdateHelloTask implements Runnable {
-		public void run() {
-			hello.setMessage(helloMessage);
-			blackboard.publishChange(hello);
-			log.shout("Publish count is " + hello.getChangeCount());
-			alarm = executeLater(period, new UpdateHelloTask());
-		}
+   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String helloMessage;
+
+   @SuppressWarnings("unused")
+   private Alarm alarm;
+   private HelloObject hello;
+
+   /** log Logging service initialized by parent ParameterizedPlugin */
+   /** uids UID service initialized by parent ParameterizedPlugin */
+
+   /**
+    * Get the HelloObject from the blackboard
+    */
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeGetHello(HelloObject hello) {
+      this.hello = hello;
+      // Create a timer task that periodically updates the HelloObject
+      alarm = executeLater(period, new UpdateHelloTask());
+   }
+
+   /*
+    * Timer task updates the hello message, then restarts the timer.
+    * executeLater runs the task in the execute transaction, so blackboard
+    * objects can be modified during the task.
+    */
+   private final class UpdateHelloTask
+         implements Runnable {
+      public void run() {
+         hello.setMessage(helloMessage);
+         blackboard.publishChange(hello);
+         log.shout("Publish count is " + hello.getChangeCount());
+         alarm = executeLater(period, new UpdateHelloTask());
+      }
    }
 }

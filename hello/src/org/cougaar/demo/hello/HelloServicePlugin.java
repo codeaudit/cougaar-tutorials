@@ -39,94 +39,97 @@ import org.cougaar.util.annotations.Subscribe;
  * the time of the start event. The HelloService clients must wait for the
  * service to be offered.
  * */
-public class HelloServicePlugin extends TodoPlugin implements HelloService {
+public class HelloServicePlugin
+      extends TodoPlugin
+      implements HelloService {
 
-	private HelloObject hello;
+   private HelloObject hello;
 
-	/** log Logging service initialized by parent ParameterizedPlugin */
-	/** uids UID service initialized by parent ParameterizedPlugin */
+   /** log Logging service initialized by parent ParameterizedPlugin */
+   /** uids UID service initialized by parent ParameterizedPlugin */
 
-	/**
-	 * Get the HelloObject from the blackboard
-	 */
-	@Cougaar.Execute(on = Subscribe.ModType.ADD)
-	public void executeGetHello(HelloObject hello) {
-		log.shout("got hello from blackboard");
-		// Remember HelloObject
-		this.hello = hello;
-	}
+   /**
+    * Get the HelloObject from the blackboard
+    */
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeGetHello(HelloObject hello) {
+      log.shout("got hello from blackboard");
+      // Remember HelloObject
+      this.hello = hello;
+   }
 
-	@Override
+   @Override
    public void load() {
-		log.shout("loaded plugin");
-		// Offer HelloService service
-		serviceProvider = new MyServiceProvider();
-		getServiceBroker().addService(HelloService.class, serviceProvider);
-		super.load();
-	}
-	@Override
+      log.shout("loaded plugin");
+      // Offer HelloService service
+      serviceProvider = new MyServiceProvider();
+      getServiceBroker().addService(HelloService.class, serviceProvider);
+      super.load();
+   }
+
+   @Override
    public void stop() {
-		log.shout("stop???");
-		if (serviceProvider != null) {
-			getServiceBroker().revokeService(HelloService.class,
-					serviceProvider);
-		}
-		super.stop();
-	}
+      log.shout("stop???");
+      if (serviceProvider != null) {
+         getServiceBroker().revokeService(HelloService.class, serviceProvider);
+      }
+      super.stop();
+   }
 
-	/**
-	 * HelloService implementation. This interface is called by external threads,
-	 * so it should not touch the black board directly
-	 */
-	public synchronized void changeMessage(String message) {
-		// delay registering change with blackboard,
-		// until later using the plugin's thread and not the callers thread
-		// executeLater actually creates a todo task which runs in
-		// this plugin's execute transaction
-		executeLater(new ChangeTask(message));
-	}
+   /**
+    * HelloService implementation. This interface is called by external threads,
+    * so it should not touch the black board directly
+    */
+   public synchronized void changeMessage(String message) {
+      // delay registering change with blackboard,
+      // until later using the plugin's thread and not the callers thread
+      // executeLater actually creates a todo task which runs in
+      // this plugin's execute transaction
+      executeLater(new ChangeTask(message));
+   }
 
-	/**
-	 * Runable task to change the HelloObject. 
-	 * This class remembers the new message value,
-	 * delaying the actual change until its run() method is executed. 
-	 * Run can only be executed in the plugin's thread inside an execute transaction
-	 */
-	private final class ChangeTask implements Runnable {
-		private String newMessage;
+   /**
+    * Runable task to change the HelloObject. This class remembers the new
+    * message value, delaying the actual change until its run() method is
+    * executed. Run can only be executed in the plugin's thread inside an
+    * execute transaction
+    */
+   private final class ChangeTask
+         implements Runnable {
+      private String newMessage;
 
-		public ChangeTask(String message) {
-			newMessage = message;
-		}
+      public ChangeTask(String message) {
+         newMessage = message;
+      }
 
-		public void run() {
-			if (hello != null) {
-				hello.setMessage(newMessage);
-				blackboard.publishChange(hello);
-			}
-		}
-	}
-	
-	/**
-	 * HelloService Service Provider implementation.
-	 *  Use this (the plugin itself) as the service implementation.
-	 */
-	private ServiceProvider serviceProvider;
+      public void run() {
+         if (hello != null) {
+            hello.setMessage(newMessage);
+            blackboard.publishChange(hello);
+         }
+      }
+   }
 
-	private class MyServiceProvider implements ServiceProvider {
-		public MyServiceProvider() {
-			log.shout("new service provider");
-		}
+   /**
+    * HelloService Service Provider implementation. Use this (the plugin itself)
+    * as the service implementation.
+    */
+   private ServiceProvider serviceProvider;
 
-		public Object getService(ServiceBroker sb, Object req, Class<?> cl) {
-			log.shout("getService");
-			return HelloServicePlugin.this;
-		}
+   private class MyServiceProvider
+         implements ServiceProvider {
+      public MyServiceProvider() {
+         log.shout("new service provider");
+      }
 
-		public void releaseService(ServiceBroker arg0, Object arg1,
-				Class<?> arg2, Object arg3) {
-			log.shout("releaseService");
-		}
-	}
+      public Object getService(ServiceBroker sb, Object req, Class<?> cl) {
+         log.shout("getService");
+         return HelloServicePlugin.this;
+      }
+
+      public void releaseService(ServiceBroker arg0, Object arg1, Class<?> arg2, Object arg3) {
+         log.shout("releaseService");
+      }
+   }
 
 }

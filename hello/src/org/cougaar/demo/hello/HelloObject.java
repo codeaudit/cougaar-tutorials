@@ -28,53 +28,55 @@ package org.cougaar.demo.hello;
 import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObjectBase;
 
-/** Hello Object for publishing and subscribing on blackboard 
- * Unique Object Base gives blackboard support and allows attributes
- * to be set and viewed using the Task Servlet.
+/**
+ * Hello Object for publishing and subscribing on blackboard Unique Object Base
+ * gives blackboard support and allows attributes to be set and viewed using the
+ * Task Servlet.
  */
 @SuppressWarnings("serial")
-public class HelloObject extends UniqueObjectBase {
+public class HelloObject
+      extends UniqueObjectBase {
 
-	private String message;
-	private long changeCount;
+   private String message;
+   private long changeCount;
 
-	public HelloObject(UID uid) {
-		this(uid,"hello");
-	}
+   public HelloObject(UID uid) {
+      this(uid, "hello");
+   }
 
-	public HelloObject(UID uid, String message) {
-		super(uid);
-		changeCount=0;
-		this.message=message;
-	}
+   public HelloObject(UID uid, String message) {
+      super(uid);
+      changeCount = 0;
+      this.message = message;
+   }
 
-	/**
-	 * Setter and Getter allow access to attributes via the task servlet
-	 * Use of public fields is discouraged for blackboard objects
-	 * @return
-	 */
+   /**
+    * Setter and Getter allow access to attributes via the task servlet Use of
+    * public fields is discouraged for blackboard objects
+    * 
+    * @return
+    */
 
-	/**
-	 * Hello message
-	 */
-	public String getMessage() {
-		return message;
-	}
+   /**
+    * Hello message
+    */
+   public String getMessage() {
+      return message;
+   }
 
-	/**
-	 * Set Hello message
-	 * increment Change Count, even if message is the same.
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-		changeCount++;
-	}
+   /**
+    * Set Hello message increment Change Count, even if message is the same.
+    */
+   public void setMessage(String message) {
+      this.message = message;
+      changeCount++;
+   }
 
-	/**
-	 * Number of times the message has been set.
-	 */
-	public long getChangeCount() {
-		return changeCount;
-	}
+   /**
+    * Number of times the message has been set.
+    */
+   public long getChangeCount() {
+      return changeCount;
+   }
 
 }

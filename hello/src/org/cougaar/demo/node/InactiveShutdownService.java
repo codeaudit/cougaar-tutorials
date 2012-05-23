@@ -25,15 +25,17 @@
  */
 package org.cougaar.demo.node;
 
-/** This NodeAgent service allows plugins in agents to register activity
- *  If there is not enough activity, the node will be shut down.
+/**
+ * This NodeAgent service allows plugins in agents to register activity If there
+ * is not enough activity, the node will be shut down.
  */
 public interface InactiveShutdownService {
-	/**
-	 * Indicates that a plugin is active.
-	 * The names are used to facilitate  monitoring
-	 * @param agentName Name of the Plugin's agent
-	 * @param pluginName Name of the Plugin
-	 */
-	void stillActive(String agentName, String pluginName);
+   /**
+    * Indicates that a plugin is active. The names are used to facilitate
+    * monitoring
+    * 
+    * @param agentName Name of the Plugin's agent
+    * @param pluginName Name of the Plugin
+    */
+   void stillActive(String agentName, String pluginName);
 }

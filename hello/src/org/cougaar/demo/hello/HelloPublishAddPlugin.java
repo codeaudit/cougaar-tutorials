@@ -29,36 +29,37 @@ import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
 /** HelloPublisher add a Hello object to the blackboard */
-public class HelloPublishAddPlugin extends AnnotatedSubscriptionsPlugin {
+public class HelloPublishAddPlugin
+      extends AnnotatedSubscriptionsPlugin {
 
-	/**
-	 * Arguments can be passed into a plugin from the Society XML definition file.
-	 * The parameter value is converted from a String to the local field type and
-	 * can have a default value and description text
-	 */
-	@Cougaar.Arg(name = "message", defaultValue = "Hello", 
-			description="Message to be published on blackboard") 
-	public String helloMessage;
+   /**
+    * Arguments can be passed into a plugin from the Society XML definition
+    * file. The parameter value is converted from a String to the local field
+    * type and can have a default value and description text
+    */
+   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String helloMessage;
 
-	/** A local field to hold onto the blackboard object that we are publishing */
-	private HelloObject hello;
+   /** A local field to hold onto the blackboard object that we are publishing */
+   private HelloObject hello;
 
-	/**
-	 * Execute can be used to publish initial blackboard items.
-	 * Blackboard object can only be manipulated inside a blackboard transaction.
-	 * Execute is wrapped in a blackboard transaction.
-	 * Execute runs once during plugin startup and every time the plugin's subscription fire. So care must be taken to dispatch the desired
-	 * Execute code must check conditions for when to run its code.
-	 */
-	@Override
-   public void execute( ) {
-		super.execute();
-		// Test for initial run of execute
-		if (hello == null) {
-			hello=new HelloObject(uids.nextUID(),helloMessage);
-			blackboard.publishAdd(hello);
-		} else {
-			log.shout("This should not happen, because this plugin does not subscribe");
-		}
-	}
+   /**
+    * Execute can be used to publish initial blackboard items. Blackboard object
+    * can only be manipulated inside a blackboard transaction. Execute is
+    * wrapped in a blackboard transaction. Execute runs once during plugin
+    * startup and every time the plugin's subscription fire. So care must be
+    * taken to dispatch the desired Execute code must check conditions for when
+    * to run its code.
+    */
+   @Override
+   public void execute() {
+      super.execute();
+      // Test for initial run of execute
+      if (hello == null) {
+         hello = new HelloObject(uids.nextUID(), helloMessage);
+         blackboard.publishAdd(hello);
+      } else {
+         log.shout("This should not happen, because this plugin does not subscribe");
+      }
+   }
 }

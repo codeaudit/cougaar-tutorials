@@ -30,25 +30,29 @@ import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
 /** Hello Plugin logs "Hello" */
-public class HelloSubscribePlugin extends AnnotatedSubscriptionsPlugin {
+public class HelloSubscribePlugin
+      extends AnnotatedSubscriptionsPlugin {
 
-/**
- * The execute annotation sets up a subscription that:
- *  1) The blackboard object of a specific type, here HelloObject
- *  2) The blackboard object's content has been modified, here changed or added
- *  3) The blackboard object's content matches a predicate, here blank
- *  
- *  The body of the method will be run on the matching object
- *  The name of the method is arbitrary, but convention uses a "execute" prefix
- *  because the method will be run inside the execute event
- *  
- *  Note, If multiple changes were made to the object before this plugin was called,
- *  only the last value of the matching object will be used.
- * 
- */
-	@Cougaar.Execute(on = {Subscribe.ModType.CHANGE, Subscribe.ModType.ADD})
-	public void executeLogHello(HelloObject hello) {
-		log.shout(hello.getMessage() + " " + hello.getChangeCount());
-	}
+   /**
+    * The execute annotation sets up a subscription that: 1) The blackboard
+    * object of a specific type, here HelloObject 2) The blackboard object's
+    * content has been modified, here changed or added 3) The blackboard
+    * object's content matches a predicate, here blank
+    * 
+    * The body of the method will be run on the matching object The name of the
+    * method is arbitrary, but convention uses a "execute" prefix because the
+    * method will be run inside the execute event
+    * 
+    * Note, If multiple changes were made to the object before this plugin was
+    * called, only the last value of the matching object will be used.
+    * 
+    */
+   @Cougaar.Execute(on = {
+      Subscribe.ModType.CHANGE,
+      Subscribe.ModType.ADD
+   })
+   public void executeLogHello(HelloObject hello) {
+      log.shout(hello.getMessage() + " " + hello.getChangeCount());
+   }
 
 }

@@ -350,7 +350,8 @@ public class LegacyPingSender
          this.content = content;
       }
 
-      @SuppressWarnings("unused") // reflective access?
+      @SuppressWarnings("unused")
+      // reflective access?
       public SimpleRelay getPriorRelay() {
          return priorRelay;
       }
