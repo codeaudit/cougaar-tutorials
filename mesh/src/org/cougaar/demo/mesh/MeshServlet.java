@@ -79,7 +79,7 @@ public class MeshServlet
       loadTime = System.currentTimeMillis();
 
       // Get our required Cougaar services
-      this.blackboard = getServiceBroker().getService(this, BlackboardQueryService.class, null);
+      this.blackboard = getService(this, BlackboardQueryService.class, null);
    }
 
    /** This method is called whenever the browser loads our URL. */
@@ -118,7 +118,7 @@ public class MeshServlet
       Map<String, SimpleRelay> recv = new HashMap<String, SimpleRelay>(col.size() >> 1);
       for (Object oi : col) {
          SimpleRelay relay = (SimpleRelay) oi;
-         boolean isOutgoing = agentId.equals(relay.getSource());
+         boolean isOutgoing = getAgentIdentifier().equals(relay.getSource());
          MessageAddress addr = (isOutgoing ? relay.getTarget() : relay.getSource());
          String key = (addr == null ? null : addr.getAddress());
          if (key == null) {

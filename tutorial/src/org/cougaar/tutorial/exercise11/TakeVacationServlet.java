@@ -89,7 +89,7 @@ public class TakeVacationServlet
    @Override
    protected Servlet createServlet() {
       // get the blackboard service
-      blackboard = serviceBroker.getService(this, BlackboardService.class, null);
+      blackboard = getService(this, BlackboardService.class, null);
       if (blackboard == null) {
          throw new RuntimeException("Unable to obtain blackboard service");
       }
@@ -131,7 +131,7 @@ public class TakeVacationServlet
       super.unload();
       // release the blackboard service
       if (blackboard != null) {
-         serviceBroker.releaseService(this, BlackboardService.class, blackboard);
+         releaseService(this, BlackboardService.class, blackboard);
          blackboard = null;
       }
    }

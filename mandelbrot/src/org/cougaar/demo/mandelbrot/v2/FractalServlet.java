@@ -23,7 +23,7 @@ public class FractalServlet
    @Override
    public void load() {
       // get the FractalService
-      svc = getServiceBroker().getService(this, FractalService.class, null);
+      svc = getService(this, FractalService.class, null);
       if (svc == null) {
          throw new RuntimeException("Unable to obtain the FractalService");
       }
@@ -35,7 +35,7 @@ public class FractalServlet
    public void unload() {
       // shutting down, release the FractalService
       if (svc != null) {
-         getServiceBroker().releaseService(this, FractalService.class, svc);
+         releaseService(this, FractalService.class, svc);
          svc = null;
       }
 

@@ -78,14 +78,14 @@ public class PizzaPreferenceServlet
       super.load();
 
       // get services
-      blackboardQueryService = serviceBroker.getService(this, BlackboardQueryService.class, null);
-      AgentIdentificationService agentIDService = serviceBroker.getService(this, AgentIdentificationService.class, null);
+      blackboardQueryService = getService(this, BlackboardQueryService.class, null);
+      AgentIdentificationService agentIDService = getService(this, AgentIdentificationService.class, null);
       if (agentIDService != null) {
          agentID = agentIDService.getMessageAddress().toString();
 
          // Release the agentIDService right away, since we don't need it any
          // more
-         serviceBroker.releaseService(this, AgentIdentificationService.class, agentIDService);
+         releaseService(this, AgentIdentificationService.class, agentIDService);
          agentIDService = null;
       }
    }
@@ -97,7 +97,7 @@ public class PizzaPreferenceServlet
    @Override
    public void unload() {
       if (blackboardQueryService != null) {
-         serviceBroker.releaseService(this, BlackboardQueryService.class, blackboardQueryService);
+         releaseService(this, BlackboardQueryService.class, blackboardQueryService);
          blackboardQueryService = null;
       }
       super.unload();

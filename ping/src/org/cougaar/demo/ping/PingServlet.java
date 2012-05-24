@@ -80,7 +80,7 @@ public class PingServlet
       loadTime = System.currentTimeMillis();
 
       // Get our required Cougaar services
-      this.blackboard = getServiceBroker().getService(this, BlackboardQueryService.class, null);
+      this.blackboard = getService(this, BlackboardQueryService.class, null);
    }
 
    /** This method is called whenever the browser loads our URL. */
