@@ -12,6 +12,7 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.demo.mandelbrot.util.Arguments;
 import org.cougaar.demo.mandelbrot.util.ImageOutput;
 import org.cougaar.util.FutureResult;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
  * This servlet publishes a {@link Job} and waits for a result notification.
@@ -19,20 +20,8 @@ import org.cougaar.util.FutureResult;
 public class FractalServlet
       extends ServletPlugin {
 
-   private static final long DEFAULT_TIMEOUT = 60000;
-
-   private UIDService uidService;
-
-   @Override
-   public void load() {
-      // get the required unique identifier service
-      uidService = getServiceBroker().getService(this, UIDService.class, null);
-      if (uidService == null) {
-         throw new RuntimeException("Unable to obtain the UIDService");
-      }
-
-      super.load();
-   }
+   @Cougaar.ObtainService()
+   public UIDService uidService;
 
    @Override
    public void unload() {
@@ -59,15 +48,10 @@ public class FractalServlet
 
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse res)
-         throws IOException { // djw: removed ServletException from the throws
-                              // list
+         throws IOException {
 
       // parse the URL parameters
       Arguments args = new Arguments(req.getParameterMap());
-      long timeout = args.getLong("timeout", DEFAULT_TIMEOUT);
-      if (timeout < 0) {
-         timeout = Long.MAX_VALUE;
-      }
 
       // create a synchronized result holder
       FutureResult future = new FutureResult();
@@ -78,23 +62,23 @@ public class FractalServlet
 
       // wait for the result
       byte[] data = null;
-      Exception e = null;
+      Exception error = null;
       try {
          data = (byte[]) future.timedGet(timeout);
-      } catch (Exception ex) {
+      } catch (Exception e) {
          // either a timeout or an invalid argument
-         e = ex;
+         error = e;
       }
 
       // cleanup the blackboard
       publishRemove(job);
 
-      if (e != null) {
+      if (error != null) {
          // write error
          res.setContentType("text/plain");
          res.setStatus(HttpServletResponse.SC_NOT_FOUND);
          PrintWriter out = res.getWriter();
-         e.printStackTrace(out);
+         error.printStackTrace(out);
          return;
       }
 
