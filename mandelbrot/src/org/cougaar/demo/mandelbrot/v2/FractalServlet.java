@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.cougaar.core.servlet.ComponentServlet;
 import org.cougaar.demo.mandelbrot.util.Arguments;
 import org.cougaar.demo.mandelbrot.util.ImageOutput;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
  * This servlet uses the {@link FractalService} to calculate the image data.
@@ -18,18 +19,9 @@ public class FractalServlet
       extends ComponentServlet {
 
    private static final long serialVersionUID = 1L;
-   private FractalService svc;
-
-   @Override
-   public void load() {
-      // get the FractalService
-      svc = getService(this, FractalService.class, null);
-      if (svc == null) {
-         throw new RuntimeException("Unable to obtain the FractalService");
-      }
-
-      super.load();
-   }
+   
+   @Cougaar.ObtainService()
+   public FractalService svc;
 
    @Override
    public void unload() {
