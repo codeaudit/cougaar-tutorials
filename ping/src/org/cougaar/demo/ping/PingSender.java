@@ -87,13 +87,13 @@ import org.cougaar.util.annotations.Subscribe;
 public class PingSender
       extends TodoPlugin {
 
-   @Cougaar.Arg(name = "target", required = true)
+   @Cougaar.Arg(required = true)
    public MessageAddress target;
 
-   @Cougaar.Arg(name = "delayMillis", defaultValue = "5000")
+   @Cougaar.Arg(defaultValue = "5000")
    public long delayMillis;
 
-   @Cougaar.Arg(name = "verbose", defaultValue = "true")
+   @Cougaar.Arg(defaultValue = "true")
    public boolean verbose;
 
    @Override

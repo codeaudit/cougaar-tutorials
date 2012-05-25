@@ -33,8 +33,8 @@ import org.cougaar.util.annotations.Cougaar;
 public class HelloLifeCyclePlugin
       extends ParameterizedPlugin {
 
-   @Cougaar.Arg(name = "message", defaultValue = "hello", description = "Message to be logged")
-   public String hello;
+   @Cougaar.Arg(defaultValue = "hello", description = "Message to be logged")
+   public String message;
 
    private InactiveShutdownService inactiveShutdownService;
    private String agentName;
@@ -51,7 +51,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void load() {
       super.load();
-      log.shout(hello + ": Load!");
+      log.shout(message + ": Load!");
       agentName = getAgentIdentifier().getAddress();
       pluginName = getBlackboardClientName();
    }
@@ -64,7 +64,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void unload() {
       super.unload();
-      log.shout(hello + ": Unload!");
+      log.shout(message + ": Unload!");
    }
 
    /*******
@@ -75,7 +75,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void start() {
       super.start();
-      log.shout(hello + ": Start!");
+      log.shout(message + ": Start!");
       inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
    }
 
@@ -86,14 +86,14 @@ public class HelloLifeCyclePlugin
    @Override
    public void stop() {
       super.stop();
-      log.shout(hello + ": Stop!");
+      log.shout(message + ": Stop!");
    }
 
    /** Halt method is called for an emergency shutdown of the plugin */
    @Override
    public void halt() {
       super.halt();
-      log.shout(hello + ": Halt!");
+      log.shout(message + ": Halt!");
    }
 
    /********
@@ -107,7 +107,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void suspend() {
       super.suspend();
-      log.shout(hello + ": Suspend!");
+      log.shout(message + ": Suspend!");
    }
 
    /**
@@ -118,7 +118,7 @@ public class HelloLifeCyclePlugin
    public void resume() {
       super.resume();
       // retrieve plugin state from blackboard, agent restarted after move
-      log.shout(hello + ": Resume!");
+      log.shout(message + ": Resume!");
    }
 
    /******
@@ -131,7 +131,7 @@ public class HelloLifeCyclePlugin
     */
    @Override
    protected void setupSubscriptions() {
-      log.shout(hello + ": Setup Subscriptions!");
+      log.shout(message + ": Setup Subscriptions!");
       inactiveShutdownService.stillActive(agentName, pluginName);
    }
 
@@ -142,7 +142,7 @@ public class HelloLifeCyclePlugin
     */
    @Override
    protected void execute() {
-      log.shout(hello + ": Execute!");
+      log.shout(message + ": Execute!");
       inactiveShutdownService.stillActive(agentName, pluginName);
    }
 }

@@ -37,8 +37,8 @@ public class HelloPublishAddPlugin
     * file. The parameter value is converted from a String to the local field
     * type and can have a default value and description text
     */
-   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
-   public String helloMessage;
+   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String message;
 
    /** A local field to hold onto the blackboard object that we are publishing */
    private HelloObject hello;
@@ -56,7 +56,7 @@ public class HelloPublishAddPlugin
       super.execute();
       // Test for initial run of execute
       if (hello == null) {
-         hello = new HelloObject(uids.nextUID(), helloMessage);
+         hello = new HelloObject(uids.nextUID(), message);
          blackboard.publishAdd(hello);
       } else {
          log.shout("This should not happen, because this plugin does not subscribe");

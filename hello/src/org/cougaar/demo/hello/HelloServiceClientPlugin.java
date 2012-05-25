@@ -33,11 +33,11 @@ import org.cougaar.util.annotations.Cougaar;
 public class HelloServiceClientPlugin
       extends TodoPlugin {
 
-   @Cougaar.Arg(name = "periodMillis", defaultValue = "1000", description = "The millisecond period to publish a new hello message")
-   public int period;
+   @Cougaar.Arg(defaultValue = "1000", description = "The millisecond period to publish a new hello message")
+   public int periodMillis;
 
-   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
-   public String helloMessage;
+   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String message;
 
    @Cougaar.ObtainService
    public HelloService helloService;
@@ -66,7 +66,7 @@ public class HelloServiceClientPlugin
    public void setupSubscriptions() {
       super.setupSubscriptions();
       log.shout("setupSubsciptions");
-      alarm = executeLater(period, new CallServiceTask());
+      alarm = executeLater(periodMillis, new CallServiceTask());
    }
 
    /*
@@ -77,9 +77,9 @@ public class HelloServiceClientPlugin
       public void run() {
          log.shout("alarm fired");
          if (helloService != null) {
-            helloService.changeMessage(helloMessage + "_" + count++);
+            helloService.changeMessage(message + "_" + count++);
          }
-         alarm = executeLater(period, new CallServiceTask());
+         alarm = executeLater(periodMillis, new CallServiceTask());
       }
    }
 }

@@ -34,11 +34,11 @@ import org.cougaar.util.annotations.Subscribe;
 public class HelloTimerPlugin
       extends TodoPlugin {
 
-   @Cougaar.Arg(name = "periodMillis", defaultValue = "1000", description = "The millisecond period to publish a new hello message")
-   public int period;
+   @Cougaar.Arg(defaultValue = "1000", description = "The millisecond period to publish a new hello message")
+   public int periodMillis;
 
-   @Cougaar.Arg(name = "message", defaultValue = "Hello", description = "Message to be published on blackboard")
-   public String helloMessage;
+   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
+   public String message;
 
    @SuppressWarnings("unused")
    private Alarm alarm;
@@ -54,7 +54,7 @@ public class HelloTimerPlugin
    public void executeGetHello(HelloObject hello) {
       this.hello = hello;
       // Create a timer task that periodically updates the HelloObject
-      alarm = executeLater(period, new UpdateHelloTask());
+      alarm = executeLater(periodMillis, new UpdateHelloTask());
    }
 
    /*
@@ -65,10 +65,10 @@ public class HelloTimerPlugin
    private final class UpdateHelloTask
          implements Runnable {
       public void run() {
-         hello.setMessage(helloMessage);
+         hello.setMessage(message);
          blackboard.publishChange(hello);
          log.shout("Publish count is " + hello.getChangeCount());
-         alarm = executeLater(period, new UpdateHelloTask());
+         alarm = executeLater(periodMillis, new UpdateHelloTask());
       }
    }
 }
