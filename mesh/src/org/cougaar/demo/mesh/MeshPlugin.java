@@ -40,13 +40,14 @@ import org.cougaar.core.agent.service.alarm.AlarmBase;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.util.Arguments;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
  * This plugin is a relay scalability test that creates an arbitrarily large
@@ -108,18 +109,35 @@ import org.cougaar.util.UnaryPredicate;
  * <p>
  */
 public class MeshPlugin
-      extends ComponentPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
-   private LoggingService log;
-   private UIDService uids;
+   @Cougaar.ObtainService()
+   public LoggingService log;
+   
+   @Cougaar.ObtainService()
+   public UIDService uids;
 
+
+   /** Can't use annotation here. See {@link #parseTargets(String, String)} */
    private List<String> targets;
-   private boolean verbose;
-   private int bloatSize;
-   private long maxIterations;
-   private long delayMillis;
-   private long timeoutMillis;
-   private boolean exitWhenDone;
+   
+   @Cougaar.Arg(defaultValue="true")
+   public boolean verbose;
+   
+   @Cougaar.Arg(defaultValue="-1")
+   public int bloatSize;
+   
+   @Cougaar.Arg(defaultValue="-1")
+   public long maxIterations;
+   
+   @Cougaar.Arg(defaultValue="5000")
+   public long delayMillis;
+   
+   @Cougaar.Arg(defaultValue="30000")
+   public long timeoutMillis;
+   
+   @Cougaar.Arg(defaultValue="false")
+   public boolean exitWhenDone;
 
    private long counter = -1;
    private final Map<String, SimpleRelay> sent = new HashMap<String, SimpleRelay>();
@@ -144,21 +162,10 @@ public class MeshPlugin
    @Override
    public void load() {
       super.load();
-
-      // get our required Cougaar services
-      log = getServiceBroker().getService(this, LoggingService.class, null);
-      uids = getServiceBroker().getService(this, UIDService.class, null);
-
       // parse our plugin parameters
       Arguments args = new Arguments(getParameters(), getClass());
       String targets_string = args.getString("targets");
       targets = parseTargets(targets_string, agentId.getAddress());
-      verbose = args.getBoolean("verbose", true);
-      bloatSize = args.getInt("bloatSize", -1);
-      maxIterations = args.getLong("maxIterations", -1);
-      delayMillis = args.getLong("delayMillis", 5000);
-      timeoutMillis = args.getLong("timeoutMillis", 30000);
-      exitWhenDone = args.getBoolean("exitWhenDone", false);
 
       if (verbose && log.isShoutEnabled()) {
          log.shout("Parsed " + targets.size() + " target" + (targets.size() == 1 ? "" : "s") + ": " + targets);
@@ -167,10 +174,14 @@ public class MeshPlugin
       loadTime = System.currentTimeMillis();
    }
 
-   /** This method is called when the agent starts. */
+   /**
+    * Configure alarm and relay subscriptions. Can't use annotations since both
+    * are non-standard.  The relay sub requires the added list to be in order
+    * and the alarm sub has to be a {@link #TodoSubscription}.
+    */
    @Override
    protected void setupSubscriptions() {
-
+      super.setupSubscriptions();
       if (targets.isEmpty()) {
          // we're not in the targets set, so don't send anything
          return;
@@ -216,7 +227,7 @@ public class MeshPlugin
    /** This method is called whenever a subscription changes or alarm fires. */
    @Override
    protected void execute() {
-
+      super.execute();
       if (sub == null) {
          // Our "execute()" is always called at least once, even if we
          // don't have any subscriptions.

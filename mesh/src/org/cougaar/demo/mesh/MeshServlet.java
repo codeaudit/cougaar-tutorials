@@ -46,6 +46,7 @@ import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.servlet.ComponentServlet;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
  * This servlet shows our mesh relays as an HTML page.
@@ -61,7 +62,8 @@ public class MeshServlet
 
    private long loadTime;
 
-   private BlackboardQueryService blackboard;
+   @Cougaar.ObtainService()
+   public BlackboardQueryService blackboard;
 
    /** @return a default path if a plugin parameter is not specified */
    @Override
@@ -77,9 +79,6 @@ public class MeshServlet
 
       // Record our load time
       loadTime = System.currentTimeMillis();
-
-      // Get our required Cougaar services
-      this.blackboard = getService(this, BlackboardQueryService.class, null);
    }
 
    /** This method is called whenever the browser loads our URL. */
