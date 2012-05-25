@@ -58,6 +58,7 @@ import org.cougaar.planning.ldm.plan.Task;
 import org.cougaar.planning.ldm.plan.Verb;
 import org.cougaar.planning.plugin.util.PluginHelper;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar;
 
 /**
  * This plugin orders the pizza for a pizza party. It subscribes to a
@@ -80,11 +81,13 @@ import org.cougaar.util.UnaryPredicate;
  */
 public class PlaceOrderPlugin
       extends ComponentPlugin {
-   // Logger for the plugin
-   protected LoggingService logger;
-   // DomainService is needed to get the Planning Factory
-   protected DomainService domainService;
-   // PlanningFactory is needed to create tasks and task-related components
+   
+   @Cougaar.ObtainService()
+   public LoggingService logger;
+   
+   @Cougaar.ObtainService()
+   public DomainService domainService;
+   
    protected PlanningFactory planningFactory;
 
    // Subscription to this agent's Entity
@@ -114,12 +117,9 @@ public class PlaceOrderPlugin
    @Override
    public void load() {
       super.load();
-      // ServiceBroker handles the getting and releasing of services.
-      ServiceBroker sb = getServiceBroker();
-      logger = sb.getService(this, LoggingService.class, null);
       planningFactory = (PlanningFactory) domainService.getFactory(org.cougaar.planning.ldm.PlanningDomain.PLANNING_NAME);
       // No longer need the DomainService, release it.
-      sb.releaseService(this, DomainService.class, domainService);
+      getServiceBroker().releaseService(this, DomainService.class, domainService);
    }
 
    /**

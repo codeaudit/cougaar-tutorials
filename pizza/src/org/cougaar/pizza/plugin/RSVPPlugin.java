@@ -27,10 +27,8 @@
 package org.cougaar.pizza.plugin;
 
 import java.util.Collection;
-import java.util.Iterator;
 
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.plugin.util.PizzaPreferenceHelper;
@@ -38,6 +36,8 @@ import org.cougaar.pizza.relay.RSVPRelayTarget;
 import org.cougaar.pizza.relay.RSVPReply;
 import org.cougaar.planning.ldm.asset.Entity;
 import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar;
+import org.cougaar.util.annotations.Subscribe;
 
 /**
  * Reply to the RSVP relay invitation with the kind of pizza we like.
@@ -47,100 +47,59 @@ import org.cougaar.util.UnaryPredicate;
  * the relay and sends the response back.
  */
 public class RSVPPlugin
-      extends ComponentPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
-   private LoggingService log;
-
-   private IncrementalSubscription relaySubscription;
-
-   /**
-    * Set up the services we need - logging service
-    */
-   @Override
-   public void load() {
-      super.load();
-
-      // get services
-      log = getServiceBroker().getService(this, LoggingService.class, null);
-
-      if (log.isDebugEnabled()) {
-         log.debug("plugin loaded, services found");
-      }
-   }
+   private final UnaryPredicate isMemberPredicate = new IsLocal();
+   
+   @Cougaar.ObtainService()
+   public LoggingService log;
 
    /**
-    * We have one subscription, to the relays (the invitation) we expect to get.
+    * Handle rsvp
     */
-   @Override
-   protected void setupSubscriptions() {
-      if (log.isDebugEnabled()) {
-         log.debug("setupSubscriptions");
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void rsvp(RSVPRelayTarget relay) {
+      if (log.isInfoEnabled()) {
+         log.info("Saw added " + relay);
       }
-
-      // create relay subscription
-      // Note that blackboard is inherited from the BlackboardClientComponent
-      // base class
-      // (ComponentPlugin extends BlackboardClientComponent.)
-      relaySubscription = (IncrementalSubscription) blackboard.subscribe(new InvitePred());
-   }
-
-   /**
-    * Watch for incoming RSVPRelays. Then search our local Entity's topping PGs,
-    * and set that preference on a response to the relay.
-    */
-   @Override
-   protected void execute() {
-      if (log.isDebugEnabled()) {
-         log.debug("execute");
-      }
-
-      // observe added relays
-      for (Iterator iter = relaySubscription.getAddedCollection().iterator(); iter.hasNext();) {
-         RSVPRelayTarget relay = (RSVPRelayTarget) iter.next();
-
+   
+      // check for expected invitation relay
+      if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
+         // get the self entity
+         Entity entity = getSelfEntity();
+         if (entity == null) {
+            // This is problematic.
+            if (log.isWarnEnabled()) {
+               log.warn("Couldn't find self Entity!");
+            }
+         }
+   
+         // determine if I like meat or veggie pizza using the
+         // PizzaPreferenceHelper, which looks at the Entity object's role
+         String preference = PizzaPreferenceHelper.getPizzaPreference(log, entity);
+   
+         // send back reply
+         RSVPReply reply = new RSVPReply(getAgentIdentifier().toString(), preference);
+         relay.setResponse(reply);
+   
          if (log.isInfoEnabled()) {
-            log.info("Saw added " + relay);
+            log.info("Replying: " + relay);
          }
-
-         // check for expected invitation relay
-         if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
-            // get the self entity
-            Entity entity = getSelfEntity();
-            if (entity == null) {
-               // This is problematic.
-               if (log.isWarnEnabled()) {
-                  log.warn("Couldn't find self Entity!");
-               }
-            }
-
-            // determine if I like meat or veggie pizza using the
-            // PizzaPreferenceHelper, which looks at the Entity object's role
-            String preference = PizzaPreferenceHelper.getPizzaPreference(log, entity);
-
-            // send back reply
-            RSVPReply reply = new RSVPReply(getAgentIdentifier().toString(), preference);
-            relay.setResponse(reply);
-
-            if (log.isInfoEnabled()) {
-               log.info("Replying: " + relay);
-            }
-
-            blackboard.publishChange(relay);
-         } else {
-            if (log.isInfoEnabled()) {
-               log.info("Ignoring non-invite relay " + relay);
-            }
+   
+         blackboard.publishChange(relay);
+      } else {
+         if (log.isInfoEnabled()) {
+            log.info("Ignoring non-invite relay " + relay);
          }
       }
+   }
 
-      // Print the removed relays for debugging
-      if (log.isDebugEnabled()) {
-         // removed relays
-         for (Iterator iter = relaySubscription.getRemovedCollection().iterator(); iter.hasNext();) {
-            Object sr = iter.next();
-            log.debug("observed removed " + sr);
-         }
-      }
+   /**
+    * Just log all removals
+    */
+   @Cougaar.Execute(on = Subscribe.ModType.REMOVE)
+   public void logRemoval(RSVPRelayTarget relay) {
+      log.debug("observed removed " + relay);
    }
 
    /**
@@ -149,19 +108,8 @@ public class RSVPPlugin
     * 
     * @return self Entity, null if not found
     */
-   protected Entity getSelfEntity() {
-      // get the self entity
-      Collection entities = blackboard.query(new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         public boolean execute(Object o) {
-            if (o instanceof Entity) {
-               return ((Entity) o).isLocal();
-            } else {
-               return false;
-            }
-         }
-      });
+   private Entity getSelfEntity() {
+      Collection<?> entities = blackboard.query(isMemberPredicate);
 
       // there should be only one self entity
       if (!entities.isEmpty()) {
@@ -171,15 +119,13 @@ public class RSVPPlugin
       }
    }
 
-   /**
-    * My subscription predicate, which matches RSVPRelayTargets
-    */
-   private class InvitePred
+   private final class IsLocal
          implements UnaryPredicate {
       private static final long serialVersionUID = 1L;
-
+   
       public boolean execute(Object o) {
-         return (o instanceof RSVPRelayTarget);
+         return (o instanceof Entity) &&  ((Entity) o).isLocal();
       }
    }
-} // end of RSVPPlugin
+}
+
