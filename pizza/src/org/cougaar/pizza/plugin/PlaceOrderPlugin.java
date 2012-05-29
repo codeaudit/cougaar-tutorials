@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.plugin.ComponentPlugin;
 import org.cougaar.core.service.DomainService;
 import org.cougaar.core.service.LoggingService;
@@ -81,13 +80,13 @@ import org.cougaar.util.annotations.Cougaar;
  */
 public class PlaceOrderPlugin
       extends ComponentPlugin {
-   
+
    @Cougaar.ObtainService()
    public LoggingService logger;
-   
+
    @Cougaar.ObtainService()
    public DomainService domainService;
-   
+
    protected PlanningFactory planningFactory;
 
    // Subscription to this agent's Entity

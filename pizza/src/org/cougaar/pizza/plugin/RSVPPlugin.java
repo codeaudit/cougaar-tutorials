@@ -50,7 +50,7 @@ public class RSVPPlugin
       extends AnnotatedSubscriptionsPlugin {
 
    private final UnaryPredicate isMemberPredicate = new IsLocal();
-   
+
    @Cougaar.ObtainService()
    public LoggingService log;
 
@@ -62,7 +62,7 @@ public class RSVPPlugin
       if (log.isInfoEnabled()) {
          log.info("Saw added " + relay);
       }
-   
+
       // check for expected invitation relay
       if (Constants.INVITATION_QUERY.equals(relay.getQuery())) {
          // get the self entity
@@ -73,19 +73,19 @@ public class RSVPPlugin
                log.warn("Couldn't find self Entity!");
             }
          }
-   
+
          // determine if I like meat or veggie pizza using the
          // PizzaPreferenceHelper, which looks at the Entity object's role
          String preference = PizzaPreferenceHelper.getPizzaPreference(log, entity);
-   
+
          // send back reply
          RSVPReply reply = new RSVPReply(getAgentIdentifier().toString(), preference);
          relay.setResponse(reply);
-   
+
          if (log.isInfoEnabled()) {
             log.info("Replying: " + relay);
          }
-   
+
          blackboard.publishChange(relay);
       } else {
          if (log.isInfoEnabled()) {
@@ -122,10 +122,9 @@ public class RSVPPlugin
    private final class IsLocal
          implements UnaryPredicate {
       private static final long serialVersionUID = 1L;
-   
+
       public boolean execute(Object o) {
-         return (o instanceof Entity) &&  ((Entity) o).isLocal();
+         return (o instanceof Entity) && ((Entity) o).isLocal();
       }
    }
 }
-
