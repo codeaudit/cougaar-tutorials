@@ -32,7 +32,6 @@ import java.util.Set;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObject;
 import org.cougaar.pizza.Constants;
 import org.cougaar.pizza.plugin.PizzaPreferences;
 import org.cougaar.util.log.Logger;
@@ -49,7 +48,7 @@ import org.cougaar.util.log.Logging;
  * @see org.cougaar.pizza.plugin.PizzaPreferences
  */
 public class RSVPRelaySource
-      implements Relay.Source, UniqueObject {
+      implements Relay.Source {
    private static final long serialVersionUID = 1L;
    private final Object query; // The query in our RSVP -- meat or veg?
    private final UID uid;

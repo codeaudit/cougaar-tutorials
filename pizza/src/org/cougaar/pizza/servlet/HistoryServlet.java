@@ -1380,7 +1380,7 @@ public class HistoryServlet
       private int format = FORMAT_HTML;
 
       public HistoryFormatter(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException {
          // Handle the parameters to the request
          processParams(request);
          // Then print the resulting page

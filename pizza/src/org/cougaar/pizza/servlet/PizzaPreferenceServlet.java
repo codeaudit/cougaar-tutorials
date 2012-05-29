@@ -146,7 +146,7 @@ public class PizzaPreferenceServlet
     */
    protected class PizzaFormatter {
       public PizzaFormatter(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
+            throws IOException {
          execute(response);
       }
 

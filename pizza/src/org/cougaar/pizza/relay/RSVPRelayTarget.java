@@ -29,7 +29,6 @@ package org.cougaar.pizza.relay;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObject;
 
 /**
  * A target-side {@link Relay}. It has a slot for the query (from the sender)
@@ -47,7 +46,7 @@ import org.cougaar.core.util.UniqueObject;
  * both source and target.
  */
 public class RSVPRelayTarget
-      implements Relay.Target, UniqueObject {
+      implements Relay.Target {
    private static final long serialVersionUID = 1L;
    private final MessageAddress source; // Who do we respond to?
    private final Object query; // What info did they send to us?
