@@ -1,3 +1,6 @@
 UserSessions.dat
 tmp/
 logs/
+module.properties
+*~
+.DS_Store
