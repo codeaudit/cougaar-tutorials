@@ -40,24 +40,18 @@ import org.cougaar.util.annotations.Subscribe;
 public class HelloClassicSubscribePlugin
       extends AnnotatedSubscriptionsPlugin {
    
-   private IncrementalSubscription subscription;
+   private IncrementalSubscription<HelloObject> subscription;
 
    @Override
    /* Clunky old way to add subscriptions */
    protected void setupSubscriptions() {
       super.setupSubscriptions();
       
-      UnaryPredicate predicate = new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         @Override
+      subscription = blackboard.subscribe(new UnaryPredicate<HelloObject>() {
          public boolean execute(Object o) {
             return o instanceof HelloObject;
          }
-      };
-      subscription = new IncrementalSubscription(predicate, new HashSet<Object>());
-      blackboard.subscribe(subscription);
-      
+      });
    }
 
    @Override
@@ -65,9 +59,7 @@ public class HelloClassicSubscribePlugin
    protected void execute() {
       super.execute();
       if (!subscription.isEmpty()) {
-         @SuppressWarnings("unchecked")
-         Collection<HelloObject> added = subscription.getAddedCollection();
-         for (HelloObject hello : added) {
+         for (HelloObject hello : subscription.getAddedCollection()) {
             log.shout(hello.getMessage() + " (classic) " + hello.getChangeCount());
          }
       }

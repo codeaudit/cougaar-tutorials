@@ -155,8 +155,8 @@ public class MeshPlugin
    // time when our timeout-alarm will expire
    private long timeoutTime = -1;
 
-   private IncrementalSubscription sub;
-   private TodoSubscription expiredAlarms;
+   private IncrementalSubscription<SimpleRelay> sub;
+   private TodoSubscription<MyAlarm> expiredAlarms;
 
    /** This method is called when the agent is created */
    @Override
@@ -193,23 +193,24 @@ public class MeshPlugin
       }
 
       // subscribe to all relays sent to our agent
-      UnaryPredicate pred = new UnaryPredicate() {
+      UnaryPredicate<SimpleRelay> pred = new UnaryPredicate<SimpleRelay>() {
          private static final long serialVersionUID = 1L;
 
          public boolean execute(Object o) {
             return ((o instanceof SimpleRelay) && (agentId.equals(((SimpleRelay) o).getTarget())));
          }
       };
-      sub = (IncrementalSubscription) blackboard.subscribe(new IncrementalSubscription(pred, new HashSet()) {
+      sub = (IncrementalSubscription<SimpleRelay>) blackboard.subscribe(
+            new IncrementalSubscription<SimpleRelay>(pred, new HashSet<SimpleRelay>()) {
          // we need our added list to be in order!
          @Override
-         protected Set createAddedSet() {
-            return new LinkedHashSet(5);
+         protected Set<SimpleRelay> createAddedSet() {
+            return new LinkedHashSet<SimpleRelay>(5);
          }
       });
 
       // create a queue for expired alarms
-      expiredAlarms = (TodoSubscription) blackboard.subscribe(new TodoSubscription("myAlarms"));
+      expiredAlarms = blackboard.subscribe(new TodoSubscription<MyAlarm>("myAlarms"));
 
       if (blackboard.didRehydrate()) {
          // restarting from an agent move or persistence snapshot
@@ -237,15 +238,15 @@ public class MeshPlugin
 
       // check for expired alarms (delays & timeouts)
       if (expiredAlarms.hasChanged()) {
-         for (Object oi : expiredAlarms.getAddedCollection()) {
-            handleAlarm((MyAlarm) oi);
+         for (MyAlarm oi : expiredAlarms.getAddedCollection()) {
+            handleAlarm(oi);
          }
       }
 
       // check for incoming relays
       if (sub.hasChanged()) {
-         for (Object oi : sub.getAddedCollection()) {
-            handleRelay((SimpleRelay) oi);
+         for (SimpleRelay oi : sub.getAddedCollection()) {
+            handleRelay(oi);
          }
       }
    }
@@ -486,7 +487,7 @@ public class MeshPlugin
 
    private void restoreState() {
       // figure out our counter by looking at our sent relays
-      UnaryPredicate pred = new UnaryPredicate() {
+      UnaryPredicate<SimpleRelay> pred = new UnaryPredicate<SimpleRelay>() {
          private static final long serialVersionUID = 1L;
 
          public boolean execute(Object o) {
@@ -494,9 +495,8 @@ public class MeshPlugin
          }
       };
       long sent_value = -1;
-      Collection sent_col = blackboard.query(pred);
-      for (Object si : sent_col) {
-         SimpleRelay relay = (SimpleRelay) si;
+      Collection<SimpleRelay> sent_col = blackboard.query(pred);
+      for (SimpleRelay relay : sent_col) {
          String target = relay.getTarget().getAddress();
          Object obj = relay.getQuery();
          if (obj instanceof Payload) {
@@ -516,8 +516,7 @@ public class MeshPlugin
       }
 
       // remove any old sent relays
-      for (Object si : sent_col) {
-         SimpleRelay relay = (SimpleRelay) si;
+      for (SimpleRelay relay : sent_col) {
          String target = relay.getTarget().getAddress();
          Object obj = relay.getQuery();
          if (obj instanceof Payload) {

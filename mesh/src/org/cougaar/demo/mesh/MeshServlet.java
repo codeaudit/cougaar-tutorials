@@ -98,14 +98,14 @@ public class MeshServlet
       out.println("Milliseconds since agent load: " + runTime + "<p>");
 
       // Query the blackboard for relays
-      UnaryPredicate pred = new UnaryPredicate() {
+      UnaryPredicate<SimpleRelay> pred = new UnaryPredicate<SimpleRelay>() {
          private static final long serialVersionUID = 1L;
 
          public boolean execute(Object o) {
             return (o instanceof SimpleRelay);
          }
       };
-      Collection col = blackboard.query(pred);
+      Collection<SimpleRelay> col = blackboard.query(pred);
 
       // We expect multiple "incoming" relays from different remote targets,
       // each
@@ -115,8 +115,7 @@ public class MeshServlet
       // So, we'll split our relays into pairs based on the targets.
       Map<String, SimpleRelay> sent = new HashMap<String, SimpleRelay>(col.size() >> 1);
       Map<String, SimpleRelay> recv = new HashMap<String, SimpleRelay>(col.size() >> 1);
-      for (Object oi : col) {
-         SimpleRelay relay = (SimpleRelay) oi;
+      for (SimpleRelay relay : col) {
          boolean isOutgoing = getAgentIdentifier().equals(relay.getSource());
          MessageAddress addr = (isOutgoing ? relay.getTarget() : relay.getSource());
          String key = (addr == null ? null : addr.getAddress());
