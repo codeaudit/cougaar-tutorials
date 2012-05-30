@@ -58,8 +58,11 @@ public class HelloClassicSubscribePlugin
    /* Clunky old way to process subscriptions */
    protected void execute() {
       super.execute();
-      if (!subscription.isEmpty()) {
+      if (subscription.hasChanged()) {
          for (HelloObject hello : subscription.getAddedCollection()) {
+            log.shout(hello.getMessage() + " (classic) " + hello.getChangeCount());
+         }
+         for (HelloObject hello : subscription.getChangedCollection()) {
             log.shout(hello.getMessage() + " (classic) " + hello.getChangeCount());
          }
       }
