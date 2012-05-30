@@ -151,7 +151,7 @@ public class Constants {
     * @return a string representing the file path
     */
    public static String getDataPath() {
-      return System.getProperty("org.cougaar.install.path") + File.separator + "pizza" + File.separator + "data";
+      return System.getProperty("org.cougaar.society.path") + File.separator + "data";
    }
 
    /**
