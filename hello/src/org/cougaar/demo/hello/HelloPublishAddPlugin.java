@@ -25,6 +25,9 @@
  */
 package org.cougaar.demo.hello;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
@@ -39,9 +42,13 @@ public class HelloPublishAddPlugin
     */
    @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
    public String message;
+   
+   @Cougaar.Arg(defaultValue="1")
+   public int insertCount;
+   
 
    /** A local field to hold onto the blackboard object that we are publishing */
-   private HelloObject hello;
+   private List<HelloObject> hello;
 
    /**
     * Execute can be used to publish initial blackboard items. Blackboard object
@@ -56,8 +63,15 @@ public class HelloPublishAddPlugin
       super.execute();
       // Test for initial run of execute
       if (hello == null) {
-         hello = new HelloObject(uids.nextUID(), message);
-         blackboard.publishAdd(hello);
+         hello = new ArrayList<HelloObject>(insertCount);
+         HelloObject next = new HelloObject(uids.nextUID(), message);
+         hello.add(next);
+         blackboard.publishAdd(next);
+         for (int i=1; i<insertCount; i++) {
+            next = new HelloObject(uids.nextUID(), message + "." + i);
+            hello.add(next);
+            blackboard.publishAdd(next);
+         }
       } else {
          log.shout("This should not happen, because this plugin does not subscribe");
       }
