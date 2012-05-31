@@ -25,18 +25,22 @@
  */
 package org.cougaar.demo.hello;
 
-import org.cougaar.core.plugin.ParameterizedPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.demo.node.InactiveShutdownService;
 import org.cougaar.util.annotations.Cougaar;
 
-/** This plugin logs "Hello" at various agent life-cycle times */
+/** 
+ * This plugin logs "Hello" at various agent life-cycle times 
+ */
 public class HelloLifeCyclePlugin
-      extends ParameterizedPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
-   @Cougaar.Arg(defaultValue = "hello", description = "Message to be logged")
+   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be logged")
    public String message;
 
-   private InactiveShutdownService inactiveShutdownService;
+   @Cougaar.ObtainService
+   public InactiveShutdownService inactiveShutdownService;
+   
    private String agentName;
    private String pluginName;
 
@@ -51,9 +55,9 @@ public class HelloLifeCyclePlugin
    @Override
    public void load() {
       super.load();
-      log.shout(message + ": Load!");
       agentName = getAgentIdentifier().getAddress();
       pluginName = getBlackboardClientName();
+      log.shout(message + ": Load!" );
    }
 
    /**
@@ -64,7 +68,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void unload() {
       super.unload();
-      log.shout(message + ": Unload!");
+      log.shout(message + ": Unload!" );
    }
 
    /*******
@@ -75,8 +79,14 @@ public class HelloLifeCyclePlugin
    @Override
    public void start() {
       super.start();
-      log.shout(message + ": Start!");
-      inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
+      // TODO THIS Test SHOULD NOT BE NEEDED
+      if (inactiveShutdownService == null) {
+         inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
+         boolean success = inactiveShutdownService != null;
+         //TODO putting the log first makes setup subscriptions fail with null pointer
+         log.shout("Did not bid to inactiveShutdownService before Start success=" + success ) ;
+      }
+      log.shout(message + ": Start!" );
    }
 
    /**
@@ -86,14 +96,14 @@ public class HelloLifeCyclePlugin
    @Override
    public void stop() {
       super.stop();
-      log.shout(message + ": Stop!");
+      log.shout(message + ": Stop!" );
    }
 
    /** Halt method is called for an emergency shutdown of the plugin */
    @Override
    public void halt() {
       super.halt();
-      log.shout(message + ": Halt!");
+      log.shout(message + ": Halt!" );
    }
 
    /********
@@ -107,7 +117,7 @@ public class HelloLifeCyclePlugin
    @Override
    public void suspend() {
       super.suspend();
-      log.shout(message + ": Suspend!");
+      log.shout(message + ": Suspend!"  );
    }
 
    /**
@@ -118,7 +128,7 @@ public class HelloLifeCyclePlugin
    public void resume() {
       super.resume();
       // retrieve plugin state from blackboard, agent restarted after move
-      log.shout(message + ": Resume!");
+      log.shout(message + ": Resume!" );
    }
 
    /******
@@ -131,8 +141,8 @@ public class HelloLifeCyclePlugin
     */
    @Override
    protected void setupSubscriptions() {
-      log.shout(message + ": Setup Subscriptions!");
       inactiveShutdownService.stillActive(agentName, pluginName);
+      log.shout(message + ": Setup Subscriptions!" );
    }
 
    /**
@@ -142,7 +152,7 @@ public class HelloLifeCyclePlugin
     */
    @Override
    protected void execute() {
-      log.shout(message + ": Execute!");
+      log.shout(message + ": Execute!" );
       inactiveShutdownService.stillActive(agentName, pluginName);
    }
 }
