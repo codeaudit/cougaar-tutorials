@@ -11,6 +11,12 @@
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
+<listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER&quot; javaProject=&quot;pizza&quot; path=&quot;1&quot; type=&quot;4&quot;/&gt;&#10;"/>
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.defaultClasspath&quot;&gt;&#10;&lt;memento exportedEntriesOnly=&quot;false&quot; project=&quot;pizza&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;&#10;"/>
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/jars/lib/junit.jar&quot; path=&quot;3&quot; type=&quot;2&quot;/&gt;&#10;"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.cougaar.bootstrap.Bootstrapper"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="pizza"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dorg.cougaar.society.path=${project_loc:pizza}&#10;-Dorg.cougaar.runtime.path=${project_loc:pizza}/configs/pizzaparty&#10;-Dorg.cougaar.society.file=${project_loc:pizza}/configs/pizzaparty/SDPizzaNode1.xml&#10;-Dorg.cougaar.runtime.file=SingleNodeRuntime.xml &#10;-Dorg.cougaar.core.agent.quiet=true&#10;-Dorg.cougaar.node.name=SDPizzaNode1&#10;-Dorg.cougaar.society.xsl.param.template=legacy&#13;&#10;-Dorg.cougaar.core.logging.config.filename=${project_loc:mesh}/run/logging.props&#10;-Dorg.cougaar.install.path=${workspace_loc:/TrimCougaar}&#10;-Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node&#10;-Dorg.cougaar.core.node.InitializationComponent=XML&#10;-Dorg.cougaar.core.persistence.verifyJavaIOPatch=false&#10;-Dorg.cougaar.core.agent.quiet=true&#10;-Dorg.cougaar.core.agent.heartbeat=false&#10;-Dorg.xml.sax.driver=com.sun.org.apache.xerces.internal.parsers.SAXParser&#10;-Dcom.apple.mrj.application.apple.menu.about.name=&quot;Pizza Node 1&quot;&#10;-Dorg.cougaar.workspace=${project_loc:pizza}/run/workspace&#10;-Dorg.cougaar.name.server=SDPizzaNode1@localhost:8888"/>
