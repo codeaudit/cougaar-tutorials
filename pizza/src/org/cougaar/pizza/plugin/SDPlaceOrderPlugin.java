@@ -88,7 +88,7 @@ public class SDPlaceOrderPlugin
       // Initialize subscriptions in the super class.n
       super.setupSubscriptions();
       // Subscribe to the Disposition of the FindProviders task
-      fpDispositionSub = (IncrementalSubscription) blackboard.subscribe(FP_DISPOSITION_PRED);
+      fpDispositionSub = blackboard.subscribe(FP_DISPOSITION_PRED);
       // Subscribe to our Order tasks.
       taskSub = blackboard.subscribe(TASK_PRED);
    }

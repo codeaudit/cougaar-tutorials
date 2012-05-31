@@ -200,7 +200,7 @@ public class MeshPlugin
             return ((o instanceof SimpleRelay) && (agentId.equals(((SimpleRelay) o).getTarget())));
          }
       };
-      sub = (IncrementalSubscription<SimpleRelay>) blackboard.subscribe(
+      sub = blackboard.subscribe(
             new IncrementalSubscription<SimpleRelay>(pred, new HashSet<SimpleRelay>()) {
          // we need our added list to be in order!
          @Override
