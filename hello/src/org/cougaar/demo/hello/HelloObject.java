@@ -54,7 +54,7 @@ public class HelloObject
       super(uid);
       changeCount = 0;
       this.message = message;
-      this.value = 0;
+      this.value = value;
    }
 
    /**

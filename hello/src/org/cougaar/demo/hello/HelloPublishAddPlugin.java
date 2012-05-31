@@ -44,11 +44,11 @@ public class HelloPublishAddPlugin
    public String message;
    
    @Cougaar.Arg(defaultValue="1")
-   public int insertCount;
+   public int numberToAdd;
    
 
    /** A local field to hold onto the blackboard object that we are publishing */
-   private List<HelloObject> hello;
+   private List<HelloObject> hellos;
 
    /**
     * Execute can be used to publish initial blackboard items. Blackboard object
@@ -62,14 +62,11 @@ public class HelloPublishAddPlugin
    public void execute() {
       super.execute();
       // Test for initial run of execute
-      if (hello == null) {
-         hello = new ArrayList<HelloObject>(insertCount);
-         HelloObject next = new HelloObject(uids.nextUID(), message);
-         hello.add(next);
-         blackboard.publishAdd(next);
-         for (int i=1; i<insertCount; i++) {
-            next = new HelloObject(uids.nextUID(), message + "." + i);
-            hello.add(next);
+      if (hellos == null) {
+         hellos = new ArrayList<HelloObject>(numberToAdd);
+         for (int i=1; i <= numberToAdd; i++) {
+            HelloObject next = new HelloObject(uids.nextUID(), message, i);
+            hellos.add(next);
             blackboard.publishAdd(next);
          }
       } else {

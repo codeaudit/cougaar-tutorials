@@ -6,7 +6,7 @@
 		<agent name="AgentA">
 			<component class="org.cougaar.demo.hello.HelloPublishAddPlugin">
 				<argument name="message" value="HELLO" />
-				<argument name="insertCount" value="10" />
+				<argument name="numberToAdd" value="10" />
 			</component>
 			<component class="org.cougaar.demo.hello.HelloQueryPlugin" />
 		</agent>
