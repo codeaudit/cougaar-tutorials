@@ -25,11 +25,13 @@
  */
 package org.cougaar.demo.node;
 
+import org.cougaar.core.component.Service;
+
 /**
  * This NodeAgent service allows plugins in agents to register activity If there
  * is not enough activity, the node will be shut down.
  */
-public interface InactiveShutdownService {
+public interface InactiveShutdownService extends Service {
    /**
     * Indicates that a plugin is active. The names are used to facilitate
     * monitoring
