@@ -100,8 +100,7 @@ public class PingServlet
       out.println("Milliseconds since agent load: " + runTime + "<p>");
 
       // Find all relays and sort them by source then target
-      @SuppressWarnings("unchecked")
-      Collection<SimpleRelay> col = blackboard.query(new IsInstanceOf(SimpleRelay.class));
+      Collection<SimpleRelay> col = blackboard.query(new IsInstanceOf<SimpleRelay>(SimpleRelay.class));
       List<SimpleRelay> l1 = new ArrayList<SimpleRelay>(col);
       Collections.sort(l1, RELAY_COMPARATOR);
       List<SimpleRelay> l = l1;

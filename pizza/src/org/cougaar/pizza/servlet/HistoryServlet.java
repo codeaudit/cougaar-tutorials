@@ -286,11 +286,11 @@ public class HistoryServlet
     */
    @Override
    protected void setupSubscriptions() {
-      relaysSubscription = (IncrementalSubscription) blackboard.subscribe(relayPredicate);
-      tasksSubscription = (IncrementalSubscription) blackboard.subscribe(taskPredicate);
-      planElementsSubscription = (IncrementalSubscription) blackboard.subscribe(allocationPredicate);
-      assetsSubscription = (IncrementalSubscription) blackboard.subscribe(assetPredicate);
-      uniqueObjectsSubscription = (IncrementalSubscription) blackboard.subscribe(uniqueObjectPredicate);
+      relaysSubscription = blackboard.subscribe(relayPredicate);
+      tasksSubscription = blackboard.subscribe(taskPredicate);
+      planElementsSubscription = blackboard.subscribe(allocationPredicate);
+      assetsSubscription = blackboard.subscribe(assetPredicate);
+      uniqueObjectsSubscription = blackboard.subscribe(uniqueObjectPredicate);
 
       // register with servlet service
       try {

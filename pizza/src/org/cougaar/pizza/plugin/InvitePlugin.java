@@ -179,10 +179,10 @@ public class InvitePlugin
       waitForRSVPDuration = getWaitParameter();
 
       // create relay subscription
-      relaySubscription = (IncrementalSubscription) blackboard.subscribe(RELAYSOURCEPRED);
+      relaySubscription = blackboard.subscribe(RELAYSOURCEPRED);
 
       // create entity subscription
-      entitySubscription = (IncrementalSubscription) blackboard.subscribe(ENTITYPRED);
+      entitySubscription = blackboard.subscribe(ENTITYPRED);
 
       // If this agent moves or restarts, its possible we've already
       // invited people to the party. Get any pre-published PizzaPreferences.

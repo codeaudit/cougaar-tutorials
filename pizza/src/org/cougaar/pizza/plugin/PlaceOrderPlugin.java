@@ -127,10 +127,10 @@ public class PlaceOrderPlugin
     */
    @Override
    protected void setupSubscriptions() {
-      selfSub = (IncrementalSubscription) getBlackboardService().subscribe(SELF_PRED);
-      pizzaPrefSub = (IncrementalSubscription) getBlackboardService().subscribe(PIZZA_PREF_PRED);
-      allocationSub = (IncrementalSubscription) getBlackboardService().subscribe(ALLOCATION_PRED);
-      expansionSub = (IncrementalSubscription) blackboard.subscribe(EXPANSION_PRED);
+      selfSub = getBlackboardService().subscribe(SELF_PRED);
+      pizzaPrefSub = getBlackboardService().subscribe(PIZZA_PREF_PRED);
+      allocationSub = getBlackboardService().subscribe(ALLOCATION_PRED);
+      expansionSub = blackboard.subscribe(EXPANSION_PRED);
    }
 
    /**

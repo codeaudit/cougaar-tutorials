@@ -150,7 +150,7 @@ public class PingSender
       int ret = 0;
       if (blackboard.didRehydrate()) {
          // Get the counter from our sent ping, if any, then remove it
-         IncrementalSubscription<SimpleRelay> sub = getSubscription("isRelayForAgent");
+         IncrementalSubscription<SimpleRelay> sub = getSubscription("isRelayForAgent", SimpleRelay.class);
          for (SimpleRelay relay : sub) {
             ret = ((Integer) relay.getQuery()).intValue();
             blackboard.publishRemove(relay);

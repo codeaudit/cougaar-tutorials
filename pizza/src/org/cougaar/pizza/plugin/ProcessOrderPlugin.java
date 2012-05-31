@@ -97,11 +97,11 @@ public class ProcessOrderPlugin
     */
    @Override
    protected void setupSubscriptions() {
-      tasksSubscription = (IncrementalSubscription) getBlackboardService().subscribe(ORDER_TASKS_PRED);
+      tasksSubscription = getBlackboardService().subscribe(ORDER_TASKS_PRED);
       // Subscribe to PlanElements handling the Order Tasks -
       // to tell when we've processed a Task
-      pesSubscription = (IncrementalSubscription) getBlackboardService().subscribe(ORDER_TASKS_PES_PRED);
-      kitchenAssetSubscription = (IncrementalSubscription) getBlackboardService().subscribe(KITCHEN_ASSET_PRED);
+      pesSubscription = getBlackboardService().subscribe(ORDER_TASKS_PES_PRED);
+      kitchenAssetSubscription = getBlackboardService().subscribe(KITCHEN_ASSET_PRED);
    }
 
    /**
