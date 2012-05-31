@@ -25,9 +25,6 @@
  */
 package org.cougaar.demo.hello;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.util.UnaryPredicate;
@@ -48,6 +45,8 @@ public class HelloClassicSubscribePlugin
       super.setupSubscriptions();
       
       subscription = blackboard.subscribe(new UnaryPredicate<HelloObject>() {
+         private static final long serialVersionUID = -8980291132303080172L;
+
          public boolean execute(Object o) {
             return o instanceof HelloObject;
          }
