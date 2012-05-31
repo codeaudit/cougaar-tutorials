@@ -29,8 +29,10 @@ import org.cougaar.core.util.UID;
 import org.cougaar.core.util.UniqueObjectBase;
 
 /**
- * Hello Object for publishing and subscribing on blackboard Unique Object Base
- * gives blackboard support and allows attributes to be set and viewed using the
+ * Hello Object for publishing and subscribing on blackboard extending Unique Object Base.
+ * Setters and Getters allow access to attributes via the task servlet. 
+ * Use of public fields is discouraged for blackboard objects.
+ * Notice the Blackboard Object MUST have a unique the UUID field or they will test as equal.
  * Task Servlet.
  */
 @SuppressWarnings("serial")
@@ -42,16 +44,11 @@ public class HelloObject
    private long value;
 
  
-   public HelloObject(UID uid) {
-      this(uid, "hello");
-   }
-
    /**
     * Hello Object Constructor
-    * Setter and Getter allow access to attributes via the task servlet 
-    * Use of public fields is discouraged for blackboard objects
     * @param uid is set in the creator's context with uids.nextUID() service
     * @param message is a user friendly id.
+    * @param value is dynamic value
     */
    public HelloObject(UID uid, String message, long value) {
       super(uid);
@@ -60,8 +57,23 @@ public class HelloObject
       this.value = 0;
    }
 
+   /**
+    * Hello Object Constructor
+    * Value defaults to 0
+    * @param uid is set in the creator's context with uids.nextUID() service
+    * @param message is a user friendly id.
+    */
    public HelloObject(UID uid, String message) {
       this(uid, message, 0);
+   }
+   
+   /**
+    * Hello Object Constructor
+    * Value defaults to 0 and message defaults to "hello"
+    * @param uid is set in the creator's context with uids.nextUID() service
+    */
+   public HelloObject(UID uid) {
+      this(uid, "hello");
    }
 
     /**
@@ -73,7 +85,7 @@ public class HelloObject
    }
 
    /**
-    * Set Hello message increment change count, even if message is the same.
+    * Set Hello message and increment change count, even if message is the same.
     */
    public void setMessage(String message) {
       this.message = message;
@@ -106,7 +118,10 @@ public class HelloObject
    
  @Override
   public String toString() {
-      return "Hello Object: Value=" + value + " Message=" + message;
+      return "Hello Object:"
+            + " Value=" + value 
+            + " Changes=" +changeCount
+            + " Message=" + message;
    }
 
 }
