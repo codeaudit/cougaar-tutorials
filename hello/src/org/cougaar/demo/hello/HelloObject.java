@@ -39,44 +39,74 @@ public class HelloObject
 
    private String message;
    private long changeCount;
+   private long value;
 
+ 
    public HelloObject(UID uid) {
       this(uid, "hello");
    }
 
-   public HelloObject(UID uid, String message) {
+   /**
+    * Hello Object Constructor
+    * Setter and Getter allow access to attributes via the task servlet 
+    * Use of public fields is discouraged for blackboard objects
+    * @param uid is set in the creator's context with uids.nextUID() service
+    * @param message is a user friendly id.
+    */
+   public HelloObject(UID uid, String message, long value) {
       super(uid);
       changeCount = 0;
       this.message = message;
+      this.value = 0;
    }
 
-   /**
-    * Setter and Getter allow access to attributes via the task servlet Use of
-    * public fields is discouraged for blackboard objects
-    * 
-    * @return
-    */
+   public HelloObject(UID uid, String message) {
+      this(uid, message, 0);
+   }
 
-   /**
+    /**
     * Hello message
+    * @return the message
     */
    public String getMessage() {
       return message;
    }
 
    /**
-    * Set Hello message increment Change Count, even if message is the same.
+    * Set Hello message increment change count, even if message is the same.
     */
    public void setMessage(String message) {
       this.message = message;
-      changeCount++;
+      this.changeCount++;
    }
 
    /**
-    * Number of times the message has been set.
+    * Number of times the message or value has been set.
     */
    public long getChangeCount() {
       return changeCount;
+   }
+
+   /**
+    * Dynamic Value 
+    * @return the value
+    */
+   public long getValue() {
+      return value;
+   }
+
+   /**
+    * Set Dynamic value and increment change count
+    * @param value the value to set
+    */
+   public void setValue(long value) {
+      this.value = value;
+      this.changeCount++;
+   }
+   
+ @Override
+  public String toString() {
+      return "Hello Object: Value=" + value + " Message=" + message;
    }
 
 }
