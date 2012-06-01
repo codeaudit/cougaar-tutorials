@@ -177,7 +177,7 @@ public class MeshPlugin
    /**
     * Configure alarm and relay subscriptions. Can't use annotations since both
     * are non-standard.  The relay sub requires the added list to be in order
-    * and the alarm sub has to be a {@link #TodoSubscription}.
+    * and the alarm sub has to be a TodoSubscription.
     */
    @Override
    protected void setupSubscriptions() {

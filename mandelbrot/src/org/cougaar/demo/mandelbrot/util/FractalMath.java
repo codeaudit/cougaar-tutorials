@@ -46,12 +46,10 @@ public final class FractalMath {
       return (byte) i;
    }
 
-   /** @see #compute(double,double,double,double,boolean,double,double) */
    public static byte[] mandelbrot(int width, int height, double x_min, double x_max, double y_min, double y_max) {
       return compute(width, height, x_min, x_max, y_min, y_max, false, 0, 0);
    }
 
-   /** @see #compute(double,double,double,double,boolean,double,double) */
    public static byte[] julia(int width, int height, double x_min, double x_max, double y_min, double y_max, double cx, double cy) {
       return compute(width, height, x_min, x_max, y_min, y_max, true, cx, cy);
    }
@@ -80,12 +78,10 @@ public final class FractalMath {
       return data;
    }
 
-   /** @see #compute(double,double,double,double,boolean,double,double,byte[]) */
    public static void mandelbrot(int width, int height, double x_min, double x_max, double y_min, double y_max, byte[] data) {
       compute(width, height, x_min, x_max, y_min, y_max, false, 0, 0, data);
    }
 
-   /** @see #compute(double,double,double,double,boolean,double,double,byte[]) */
    public static void julia(int width, int height, double x_min, double x_max, double y_min, double y_max, double cx, double cy,
                             byte[] data) {
       compute(width, height, x_min, x_max, y_min, y_max, true, cx, cy, data);

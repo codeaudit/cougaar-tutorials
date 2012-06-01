@@ -35,17 +35,17 @@ public final class Arguments
    // String[] values.
    private final Map<String, Object> m;
 
-   /** @see Arguments(Object,Set,Object) Same as Arguments(null, null, null) */
+   /** @see #Arguments(Object,Set,Object).   Same as #Arguments(null, null, null) */
    public Arguments() {
       this(null, null, null);
    }
 
-   /** @see Arguments(Object,Set,Object) Same as Arguments(o, null, null) */
+   /** @see #Arguments(Object,Set,Object).   Same as #Arguments(null, null, null) */
    public Arguments(Object o) {
       this(o, null, null);
    }
 
-   /** @see Arguments(Object,Set,Map) Same as Arguments(o, null, deflt) */
+   /** @see #Arguments(Object,Set,Object).   Same as #Arguments(null, null, null) */
    public Arguments(Object o, Object deflt) {
       this(o, null, deflt);
    }

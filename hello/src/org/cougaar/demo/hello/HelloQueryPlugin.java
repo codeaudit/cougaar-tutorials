@@ -36,7 +36,7 @@ public class HelloQueryPlugin
    /**
     * Predicate to match against all HelloObject on the blackboard
     * @param hello
-    * @return
+    * @return true if more than three, else false
    */
    public boolean isMoreThanThree(HelloObject hello) {
       return  hello.getValue() > 3;
