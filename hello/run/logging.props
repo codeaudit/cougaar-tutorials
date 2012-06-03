@@ -14,5 +14,19 @@ log4j.appender.A1=org.apache.log4j.ConsoleAppender
 # e.g.:
 #  -Dorg.cougaar.util.log.log4j.appender.A1.File=foo.log
 
-# optionally enable logging categories, e.g.:
-#log4j.category.org.cougaar.core=INFO
+# Optionally enable logging categories, e.g.: DETAIL*, DEBUG, INFO, WARN, ERROR, SHOUT*, FATAL
+# For a whole package:
+#log4j.category.org.cougaar.demo.hello=INFO
+
+# For a specific class:
+log4j.category.org.cougaar.demo.hello.HelloLoggingPlugin=DEBUG
+
+#
+# *NOTE a reference to the DETAIL or SHOUT level from a
+# log4j properties file must specify the full 
+# "DETAIL#org.cougaar.util.log.log4j.DetailPriority"
+# line, otherwise log4j doesn't know this class 
+# and will default the level to "DEBUG".
+# log4j.category.org.cougaar.demo.hello.HelloLoggingPlugin=DETAIL#org.cougaar.util.log.log4j.DetailPriority
+# log4j.category.org.cougaar.demo.hello.HelloLoggingPlugin=SHOUT#org.cougaar.util.log.log4j.ShoutPriority
+
