@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
