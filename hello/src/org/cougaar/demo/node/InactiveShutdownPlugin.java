@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
@@ -30,8 +30,6 @@ import org.cougaar.core.component.ServiceBroker;
 import org.cougaar.core.component.ServiceProvider;
 import org.cougaar.core.node.NodeControlService;
 import org.cougaar.core.plugin.TodoPlugin;
-import org.cougaar.core.util.UID;
-import org.cougaar.core.util.UniqueObjectBase;
 import org.cougaar.util.annotations.Cougaar;
 
 /**
@@ -57,50 +55,6 @@ public class InactiveShutdownPlugin
 
    /** log Logging service initialized by parent ParameterizedPlugin */
    /** uids UID service initialized by parent ParameterizedPlugin */
-
-   /**
-    * Blackboard Object that will be incremented each every time activity is
-    * detected Activity count can be monitored by external plugins and the task
-    * view servlet
-    */
-   @SuppressWarnings("serial")
-   public final class ActivityCounter
-         extends UniqueObjectBase {
-      private long count;
-      private long lastActivityTime;
-      private String lastAgentName;
-      private String lastPlugName;
-
-      public ActivityCounter(UID uid) {
-         super(uid);
-         this.count = 0;
-      }
-
-      public long getInactiveTime() {
-         return System.currentTimeMillis() - lastActivityTime;
-      }
-
-      public long increment(String agentName, String pluginName) {
-         lastActivityTime = System.currentTimeMillis();
-         lastAgentName = agentName;
-         lastPlugName = pluginName;
-         count++;
-         return count;
-      }
-
-      public long getCount(String agentName, String pluginName) {
-         return count;
-      }
-
-      public String getLastAgentName() {
-         return lastAgentName;
-      }
-
-      public String getLastPlugName() {
-         return lastPlugName;
-      }
-
-   }
 
    @Override
    public void load() {
