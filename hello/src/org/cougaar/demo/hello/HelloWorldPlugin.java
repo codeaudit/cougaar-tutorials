@@ -27,14 +27,19 @@ package org.cougaar.demo.hello;
 
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 
-/** Hello Plugin logs "Hello" */
+/**
+ * Hello Plugin logs "Hello"
+ */
 public class HelloWorldPlugin
       extends AnnotatedSubscriptionsPlugin {
 
-   /** SetupSubscription method is called once at agent startup. */
+   /**
+    * Execute method is called once after agent has started.
+    * The Cougaar Node runs forever, until terminated
+    */
    @Override
-   public void start() {
-      super.start();
+   public void execute() {
+      super.execute();
       log.shout("Hello, World!");
    }
 }
