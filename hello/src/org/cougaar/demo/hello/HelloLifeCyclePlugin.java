@@ -38,6 +38,7 @@ public class HelloLifeCyclePlugin
    @Cougaar.Arg(defaultValue = "Hello", description = "Message to be logged")
    public String message;
 
+   // Watchdog service that detects inactivity in Agents, then shuts down the Node.
    @Cougaar.ObtainService
    public InactiveShutdownService inactiveShutdownService;
    
@@ -49,8 +50,9 @@ public class HelloLifeCyclePlugin
     */
 
    /**
-    * Load method is called when the agent is created. Node-layer services can
-    * be bound at this time
+    * Load method is called when the agent is created. 
+    * Node-layer services are bound after super.load is run.
+    * Agent services should be provided at load time.
     */
    @Override
    public void load() {
@@ -62,12 +64,14 @@ public class HelloLifeCyclePlugin
 
    /**
     * Unload method is called whenever a plugin is about to be unloaded as part
-    * of an agent move or clean shutdown. NodeAgents plugins should revoke
-    * Node-level services
+    * of an agent move or clean shutdown. 
+    * Agents plugins should release services.
     */
    @Override
    public void unload() {
       super.unload();
+      //getServiceBroker().releaseService(this, InactiveShutdownService.class, inactiveShutdownService);
+      inactiveShutdownService = null;
       log.shout(message + ": Unload!" );
    }
 
@@ -75,23 +79,18 @@ public class HelloLifeCyclePlugin
     * Agent Service-hookup Life-Cycle Events
     */
 
-   /** Start method is used to advertise and bind to Agent-layer services */
+   /** 
+    * Start method allows binding to Agent-layer services (none in this example).
+    */
    @Override
    public void start() {
       super.start();
-      // TODO THIS Test SHOULD NOT BE NEEDED
-      if (inactiveShutdownService == null) {
-         inactiveShutdownService = getServiceBroker().getService(this, InactiveShutdownService.class, null);
-         boolean success = inactiveShutdownService != null;
-         //TODO putting the log first makes setup subscriptions fail with null pointer
-         log.shout("Did not bid to inactiveShutdownService before Start success=" + success ) ;
-      }
       log.shout(message + ": Start!" );
    }
 
    /**
-    * Stop method is called for a clean shutdown of the plugin All Agent-Layer
-    * services should be revoked
+    * Stop method is called for a clean shutdown of the plugin 
+    * All Agent-Layer services should be released (none in this example).
     */
    @Override
    public void stop() {
@@ -99,7 +98,9 @@ public class HelloLifeCyclePlugin
       log.shout(message + ": Stop!" );
    }
 
-   /** Halt method is called for an emergency shutdown of the plugin */
+   /** 
+    * Halt method is called for an emergency shutdown of the plugin.
+    */
    @Override
    public void halt() {
       super.halt();
@@ -112,7 +113,7 @@ public class HelloLifeCyclePlugin
 
    /**
     * Suspend method is called before an agent moves. The plugin local state
-    * should be moved to the blackboard and services and timers shutdown
+    * should be moved to the blackboard and services and timers shutdown.
     */
    @Override
    public void suspend() {
@@ -122,7 +123,7 @@ public class HelloLifeCyclePlugin
 
    /**
     * Resume method is call after an agent has moved. The plugin local state
-    * should be restored from the blackboard
+    * should be restored from the blackboard.
     */
    @Override
    public void resume() {
@@ -136,8 +137,8 @@ public class HelloLifeCyclePlugin
     */
 
    /**
-    * SetupSubscriptions method is called when the agent starts. Subscribe to
-    * changes in blackboard objects
+    * SetupSubscriptions method is called when the agent starts. 
+    * Subscribe to changes in blackboard objects
     */
    @Override
    protected void setupSubscriptions() {
@@ -148,7 +149,9 @@ public class HelloLifeCyclePlugin
    /**
     * Execute method is called whenever a subscription changes. Check
     * subscriptions for add-delete-modified blackboard objects. Note execute()
-    * is run once at startup, even if nothing has changed on the blackboard
+    * is run once at startup, even if nothing has changed on the blackboard.
+    * This initial execution can be used to inject the initial blackboard objects
+    * that trigger the agent processing.
     */
    @Override
    protected void execute() {

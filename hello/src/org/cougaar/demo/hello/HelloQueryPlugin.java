@@ -37,10 +37,10 @@ public class HelloQueryPlugin
       extends AnnotatedSubscriptionsPlugin {
    
    /**
-    * Named blackboard query. 
+    * Blackboard query. 
     * When the query is invoked via {@link #runQuery}, 
     * this method will be called once per match.
-    * The where clause defines the match predicate.
+    * The "where" clause defines the match predicate.
     * Any number of context variables are passed to the processing method.
     * The same context is passed in each iteration.
     * 
