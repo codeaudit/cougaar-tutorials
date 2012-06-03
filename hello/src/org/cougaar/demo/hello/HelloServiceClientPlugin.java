@@ -36,7 +36,8 @@ public class HelloServiceClientPlugin
    @Cougaar.Arg(defaultValue = "1000", description = "The millisecond period to publish a new hello message")
    public int periodMillis;
 
-   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
+   @Cougaar.Arg(defaultValue = "Hello from service client", 
+         description = "Message to be published on blackboard")
    public String message;
 
    @Cougaar.ObtainService
@@ -46,15 +47,17 @@ public class HelloServiceClientPlugin
    private Alarm alarm;
    private int count = 0;
 
-   /** log Logging service initialized by parent ParameterizedPlugin */
-   /** uids UID service initialized by parent ParameterizedPlugin */
-
+   /**
+    *  The hello service should be bound after the super.start().
+    *  Show that it is really bound. 
+    */
    @Override
    public void start() {
       super.start();
-      log.shout("start");
       if (helloService == null) {
-         log.shout("no luck getting hello service");
+         log.error("No luck getting hello service");
+      } else {
+         log.shout("Hello service is bound at start");
       }
    }
 
@@ -65,7 +68,7 @@ public class HelloServiceClientPlugin
    @Override
    public void setupSubscriptions() {
       super.setupSubscriptions();
-      log.shout("setupSubsciptions");
+      log.info("Setting up alarm in setupSubsciptions");
       alarm = executeLater(periodMillis, new CallServiceTask());
    }
 
@@ -75,9 +78,10 @@ public class HelloServiceClientPlugin
    private final class CallServiceTask
          implements Runnable {
       public void run() {
-         log.shout("alarm fired");
+         ++count;
+         log.shout("Alarm fired for count " + count);
          if (helloService != null) {
-            helloService.changeMessage(message + "_" + count++);
+            helloService.update(message, count);
          }
          alarm = executeLater(periodMillis, new CallServiceTask());
       }

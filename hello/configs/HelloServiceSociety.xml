@@ -1,21 +1,40 @@
 <?xml version='1.0'?>
 
-<!-- This file contains the "hello world" society definition. -->
+<!-- 
+     This file contains the "hello service" society definition. 
+     Two plugins are updating a HelloObject on the blackboard, 
+     one through a HelloService and one directly.
+     The Subscriber plugin prints the results.
+-->
 <society>
 	<node name="Node1">
 		<agent name="AgentA">
+		
+			<!-- Subscriber prints the state of Hello Object -->
+			<component class="org.cougaar.demo.hello.HelloSubscribePlugin" />
+			
+			<!-- Initializes Hello Object -->
+			<component class="org.cougaar.demo.hello.HelloPublishAddPlugin">
+				<argument name="message" value="Hello (initial)" />
+			</component>
+			
+			<!-- Timer-based updater of Hello Object-->
 			<component class="org.cougaar.demo.hello.HelloTimerPlugin">
 				<argument name="periodMillis" value="5000" />
-				<argument name="message" value="HELLO" />
+				<argument name="message" value="Hello from Timer" />
 			</component>
+			
+			<!-- Timer-based updater of Hello Object-->
 			<component class="org.cougaar.demo.hello.HelloServiceClientPlugin">
-				<argument name="periodMillis" value="7000" />
-				<argument name="message" value="hello" />
+				<argument name="periodMillis" value="3000" />
+				<argument name="message" value="Hello from Service Client" />
 			</component>
-			<component class="org.cougaar.demo.hello.HelloPublishAddPlugin">
-				<argument name="message" value="_Hello_" />
-			</component>
-			<component class="org.cougaar.demo.hello.HelloSubscribePlugin" />
+			
+			<!-- Service Provider for Hello Service
+			     Put Service provider last to show that the service client can't find service at load(),
+			     resulting in a warning.
+			     But the client does find the service at start()
+			 -->
 			<component class="org.cougaar.demo.hello.HelloServicePlugin" />
 		</agent>
 	</node>
