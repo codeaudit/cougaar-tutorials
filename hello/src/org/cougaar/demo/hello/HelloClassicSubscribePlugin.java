@@ -32,15 +32,24 @@ import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
 /**
- * Example of old-style subscriptions.
+ * Example of classic subscriptions that do not use annotations.
+ * Classic subscriptions are useful if the changed blackboard objects 
+ * need to be treated as a group. For example, if one group of blackboard
+ * changes must be coorelated with another group.
+ * Classic subscriptions can be used in conjunction with subscriptions added
+ * using annotations. 
+ * 
  */
 public class HelloClassicSubscribePlugin
       extends AnnotatedSubscriptionsPlugin {
    
+   //Generic Subscriptions added for Cougaar 12.6
    private IncrementalSubscription<HelloObject> subscription;
 
+   /**
+    *  Classic way to add subscriptions 
+    */
    @Override
-   /* Clunky old way to add subscriptions */
    protected void setupSubscriptions() {
       super.setupSubscriptions();
       
@@ -53,42 +62,35 @@ public class HelloClassicSubscribePlugin
       });
    }
 
+   /**
+    *  Classic way to process subscriptions 
+    */
    @Override
-   /* Clunky old way to process subscriptions */
    protected void execute() {
+      //super call is necessary to allow annotated subscriptions to execute.
       super.execute();
+      // Test if classic subscription has changed
       if (subscription.hasChanged()) {
          for (HelloObject hello : subscription.getAddedCollection()) {
-            log.shout(hello.getMessage() + " (classic) " + hello.getChangeCount());
+            log.shout( "Classic Added " + hello);
          }
          for (HelloObject hello : subscription.getChangedCollection()) {
-            log.shout(hello.getMessage() + " (classic) " + hello.getChangeCount());
+            log.shout( "Classic Changed " + hello);
          }
       }
    }
 
 
 
-   /**
-    * The execute annotation sets up a subscription that: 1) The blackboard
-    * object of a specific type, here HelloObject 2) The blackboard object's
-    * content has been modified, here changed or added 3) The blackboard
-    * object's content matches a predicate, here blank
-    * 
-    * The body of the method will be run on the matching object The name of the
-    * method is arbitrary, but convention uses a "execute" prefix because the
-    * method will be run inside the execute event
-    * 
-    * Note, If multiple changes were made to the object before this plugin was
-    * called, only the last value of the matching object will be used.
-    * 
+   /** 
+    * The same subscription using annotations
     */
    @Cougaar.Execute(on = {
       Subscribe.ModType.CHANGE,
       Subscribe.ModType.ADD
    })
    public void executeLogHello(HelloObject hello) {
-      log.shout(hello.getMessage() + " " + hello.getChangeCount());
+      log.shout("Annotated " + hello);
    }
 
 }
