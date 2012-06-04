@@ -15,8 +15,4 @@ This file contains the "hello world" runtime System Properties.
     name="-Dorg.cougaar.core.logging.config.filename"
     value="logging.props"/>
     
-  <vm_parameter
-    name="-Dorg.cougaar.core.persistence.verifyJavaIOPatch"
-    value="false"/>
-
 </runtime>

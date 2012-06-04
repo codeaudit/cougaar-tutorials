@@ -52,7 +52,7 @@ For additional information, please see the <a href="http://cougaar.org/doc/12_4/
 <h2>Installation:<a name="installation"></a></h2>
 
 <ol>
-  <li>Verify that Java 1.5 or 1.6 is installed and is on the PATH:<br>
+  <li>Verify that Java 6 (aka 1.6) is installed and is on the PATH:<br>
   &nbsp;&nbsp;<code>java -version</code>
   </li><p>
 
@@ -93,13 +93,13 @@ For additional information, please see the <a href="http://cougaar.org/doc/12_4/
 
   <li>Move the "hello/" directory into your Cougaar "user" directory.
   <p>
-  If you're using the "demo-hello.zip" from 12.4 release, then unzip this zip into your
+  If you're using the "demo-hello.zip" from the release, then unzip this zip into your
   Cougaar "user" directory. 
  
   <p>
-  If you're using CSV, then checkout the HEAD version of the "hello" module into your 
+  If you're using Git, then checkout the master branch of the "hello" module into your 
   Cougaar "user" directory:<br>
-  &nbsp;&nbsp;<code>cvs -d :ext:cougaar.org:/cvsroot/tutorials co hello</code><br>
+  &nbsp;&nbsp;<code>git clone http://cougaar.org/git/tutorials.git</code>
   </li><p>
 
   <li>Set the COUGAAR_SOCIETY_PATH environment variable:<br>
@@ -188,7 +188,6 @@ For additional information, please see the <a href="http://cougaar.org/doc/12_4/
   &nbsp;&nbsp; <i># boilerplate</i><br>
   &nbsp;&nbsp; <code>-Dorg.cougaar.bootstrap.application=org.cougaar.core.node.Node<code><br>
   &nbsp;&nbsp; <code>-Dorg.cougaar.core.node.InitializationComponent=XML<code><br>
-  &nbsp;&nbsp; <code>-Dorg.cougaar.core.persistence.verifyJavaIOPatch=false<code><br>
   &nbsp;&nbsp; <br>
   &nbsp;&nbsp; <i># the classpath, which <b>ALWAYS ONLY</b> contains the Cougaar jar locator</i><br>
   &nbsp;&nbsp; <code>-Djava.class.path=$COUGAAR_INSTALL_PATH/lib/bootstrap.jar<code><br>
