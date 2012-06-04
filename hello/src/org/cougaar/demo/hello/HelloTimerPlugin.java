@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
@@ -30,22 +30,26 @@ import org.cougaar.core.plugin.TodoPlugin;
 import org.cougaar.util.annotations.Cougaar;
 import org.cougaar.util.annotations.Subscribe;
 
-/** This plugin publishes a change to a HelloObject periodically, forever */
+/** 
+ * This plugin publishes a change to a HelloObject periodically, forever 
+ */
 public class HelloTimerPlugin
       extends TodoPlugin {
 
-   @Cougaar.Arg(defaultValue = "1000", description = "The millisecond period to publish a new hello message")
+   @Cougaar.Arg(defaultValue = "1000", 
+         description = "The millisecond period to publish a change to the hello message")
    public int periodMillis;
 
-   @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
+   @Cougaar.Arg(defaultValue = "Hello from timer",
+         description = "Message to be published on blackboard")
    public String message;
 
    @SuppressWarnings("unused")
    private Alarm alarm;
    private HelloObject hello;
 
-   /** log Logging service initialized by parent ParameterizedPlugin */
-   /** uids UID service initialized by parent ParameterizedPlugin */
+   // log Logging service initialized by parent ParameterizedPlugin 
+   // uids UID service initialized by parent ParameterizedPlugin 
 
    /**
     * Get the HelloObject from the blackboard
@@ -65,9 +69,11 @@ public class HelloTimerPlugin
    private final class UpdateHelloTask
          implements Runnable {
       public void run() {
+         long value = hello.getValue();
+         hello.setValue(++value);
          hello.setMessage(message);
          blackboard.publishChange(hello);
-         log.shout("Publish count is " + hello.getChangeCount());
+         log.shout("Timer incremented value to " + value );
          alarm = executeLater(periodMillis, new UpdateHelloTask());
       }
    }

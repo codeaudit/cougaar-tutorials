@@ -28,9 +28,17 @@ package org.cougaar.demo.hello;
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 
 /**
- * Hello Plugin logs "Hello"
+ * Hello Logger Plugin
+ * The Logger service has multiple log levels that are control
+ * by a logging.props file.
+ * The file name is defined by the vm property 
+ * -Dorg.cougaar.core.logging.config.filename=logging.props
+ * <p>
+ * Logger users should check "isEnabledFor(..)" before requesting 
+ * a log message, to prevent unnecessary string creation.
+
  */
-public class HelloWorldPlugin
+public class HelloLoggingPlugin
       extends AnnotatedSubscriptionsPlugin {
 
    /**
@@ -40,6 +48,34 @@ public class HelloWorldPlugin
    @Override
    public void execute() {
       super.execute();
-      log.shout("Hello, World!");
+      
+       if ( log.isFatalEnabled()) {
+         log.fatal("Hello, Fatal");
+      }
+      
+      if ( log.isShoutEnabled()) {
+         log.shout("Hello, Shout");
+      }
+      
+      if ( log.isErrorEnabled()) {
+         log.error("Hello, Error");
+      }
+      
+      if(log.isWarnEnabled()) {
+         log.warn("Hello, Wait");
+      }
+      
+      if (log.isInfoEnabled()) {
+         log.info("Hello, Info");
+      }
+
+      if (log.isDebugEnabled()) {
+         log.debug("Hello, Debug");
+       }
+      
+      if (log.isDetailEnabled()) {
+         log.detail("Hello,Detail");
+      }
+
    }
 }

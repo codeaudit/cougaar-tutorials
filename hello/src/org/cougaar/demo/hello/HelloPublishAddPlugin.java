@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
@@ -25,13 +25,13 @@
  */
 package org.cougaar.demo.hello;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.util.annotations.Cougaar;
 
-/** HelloPublisher add a Hello object to the blackboard */
+/**
+ * HelloPublisher adds HelloObjects to the blackboard once, when the Agent has
+ * started.
+ */
 public class HelloPublishAddPlugin
       extends AnnotatedSubscriptionsPlugin {
 
@@ -42,33 +42,32 @@ public class HelloPublishAddPlugin
     */
    @Cougaar.Arg(defaultValue = "Hello", description = "Message to be published on blackboard")
    public String message;
-   
-   @Cougaar.Arg(defaultValue="1")
-   public int numberToAdd;
-   
 
-   /** A local field to hold onto the blackboard object that we are publishing */
-   private List<HelloObject> hellos;
+   @Cougaar.Arg(defaultValue = "1", description = "Number of Hello Objects to Add at Agent Startup")
+   public int numberToAdd;
+
+   // remember if objects have been added
+   private boolean isFirstTime = true;
 
    /**
     * Execute can be used to publish initial blackboard items. Blackboard object
     * can only be manipulated inside a blackboard transaction. Execute is
     * wrapped in a blackboard transaction. Execute runs once during plugin
-    * startup and every time the plugin's subscription fire. So care must be
-    * taken to dispatch the desired Execute code must check conditions for when
-    * to run its code.
+    * startup and every time the plugin's subscription fire. Execute code must
+    * check conditions for when to run its code.
     */
    @Override
    public void execute() {
       super.execute();
       // Test for initial run of execute
-      if (hellos == null) {
-         hellos = new ArrayList<HelloObject>(numberToAdd);
-         for (int i=1; i <= numberToAdd; i++) {
+      if (isFirstTime) {
+         for (int i = 1; i <= numberToAdd; i++) {
+            // Create a new hello object with unique id
             HelloObject next = new HelloObject(uids.nextUID(), message, i);
-            hellos.add(next);
+            // Add new object to blackboard
             blackboard.publishAdd(next);
          }
+         isFirstTime = false;
       } else {
          log.shout("This should not happen, because this plugin does not subscribe");
       }

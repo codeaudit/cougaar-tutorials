@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
@@ -45,48 +45,48 @@ public class HelloServicePlugin
 
    private HelloObject hello;
 
-   /** log Logging service initialized by parent ParameterizedPlugin */
-   /** uids UID service initialized by parent ParameterizedPlugin */
-
-   /**
-    * Get the HelloObject from the blackboard
-    */
-   @Cougaar.Execute(on = Subscribe.ModType.ADD)
-   public void executeGetHello(HelloObject hello) {
-      log.shout("got hello from blackboard");
-      // Remember HelloObject
-      this.hello = hello;
-   }
 
    @Override
    public void load() {
-      log.shout("loaded plugin");
-      // Offer HelloService service
+      // First offer my HelloService service
       serviceProvider = new MyServiceProvider();
       getServiceBroker().addService(HelloService.class, serviceProvider);
+      log.shout("Provided hello service at Load time");
+      // then let other plugins offer their services
       super.load();
    }
 
    @Override
    public void stop() {
-      log.shout("stop???");
+      log.shout("Stop???");
       if (serviceProvider != null) {
          getServiceBroker().revokeService(HelloService.class, serviceProvider);
       }
       super.stop();
    }
-
+   
+   /**
+    * Get the HelloObject from the blackboard
+    */
+   @Cougaar.Execute(on = Subscribe.ModType.ADD)
+   public void executeGetHello(HelloObject hello) {
+      log.shout("Got hello from blackboard");
+      // Remember HelloObject
+      this.hello = hello;
+   }
+   
    /**
     * HelloService implementation. This interface is called by external threads,
-    * so it should not touch the black board directly
+    * so it should not touch the black board directly.
     */
-   public synchronized void changeMessage(String message) {
+   public synchronized void update(String message, long value) {
       // delay registering change with blackboard,
-      // until later using the plugin's thread and not the callers thread
-      // executeLater actually creates a todo task which runs in
-      // this plugin's execute transaction
-      executeLater(new ChangeTask(message));
+      // until later using the plugin's thread and not the callers thread.
+      // ExecuteLater creates a todo task which runs in
+      // this plugin's execute transaction.
+      executeLater(new ChangeTask(message, value));
    }
+
 
    /**
     * Runable task to change the HelloObject. This class remembers the new
@@ -96,39 +96,46 @@ public class HelloServicePlugin
     */
    private final class ChangeTask
          implements Runnable {
-      private String newMessage;
+      private long value;
+      private String message;
 
-      public ChangeTask(String message) {
-         newMessage = message;
+      public ChangeTask(String message, long value) {
+         this.value = value;
+         this.message = message;
       }
 
       public void run() {
          if (hello != null) {
-            hello.setMessage(newMessage);
+            //Changes to the object are bundled together.
+            hello.setValue(value);
+            hello.setMessage(message);
             blackboard.publishChange(hello);
+         } else {
+            log.warn("Service called before blackboard was ready");
          }
       }
    }
 
    /**
-    * HelloService Service Provider implementation. Use this (the plugin itself)
-    * as the service implementation.
+    * HelloService Service Provider implementation. 
+    * Uses this (the plugin itself) as the service implementation
+    * and does not keep track of its clients.
     */
    private ServiceProvider serviceProvider;
 
    private class MyServiceProvider
          implements ServiceProvider {
       public MyServiceProvider() {
-         log.shout("new service provider");
+         log.info("new service provider");
       }
 
       public Object getService(ServiceBroker sb, Object req, Class<?> cl) {
-         log.shout("getService");
+         log.info("Service request from " + req);
          return HelloServicePlugin.this;
       }
 
-      public void releaseService(ServiceBroker arg0, Object arg1, Class<?> arg2, Object arg3) {
-         log.shout("releaseService");
+      public void releaseService(ServiceBroker arg0, Object req, Class<?> arg2, Object arg3) {
+         log.info("Service released by " + req);
       }
    }
 

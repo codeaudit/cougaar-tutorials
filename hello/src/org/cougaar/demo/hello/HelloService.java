@@ -1,7 +1,7 @@
 /*
  * <copyright>
  *  
- *  Copyright 1997-2006 BBNT Solutions, LLC
+ *  Copyright 1997-2012 BBNT Solutions, LLC
  *  under sponsorship of the Defense Advanced Research Projects
  *  Agency (DARPA).
  * 
@@ -28,14 +28,18 @@ package org.cougaar.demo.hello;
 import org.cougaar.core.component.Service;
 
 /**
- * The Hello service changes the HelloObject on the blackboard This service
+ * The Hello service changes the HelloObject on the blackboard. This service
  * illustrates the decoupling that is necessary for external events to trigger
- * blackboard changes
+ * blackboard changes.
  */
 public interface HelloService
       extends Service {
+   
+   
    /**
-    * Change the message of the HelloObject on the blackboard
+    * Change the value of the HelloObject on the blackboard
     */
-   void changeMessage(String message);
+   void update(String message, long value);
+
+
 }
