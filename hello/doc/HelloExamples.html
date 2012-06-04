@@ -1,0 +1,69 @@
+<html>
+<head><title>Cougaar "Hello" Examples</title></head>
+<body>
+<h1>Cougaar "Hello" Examples</h1>
+<p>
+This module contains several examples that s
+<p>
+This module assumes that you have read the Hello World <a href="README.html">README </a>
+and have successfully set up and run the demo. All examples are expected to be run in eclipse,
+but they can also be run as ant targets or from the command line.
+The following of the following sections describes how to run each example and how to interpret
+output.
+<p>
+<h2>Index:</h2>
+<ul>
+  <li><a href="#world">Hello World</a></li>
+  <li><a href="#logging">Hello Logging</a></li>
+  <li><a href="#lifecycle">Hello Life Cycle</a></li>
+  <li><a href="#pubsub">Hello Publication / Subscription</a></li>
+  <li><a href="#classic">Hello Classic Subscriptions</a></li>
+  <li><a href="#query">Hello Query</a></li>
+  <li><a href="#timer">Hello Timer</a></li>
+  <li><a href="#service">Hello Service</a></li>
+  <li><a href="#debug">Hello Debug</a></li>
+</ul>
+
+<h2>Hello World:<a name="world"></a></h2>
+
+<ul>  
+  <li>The source code:<br>
+  <a href="../src/org/cougaar/demo/hello/HelloWorldPlugin.java">
+  src/org/cougaar/demo/hello/HelloPlugin.java</a>
+  </li><p>
+  
+  <li>The society configuration file:<br>
+  <a href="../configs/HelloWorldSociety.xml">configs/HelloWorldSociety.xml</a>
+  </li><p>
+
+  
+  <li>Eclipse run command:
+ <code><pre>
+ helloWorld
+ </pre></code>
+  </li><p>
+
+  <li>The Ant script target:
+ <code><pre>
+ ant helloWorld
+ </pre></code>
+  </li><p>
+  
+  <li>Unix command line (bash):
+  <code><pre>
+  cd [HelloProjectDirectory]
+  export COUGAAR_INSTALL_PATH=`pwd`/../../trimcougaar/TrimCougaar
+  export CIP=$COUGAAR_INSTALL_PATH
+  export COUGAAR_SOCIETY_PATH=`pwd`
+  export COUGAAR_RUNTIME_PATH=`pwd`/run
+  cd $COUGAAR_RUNTIME_PATH
+  $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloWorldSociety.xml 
+  </pre></code>
+  </li><p>
+  
+</ul>
+<p>
+
+
+
+</body>
