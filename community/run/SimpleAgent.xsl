@@ -104,6 +104,9 @@ section titled "XSL Agent Templates".
         servlet_engine.tomcat=true,
         servlet_redirector.http_redirect=true,
       </xsl:when>
+      <!-- Note: 
+	   Do *not* change threadService=full to trivial unless you also change to metrics=trivial
+      -->
       <xsl:when test="$template = 'single_debug'">
         threadService=full,
         pluginThreadPool=30,
