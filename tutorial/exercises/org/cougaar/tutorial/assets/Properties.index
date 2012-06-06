@@ -1,0 +1,18 @@
+- - - - - List of machine generated PropertyGroups - - - - -
+* LanguagePG
+Listing of the programming languages a programmer can use.
+    boolean KnowsJava;	//True if the programmer is fluent in Java
+    boolean KnowsJavaScript;	//True if the programmer is fluent in JavaScript
+* SkillsPG
+    int YearsExperience;	//The number of years the programmer has been coding
+    int SLOCPerDay;	//The average number lines of source code the programmer can produce per day
+* global
+- - - - - Permuted index of PropertyGroupSlots - - - - -
+* SLOCPerDay
+    SkillsPG
+* KnowsJava
+    LanguagePG
+* KnowsJavaScript
+    LanguagePG
+* YearsExperience
+    SkillsPG
