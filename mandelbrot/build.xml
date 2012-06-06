@@ -56,6 +56,14 @@ The zip already contains a "lib/mandelbrot.jar", so this is optional.
     <include name="**/*.map"/>
   </patternset>
 
+  <!-- Project specific dependencies -->    
+  <path id="project.dependencies">
+    <!-- By convention, application external jars are in sys  -->
+    <fileset dir="${basedir}" includes="sys" />
+  </path>
+  <!--Load predefined Cougaar Ant Targets  -->
+  <import file="${cougaar.install.path}/build/data/cougaar-app-project-import.xml"/>
+
   <target name="init" description="Initialize the build env.  Check for required properties">
     <fail unless="cougaar.install.path">		
       You must define a 'cougaar.install.path' property.  
