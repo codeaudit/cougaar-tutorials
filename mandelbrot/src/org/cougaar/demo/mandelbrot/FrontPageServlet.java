@@ -128,7 +128,7 @@ public class FrontPageServlet
             "<script type=\"text/javascript\">\n"
             + "var myImage = document.getElementById(\"myImage\");\n"
             + "var click_count=0;\n"
-            + "function onImageClick(e) {\n"
+            + "function onImageClick(e2) {\n"
             + // R. Kurtz 02 Feb 2012 - Existing code apparently makes use of
               // some obsolete Javascript features, specifically myImage.x and
               // myImage.y; using the .offsetLeft and .offsetTop attributes
@@ -137,7 +137,7 @@ public class FrontPageServlet
               // "    (document.all ? document.body.scrollLeft : window.scrollX);\n"+
               // "  var h = e.clientY - myImage.y +\n"+
               // "    (document.all ? document.body.scrollTop : window.scrollY);\n"+
-            "  var w = e.clientX - myImage.offsetLeft +\n" + "    (document.all ? document.body.scrollLeft : window.scrollX);\n"
+            "  var e=window.event || e2;  var w = e.clientX - myImage.offsetLeft +\n" + "    (document.all ? document.body.scrollLeft : window.scrollX);\n"
             + "  var h = e.clientY - myImage.offsetTop +\n" + "    (document.all ? document.body.scrollTop : window.scrollY);\n"
             + "  var x = " + args.getDouble("x_min") + " +\n" + "    (w/" + args.getInt("width") + ")*" + x_range + ";\n"
             + "  var y = " + args.getDouble("y_min") + " +\n" + "    (h/" + args.getInt("height") + ")*" + y_range + ";\n"
