@@ -178,7 +178,7 @@
 
     <!-- Extra jars needed at run / unit-test time. -->
     <!-- WARNING: Only relative paths work here. -->
-    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.lib}/servicediscovery.jar,${target.lib}/yp.jar,${target.lib}/community.jar,${target.sys}/xercesImpl.jar,${target.sys}/servlet.jar,${target.sys}/xml-apis.jar,${target.sys}/jena.jar,${target.sys}/uddi4j.jar"/>
+    <property name="run.jarlist" value="${target.lib}/core.jar,${target.lib}/planning.jar,${target.lib}/util.jar,${target.lib}/servicediscovery.jar,${target.lib}/yp.jar,${target.lib}/community.jar,${target.sys}/xercesImpl.jar,${target.sys}/servlet.jar,${target.sys}/xml-apis.jar,${target.sys}/jena.jar,${target.sys}/uddi4j.jar,${target.sys}/junit.jar"/>
     <!-- Put absolute paths on this list, in the form of a path. -->
     <property name="run.abs.jarlist" value=""/>
     
