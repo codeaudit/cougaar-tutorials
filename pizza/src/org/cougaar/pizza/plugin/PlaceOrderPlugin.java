@@ -97,19 +97,7 @@ public class PlaceOrderPlugin
    protected IncrementalSubscription allocationSub;
    // Subscription to Expansions on order tasks
    protected IncrementalSubscription expansionSub;
-
-   /**
-    * Services that are absolutely required by the plugin can be loaded via
-    * introspection by the binding utility instead of explicitly getting each
-    * service from the ServiceBroker in load(). The setter methods are called
-    * after the component is constructed but before the state methods such as
-    * initialize, load, setupSubscriptions, etc. If the service is not available
-    * at that time, the component will be unloaded.
-    */
-   public void setDomainService(DomainService aDomainService) {
-      domainService = aDomainService;
-   }
-
+ 
    /**
     * Loads services used by the plugin.
     */

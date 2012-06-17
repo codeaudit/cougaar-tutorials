@@ -24,17 +24,6 @@ public class FractalServlet
    public FractalService svc;
 
    @Override
-   public void unload() {
-      // shutting down, release the FractalService
-      if (svc != null) {
-         releaseService(this, FractalService.class, svc);
-         svc = null;
-      }
-
-      super.unload();
-   }
-
-   @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse res)
          throws ServletException, IOException {
 

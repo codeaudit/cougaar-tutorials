@@ -23,16 +23,6 @@ public class FractalServlet
    @Cougaar.ObtainService()
    public UIDService uidService;
 
-   @Override
-   public void unload() {
-      super.unload();
-
-      if (uidService != null) {
-         getServiceBroker().releaseService(this, UIDService.class, uidService);
-         uidService = null;
-      }
-   }
-
    /**
     * Override "isTransactional" to false.
     * <p>

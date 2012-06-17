@@ -39,7 +39,7 @@ public class HelloLifeCyclePlugin
    public String message;
 
    // Watchdog service that detects inactivity in Agents, then shuts down the Node.
-   @Cougaar.ObtainService
+   @Cougaar.ObtainService(releaseOnUnload=false)
    public InactiveShutdownService inactiveShutdownService;
    
    private String agentName;
@@ -69,10 +69,9 @@ public class HelloLifeCyclePlugin
     */
    @Override
    public void unload() {
-      super.unload();
-      //getServiceBroker().releaseService(this, InactiveShutdownService.class, inactiveShutdownService);
       inactiveShutdownService = null;
       log.shout(message + ": Unload!" );
+      super.unload();
    }
 
    /*******
