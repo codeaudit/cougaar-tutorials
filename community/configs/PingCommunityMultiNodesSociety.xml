@@ -40,9 +40,7 @@
 				<argument>/tasks</argument>
 			</component>
 		</agent>
-	</node>
 
-	<node name="NodeB">
 		<!-- First receiver -->
 		<agent name="Agent-2">
 			<component class="org.cougaar.demo.community.PingReceiver" />
@@ -68,7 +66,7 @@
 		</agent>
 	</node>
 
-	<node name="NodeC">
+	<node name="NodeB">
 		<!-- Another receiver -->
 		<agent name="Agent-3">
 			<component class='org.cougaar.demo.community.PingReceiver' />
@@ -92,9 +90,7 @@
 				<argument>/tasks</argument>
 			</component>
 		</agent>
-	</node>
 
-	<node name="NodeD">
 		<!-- Another receiver -->
 		<agent name="Agent-4">
 			<component class='org.cougaar.demo.community.PingReceiver' />
@@ -118,9 +114,7 @@
 				<argument>/tasks</argument>
 			</component>
 		</agent>
-	</node>
 
-	<node name="NodeE">
 		<!-- Another receiver -->
 		<agent name="Agent-5">
 			<component class='org.cougaar.demo.community.PingReceiver' />
