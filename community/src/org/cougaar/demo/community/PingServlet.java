@@ -42,6 +42,8 @@ import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.BlackboardQueryService;
 import org.cougaar.core.servlet.ComponentServlet;
+import org.cougaar.util.annotations.Cougaar.ObtainService;
+
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -58,7 +60,8 @@ public class PingServlet
 
    private long loadTime;
 
-   private BlackboardQueryService blackboard;
+   @ObtainService
+   public BlackboardQueryService blackboard;
 
    /** @return a default path if a plugin parameter is not specified */
    @Override
@@ -74,9 +77,6 @@ public class PingServlet
 
       // Record our load time
       loadTime = System.currentTimeMillis();
-
-      // Get our required Cougaar services
-      this.blackboard = getService(this, BlackboardQueryService.class, null);
    }
 
    /** This method is called whenever the browser loads our URL. */

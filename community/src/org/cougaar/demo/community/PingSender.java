@@ -29,19 +29,19 @@ package org.cougaar.demo.community;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.cougaar.bootstrap.SystemProperties;
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.agent.service.alarm.AlarmBase;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.ParameterizedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
-import org.cougaar.util.Arguments;
+import org.cougaar.util.annotations.Cougaar.ObtainService;
+import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -94,21 +94,26 @@ import org.cougaar.util.UnaryPredicate;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingSender
-      extends ComponentPlugin {
+      extends ParameterizedPlugin {
 
-   private static final long DEFAULT_DELAY_MILLIS = SystemProperties.getLong("org.cougaar.demo.community.PingSender.delayMillis",
-                                                                             5000);
 
-   private static final boolean DEFAULT_VERBOSE =
-         SystemProperties.getBoolean("org.cougaar.demo.community.PingSender.verbose", true);
-
-   private LoggingService log;
-   private UIDService uids;
+   @ObtainService
+   public LoggingService log;
+   
+   @ObtainService
+   public UIDService uids;
+   
+   @Arg(name="community-name")
+   public String community_name;
 
    private MessageAddress target;
-   private long delayMillis;
-   private boolean verbose;
-
+   
+   @Arg(defaultValue="5000")
+   public long delayMillis;
+   
+   @Arg(defaultValue="false")
+   public boolean verbose;
+   
    // response relay change subscription
    private IncrementalSubscription sub;
    // sending relay change subscription
@@ -121,16 +126,8 @@ public class PingSender
 
    /** This method is called when the agent is created */
    @Override
-   public void load() {
-      super.load();
-
-      // Get our required Cougaar services
-      log = getServiceBroker().getService(this, LoggingService.class, null);
-      uids = getServiceBroker().getService(this, UIDService.class, null);
-
-      // Parse our plugin parameters
-      Arguments args = new Arguments(getParameters());
-      String community_name = args.getString("community-name", null);
+   public void start() {
+      super.start();
 
       // using the attribute role to specify the target
       target = AttributeBasedAddress.getAttributeBasedAddress(community_name, "Role", "Member");
@@ -139,9 +136,6 @@ public class PingSender
       } else if (target.equals(agentId)) {
          throw new IllegalArgumentException("Target matches self: " + target);
       }
-
-      delayMillis = args.getLong("delayMillis", DEFAULT_DELAY_MILLIS);
-      verbose = args.getBoolean("verbose", DEFAULT_VERBOSE);
    }
 
    /** This method is called when the agent starts. */
@@ -153,11 +147,11 @@ public class PingSender
       // The "myAlarms" string is any arbitrary identifier, and would only be
       // significant if we made more than one TodoSubscription instance.
       if (delayMillis > 0) {
-         expiredAlarms = (TodoSubscription) blackboard.subscribe(new TodoSubscription("myAlarms"));
+         expiredAlarms = blackboard.subscribe(new TodoSubscription("myAlarms"));
       }
 
       // Subscribe to all relays received by our agent as a response
-      sub = (IncrementalSubscription) blackboard.subscribe(createPredicate());
+      sub = blackboard.subscribe(createPredicate());
 
       // Get our initial counter value, which is zero unless we're restarting
       // from an agent move or persistence snapshot

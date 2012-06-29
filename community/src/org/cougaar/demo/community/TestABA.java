@@ -35,45 +35,38 @@ package org.cougaar.demo.community;
 import java.util.Collection;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.ParameterizedPlugin;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
-import org.cougaar.util.Arguments;
+import org.cougaar.util.annotations.Cougaar.ObtainService;
+import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.UnaryPredicate;
 
 /**
  * This plugin sends a simple ABA Relay to a target community.
  */
 public class TestABA
-      extends ComponentPlugin {
+      extends ParameterizedPlugin {
 
-   private Arguments args = Arguments.EMPTY_INSTANCE;
 
-   private LoggingService log;
-   private UIDService uids;
+   @ObtainService
+   public LoggingService log;
+   
+   @ObtainService
+   public UIDService uids;
+   
+   @Arg(name="target")
+   public String community;
 
    private IncrementalSubscription sub;
 
    @Override
-   public void setParameter(Object o) {
-      args = new Arguments(o);
-   }
-
-   public void setLoggingService(LoggingService log) {
-      this.log = log;
-   }
-
-   public void setUIDService(UIDService uids) {
-      this.uids = uids;
-   }
-
-   @Override
    protected void setupSubscriptions() {
-      sub = (IncrementalSubscription) blackboard.subscribe(new UnaryPredicate() {
+      sub = blackboard.subscribe(new UnaryPredicate() {
          private static final long serialVersionUID = 1L;
 
          public boolean execute(Object o) {
@@ -81,7 +74,6 @@ public class TestABA
          }
       });
 
-      String community = args.getString("target");
       if (community != null) {
          if (log.isInfoEnabled()) {
             log.info("Sending ABA Relay to " + community);

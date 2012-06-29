@@ -28,17 +28,18 @@ package org.cougaar.demo.community;
 
 import java.util.Iterator;
 
-import org.cougaar.bootstrap.SystemProperties;
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ComponentPlugin;
+import org.cougaar.core.plugin.ParameterizedPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
-import org.cougaar.util.Arguments;
+import org.cougaar.util.annotations.Cougaar.ObtainService;
+import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.UnaryPredicate;
+
 
 /**
  * This plugin is an example ping target that receives relays and sends back a
@@ -60,39 +61,26 @@ import org.cougaar.util.UnaryPredicate;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingReceiver
-      extends ComponentPlugin {
+      extends ParameterizedPlugin {
 
-   private LoggingService log;
-   private UIDService uids;
 
-   private boolean verbose;
+   @ObtainService
+   public LoggingService log;
+   
+   @ObtainService
+   public UIDService uids;
+
+   @Arg(defaultValue="false")
+   public boolean verbose;
 
    private IncrementalSubscription sub;
    private SimpleRelay reply_relay;
-
-   private static final boolean DEFAULT_VERBOSE = SystemProperties.getBoolean("org.cougaar.demo.community.PingReceiver.verbose",
-                                                                              true);
-
-   /** This method is called when the agent is constructed. */
-   public void setArguments(Arguments args) {
-      verbose = args.getBoolean("verbose", DEFAULT_VERBOSE);
-   }
-
-   /** This method is called when the agent loads. */
-   @Override
-   public void load() {
-      super.load();
-
-      // Get our required Cougaar services
-      log = getServiceBroker().getService(this, LoggingService.class, null);
-      uids = getServiceBroker().getService(this, UIDService.class, null);
-   }
 
    /** This method is called when the agent starts. */
    @Override
    protected void setupSubscriptions() {
       // Subscribe to all relays sent to our agent
-      sub = (IncrementalSubscription) blackboard.subscribe(createPredicate());
+      sub = blackboard.subscribe(createPredicate());
 
       // When a relay arrives on our blackboard, our "execute()" method
       // will be called.
