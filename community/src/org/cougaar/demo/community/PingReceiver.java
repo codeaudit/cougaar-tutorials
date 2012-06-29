@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ParameterizedPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
@@ -61,7 +61,7 @@ import org.cougaar.util.UnaryPredicate;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingReceiver
-      extends ParameterizedPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
 
    @ObtainService

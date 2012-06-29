@@ -32,10 +32,7 @@ package org.cougaar.demo.community;
  * It has been copied in this demo to include all examples in one place.
  */
 
-import java.util.Collection;
-
-import org.cougaar.core.blackboard.IncrementalSubscription;
-import org.cougaar.core.plugin.ParameterizedPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.Relay;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
@@ -44,13 +41,14 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.util.annotations.Cougaar.ObtainService;
 import org.cougaar.util.annotations.Cougaar.Arg;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar.Execute;
+import org.cougaar.util.annotations.Subscribe;
 
 /**
  * This plugin sends a simple ABA Relay to a target community.
  */
 public class TestABA
-      extends ParameterizedPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
 
    @ObtainService
@@ -62,18 +60,25 @@ public class TestABA
    @Arg(name="target")
    public String community;
 
-   private IncrementalSubscription sub;
+   @Execute(on=Subscribe.ModType.ADD)
+   public void handleAdd(Relay relay) {
+      log.info("Observed add");
+   }
+   
+   @Execute(on=Subscribe.ModType.CHANGE)
+   public void handleChaneg(Relay relay) {
+      log.info("Observed add");
+   }
+
+   @Execute(on=Subscribe.ModType.ADD)
+   public void handlRemove(Relay relay) {
+      log.info("Observed remove");
+   }
+
 
    @Override
    protected void setupSubscriptions() {
-      sub = blackboard.subscribe(new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         public boolean execute(Object o) {
-            return (o instanceof Relay);
-         }
-      });
-
+      super.setupSubscriptions();
       if (community != null) {
          if (log.isInfoEnabled()) {
             log.info("Sending ABA Relay to " + community);
@@ -84,19 +89,6 @@ public class TestABA
                                      AttributeBasedAddress.getAttributeBasedAddress(community, "Role", "Member"),
                                      "(Test from \"" + agentId + "\" to \"" + community + "\")");
          blackboard.publishAdd(sr);
-      }
-   }
-
-   @Override
-   protected void execute() {
-      if (log.isInfoEnabled() && sub.hasChanged()) {
-         for (int i = 0; i < 3; i++) {
-            Collection c = (i == 0 ? sub.getAddedCollection() : i == 1 ? sub.getChangedCollection() : sub.getRemovedCollection());
-            if (c.isEmpty()) {
-               continue;
-            }
-            log.info("Observed " + (i == 0 ? "add" : i == 1 ? "change" : "remove") + "[" + c.size() + "]:" + c);
-         }
       }
    }
 }

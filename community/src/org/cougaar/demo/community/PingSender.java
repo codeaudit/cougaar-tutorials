@@ -31,10 +31,9 @@ import java.util.Iterator;
 
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.agent.service.alarm.AlarmBase;
-import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.blackboard.TodoSubscription;
 import org.cougaar.core.mts.MessageAddress;
-import org.cougaar.core.plugin.ParameterizedPlugin;
+import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
@@ -42,6 +41,8 @@ import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.util.annotations.Cougaar.ObtainService;
 import org.cougaar.util.annotations.Cougaar.Arg;
+import org.cougaar.util.annotations.Subscribe;
+import org.cougaar.util.annotations.Cougaar.Execute;
 import org.cougaar.util.UnaryPredicate;
 
 /**
@@ -94,7 +95,7 @@ import org.cougaar.util.UnaryPredicate;
  * @see PingServlet Optional browser-based GUI.
  */
 public class PingSender
-      extends ParameterizedPlugin {
+      extends AnnotatedSubscriptionsPlugin {
 
 
    @ObtainService
@@ -114,12 +115,8 @@ public class PingSender
    @Arg(defaultValue="false")
    public boolean verbose;
    
-   // response relay change subscription
-   private IncrementalSubscription sub;
    // sending relay change subscription
    // just used to rehydrate and get the counter
-   @SuppressWarnings("unused")
-   private IncrementalSubscription sending_sub;
    private TodoSubscription expiredAlarms;
 
    private SimpleRelay sending_relay;
@@ -137,10 +134,26 @@ public class PingSender
          throw new IllegalArgumentException("Target matches self: " + target);
       }
    }
+   
+   @Execute(on={Subscribe.ModType.ADD, Subscribe.ModType.CHANGE}, when="isMine")
+   public void handleAdd(SimpleRelay relay) {
+      log.debug("seems like I received something!");
+      handleResponse(relay);
+   }
+   
+   @Execute(on=Subscribe.ModType.CHANGE, when="isMine")
+   public void handleChange(SimpleRelay relay) {
+   }
+
+
+   public boolean isMine(SimpleRelay relay) {
+      return agentId.equals(relay.getTarget());
+   }
 
    /** This method is called when the agent starts. */
    @Override
    protected void setupSubscriptions() {
+      super.setupSubscriptions();
 
       // Create a holder for alarms that have come due
       //
@@ -149,9 +162,6 @@ public class PingSender
       if (delayMillis > 0) {
          expiredAlarms = blackboard.subscribe(new TodoSubscription("myAlarms"));
       }
-
-      // Subscribe to all relays received by our agent as a response
-      sub = blackboard.subscribe(createPredicate());
 
       // Get our initial counter value, which is zero unless we're restarting
       // from an agent move or persistence snapshot
@@ -167,20 +177,7 @@ public class PingSender
    /** This method is called whenever a subscription changes. */
    @Override
    protected void execute() {
-      log.debug("well, let's execute");
-      // Observe changed relays by looking at our subscription's change list
-      if (sub.hasChanged()) {
-         log.debug("seems like I received something!");
-         for (Iterator iter = sub.getAddedCollection().iterator(); iter.hasNext();) {
-            SimpleRelay relay = (SimpleRelay) iter.next();
-            handleResponse(relay);
-         }
-         for (Iterator iter = sub.getChangedCollection().iterator(); iter.hasNext();) {
-            SimpleRelay relay = (SimpleRelay) iter.next();
-            handleResponse(relay);
-         }
-      }
-
+      super.execute();
       // If we're using a delay, check to see if it is time to send the next
       // ping iteration
       if (delayMillis > 0 && expiredAlarms.hasChanged()) {
@@ -189,27 +186,6 @@ public class PingSender
             handleAlarm(alarm);
          }
       }
-   }
-
-   /** Create our subscription filter */
-   // subscription to response relays
-   private UnaryPredicate createPredicate() {
-      // Match any relay sent in return by the receiving agent
-      return new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         public boolean execute(Object o) {
-
-            if (o instanceof SimpleRelay) {
-               SimpleRelay relay = (SimpleRelay) o;
-               if (agentId.equals(relay.getTarget())) {
-                  return true;
-
-               }
-            }
-            return false;
-         }
-      };
    }
 
    /** Create our subscription filter */
