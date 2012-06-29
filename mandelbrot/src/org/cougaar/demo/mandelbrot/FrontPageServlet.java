@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.servlet.ComponentServlet;
 import org.cougaar.demo.mandelbrot.util.Arguments;
 
@@ -41,6 +42,21 @@ public class FrontPageServlet
    // this is the servlet path of our MandelbrotServlet, which
    // does the real work. It generates the JPEG image.
    private static final String IMAGE_SERVLET_PATH = "/image";
+   
+   /** This method is called when the agent is created.
+    *  It is only here to log a message to let the user know what to browser to
+    */
+   @Override
+   public void start() {
+      super.start();
+      
+      LoggingService log = getService(this, LoggingService.class,  null);
+      
+      log.warn("Mandelbrot agent has been started");
+
+      log.warn("Browse to http://localhost:8800/$Node1/mandelbrot to interact with Mandelbrot");
+   }
+
 
    @Override
    protected void doGet(HttpServletRequest req, HttpServletResponse res)

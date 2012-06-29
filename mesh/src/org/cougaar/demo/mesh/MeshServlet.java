@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.BlackboardQueryService;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.servlet.ComponentServlet;
 import org.cougaar.util.UnaryPredicate;
 import org.cougaar.util.annotations.Cougaar;
@@ -79,6 +80,21 @@ public class MeshServlet
 
       // Record our load time
       loadTime = System.currentTimeMillis();
+      
+      LoggingService log = getService(this, LoggingService.class,  null);
+      log.warn("Mesh agent " + getEncodedAgentName() + " has been loaded");
+   }
+
+   /** This method is called when the agent is created.
+    *  It is only here to log a message to let the user know what to browser to
+    */
+   @Override
+   public void start() {
+      super.start();
+      LoggingService log = getService(this, LoggingService.class,  null);
+
+      log.warn("Mesh agent " + getEncodedAgentName() + " has been started");
+      log.warn("Browse to http://localhost:8800/$" + getEncodedAgentName() + "/mesh to interact with Mesh agent " + getEncodedAgentName());
    }
 
    /** This method is called whenever the browser loads our URL. */

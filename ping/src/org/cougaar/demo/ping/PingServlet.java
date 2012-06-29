@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.relay.SimpleRelay;
 import org.cougaar.core.service.BlackboardQueryService;
+import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.servlet.ComponentServlet;
 import org.cougaar.util.IsInstanceOf;
 
@@ -81,6 +82,22 @@ public class PingServlet
 
       // Get our required Cougaar services
       this.blackboard = getService(this, BlackboardQueryService.class, null);
+
+      LoggingService log = getService(this, LoggingService.class,  null);
+      log.warn("Ping agent " + getEncodedAgentName() + " has been loaded");
+   }
+   
+   /** This method is called when the agent is started.
+    *  It is only here to log a message to let the user know what to browser to
+    */
+   @Override
+   public void start() {
+      super.start();
+      LoggingService log = getService(this, LoggingService.class,  null);
+      
+      log.warn("Ping agent " + getEncodedAgentName() + " has been started");
+
+      log.warn("Browse to http://localhost:8800/$" + getEncodedAgentName() + "/ping to interact with Ping agent " + getEncodedAgentName());
    }
 
    /** This method is called whenever the browser loads our URL. */
