@@ -6,6 +6,12 @@
 <society>
 
 	<node name="NodeA">
+	
+	    <!-- Agent "NameServer" will be our society-wide naming service -->
+  		<agent name="NameServer">
+   		   <component class='org.cougaar.core.wp.server.Server'/>
+   	    </agent>
+	
 
 		<agent name="Agent-1">
 			<component class="org.cougaar.demo.community.PingSender">
