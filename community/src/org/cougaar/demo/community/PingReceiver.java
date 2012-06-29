@@ -36,6 +36,8 @@ import org.cougaar.core.relay.SimpleRelaySource;
 import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
+import org.cougaar.util.annotations.Cougaar;
+import org.cougaar.util.annotations.Subscribe;
 import org.cougaar.util.annotations.Cougaar.ObtainService;
 import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.UnaryPredicate;
@@ -73,54 +75,10 @@ public class PingReceiver
    @Arg(defaultValue="false")
    public boolean verbose;
 
-   private IncrementalSubscription sub;
    private SimpleRelay reply_relay;
 
-   /** This method is called when the agent starts. */
-   @Override
-   protected void setupSubscriptions() {
-      // Subscribe to all relays sent to our agent
-      sub = blackboard.subscribe(createPredicate());
-
-      // When a relay arrives on our blackboard, our "execute()" method
-      // will be called.
-   }
-
-   /** This method is called whenever a subscription changes. */
-   @Override
-   protected void execute() {
-      log.debug("well, let's execute");
-      // Observe added relays by looking at our subscription's add list
-      for (Iterator iter = sub.getAddedCollection().iterator(); iter.hasNext();) {
-         log.debug("looping through addedCollection");
-         SimpleRelay relay = (SimpleRelay) iter.next();
-         replyTo(relay);
-      }
-      for (Iterator iter = sub.getChangedCollection().iterator(); iter.hasNext();) {
-         log.debug("looping through changedCollection");
-         SimpleRelay relay = (SimpleRelay) iter.next();
-         replyTo(relay);
-      }
-   }
-
-   /** Create our subscription filter */
-   private UnaryPredicate createPredicate() {
-      // Matches any relay sent to our agent
-      return new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         public boolean execute(Object o) {
-            if (o instanceof SimpleRelay) {
-               MessageAddress target = ((SimpleRelay) o).getTarget();
-               if (target instanceof AttributeBasedAddress) {
-                  return true;
-               }
-            }
-            return false;
-         }
-      };
-   }
-
+   @Cougaar.Execute(on = {Subscribe.ModType.CHANGE, Subscribe.ModType.ADD
+                         }, when = "isABA")
    private void replyTo(SimpleRelay relay) {
       log.debug("well, let's reply, I'm polite!");
       // Send back the same content as our response
@@ -141,5 +99,10 @@ public class PingReceiver
       // updating content
       reply_relay.setQuery(content);
       blackboard.publishChange(reply_relay);
+   }
+
+   public boolean isABA(SimpleRelay relay) {
+      MessageAddress target = relay.getTarget();
+      return target instanceof AttributeBasedAddress;
    }
 }
