@@ -26,9 +26,6 @@
 
 package org.cougaar.demo.community;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.cougaar.core.agent.service.alarm.Alarm;
 import org.cougaar.core.agent.service.alarm.AlarmBase;
 import org.cougaar.core.blackboard.TodoSubscription;
@@ -43,7 +40,7 @@ import org.cougaar.util.annotations.Cougaar.ObtainService;
 import org.cougaar.util.annotations.Cougaar.Arg;
 import org.cougaar.util.annotations.Subscribe;
 import org.cougaar.util.annotations.Cougaar.Execute;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar.Query;
 
 /**
  * This plugin is an example ping source that sends relays to remote agents
@@ -117,7 +114,7 @@ public class PingSender
    
    // sending relay change subscription
    // just used to rehydrate and get the counter
-   private TodoSubscription expiredAlarms;
+   private TodoSubscription<MyAlarm> expiredAlarms;
 
    private SimpleRelay sending_relay;
 
@@ -143,6 +140,10 @@ public class PingSender
 
    public boolean isMine(SimpleRelay relay) {
       return agentId.equals(relay.getTarget());
+   }
+
+   public boolean isTarget(SimpleRelay relay) {
+      return agentId.equals(relay.getSource()) && target.equals(relay.getTarget());
    }
 
    /** This method is called when the agent starts. */
@@ -176,54 +177,31 @@ public class PingSender
       // If we're using a delay, check to see if it is time to send the next
       // ping iteration
       if (delayMillis > 0 && expiredAlarms.hasChanged()) {
-         for (Iterator iter = expiredAlarms.getAddedCollection().iterator(); iter.hasNext();) {
-            MyAlarm alarm = (MyAlarm) iter.next();
+         for (MyAlarm alarm : expiredAlarms.getAddedCollection()) {
             handleAlarm(alarm);
          }
       }
    }
-
-   /** Create our subscription filter */
-   // subscription to sending relays
-   private UnaryPredicate createSendingPredicate() {
-      // Match any relay sent in return by the receiving agent
-      return new UnaryPredicate() {
-         private static final long serialVersionUID = 1L;
-
-         public boolean execute(Object o) {
-
-            if (o instanceof SimpleRelay) {
-               SimpleRelay relay = (SimpleRelay) o;
-               if (agentId.equals(relay.getSource()) && target.equals(relay.getTarget())) {
-                  return true;
-
-               }
-            }
-            return false;
-         }
-      };
+   
+   @Query(where="isTarget")
+   public void countQuery(SimpleRelay relay, QueryContext context) {
+      context.count = ((Integer) relay.getQuery()).intValue();
+      blackboard.publishRemove(relay);
    }
-
+   
    /** Get our initial ping iteration counter value */
    private int getInitialCounter() {
       // Check to see if we've already sent a ping, in case we're restarting
       // from an agent move or persistence snapshot.
-      int ret = 0;
       if (blackboard.didRehydrate()) {
-         Collection relays = getBlackboardService().query(createSendingPredicate());
-
-         // Get the counter from our sent ping, if any, then remove it
-         for (Iterator iter = relays.iterator(); iter.hasNext();) {
-            SimpleRelay relay = (SimpleRelay) iter.next();
-            ret = ((Integer) relay.getQuery()).intValue();
-            // remove sending relays
-            blackboard.publishRemove(relay);
-         }
+         QueryContext queryContext = new QueryContext();
+         runQuery("countQuery", SimpleRelay.class, queryContext);
          if (verbose && log.isShoutEnabled()) {
-            log.shout("Resuming pings to " + target + " at counter " + ret);
+            log.shout("Resuming pings to " + target + " at counter " + queryContext.count);
+            return queryContext.count;
          }
       }
-      return ret;
+      return 0;
    }
 
    /** Handle a response to a ping relay that we sent */
@@ -298,6 +276,10 @@ public class PingSender
       long futureTime = System.currentTimeMillis() + delayMillis;
       Alarm alarm = new MyAlarm(sending_relay, content, futureTime);
       getAlarmService().addRealTimeAlarm(alarm);
+   }
+
+   private static final class QueryContext {
+      int count;
    }
 
    /** An alarm that we use to wake us up after the delayMillis */
