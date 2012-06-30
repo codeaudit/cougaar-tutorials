@@ -26,9 +26,6 @@
 
 package org.cougaar.demo.community;
 
-import java.util.Iterator;
-
-import org.cougaar.core.blackboard.IncrementalSubscription;
 import org.cougaar.core.mts.MessageAddress;
 import org.cougaar.core.plugin.AnnotatedSubscriptionsPlugin;
 import org.cougaar.core.relay.SimpleRelay;
@@ -37,10 +34,9 @@ import org.cougaar.core.service.LoggingService;
 import org.cougaar.core.service.UIDService;
 import org.cougaar.multicast.AttributeBasedAddress;
 import org.cougaar.util.annotations.Cougaar;
-import org.cougaar.util.annotations.Subscribe;
-import org.cougaar.util.annotations.Cougaar.ObtainService;
 import org.cougaar.util.annotations.Cougaar.Arg;
-import org.cougaar.util.UnaryPredicate;
+import org.cougaar.util.annotations.Cougaar.ObtainService;
+import org.cougaar.util.annotations.Subscribe;
 
 
 /**
@@ -77,9 +73,8 @@ public class PingReceiver
 
    private SimpleRelay reply_relay;
 
-   @Cougaar.Execute(on = {Subscribe.ModType.CHANGE, Subscribe.ModType.ADD
-                         }, when = "isABA")
-   private void replyTo(SimpleRelay relay) {
+   @Cougaar.Execute(on = {Subscribe.ModType.CHANGE, Subscribe.ModType.ADD}, when = "isABA")
+   public void replyTo(SimpleRelay relay) {
       log.debug("well, let's reply, I'm polite!");
       // Send back the same content as our response
       Object content = relay.getQuery();
