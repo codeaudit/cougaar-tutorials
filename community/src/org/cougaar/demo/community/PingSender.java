@@ -140,11 +140,6 @@ public class PingSender
       log.debug("seems like I received something!");
       handleResponse(relay);
    }
-   
-   @Execute(on=Subscribe.ModType.CHANGE, when="isMine")
-   public void handleChange(SimpleRelay relay) {
-   }
-
 
    public boolean isMine(SimpleRelay relay) {
       return agentId.equals(relay.getTarget());
