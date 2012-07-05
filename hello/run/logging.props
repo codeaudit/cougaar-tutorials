@@ -16,7 +16,7 @@ log4j.appender.A1=org.apache.log4j.ConsoleAppender
 
 # Optionally enable logging categories, e.g.: DETAIL*, DEBUG, INFO, WARN, ERROR, SHOUT*, FATAL
 # For a whole package:
-#log4j.category.org.cougaar.demo.hello=INFO
+# log4j.category.org.cougaar=INFO
 
 # For a specific class:
 log4j.category.org.cougaar.demo.hello.HelloLoggingPlugin=DEBUG
