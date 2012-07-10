@@ -13,7 +13,7 @@ Sample build script for Cougaar application using predefined Ant targets
 		<fileset dir="${basedir}" includes="sys" />
 	</path>
 	<!--Load predefined Cougaar Ant Targets  -->
-    <import file="${cougaar.install.path}/build/data/cougaar-app-project-import.xml"/>
+    <import file="../../build/build/data/cougaar-app-project-import.xml"/>
 	
 	<!--Run Hello using Ant, good for nightly builds  -->
 	
