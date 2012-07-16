@@ -8,15 +8,12 @@ The zip already contains a "lib/ping.jar", so this is optional.
 <project name="ping" basedir="." default="jar">
 
   <property environment="env"/>
-  <property name="TARGETBASE" value=".." />
+  <property name="TARGETBASE" value="../.." />
 	
   <!--- Configure all required paths -->
   <property name="src.dir" value="${basedir}/src" description="Java source files" />
   <property name="build.dir" value="${basedir}/tmp" description="Build base " />
   <property name="classes.dir" value="${build.dir}/classes" description="Class files" />
-	
-  <property name="cip.lib" value="${TARGETBASE}/lib"/>
-  <property name="cip.sys" value="${TARGETBASE}/sys"/>
 
   <!--- Compiler properties -->
   <property name="compile.deprecation" value="true" />
@@ -24,10 +21,10 @@ The zip already contains a "lib/ping.jar", so this is optional.
   <property name="compile.optimize" value="off" />
 
   <path id="compile.classpath">
-    <pathelement location="${cip.lib}/bootstrap.jar" />
-    <pathelement location="${cip.lib}/util.jar" />
-    <pathelement location="${cip.lib}/core.jar" />
-    <pathelement location="${cip.sys}/servlet.jar" />
+    <pathelement location="${TARGETBASE}/util/bootstrap/tmp/bootstrap.jar" />
+    <pathelement location="${TARGETBASE}/util/util/tmp/util.jar" />
+    <pathelement location="${TARGETBASE}/core/core/tmp/core.jar" />
+    <pathelement location="${TARGETBASE}/core/jars/lib/servlet.jar" />
   </path>
 
   <patternset id="ps.jar.extras">

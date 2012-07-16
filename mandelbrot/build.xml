@@ -3,134 +3,77 @@
 <!--
 Sample build script for the Cougaar "Mandelbrot" application.
 
-The "ant test-popup" target runs the "v0" minimal test.
-
 The zip already contains a "lib/mandelbrot.jar", so this is optional.
 -->
-<project name="mandelbrot" basedir="." default="dist">
+<project name="mandelbrot" basedir="." default="jar">
 
   <property environment="env"/>
-  <property name="cougaar.install.path" value="${env.COUGAAR_INSTALL_PATH}" />
-  <property name="cougaar.home" value="${env.COUGAAR_HOME}" />
-
+  <property name="TARGETBASE" value="../.." />
+	
   <!--- Configure all required paths -->
   <property name="src.dir" value="${basedir}/src" description="Java source files" />
-  <property name="build.dir" value="${basedir}/tmp" description="Class files" />
-  <property name="dist.dir" value="${basedir}/lib" description="Generated jars" />
-
-  <property name="cip.lib" value="${cougaar.install.path}/lib"/>
-  <property name="cip.sys" value="${cougaar.install.path}/sys"/>
-  <property name="local.lib" value="sys"/>
+  <property name="build.dir" value="${basedir}/tmp" description="Build base " />
+  <property name="classes.dir" value="${build.dir}/classes" description="Class files" />
 
   <!--- Compiler properties -->
   <property name="compile.deprecation" value="true" />
   <property name="compile.debug" value="on" />
   <property name="compile.optimize" value="off" />
 
-  <path id="sys.classpath">
-    <!-- none from ${local.lib} -->
-  </path>
-  <path id="cougaar.lib.classpath">
-    <pathelement location="${cip.lib}/util.jar" />
-    <pathelement location="${cip.lib}/core.jar" />
-  </path>
-  <path id="cougaar.sys.classpath">
-    <pathelement location="${cip.sys}/servlet.jar" />
-  </path>
-
   <path id="compile.classpath">
-    <path refid="sys.classpath" />
-    <path refid="cougaar.lib.classpath" />
-    <path refid="cougaar.sys.classpath" />
+    <pathelement location="${TARGETBASE}/util/bootstrap/tmp/bootstrap.jar" />
+    <pathelement location="${TARGETBASE}/util/util/tmp/util.jar" />
+    <pathelement location="${TARGETBASE}/core/core/tmp/core.jar" />
+    <pathelement location="${TARGETBASE}/core/jars/lib/servlet.jar" />
   </path>
-
-  <!-- Load user defaults -->
-  <property file="${user.home}/.${ant.project.name}-build.properties" />
-  <property file="${user.home}/.build.properties" />	
 
   <patternset id="ps.jar.extras">
     <include name="**/*.xml"/>
     <include name="**/*.dtd"/>
     <include name="**/*.properties"/>
     <include name="**/*.png"/>
-    <include name="**/*.map"/>
   </patternset>
 
-  <!-- Project specific dependencies -->    
-  <path id="project.dependencies">
-    <!-- By convention, application external jars are in sys  -->
-    <fileset dir="${basedir}" includes="sys" />
-  </path>
-  <!--Load predefined Cougaar Ant Targets  -->
-  <import file="${cougaar.install.path}/build/data/cougaar-app-project-import.xml"/>
-
   <target name="init" description="Initialize the build env.  Check for required properties">
-    <fail unless="cougaar.install.path">		
-      You must define a 'cougaar.install.path' property.  
-      Create a '.build.properties' file in your home dir with the property.
-      Line format ==> cougaar.install.path=[your path]		
-    </fail>
-
-    <echo message="Using COUGAAR_INSTALL_PATH: ${cougaar.install.path}"/>
+    
   </target>
 
   <target name="prepare" depends="init" description="Prepares for building, creates required directories">
     <tstamp />
-
-    <mkdir dir="${build.dir}" description="Creates the build directory for class files" />
-    <mkdir dir="${dist.dir}" description="Creates the dist directory for jar files" />
+    <mkdir dir="${build.dir}" description="Creates the build directory" />
+    <mkdir dir="${classes.dir}" description="Creates the classes directory" />
   </target>
 
-  <target name="compile" depends="prepare" description="Compiles all source files.">
-    <javac srcdir="${src.dir}" destdir="${build.dir}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="ISO-8859-1" includeantruntime="no">
+  <target name="compile" depends="prepare" description="Compiles all source files .">
+    <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}" encoding="ISO-8859-1" includeantruntime="no">
       <classpath>
 	<path refid="compile.classpath" />
       </classpath>
     </javac>
-    <copy todir="${build.dir}" >
+    <copy todir="${classes.dir}" >
       <fileset dir="${src.dir}">
         <patternset refid="ps.jar.extras"/>
       </fileset>
     </copy>
   </target>
 
-  <target name="dist" depends="compile" description="Creates a jar file for this module.">
-    <jar jarfile="${dist.dir}/${ant.project.name}.jar" casesensitive="yes">
+  <target name="jar" depends="compile" description="Creates a jar file for this module.">
+    <jar jarfile="${build.dir}/${ant.project.name}.jar" casesensitive="yes">
       <manifest>
         <attribute name="Application-Title" value="Cougaar - ${ant.project.name}" />
         <attribute name="Built-By" value="${user.name}" />
         <attribute name="Build-Date" value="${TODAY}" />
         <attribute name="Implementation-Version" value="1" />
       </manifest>
-      <fileset dir="${build.dir}" />
+      <fileset dir="${classes.dir}" />
     </jar>
   </target>
 
-  <target name="install" depends="dist" description="Creates jar and copies it and sys jars to $CIP">
-    <copy todir="${cip.sys}">
-      <fileset dir="${local.lib}"/>
-    </copy>
-    <copy file="${dist.dir}/${ant.project.name}.jar" todir="${cip.lib}"/>
-  </target>
-
-  <target name="test-popup" depends="dist" description="Test the basic math and popup a UI">
-    <java 
-      classname="org.cougaar.demo.mandelbrot.v0.MandelbrotPopup"
-      classpath="${dist.dir}/${ant.project.name}.jar"
-      fork="yes"/>
-  </target>
-
-  <target name="test-file" depends="dist" description="Test the basic math and write a 'test.jpg' file">
-    <java 
-      classname="org.cougaar.demo.mandelbrot.v0.MandelbrotPopup"
-      classpath="${dist.dir}/${ant.project.name}.jar"
-      fork="yes">
-      <arg value="file=test.jpg"/>
-    </java>
+  <target name="install" depends="jar" description="Creates jar and copies it and sys jars to $CIP">
+    <copy file="${build.dir}/${ant.project.name}.jar" todir="${cip.lib}"/>
   </target>
 
   <target name="clean" depends="" description="Deletes all class files and all module generated jars">
     <delete dir="${build.dir}" />
-    <delete file="${dist.dir}/${ant.project.name}.jar" />
   </target>
 </project>
