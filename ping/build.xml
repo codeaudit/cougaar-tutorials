@@ -58,7 +58,7 @@ The zip already contains a "lib/ping.jar", so this is optional.
   </target>
 
   <target name="jar" depends="compile" description="Creates a jar file for this module.">
-    <jar jarfile="${build.dir}/${ant.project.name}.jar" casesensitive="yes">
+    <jar jarfile="${basedir}/lib/${ant.project.name}.jar" casesensitive="yes">
       <manifest>
         <attribute name="Application-Title" value="Cougaar - ${ant.project.name}" />
         <attribute name="Built-By" value="${user.name}" />
