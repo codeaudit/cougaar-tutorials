@@ -8,7 +8,21 @@ The zip already contains a "lib/community.jar", so this is optional.
 <project name="community" basedir="." default="jar">
 
   <property environment="env"/>
-  <property name="TARGETBASE" value="../.." />
+  <condition property="CIP" value="${env.COUGAAR_INSTALL_PATH}" else="../../cougaar">
+    <isset property="env.COUGAAR_INSTALL_PATH"/>
+  </condition>
+  <condition property="BOOTSTRAP_JAR" value="../../util/bootstrap/tmp/bootstrap.jar" else="${CIP}/lib/bootstrap.jar">
+	<available file="$../../util/bootstrap/tmp/bootstrap.jar"/>
+  </condition>
+  <condition property="UTIL_JAR" value="../../util/util/tmp/util.jar" else="${CIP}/lib/util.jar">
+	<available file="../../util/util/tmp/util.jar"/>
+  </condition>
+  <condition property="CORE_JAR" value="../../core/core/tmp/core.jar" else="${CIP}/lib/core.jar">
+	<available file="../../core/core/tmp/core.jar"/>
+  </condition>
+  <condition property="SERVLET_JAR" value="../../core/jars/lib/servlet.jar" else="${CIP}/sys/servlet.jar">
+	<available file="../../core/jars/lib/servlet.jar"/>
+  </condition>
 	
   <!--- Configure all required paths -->
   <property name="src.dir" value="${basedir}/src" description="Java source files" />
@@ -21,12 +35,10 @@ The zip already contains a "lib/community.jar", so this is optional.
   <property name="compile.optimize" value="off" />
 
   <path id="compile.classpath">
-    <pathelement location="${TARGETBASE}/util/bootstrap/tmp/bootstrap.jar" />
-    <pathelement location="${TARGETBASE}/util/util/tmp/util.jar" />
-    <pathelement location="${TARGETBASE}/core/core/tmp/core.jar" />
-    <pathelement location="${TARGETBASE}/core/jars/lib/servlet.jar" />
-    <fileset dir="${TARGETBASE}/cougaar/lib" includes="*.jar"/>
-    <fileset dir="${TARGETBASE}/cougaar/sys" includes="*.jar"/>
+    <pathelement location="${BOOTSTRAP_JAR}" />
+    <pathelement location="${UTIL_JAR}" />
+    <pathelement location="${CORE_JAR}" />
+    <pathelement location="${SERVLET_JAR}" />
   </path>
 
   <patternset id="ps.jar.extras">
