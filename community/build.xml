@@ -25,6 +25,8 @@ The zip already contains a "lib/community.jar", so this is optional.
     <pathelement location="${TARGETBASE}/util/util/tmp/util.jar" />
     <pathelement location="${TARGETBASE}/core/core/tmp/core.jar" />
     <pathelement location="${TARGETBASE}/core/jars/lib/servlet.jar" />
+    <fileset dir="${TARGETBASE}/cougaar/lib" includes="*.jar"/>
+    <fileset dir="${TARGETBASE}/cougaar/sys" includes="*.jar"/>
   </path>
 
   <patternset id="ps.jar.extras">
