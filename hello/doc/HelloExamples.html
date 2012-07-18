@@ -7,21 +7,31 @@ This module contains several examples that show various ways of running the Hell
 <p>
 This module assumes that you have read the Hello World <a href="README.html">README </a>
 and have successfully set up and run the demo. All examples are expected to be run in eclipse,
-but they can also be run as ant targets or from the command line.
+but they can also be run <!-- as ant targets or --> from the command line.
 The following of the following sections describes how to run each example and how to interpret
 the output.
 <p>
 <h2>Index:</h2>
 <ul>
-  <li><a href="#world">Hello World</a></li>
-  <li><a href="#logging">Hello Logging</a></li>
-  <li><a href="#lifecycle">Hello Life Cycle</a></li>
-  <li><a href="#pubsub">Hello Publication / Subscription</a></li>
-  <li><a href="#classic">Hello Classic Subscriptions</a></li>
-  <li><a href="#query">Hello Query</a></li>
-  <li><a href="#timer">Hello Timer</a></li>
-  <li><a href="#service">Hello Service</a></li>
-  <li><a href="#debug">Hello Debug</a></li>
+  <li><a href="#world">Hello World</a> -
+  Verifies that the installation is correct</li>
+  <li><a href="#logging">Hello Logging</a> -
+  Demonstrates how to control the logging levels</li>
+  <li><a href="#lifecycle">Hello Life Cycle</a> -
+  Prints out additional logging information telling what is happening
+  to the agent as it progresses through its life</li>
+  <li><a href="#pubsub">Hello Publication / Subscription</a> -
+  Illustrates how to read and write to the blackboard</li>
+  <li><a href="#classic">Hello Classic Subscriptions</a> -
+  Illustrates how to read and write to the blackboard the old way</li>
+  <li><a href="#query">Hello Query</a> -
+  Illustrates how to query the blackboard</li>
+  <li><a href="#timer">Hello Timer</a> -
+  Shows how to use the blackboard for time-based notifications</li>
+  <li><a href="#service">Hello Service</a> -
+  Shows how external events can trigger changes to the blackboard</li>
+  <li><a href="#debug">Hello Debug</a> -
+  Illustrates how to run in debug mode</li>
 </ul>
 
 <h2>Hello World:<a name="world"></a></h2>
@@ -42,17 +52,17 @@ the output.
  helloWorld
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloWorld
  </pre></code>
   </li><p>
-  
+ --> 
   <li>Unix command line (bash):
   <code><pre>
   cd [HelloProjectDirectory]
-  export COUGAAR_INSTALL_PATH=`pwd`/../../trimcougaar/TrimCougaar
+  export COUGAAR_INSTALL_PATH=[`pwd`/../.. or CougaarTopLevelDirectory]/cougaar
   export CIP=$COUGAAR_INSTALL_PATH
   export COUGAAR_SOCIETY_PATH=`pwd`
   export COUGAAR_RUNTIME_PATH=`pwd`/run
@@ -76,19 +86,19 @@ the output.
   <a href="../configs/HelloLoggingSociety.xml">configs/HelloLoggingSociety.xml</a>
   </li><p>
 
-  
+
   <li>Eclipse run command:
  <code><pre>
  helloLogging
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloLogging
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloLoggingSociety.xml 
@@ -115,13 +125,13 @@ the output.
  helloLifeCycle
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloLifeCycle
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloLifeCycleSociety.xml 
@@ -152,13 +162,13 @@ the output.
  helloPubSub
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloPubSub
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloPublishSubscribeSociety.xml 
@@ -185,13 +195,13 @@ the output.
  helloPubSub-classic
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloPubSub-classic
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloClassicPublishSubscribeSociety.xml 
@@ -219,13 +229,13 @@ the output.
  helloQuery
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloQuery
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
    $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloQuerySociety.xml 
@@ -252,13 +262,13 @@ the output.
  helloTimer
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloTimer
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloTimerSociety.xml 
@@ -285,13 +295,13 @@ the output.
  helloService
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloService
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleNodeRuntime.xml --society ../configs/HelloServiceSociety.xml 
@@ -315,13 +325,13 @@ the output.
  helloDebug
  </pre></code>
   </li><p>
-
+<!--
   <li>The Ant script target:
  <code><pre>
  ant helloDebug
  </pre></code>
   </li><p>
-  
+-->  
   <li>Unix command line (bash):
   <code><pre>
   $CIP/bin/cougaar --runtime SingleDebugRuntime.xml --society ../configs/HelloQuerySociety.xml 
