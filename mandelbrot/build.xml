@@ -46,6 +46,7 @@ The zip already contains a "lib/mandelbrot.jar", so this is optional.
     <include name="**/*.dtd"/>
     <include name="**/*.properties"/>
     <include name="**/*.png"/>
+    <include name="**/*.map"/>
   </patternset>
 
   <target name="init" description="Initialize the build env.  Check for required properties">
